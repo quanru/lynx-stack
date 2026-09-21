@@ -1,0 +1,23 @@
+cases:
+  # 对应 lynx-stack web-core-e2e 的 tests/reactlynx/basic-bindtap（ReactLynx：点 100x100 方块，颜色 pink↔green）。
+  # 页面渲染在 lynx-view 的 closed shadow/worker 内，DOM 不可穿透；Midscene 只凭截图驱动。
+  - name: bindtap toggles the square pink to green
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-bindtap
+      - wait: { duration: 4000 }
+      # 不写死像素：截图按设备 DPR 放大，100 CSS px 在图上约占屏宽 1/4。
+      - aiAssert: A small solid pink square is rendered at the top-left corner of an otherwise blank white page.
+      - aiTap: the pink square at the top-left corner
+      - wait: { duration: 1500 }
+      - aiAssert: The same square is now solid green after the tap, and the rest of the page stays white.
+
+  - name: bindtap toggles back to pink on second tap
+    tags: [toggle]
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-bindtap
+      - wait: { duration: 4000 }
+      - aiTap: the pink square at the top-left corner
+      - wait: { duration: 1000 }
+      - aiTap: the square, which is now green
+      - wait: { duration: 1500 }
+      - aiAssert: The square has toggled back to pink.

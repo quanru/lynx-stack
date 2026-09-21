@@ -1,0 +1,26 @@
+cases:
+  # Lynx web-core-e2e: tests/reactlynx/basic-element-text-color
+  # "hello lynx" 以 80px linear-gradient(green, yellow) 渐变渲染——验证 shadow/worker 内文本绘制。
+  - name: Styled text renders with gradient color
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-element-text-color
+      - wait: { duration: 4000 }
+      - aiAssert: The text "hello lynx" is rendered in very large bold letters near the top-left of the page. Each letter is filled with a vertical green gradient, from dark green at the top to bright yellow-green at the bottom, on a plain white background.
+
+  # Lynx web-core-e2e: tests/reactlynx/basic-element-image-src
+  - name: Image component renders a remote resource
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-element-image-src
+      - wait: { duration: 4000 }
+      - aiAssert: A small square Lynx logo image is rendered at the top-left corner, taking up roughly a quarter of the page width. The image is fully loaded and shows a recognizable graphic, not a blank or broken-image placeholder.
+
+  # Lynx web-core-e2e: tests/reactlynx/basic-element-input-bindinput
+  # bindinput 回调把输入值镜像渲染到 input 下方的 .result。
+  - name: Text input mirrors typed value through bindinput
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-element-input-bindinput
+      - wait: { duration: 4000 }
+      - aiAssert: A bordered text input prefilled with the word "bindinput" is visible near the top of the page.
+      - aiAct: click into the bordered text input field that currently contains the text "bindinput", select and clear all existing text, then type "hello-lynx"
+      - wait: { duration: 1500 }
+      - aiAssert: A text below the input shows "hello-lynx" (mirrored from the input event), followed by cursor position numbers separated by dashes.

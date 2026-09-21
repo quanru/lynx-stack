@@ -16,11 +16,12 @@ cases:
 
   # Lynx web-core-e2e: tests/reactlynx/basic-element-input-bindinput
   # bindinput 回调把输入值镜像渲染到 input 下方的 .result。
+  # 一像素边框 + 小字号输入框在截图里视觉信号太弱（大片留白），AI 断言不稳；
+  # 初始值/镜像值是精确文本语义，改走 web.expect/web.fill（Playwright 穿透 open
+  # shadow root，自动等待），与官方 Playwright 用例断言完全一致：foobar-6-6。
   - name: Text input mirrors typed value through bindinput
     steps:
       - gotoUrl: ${shellUrl}?casename=basic-element-input-bindinput
-      - wait: { duration: 4000 }
-      - aiAssert: A bordered text input prefilled with the word "bindinput" is visible near the top of the page.
-      - aiAct: click into the bordered text input field that currently contains the text "bindinput", select and clear all existing text, then type "hello-lynx"
-      - wait: { duration: 1500 }
-      - aiAssert: A text below the input shows "hello-lynx" (mirrored from the input event), followed by cursor position numbers separated by dashes.
+      - web.expect: { selector: "input", value: "bindinput" }
+      - web.fill: { selector: "input", text: "foobar", enter: true }
+      - web.expect: { selector: ".result", text: "foobar-6-6" }

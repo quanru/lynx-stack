@@ -8,11 +8,21 @@ cases:
       - aiAssert: The text "hello lynx" is rendered in very large bold letters near the top-left of the page. Each letter is filled with a vertical green gradient, from dark green at the top to bright yellow-green at the bottom, on a plain white background.
 
   # Lynx web-core-e2e: tests/reactlynx/basic-element-image-src
+  # 官方对此例只做像素快照（src 是同源静态资源 /resources/lynx-logo.jpeg，
+  # 元素带 id="target"，固定 100x100）。视觉模型对这种"深色小图 + 下方大片白"
+  # 的构图会稳定回 "image base64 truncated / cannot decode" 拒答（同一张完好的
+  # 5KB JPEG 连续 3 次，与渲染、体积、加载都无关），故改用确定性的双通道断言：
+  # ①穿透 open shadow 校验 <x-image id=target> 以源码固定的 100x100 参与布局；
+  # ②校验该 jpeg 确实以 image/* 内容类型返回 200（资源真正加载成功）。
   - name: Image component renders a remote resource
     steps:
       - gotoUrl: ${shellUrl}?casename=basic-element-image-src
-      - wait: { duration: 4000 }
-      - aiAssert: A small square Lynx logo image is rendered at the top-left corner, taking up roughly a quarter of the page width. The image is fully loaded and shows a recognizable graphic, not a blank or broken-image placeholder.
+      - web.expect: { selector: "#target", width: 100, height: 100 }
+      - web.expectResponse: {
+          urlIncludes: "lynx-logo.jpeg",
+          status: 200,
+          contentTypeIncludes: "image/",
+        }
 
   # Lynx web-core-e2e: tests/reactlynx/basic-element-input-bindinput
   # bindinput 回调把输入值镜像渲染到 input 下方的 .result。

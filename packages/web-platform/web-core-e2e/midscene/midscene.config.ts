@@ -23,17 +23,26 @@ interface AgentRegistry {
   releaseAgent(runId: string): Promise<AgentReleaseResult | void>;
 }
 
+interface ResponseInfo {
+  url: string;
+  status: number;
+  contentType: string;
+}
+
 interface WebProjectContext {
   agentRegistry: AgentRegistry;
   // DOM 节点（web.expect / web.fill）用：按 case runId 取该 run 的 Playwright Page。
   getPage(runId: string): Promise<Page>;
+  // web.expectResponse 用：取该 run 自建页起记录到的所有网络响应（含 gotoUrl
+  // 触发的首次导航），用于确定性断言图片等资源确实以 200 + 正确类型加载。
+  getResponses(runId: string): ResponseInfo[];
 }
 
 // Playwright 驱动 Chromium 打开 web-core-e2e dev shell。ReactLynx 页面渲染在
 // <lynx-view> 的 open shadow root 内：Playwright 的 CSS/locator 引擎可以穿透
 // open shadow 做精确值断言（官方 web-core-e2e Playwright 套件即如此），而整体
-// 布局/视觉语义仍由 Midscene 纯视觉驱动。两类节点配合：精确文本用 DOM，
-// 视觉/空间关系用 AI。
+// 布局/视觉语义仍由 Midscene 纯视觉驱动。两类节点配合：精确文本/盒模型/资源
+// 加载用 DOM 与网络，颜色/空间关系等仍走 AI 视觉。
 // 浏览器全 project 共享；每个 case run 用独立 context+page+agent，结束即关。
 const webSetup = defineProjectSetup<WebProjectContext>({
   name: 'web',
@@ -43,6 +52,7 @@ const webSetup = defineProjectSetup<WebProjectContext>({
 
     const pages = new Map<string, Page>();
     const agents = new Map<string, PlaywrightAgent>();
+    const responseLogs = new Map<string, ResponseInfo[]>();
 
     const getPage = async (runId: string) => {
       let page = pages.get(runId);
@@ -51,6 +61,21 @@ const webSetup = defineProjectSetup<WebProjectContext>({
           viewport: { width: 393, height: 851 },
         });
         page = await context.newPage();
+        // 在建页瞬间就开始记录响应：getPage 由 gotoUrl 懒触发，监听器先于该步
+        // 导航挂好，所以首次加载的图片/资源响应也能被 web.expectResponse 看到。
+        const log: ResponseInfo[] = [];
+        responseLogs.set(runId, log);
+        page.on('response', (response) => {
+          try {
+            log.push({
+              url: response.url(),
+              status: response.status(),
+              contentType: response.headers()['content-type'] ?? '',
+            });
+          } catch {
+            // 响应已回收等情况下忽略，不能让记录器把用例带崩。
+          }
+        });
         pages.set(runId, page);
       }
       return page;
@@ -73,6 +98,7 @@ const webSetup = defineProjectSetup<WebProjectContext>({
         const page = pages.get(runId);
         agents.delete(runId);
         pages.delete(runId);
+        responseLogs.delete(runId);
         if (agent) await agent.destroy();
         if (page) await page.context().close();
         // 仅当该 run 真的跑过 AI 任务、core 已落盘 agent HTML 时才回传路径；
@@ -82,7 +108,11 @@ const webSetup = defineProjectSetup<WebProjectContext>({
         return agent && existsSync(report) ? { reportPath: report } : undefined;
       },
     };
-    return { agentRegistry: registry, getPage };
+    return {
+      agentRegistry: registry,
+      getPage,
+      getResponses: (runId) => responseLogs.get(runId) ?? [],
+    };
   },
 });
 
@@ -97,6 +127,20 @@ interface ExpectInput {
   value?: string;
   // 断言元素文本（trim 后）严格相等；与 value 二选一；都省略仅断言可见。
   text?: string;
+  // 断言元素渲染盒的 CSS 像素宽/高（getBoundingClientRect，四舍五入）。
+  // 用于 <x-image> 这类"资源已加载并按尺寸参与布局"的确定性判断。
+  width?: number;
+  height?: number;
+  timeoutMs?: number;
+}
+
+interface ExpectResponseInput {
+  // 响应 URL 需包含的子串（如资源文件名）。
+  urlIncludes: string;
+  // 期望 HTTP 状态码，默认 200。
+  status?: number;
+  // 期望 content-type 需包含的子串，如 "image/"；省略则不校验类型。
+  contentTypeIncludes?: string;
   timeoutMs?: number;
 }
 
@@ -139,12 +183,12 @@ async function pollUntil(
 const webExpectNode = defineNode<ExpectInput, void, WebProjectContext>({
   name: 'web.expect',
   description:
-    'Assert a DOM condition inside the Lynx open shadow root: input value, element text, or visibility.',
+    'Assert a DOM condition inside the Lynx open shadow root: input value, element text, visibility, or rendered box size.',
   async execute(execution) {
     if (execution.scope !== 'case') {
       throw new Error('web.expect can only be used as a case-level step.');
     }
-    const { selector, value, text, timeoutMs } = execution.input;
+    const { selector, value, text, width, height, timeoutMs } = execution.input;
     const page = await execution.context.getPage(execution.case.runId);
     const locator: Locator = page.locator(selector).first();
     const timeout = timeoutMs ?? DEFAULT_DOM_TIMEOUT_MS;
@@ -166,6 +210,81 @@ const webExpectNode = defineNode<ExpectInput, void, WebProjectContext>({
         () => `text of ${selector}`,
         timeout,
       );
+    }
+    if (width !== undefined || height !== undefined) {
+      const deadline = Date.now() + timeout;
+      let gotW: number | null = null;
+      let gotH: number | null = null;
+      for (;;) {
+        const box = await locator.boundingBox().catch(() => null);
+        gotW = box ? Math.round(box.width) : null;
+        gotH = box ? Math.round(box.height) : null;
+        const okW = width === undefined || gotW === width;
+        const okH = height === undefined || gotH === height;
+        if (okW && okH) break;
+        if (Date.now() >= deadline) {
+          throw new Error(
+            `box size of ${selector} timed out after ${timeout}ms; expected ${
+              width ?? '*'
+            }x${height ?? '*'}, got ${gotW}x${gotH}`,
+          );
+        }
+        await new Promise((resolve) => setTimeout(resolve, 200));
+      }
+    }
+  },
+});
+
+const webExpectResponseNode = defineNode<
+  ExpectResponseInput,
+  void,
+  WebProjectContext
+>({
+  name: 'web.expectResponse',
+  description:
+    'Assert a network response recorded since page creation matches a URL substring, HTTP status and content-type (deterministic resource-loaded check).',
+  async execute(execution) {
+    if (execution.scope !== 'case') {
+      throw new Error(
+        'web.expectResponse can only be used as a case-level step.',
+      );
+    }
+    const {
+      urlIncludes,
+      status = 200,
+      contentTypeIncludes,
+      timeoutMs,
+    } = execution.input;
+    const timeout = timeoutMs ?? DEFAULT_DOM_TIMEOUT_MS;
+    const deadline = Date.now() + timeout;
+    for (;;) {
+      const hit = execution.context
+        .getResponses(execution.case.runId)
+        .find(
+          (r) =>
+            r.url.includes(urlIncludes)
+            && r.status === status
+            && (!contentTypeIncludes
+              || r.contentType.includes(contentTypeIncludes)),
+        );
+      if (hit) return;
+      if (Date.now() >= deadline) {
+        const seen = execution.context
+          .getResponses(execution.case.runId)
+          .filter((r) => r.url.includes(urlIncludes))
+          .map((r) => `${r.status} ${r.contentType} ${r.url}`)
+          .slice(-5);
+        throw new Error(
+          `response ${
+            JSON.stringify(urlIncludes)
+          } status=${status} contentType*=${
+            JSON.stringify(contentTypeIncludes)
+          } timed out after ${timeout}ms; matching responses seen: ${
+            seen.length ? `\n${seen.join('\n')}` : 'none'
+          }`,
+        );
+      }
+      await new Promise((resolve) => setTimeout(resolve, 200));
     }
   },
 });
@@ -222,6 +341,7 @@ export default defineTestProject<WebProjectContext>({
           } satisfies AgentProvider<WebProjectContext>,
         }),
         webExpectNode,
+        webExpectResponseNode,
         webFillNode,
       ],
       files: { include: ['cases/web/**/*.{yaml,yml}'] },

@@ -76,17 +76,23 @@ jobs:
         run: bash ../../../../.github/scripts/preflight-model.sh
 
       - name: Install Rust toolchain (web-core build:wasm)
+        # Container jobs default to `sh` (dash), which has no `source`;
+        # pin bash explicitly.
+        shell: bash
         run: |
+          set -e
           apt-get update -qq
           apt-get install -y -qq build-essential pkg-config curl ca-certificates >/dev/null
           if ! command -v rustup >/dev/null; then
             curl --proto '=https' --tlsv1.2 --retry 10 -fsSL https://sh.rustup.rs \
               | sh -s -- --default-toolchain none -y
           fi
-          source "$HOME/.cargo/env"
+          . "$HOME/.cargo/env"
           # rust-toolchain.toml pins channel 1.97.1; install its wasm targets.
           rustup toolchain install 1.97.1 --profile minimal
           rustup target add --toolchain 1.97.1 wasm32-unknown-unknown wasm32-wasip1
+          # Make cargo/rustc available to every later step (turbo build:wasm).
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
           rustc --version
 
       - name: Install workspace dependencies
@@ -115,7 +121,7 @@ jobs:
 
       - name: Install Midscene test dependencies
         working-directory: packages/web-platform/web-core-e2e/midscene
-        run: npm ci
+        run: npm ci --no-audit --no-fund
 
       - name: Run Web Midscene cases
         working-directory: packages/web-platform/web-core-e2e/midscene

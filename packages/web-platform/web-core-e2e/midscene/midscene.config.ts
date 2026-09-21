@@ -11,13 +11,14 @@ import type {
 } from '@midscene/test/midscene';
 import { chromium, type Browser, type Locator, type Page } from 'playwright';
 
-// Agent 报告由 @midscene/core 写到 <cwd>/midscene_run/report/<reportFileName>.html。
-// releaseAgent 时把同一绝对路径交还 runner，test-run 汇总报告才能把逐步详情
-// 嵌进对应用例（共享单 agent 会让详情挂错 scope，汇总页全部 unresolved）。
+// @midscene/core writes agent reports to
+// <cwd>/midscene_run/report/<reportFileName>.html. releaseAgent must return the
+// same absolute path so the test-run report can embed each case's step details.
+// Sharing one agent would attach details to the wrong scope and mark the summary unresolved.
 const reportDir = resolve('./midscene_run/report');
 const reportPath = (runId: string) => resolve(reportDir, `web-${runId}.html`);
 
-// setup 产出、YAML 节点可见的 project 上下文。
+// Project context produced by setup and available to YAML nodes.
 interface AgentRegistry {
   getAgent(runId: string): MidsceneUIAgent | Promise<MidsceneUIAgent>;
   releaseAgent(runId: string): Promise<AgentReleaseResult | void>;
@@ -31,19 +32,19 @@ interface ResponseInfo {
 
 interface WebProjectContext {
   agentRegistry: AgentRegistry;
-  // DOM 节点（web.expect / web.fill）用：按 case runId 取该 run 的 Playwright Page。
+  // Return the Playwright Page for a case run to web.expect and web.fill.
   getPage(runId: string): Promise<Page>;
-  // web.expectResponse 用：取该 run 自建页起记录到的所有网络响应（含 gotoUrl
-  // 触发的首次导航），用于确定性断言图片等资源确实以 200 + 正确类型加载。
+  // Return every response recorded since this run created its page, including
+  // gotoUrl's first navigation, for deterministic status and content-type checks.
   getResponses(runId: string): ResponseInfo[];
 }
 
-// Playwright 驱动 Chromium 打开 web-core-e2e dev shell。ReactLynx 页面渲染在
-// <lynx-view> 的 open shadow root 内：Playwright 的 CSS/locator 引擎可以穿透
-// open shadow 做精确值断言（官方 web-core-e2e Playwright 套件即如此），而整体
-// 布局/视觉语义仍由 Midscene 纯视觉驱动。两类节点配合：精确文本/盒模型/资源
-// 加载用 DOM 与网络，颜色/空间关系等仍走 AI 视觉。
-// 浏览器全 project 共享；每个 case run 用独立 context+page+agent，结束即关。
+// Playwright drives Chromium against the web-core-e2e development shell.
+// ReactLynx renders inside <lynx-view>'s open shadow root, which Playwright's
+// CSS and locator engines can pierce for exact assertions. Midscene still
+// handles visual semantics such as color and spatial relationships. The browser
+// is shared by the project; every case run owns and closes its context, page,
+// and agent.
 const webSetup = defineProjectSetup<WebProjectContext>({
   name: 'web',
   async setup({ onTeardown }) {
@@ -61,8 +62,8 @@ const webSetup = defineProjectSetup<WebProjectContext>({
           viewport: { width: 393, height: 851 },
         });
         page = await context.newPage();
-        // 在建页瞬间就开始记录响应：getPage 由 gotoUrl 懒触发，监听器先于该步
-        // 导航挂好，所以首次加载的图片/资源响应也能被 web.expectResponse 看到。
+        // Start recording immediately. gotoUrl creates the page lazily, so the
+        // listener is attached before navigation and sees first-load resources.
         const log: ResponseInfo[] = [];
         responseLogs.set(runId, log);
         page.on('response', (response) => {
@@ -73,7 +74,7 @@ const webSetup = defineProjectSetup<WebProjectContext>({
               contentType: response.headers()['content-type'] ?? '',
             });
           } catch {
-            // 响应已回收等情况下忽略，不能让记录器把用例带崩。
+            // Ignore responses that were already released; recording must not fail a case.
           }
         });
         pages.set(runId, page);
@@ -101,9 +102,9 @@ const webSetup = defineProjectSetup<WebProjectContext>({
         responseLogs.delete(runId);
         if (agent) await agent.destroy();
         if (page) await page.context().close();
-        // 仅当该 run 真的跑过 AI 任务、core 已落盘 agent HTML 时才回传路径；
-        // 像 bindinput 这种纯 DOM 用例（gotoUrl 也会懒建 agent 但无 AI 任务），
-        // destroy 不产生报告文件，此时不能回传路径（否则 runner 报 report missing）。
+        // Return a report path only after an AI task caused core to write the
+        // agent HTML. DOM-only cases create an agent lazily for gotoUrl but do
+        // not emit a report on destroy; returning a missing path fails the runner.
         const report = reportPath(runId);
         return agent && existsSync(report) ? { reportPath: report } : undefined;
       },
@@ -116,30 +117,30 @@ const webSetup = defineProjectSetup<WebProjectContext>({
   },
 });
 
-// ── DOM 精确断言/输入节点 ───────────────────────────────────────────────────
-// 细边框小字号输入框这类控件，纯视觉截图里信号太弱（一像素边框 + 小号文字，
-// 大片留白），AI 断言不稳定；其"初始值/输入镜像值"是精确文本语义，直接走
-// Playwright（自动穿透 open shadow root、自带 auto-wait 重试）更可靠。
+// Exact DOM assertions and input nodes.
+// Thin borders and small text against mostly blank screenshots provide a weak
+// visual signal. Exact initial and mirrored values use Playwright, which pierces
+// the open shadow root and provides automatic waiting.
 
 interface ExpectInput {
   selector: string;
-  // 断言 <input>/<textarea> 的当前值严格相等；省略则断言 textContent。
+  // Require an exact <input>/<textarea> value. Omit to assert textContent.
   value?: string;
-  // 断言元素文本（trim 后）严格相等；与 value 二选一；都省略仅断言可见。
+  // Require exact trimmed text. Mutually exclusive with value; omit both for visibility.
   text?: string;
-  // 断言元素渲染盒的 CSS 像素宽/高（getBoundingClientRect，四舍五入）。
-  // 用于 <x-image> 这类"资源已加载并按尺寸参与布局"的确定性判断。
+  // Require rounded getBoundingClientRect dimensions in CSS pixels. This gives
+  // deterministic evidence that resources such as <x-image> participate in layout.
   width?: number;
   height?: number;
   timeoutMs?: number;
 }
 
 interface ExpectResponseInput {
-  // 响应 URL 需包含的子串（如资源文件名）。
+  // Substring required in the response URL, such as a resource filename.
   urlIncludes: string;
-  // 期望 HTTP 状态码，默认 200。
+  // Expected HTTP status; defaults to 200.
   status?: number;
-  // 期望 content-type 需包含的子串，如 "image/"；省略则不校验类型。
+  // Optional substring required in content-type, such as "image/".
   contentTypeIncludes?: string;
   timeoutMs?: number;
 }
@@ -147,7 +148,7 @@ interface ExpectResponseInput {
 interface FillInput {
   selector: string;
   text: string;
-  // 填入前先按一次 Enter（对齐官方用例：先触发 bindconfirm 再改值）。
+  // Press Enter before filling to match the official case's bindconfirm step.
   enter?: boolean;
   timeoutMs?: number;
 }
@@ -307,9 +308,10 @@ const webFillNode = defineNode<FillInput, void, WebProjectContext>({
   },
 });
 
-// createMidsceneNodes 需要在 config 加载时就拿到 provider 对象，而 registry
-// 在 setup 时才诞生；用 project 级槽位把两者接起来。getAgent 直接走
-// execution.context，releaseAgent 只有 runId，走槽位闭包。
+// createMidsceneNodes needs a provider while loading the config, but setup
+// creates the registry later. A project-level slot connects those lifecycles.
+// getAgent uses execution.context; releaseAgent only receives runId and uses
+// the slot closure.
 const registrySlot: { current?: AgentRegistry } = {};
 
 export default defineTestProject<WebProjectContext>({
@@ -346,15 +348,15 @@ export default defineTestProject<WebProjectContext>({
       ],
       files: { include: ['cases/web/**/*.{yaml,yml}'] },
       variables: {
-        // 由 web-core-e2e 的 rsbuild dev shell 提供（默认 PORT=3080）。
+        // Served by the web-core-e2e Rsbuild development shell on PORT=3080 by default.
         shellUrl: process.env.WEB_SHELL_URL ?? 'http://localhost:3080/',
       },
-      // 每例最多 3 次 attempt（共 2 次重试）。两类偶发靠重试吸收：
-      // ① 新页面 lynx worker/wasm 冷初始化偶尔超过用例里的固定等待，首帧白屏；
-      // ② 视觉模型（ARK deepseek）网关偶发返回"image base64 truncated / cannot
-      //    decode"——HTTP 200 的语义层失败、非传输错误，单次调用的内置重试不触发，
-      //    只能靠整 attempt 重新抓帧+重新调用模型来躲过。官方 Playwright CI 甚至
-      //    retries:20，AI 调用更贵，这里取 3 次。
+      // Allow three attempts to absorb two intermittent failures: a new page's
+      // Lynx worker/Wasm cold start can outlast the fixed wait and capture a
+      // blank frame, and the ARK deepseek vision gateway can return an HTTP-200
+      // semantic "image base64 truncated / cannot decode" failure that does not
+      // trigger per-call retries. The official Playwright CI uses retries: 20;
+      // model calls are costlier, so this suite limits the total to three.
       retry: 2,
     },
   ],

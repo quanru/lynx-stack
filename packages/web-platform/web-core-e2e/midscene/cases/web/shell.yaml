@@ -1,11 +1,12 @@
 cases:
-  # 对应 lynx-stack web-core-e2e 的 tests/reactlynx/basic-bindtap（ReactLynx：点 100x100 方块，颜色 pink↔green）。
-  # 页面渲染在 lynx-view 的 closed shadow/worker 内，DOM 不可穿透；Midscene 只凭截图驱动。
+  # Covers tests/reactlynx/basic-bindtap: clicking a 100x100 square toggles pink and green.
+  # The interaction deliberately uses Midscene screenshots, while deterministic
+  # checks elsewhere can use Playwright through lynx-view's open shadow root.
   - name: bindtap toggles the square pink to green
     steps:
       - gotoUrl: ${shellUrl}?casename=basic-bindtap
       - wait: { duration: 4000 }
-      # 不写死像素：截图按设备 DPR 放大，100 CSS px 在图上约占屏宽 1/4。
+      # Avoid fixed screenshot pixels: DPR scaling makes 100 CSS px roughly one quarter of the viewport width.
       - aiAssert: A small solid pink square is rendered at the top-left corner of an otherwise blank white page.
       - aiTap: the pink square at the top-left corner
       - wait: { duration: 1500 }

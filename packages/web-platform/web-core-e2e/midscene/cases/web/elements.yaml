@@ -1,6 +1,6 @@
 cases:
   # Lynx web-core-e2e: tests/reactlynx/basic-element-text-color
-  # "hello lynx" 以 80px linear-gradient(green, yellow) 渐变渲染——验证 shadow/worker 内文本绘制。
+  # "hello lynx" uses an 80px linear-gradient(green, yellow), validating text rendering inside the shadow root and worker.
   - name: Styled text renders with gradient color
     steps:
       - gotoUrl: ${shellUrl}?casename=basic-element-text-color
@@ -8,12 +8,13 @@ cases:
       - aiAssert: The text "hello lynx" is rendered in very large bold letters near the top-left of the page. Each letter is filled with a vertical green gradient, from dark green at the top to bright yellow-green at the bottom, on a plain white background.
 
   # Lynx web-core-e2e: tests/reactlynx/basic-element-image-src
-  # 官方对此例只做像素快照（src 是同源静态资源 /resources/lynx-logo.jpeg，
-  # 元素带 id="target"，固定 100x100）。视觉模型对这种"深色小图 + 下方大片白"
-  # 的构图会稳定回 "image base64 truncated / cannot decode" 拒答（同一张完好的
-  # 5KB JPEG 连续 3 次，与渲染、体积、加载都无关），故改用确定性的双通道断言：
-  # ①穿透 open shadow 校验 <x-image id=target> 以源码固定的 100x100 参与布局；
-  # ②校验该 jpeg 确实以 image/* 内容类型返回 200（资源真正加载成功）。
+  # The official suite covers this case with a pixel snapshot. Its same-origin
+  # /resources/lynx-logo.jpeg source renders as <x-image id="target"> at 100x100.
+  # The vision gateway consistently rejects this dark, small image above a large
+  # white area as "image base64 truncated / cannot decode," even for the same
+  # valid 5KB JPEG across three attempts. Use two deterministic checks instead:
+  # verify the 100x100 layout through the open shadow root, then verify that the
+  # JPEG resource loaded with HTTP 200 and an image/* content type.
   - name: Image component renders a remote resource
     steps:
       - gotoUrl: ${shellUrl}?casename=basic-element-image-src
@@ -25,10 +26,10 @@ cases:
         }
 
   # Lynx web-core-e2e: tests/reactlynx/basic-element-input-bindinput
-  # bindinput 回调把输入值镜像渲染到 input 下方的 .result。
-  # 一像素边框 + 小字号输入框在截图里视觉信号太弱（大片留白），AI 断言不稳；
-  # 初始值/镜像值是精确文本语义，改走 web.expect/web.fill（Playwright 穿透 open
-  # shadow root，自动等待），与官方 Playwright 用例断言完全一致：foobar-6-6。
+  # The bindinput callback mirrors the typed value into .result below the input.
+  # A one-pixel border and small text against a mostly blank page are too weak
+  # for a stable visual assertion. web.expect and web.fill pierce the open shadow
+  # root and match the official Playwright case's exact foobar-6-6 assertion.
   - name: Text input mirrors typed value through bindinput
     steps:
       - gotoUrl: ${shellUrl}?casename=basic-element-input-bindinput

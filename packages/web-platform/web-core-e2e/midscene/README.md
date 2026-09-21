@@ -43,12 +43,13 @@ npm test -- --project web-shell
 
 ## Case-writing guidelines
 
+- Use `aiAct` for visible user interactions. Describe the user goal instead of
+  decomposing it into `aiTap`, `aiScroll`, or other atomic AI operations.
+- Use `aiAssert` for visual outcomes and semantic UI state.
 - Do not assert fixed screenshot pixels. Device pixel ratio scales 100 CSS px
   to roughly one quarter of a 393 px viewport screenshot, so use relative
   descriptions such as "a small square" or "roughly a quarter of the page
   width."
-- `@midscene/test` 1.12.9 has no built-in `aiInput` node. Express model-driven
-  input as `aiAct: click ..., clear ..., type "..."`.
 - Use the deterministic `web.expect`, `web.fill`, and `web.expectResponse`
   nodes for exact values, box dimensions, and resource loading. Reserve visual
   assertions for color, spatial relationships, and other visual semantics.

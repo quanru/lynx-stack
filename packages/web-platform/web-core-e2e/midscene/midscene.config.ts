@@ -229,7 +229,13 @@ export default defineTestProject<WebProjectContext>({
         // 由 web-core-e2e 的 rsbuild dev shell 提供（默认 PORT=3080）。
         shellUrl: process.env.WEB_SHELL_URL ?? 'http://localhost:3080/',
       },
-      retry: 1,
+      // 每例最多 3 次 attempt（共 2 次重试）。两类偶发靠重试吸收：
+      // ① 新页面 lynx worker/wasm 冷初始化偶尔超过用例里的固定等待，首帧白屏；
+      // ② 视觉模型（ARK deepseek）网关偶发返回"image base64 truncated / cannot
+      //    decode"——HTTP 200 的语义层失败、非传输错误，单次调用的内置重试不触发，
+      //    只能靠整 attempt 重新抓帧+重新调用模型来躲过。官方 Playwright CI 甚至
+      //    retries:20，AI 调用更贵，这里取 3 次。
+      retry: 2,
     },
   ],
   test: {

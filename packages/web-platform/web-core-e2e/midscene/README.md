@@ -59,4 +59,6 @@ official Playwright 1.61.1 container, Node.js 24, Turbo builds, and the Rsbuild
 development server. Configure `MIDSCENE_MODEL_API_KEY`,
 `MIDSCENE_MODEL_NAME`, `MIDSCENE_MODEL_BASE_URL`, and
 `MIDSCENE_MODEL_FAMILY` as secrets. Optionally set
-`MIDSCENE_PAGES_BRANCH=main` to publish Pages reports.
+`MIDSCENE_PAGES_BRANCH=main` to publish Pages reports. Every CI run also adds
+an English Actions Summary table with totals, individual case results,
+durations, failure details, and a link to the complete report artifact.

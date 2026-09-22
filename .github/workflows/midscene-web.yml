@@ -132,7 +132,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: midscene-ai-e2e-web
+          name: midscene-ai-e2e-web-${{ github.run_attempt }}
           path: packages/web-platform/web-core-e2e/midscene/midscene_run/
           if-no-files-found: warn
           retention-days: 14
@@ -141,7 +141,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: midscene-ai-e2e-web-shell-log
+          name: midscene-ai-e2e-log-web-shell-${{ github.run_attempt }}
           path: /tmp/web-shell.log
           if-no-files-found: ignore
           retention-days: 14
@@ -173,8 +173,17 @@ jobs:
       - name: Download report
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: midscene-ai-e2e-web
-          path: ${{ runner.temp }}/midscene-report
+          pattern: midscene-ai-e2e-web-*
+          path: ${{ runner.temp }}/midscene-artifacts
+
+      - name: Select latest report attempt
+        run: |
+          latest="$(find "$RUNNER_TEMP/midscene-artifacts" \
+            -mindepth 1 -maxdepth 1 -type d \
+            -name 'midscene-ai-e2e-web-*' -print | sort -V | tail -n 1)"
+          test -n "$latest"
+          mkdir -p "$RUNNER_TEMP/midscene-report"
+          cp -R "$latest"/. "$RUNNER_TEMP/midscene-report"/
 
       - id: pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
@@ -194,7 +203,7 @@ jobs:
             --pages-url "$PAGES_URL" \
             --entry "Web=$RUNNER_TEMP/midscene-report" \
             --result "Web=$WEB_RESULT" \
-            --artifact "Web=midscene-ai-e2e-web" \
+            --artifact "Web=midscene-ai-e2e-web-$GITHUB_RUN_ATTEMPT" \
             --site-dir "$RUNNER_TEMP/pages-site" \
             --output "$GITHUB_STEP_SUMMARY"
 

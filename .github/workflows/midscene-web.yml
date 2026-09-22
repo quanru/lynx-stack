@@ -128,12 +128,23 @@ jobs:
         working-directory: packages/web-platform/web-core-e2e/midscene
         run: npm test -- --project web-shell
 
+      - name: Stage Web report for this attempt
+        if: always()
+        run: |
+          target="$RUNNER_TEMP/midscene-upload/attempt-$GITHUB_RUN_ATTEMPT"
+          mkdir -p "$target"
+          printf '%s\n' "$GITHUB_RUN_ATTEMPT" > "$target/attempt.txt"
+          report=packages/web-platform/web-core-e2e/midscene/midscene_run
+          if [ -d "$report" ]; then
+            cp -R "$report"/. "$target"/
+          fi
+
       - name: Upload Web report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: midscene-ai-e2e-web-${{ github.run_attempt }}
-          path: packages/web-platform/web-core-e2e/midscene/midscene_run/
+          path: ${{ runner.temp }}/midscene-upload
           if-no-files-found: warn
           retention-days: 14
 
@@ -175,12 +186,13 @@ jobs:
         with:
           pattern: midscene-ai-e2e-web-*
           path: ${{ runner.temp }}/midscene-artifacts
+          merge-multiple: true
 
       - name: Select latest report attempt
         run: |
           latest="$(find "$RUNNER_TEMP/midscene-artifacts" \
             -mindepth 1 -maxdepth 1 -type d \
-            -name 'midscene-ai-e2e-web-*' -print | sort -V | tail -n 1)"
+            -name 'attempt-*' -print | sort -V | tail -n 1)"
           test -n "$latest"
           mkdir -p "$RUNNER_TEMP/midscene-report"
           cp -R "$latest"/. "$RUNNER_TEMP/midscene-report"/

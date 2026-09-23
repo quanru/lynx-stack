@@ -74,7 +74,9 @@ treating the suite as an upstream PR gate.
 
 The report renderer is vendored from the native Lynx suite so this workflow
 remains self-contained. `scripts/check-renderer-parity.sh` compares it with the
-canonical renderer in the sibling `lynx` repository and fails on drift. It
-checks `develop` by default, falling back to the native feature branch while
-the fork PR is unmerged. For upstream integration, merge the native suite
-first so the canonical file exists on `lynx/develop`.
+canonical renderer in the sibling `lynx` repository and fails on drift. The
+check runs before credentialed Web E2E and also runs weekly on its own, without
+model credentials or Pages publication. It checks `develop` by default,
+falling back to the native feature branch while the fork PR is unmerged. For
+upstream integration, merge the native suite first so the canonical file exists
+on `lynx/develop`.

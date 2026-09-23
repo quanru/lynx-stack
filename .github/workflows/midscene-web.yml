@@ -27,6 +27,8 @@ on:
   pull_request:
     branches: [main]
     paths: *ai-e2e-paths
+  schedule:
+    - cron: "17 3 * * 1"
 
 permissions:
   contents: read
@@ -36,14 +38,20 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
-  MIDSCENE_MODEL_API_KEY: ${{ secrets.MIDSCENE_MODEL_API_KEY }}
-  MIDSCENE_MODEL_NAME: ${{ secrets.MIDSCENE_MODEL_NAME }}
-  MIDSCENE_MODEL_BASE_URL: ${{ secrets.MIDSCENE_MODEL_BASE_URL }}
-  MIDSCENE_MODEL_FAMILY: ${{ secrets.MIDSCENE_MODEL_FAMILY }}
-  MIDSCENE_MODEL_REASONING_ENABLED: ${{ secrets.MIDSCENE_MODEL_REASONING_ENABLED }}
   NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection
 
 jobs:
+  renderer-parity:
+    name: Check cross-repository report renderer parity
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: bash packages/web-platform/web-core-e2e/midscene/scripts/check-renderer-parity.sh
+
   fork-contract-check:
     name: Midscene contract check (external fork)
     if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
@@ -57,8 +65,6 @@ jobs:
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
         with:
           node-version: "24"
-      - name: Check vendored report renderer parity
-        run: bash packages/web-platform/web-core-e2e/midscene/scripts/check-renderer-parity.sh
       - name: Check types and report contract without model credentials
         working-directory: packages/web-platform/web-core-e2e/midscene
         run: |
@@ -68,9 +74,16 @@ jobs:
 
   web-shell-ai-e2e:
     name: Midscene AI E2E · Web (web-core shell)
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    needs: [renderer-parity]
+    if: github.event_name != 'schedule' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    env:
+      MIDSCENE_MODEL_API_KEY: ${{ secrets.MIDSCENE_MODEL_API_KEY }}
+      MIDSCENE_MODEL_NAME: ${{ secrets.MIDSCENE_MODEL_NAME }}
+      MIDSCENE_MODEL_BASE_URL: ${{ secrets.MIDSCENE_MODEL_BASE_URL }}
+      MIDSCENE_MODEL_FAMILY: ${{ secrets.MIDSCENE_MODEL_FAMILY }}
+      MIDSCENE_MODEL_REASONING_ENABLED: ${{ secrets.MIDSCENE_MODEL_REASONING_ENABLED }}
     # Same image the official Playwright web jobs use: browsers preinstalled
     # (/ms-playwright) and system libraries ready for headless Chromium.
     container:
@@ -83,9 +96,6 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-
-      - name: Check vendored report renderer parity
-        run: bash packages/web-platform/web-core-e2e/midscene/scripts/check-renderer-parity.sh
 
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
         with:
@@ -191,6 +201,7 @@ jobs:
     if: >-
       always() &&
       !cancelled() &&
+      github.event_name != 'schedule' &&
       ((github.event_name == 'pull_request' &&
       github.event.pull_request.head.repo.full_name == github.repository) ||
       (github.event_name != 'pull_request' &&

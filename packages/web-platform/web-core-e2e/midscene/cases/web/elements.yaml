@@ -1,0 +1,43 @@
+cases:
+  # Lynx web-core-e2e: tests/reactlynx/basic-element-text-color
+  # "hello lynx" uses an 80px linear-gradient(green, yellow), validating text rendering inside the shadow root and worker.
+  - name: Styled text renders with gradient color
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-element-text-color
+      - wait: { duration: 4000 }
+      - aiAssert: The text "hello lynx" is rendered in very large bold letters near the top-left of the page. Each letter is filled with a vertical green gradient, from dark green at the top to bright yellow-green at the bottom, on a plain white background.
+
+  # Lynx web-core-e2e: tests/reactlynx/basic-element-image-src
+  # The official suite covers this case with a pixel snapshot. Its same-origin
+  # /resources/lynx-logo.jpeg source renders as <x-image id="target"> at 100x100.
+  # The vision gateway consistently rejects this dark, small image above a large
+  # white area as "image base64 truncated / cannot decode," even for the same
+  # valid 5KB JPEG across three attempts. Use deterministic checks instead:
+  # verify layout and decoded image state through the open shadow root, then
+  # verify the JPEG response has HTTP 200 and an image/* content type.
+  - name: Image component renders a remote resource
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-element-image-src
+      - web.expect: {
+          selector: "#target",
+          width: 100,
+          height: 100,
+          imageLoaded: true,
+        }
+      - web.expectResponse: {
+          urlIncludes: "lynx-logo.jpeg",
+          status: 200,
+          contentTypeIncludes: "image/",
+        }
+
+  # Lynx web-core-e2e: tests/reactlynx/basic-element-input-bindinput
+  # The bindinput callback mirrors the typed value into .result below the input.
+  # A one-pixel border and small text against a mostly blank page are too weak
+  # for a stable visual assertion. web.expect and web.fill pierce the open shadow
+  # root and match the official Playwright case's exact foobar-6-6 assertion.
+  - name: Text input mirrors typed value through bindinput
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-element-input-bindinput
+      - web.expect: { selector: "input", value: "bindinput" }
+      - web.fill: { selector: "input", text: "foobar", enter: true }
+      - web.expect: { selector: ".result", text: "foobar-6-6" }

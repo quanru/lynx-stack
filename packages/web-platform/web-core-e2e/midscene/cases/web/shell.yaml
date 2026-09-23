@@ -1,0 +1,24 @@
+cases:
+  # Covers tests/reactlynx/basic-bindtap: clicking a 100x100 square toggles pink and green.
+  # The interaction deliberately uses Midscene screenshots, while deterministic
+  # checks elsewhere can use Playwright through lynx-view's open shadow root.
+  - name: bindtap toggles the square pink to green
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-bindtap
+      - wait: { duration: 4000 }
+      # Avoid fixed screenshot pixels: DPR scaling makes 100 CSS px roughly one quarter of the viewport width.
+      - aiAssert: A small solid pink square is rendered at the top-left corner of an otherwise blank white page.
+      - aiAct: Toggle the pink square at the top-left to green.
+      - wait: { duration: 1500 }
+      - aiAssert: The same square is now solid green after the tap, and the rest of the page stays white.
+
+  - name: bindtap toggles back to pink on second tap
+    tags: [toggle]
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-bindtap
+      - wait: { duration: 4000 }
+      - aiAct: Toggle the pink square at the top-left to green.
+      - wait: { duration: 1000 }
+      - aiAct: Toggle the green square back to pink.
+      - wait: { duration: 1500 }
+      - aiAssert: The square has toggled back to pink.

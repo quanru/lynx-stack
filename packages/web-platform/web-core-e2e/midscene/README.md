@@ -71,3 +71,10 @@ Summary targets. External-fork pull requests run a model-free type and
 report-contract check, but are intentionally excluded from credentialed E2E
 runs; maintainers must validate on a trusted same-repository branch before
 treating the suite as an upstream PR gate.
+
+The report renderer is vendored from the native Lynx suite so this workflow
+remains self-contained. `scripts/check-renderer-parity.sh` compares it with the
+canonical renderer in the sibling `lynx` repository and fails on drift. It
+checks `develop` by default, falling back to the native feature branch while
+the fork PR is unmerged. For upstream integration, merge the native suite
+first so the canonical file exists on `lynx/develop`.

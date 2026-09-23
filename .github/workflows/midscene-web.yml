@@ -44,6 +44,26 @@ env:
   NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection
 
 jobs:
+  fork-contract-check:
+    name: Midscene contract check (external fork)
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: "24"
+      - name: Check types and report contract without model credentials
+        working-directory: packages/web-platform/web-core-e2e/midscene
+        run: |
+          npm ci --no-audit --no-fund
+          npm run typecheck
+          node --test scripts/render-ci-summary.test.mjs
+
   web-shell-ai-e2e:
     name: Midscene AI E2E · Web (web-core shell)
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
@@ -160,6 +180,9 @@ jobs:
   pages-report:
     name: Publish report and evidence summary
     needs: [web-shell-ai-e2e]
+    concurrency:
+      group: midscene-pages-archive
+      cancel-in-progress: false
     if: >-
       always() &&
       !cancelled() &&
@@ -170,7 +193,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       actions: read
-      contents: read
+      contents: write
       pages: write
       id-token: write
     environment:
@@ -203,6 +226,23 @@ jobs:
       - name: Test the evidence renderer
         run: node --test packages/web-platform/web-core-e2e/midscene/scripts/render-ci-summary.test.mjs
 
+      - name: Restore previously published reports
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh auth setup-git
+          archive="$RUNNER_TEMP/midscene-pages-archive"
+          site="$RUNNER_TEMP/pages-site"
+          git init "$archive"
+          git -C "$archive" remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          mkdir -p "$site"
+          if git -C "$archive" fetch --depth=1 origin refs/heads/midscene-pages-archive; then
+            git -C "$archive" checkout -b midscene-pages-archive FETCH_HEAD
+            git -C "$archive" archive HEAD | tar -xf - -C "$site"
+          else
+            git -C "$archive" checkout --orphan midscene-pages-archive
+          fi
+
       - name: Build Pages report and linked screenshot summary
         env:
           PAGES_URL: ${{ steps.pages.outputs.base_url }}
@@ -216,8 +256,21 @@ jobs:
             --entry "Web=$RUNNER_TEMP/midscene-report" \
             --result "Web=$WEB_RESULT" \
             --artifact "Web=midscene-ai-e2e-web-$GITHUB_RUN_ATTEMPT" \
+            --site-prefix "runs/$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
             --site-dir "$RUNNER_TEMP/pages-site" \
             --output "$GITHUB_STEP_SUMMARY"
+
+      - name: Persist report archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          archive="$RUNNER_TEMP/midscene-pages-archive"
+          cp -R "$RUNNER_TEMP/pages-site"/. "$archive"/
+          git -C "$archive" config user.name github-actions[bot]
+          git -C "$archive" config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git -C "$archive" add -A
+          git -C "$archive" commit -m "docs: archive Midscene report $GITHUB_RUN_ID attempt $GITHUB_RUN_ATTEMPT"
+          git -C "$archive" push origin HEAD:refs/heads/midscene-pages-archive
 
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:

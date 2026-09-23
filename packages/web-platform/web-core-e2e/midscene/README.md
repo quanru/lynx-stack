@@ -51,7 +51,8 @@ npm test -- --project web-shell
   descriptions such as "a small square" or "roughly a quarter of the page
   width."
 - Use the deterministic `web.expect`, `web.fill`, and `web.expectResponse`
-  nodes for exact values, box dimensions, and resource loading. Reserve visual
+  nodes for exact values, box dimensions, image decode state, and resource
+  responses. Reserve visual
   assertions for color, spatial relationships, and other visual semantics.
 
 The companion workflow is `.github/workflows/midscene-web.yml`. It uses the
@@ -63,4 +64,10 @@ development server. Configure `MIDSCENE_MODEL_API_KEY`,
 Same-repository pull requests also publish review evidence. The report job adds
 an English Actions Summary with totals, durations, failure details, and a
 three-column node screenshot grid. Each screenshot and case name links to the
-exact step in the complete HTML report.
+exact step in the complete HTML report. Reports use
+`runs/<run-id>-<attempt>/` paths and are retained on the
+`midscene-pages-archive` branch, so later Pages deployments do not replace old
+Summary targets. External-fork pull requests run a model-free type and
+report-contract check, but are intentionally excluded from credentialed E2E
+runs; maintainers must validate on a trusted same-repository branch before
+treating the suite as an upstream PR gate.

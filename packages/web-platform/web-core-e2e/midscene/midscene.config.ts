@@ -132,6 +132,8 @@ interface ExpectInput {
   // deterministic evidence that resources such as <x-image> participate in layout.
   width?: number;
   height?: number;
+  // Require the image inside an <x-image> to finish decoding successfully.
+  imageLoaded?: boolean;
   timeoutMs?: number;
 }
 
@@ -184,12 +186,13 @@ async function pollUntil(
 const webExpectNode = defineNode<ExpectInput, void, WebProjectContext>({
   name: 'web.expect',
   description:
-    'Assert a DOM condition inside the Lynx open shadow root: input value, element text, visibility, or rendered box size.',
+    'Assert a DOM condition inside the Lynx open shadow root: input value, element text, visibility, rendered box size, or decoded image.',
   async execute(execution) {
     if (execution.scope !== 'case') {
       throw new Error('web.expect can only be used as a case-level step.');
     }
-    const { selector, value, text, width, height, timeoutMs } = execution.input;
+    const { selector, value, text, width, height, imageLoaded, timeoutMs } =
+      execution.input;
     const page = await execution.context.getPage(execution.case.runId);
     const locator: Locator = page.locator(selector).first();
     const timeout = timeoutMs ?? DEFAULT_DOM_TIMEOUT_MS;
@@ -232,6 +235,27 @@ const webExpectNode = defineNode<ExpectInput, void, WebProjectContext>({
         }
         await new Promise((resolve) => setTimeout(resolve, 200));
       }
+    }
+    if (imageLoaded) {
+      await pollUntil(
+        async () => {
+          const image = locator.locator('img').first();
+          return image.evaluate(async (node: HTMLImageElement) => {
+            if (!node.complete) return 'pending';
+            try {
+              await node.decode();
+            } catch {
+              return 'pending';
+            }
+            return node.naturalWidth > 0 && node.naturalHeight > 0
+              ? 'loaded'
+              : 'pending';
+          });
+        },
+        'loaded',
+        () => `decoded image inside ${selector}`,
+        timeout,
+      );
     }
   },
 });

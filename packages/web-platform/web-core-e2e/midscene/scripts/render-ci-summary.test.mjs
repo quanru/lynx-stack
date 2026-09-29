@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -251,6 +252,33 @@ test('extracts a node screenshot and publishes a linked HTML report', async (con
   assert.match(
     await readFile(path.join(site, 'index.html'), 'utf8'),
     /native-report\.html/,
+  );
+
+  const jobSummary = path.join(root, 'job-summary.md');
+  execFileSync(process.execPath, [
+    new URL('./render-ci-summary.mjs', import.meta.url).pathname,
+    '--title',
+    'Lynx Explorer × Midscene',
+    '--run-url',
+    'https://github.com/example/project/actions/runs/123',
+    '--pages-url',
+    'https://example.github.io/project/',
+    '--entry',
+    `Android=${path.join(root, 'source')}`,
+    '--result',
+    'Android=success',
+    '--site-prefix',
+    'runs/123-1',
+    '--site-dir',
+    path.join(root, 'job-site'),
+    '--job-summary-only',
+    'true',
+    '--output',
+    jobSummary,
+  ]);
+  assert.match(
+    await readFile(jobSummary, 'utf8'),
+    /Open the published HTML report\]\(https:\/\/example\.github\.io\/project\/runs\/123-1\/android\/report\/test-run\.html\)/,
   );
 });
 

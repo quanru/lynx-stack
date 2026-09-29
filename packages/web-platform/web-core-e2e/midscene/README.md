@@ -61,10 +61,11 @@ development server. Configure `MIDSCENE_MODEL_API_KEY`,
 `MIDSCENE_MODEL_NAME`, `MIDSCENE_MODEL_BASE_URL`, and
 `MIDSCENE_MODEL_FAMILY` as secrets. Optionally set
 `MIDSCENE_PAGES_BRANCH=main` to publish Pages reports after pushes to `main`.
-Same-repository pull requests also publish review evidence. The report job adds
-an English Actions Summary with totals, durations, failure details, and a
-three-column node screenshot grid. Each screenshot and case name links to the
-exact step in the complete HTML report. Reports use
+Same-repository pull requests also publish review evidence. The Web job and
+the publishing job each add an Actions Summary with totals, durations, failure
+details, and linked screenshots. Each screenshot and case name opens the exact
+step in the platform report. The publishing summary's HTML link opens the
+Midscene Test-generated report index, not a custom report page. Reports use
 `runs/<run-id>-<attempt>/` paths and are retained on the
 `midscene-pages-archive` branch, so later Pages deployments do not replace old
 Summary targets. External-fork pull requests run a model-free type and

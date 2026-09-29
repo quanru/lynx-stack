@@ -160,6 +160,7 @@ jobs:
         run: npm ci --no-audit --no-fund
 
       - name: Run Web Midscene cases
+        id: run-cases
         working-directory: packages/web-platform/web-core-e2e/midscene
         run: npm test -- --project web-shell
 
@@ -175,6 +176,7 @@ jobs:
           fi
 
       - name: Upload Web report
+        id: upload-report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -182,6 +184,23 @@ jobs:
           path: ${{ runner.temp }}/midscene-upload
           if-no-files-found: warn
           retention-days: 14
+
+      - name: Add Web results to the job Summary
+        if: always()
+        env:
+          PRODUCER_RESULT: ${{ steps.run-cases.outcome == 'success' && steps.upload-report.outcome == 'success' && 'success' || 'failure' }}
+        run: |
+          node packages/web-platform/web-core-e2e/midscene/scripts/render-ci-summary.mjs \
+            --title "Lynx Web × Midscene" \
+            --run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+            --pages-url "https://$GITHUB_REPOSITORY_OWNER.github.io/${GITHUB_REPOSITORY#*/}/" \
+            --entry "Web=packages/web-platform/web-core-e2e/midscene/midscene_run" \
+            --result "Web=$PRODUCER_RESULT" \
+            --artifact "Web=midscene-ai-e2e-web-$GITHUB_RUN_ATTEMPT" \
+            --site-prefix "runs/$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
+            --site-dir "$RUNNER_TEMP/midscene-job-summary" \
+            --job-summary-only true \
+            --output "$GITHUB_STEP_SUMMARY"
 
       - name: Upload dev shell log
         if: failure()
@@ -219,6 +238,16 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: packages/web-platform/web-core-e2e/midscene/package-lock.json
+
+      - name: Install Midscene report dependencies
+        working-directory: packages/web-platform/web-core-e2e/midscene
+        run: npm ci --no-audit --no-fund
 
       - name: Download report
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -259,7 +288,7 @@ jobs:
             git -C "$archive" checkout --orphan midscene-pages-archive
           fi
 
-      - name: Build Pages report and linked screenshot summary
+      - name: Build native Midscene report and linked screenshot summary
         env:
           PAGES_URL: ${{ steps.pages.outputs.base_url }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

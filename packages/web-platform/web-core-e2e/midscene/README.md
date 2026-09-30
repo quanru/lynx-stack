@@ -50,10 +50,16 @@ npm test -- --project web-shell
   to roughly one quarter of a 393 px viewport screenshot, so use relative
   descriptions such as "a small square" or "roughly a quarter of the page
   width."
-- Use the deterministic `web.expect`, `web.fill`, and `web.expectResponse`
+- Use the deterministic `web.expect` and `web.expectResponse`
   nodes for exact values, box dimensions, image decode state, and resource
-  responses. Reserve visual
+  responses. Use `aiAct` for input editing, including focus and keyboard actions.
+  Reserve visual
   assertions for color, spatial relationships, and other visual semantics.
+
+The model preflight reads an image-only OCR challenge before the workspace
+build. Text connectivity or HTTP 200 alone does not establish visual capability.
+See [model diagnostics](./MODEL_DIAGNOSTICS.md) for the historical base64-as-text
+failure and the controlled comparison with the current model.
 
 The companion workflow is `.github/workflows/midscene-web.yml`. It uses the
 official Playwright 1.61.1 container, Node.js 24, Turbo builds, and the Rsbuild

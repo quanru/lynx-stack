@@ -16,19 +16,12 @@ name: Midscene AI E2E (web-core shell)
 
 on:
   workflow_dispatch:
-    inputs:
-      diagnose-model:
-        description: "Run image capability controls only, without building the workspace"
-        type: boolean
-        default: false
-      historical-model:
-        description: "Probe the historical endpoint used by the failing September 21 run"
-        type: boolean
-        default: false
   push:
     branches: [main]
     paths: &ai-e2e-paths
       - ".github/workflows/midscene-web.yml"
+      - ".github/scripts/preflight-model.sh"
+      - ".github/scripts/vision-preflight*"
       - "packages/web-platform/web-core-e2e/midscene/**"
       - "packages/web-platform/web-core-e2e/{rsbuild.config.ts,package.json,shell-project/**,tests/reactlynx/**}"
       - "packages/web-platform/web-core/**"
@@ -50,37 +43,7 @@ env:
   NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection
 
 jobs:
-  vision-diagnostic:
-    if: github.event_name == 'workflow_dispatch' && inputs.diagnose-model
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: read
-      actions: read
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
-        with:
-          node-version: "24"
-      - name: Compare image-only evidence and negative controls
-        env:
-          GH_TOKEN: ${{ github.token }}
-          MIDSCENE_MODEL_API_KEY: ${{ secrets.MIDSCENE_MODEL_API_KEY }}
-          MIDSCENE_MODEL_NAME: ${{ secrets.MIDSCENE_MODEL_NAME }}
-          MIDSCENE_MODEL_BASE_URL: ${{ secrets.MIDSCENE_MODEL_BASE_URL }}
-          MIDSCENE_MODEL_FAMILY: ${{ secrets.MIDSCENE_MODEL_FAMILY }}
-          VISION_USE_HISTORICAL_MODEL: ${{ inputs.historical-model }}
-        run: node packages/web-platform/web-core-e2e/midscene/scripts/diagnose-vision.mjs
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: vision-diagnostic
-          path: vision-diagnostic/results.json
-
   renderer-parity:
-    if: ${{ !inputs.diagnose-model }}
     name: Check cross-repository report renderer parity
     runs-on: ubuntu-latest
     permissions:
@@ -109,7 +72,8 @@ jobs:
         run: |
           npm ci --no-audit --no-fund
           npm run typecheck
-          node --test scripts/render-ci-summary.test.mjs
+          node --test scripts/*.test.mjs
+          node --test ../../../../.github/scripts/vision-preflight.test.mjs
 
   web-shell-ai-e2e:
     name: Midscene AI E2E · Web (web-core shell)
@@ -308,7 +272,9 @@ jobs:
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
 
       - name: Test the evidence renderer
-        run: node --test packages/web-platform/web-core-e2e/midscene/scripts/render-ci-summary.test.mjs
+        run: |
+          node --test packages/web-platform/web-core-e2e/midscene/scripts/*.test.mjs
+          node --test .github/scripts/vision-preflight.test.mjs
 
       - name: Restore previously published reports
         env:

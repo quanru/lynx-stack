@@ -32,7 +32,7 @@ interface ResponseInfo {
 
 interface WebProjectContext {
   agentRegistry: AgentRegistry;
-  // Return the Playwright Page for a case run to web.expect and web.fill.
+  // Return the Playwright Page for a case run to web.expect.
   getPage(runId: string): Promise<Page>;
   // Return every response recorded since this run created its page, including
   // gotoUrl's first navigation, for deterministic status and content-type checks.
@@ -117,10 +117,9 @@ const webSetup = defineProjectSetup<WebProjectContext>({
   },
 });
 
-// Exact DOM assertions and input nodes.
-// Thin borders and small text against mostly blank screenshots provide a weak
-// visual signal. Exact initial and mirrored values use Playwright, which pierces
-// the open shadow root and provides automatic waiting.
+// Exact DOM assertions supplement visual assertions where the contract needs
+// exact values, CSS dimensions, or successful image decoding. User interactions
+// use aiAct rather than custom selector-based action nodes.
 
 interface ExpectInput {
   selector: string;
@@ -144,14 +143,6 @@ interface ExpectResponseInput {
   status?: number;
   // Optional substring required in content-type, such as "image/".
   contentTypeIncludes?: string;
-  timeoutMs?: number;
-}
-
-interface FillInput {
-  selector: string;
-  text: string;
-  // Press Enter before filling to match the official case's bindconfirm step.
-  enter?: boolean;
   timeoutMs?: number;
 }
 
@@ -314,24 +305,6 @@ const webExpectResponseNode = defineNode<
   },
 });
 
-const webFillNode = defineNode<FillInput, void, WebProjectContext>({
-  name: 'web.fill',
-  description:
-    'Focus a DOM input inside the Lynx open shadow root, optionally press Enter, then fill text.',
-  async execute(execution) {
-    if (execution.scope !== 'case') {
-      throw new Error('web.fill can only be used as a case-level step.');
-    }
-    const { selector, text, enter, timeoutMs } = execution.input;
-    const page = await execution.context.getPage(execution.case.runId);
-    const locator: Locator = page.locator(selector).first();
-    const timeout = timeoutMs ?? DEFAULT_DOM_TIMEOUT_MS;
-    await locator.waitFor({ state: 'visible', timeout });
-    if (enter) await locator.press('Enter');
-    await locator.fill(text, { timeout });
-  },
-});
-
 // createMidsceneNodes needs a provider while loading the config, but setup
 // creates the registry later. A project-level slot connects those lifecycles.
 // getAgent uses execution.context; releaseAgent only receives runId and uses
@@ -368,7 +341,6 @@ export default defineTestProject<WebProjectContext>({
         }),
         webExpectNode,
         webExpectResponseNode,
-        webFillNode,
       ],
       files: { include: ['cases/web/**/*.{yaml,yml}'] },
       variables: {

@@ -2,8 +2,8 @@ name: Midscene AI E2E (web-core shell)
 
 # AI-driven E2E on lynx-stack's web-core-e2e dev shell.
 # Overlays Midscene vision on top of Playwright: the ReactLynx page renders
-# inside a <lynx-view> closed shadow/worker where DOM selectors cannot reach;
-# Midscene drives and asserts it visually.
+# inside a <lynx-view> open shadow root and worker. Midscene drives visible
+# interactions; precise resource and event checks remain separate assertions.
 #
 # Required repository secrets:
 #   MIDSCENE_MODEL_API_KEY / NAME / BASE_URL / FAMILY

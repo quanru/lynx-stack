@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Check model endpoint connectivity before spending time building the workspace.
+# Verify model image-reading capability before building the workspace.
 # Usage: bash .github/scripts/preflight-model.sh
 set -euo pipefail
 

@@ -347,12 +347,9 @@ export default defineTestProject<WebProjectContext>({
         // Served by the web-core-e2e Rsbuild development shell on PORT=3080 by default.
         shellUrl: process.env.WEB_SHELL_URL ?? 'http://localhost:3080/',
       },
-      // Allow three attempts to absorb two intermittent failures: a new page's
-      // Lynx worker/Wasm cold start can outlast the fixed wait and capture a
-      // blank frame, and the ARK deepseek vision gateway can return an HTTP-200
-      // semantic "image base64 truncated / cannot decode" failure that does not
-      // trigger per-call retries. The official Playwright CI uses retries: 20;
-      // model calls are costlier, so this suite limits the total to three.
+      // Bound retries for transient worker/Wasm startup and interaction timing.
+      // Missing vision capability must fail preflight; retries cannot repair a
+      // text-only model path or make its hallucinated observations trustworthy.
       retry: 2,
     },
   ],

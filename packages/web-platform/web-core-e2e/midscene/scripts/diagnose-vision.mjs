@@ -46,7 +46,7 @@ const base = process.env.MIDSCENE_MODEL_BASE_URL.replace(/\/+$/, '');
 const model = process.env.VISION_USE_HISTORICAL_MODEL === 'true'
   ? 'ep-20260921115426-jf8vm' : process.env.MIDSCENE_MODEL_NAME;
 console.log(JSON.stringify({ configuredModel: model, modelFamily: process.env.MIDSCENE_MODEL_FAMILY }));
-async function probe(name, image, prompt, mode) {
+async function probe(name, image, prompt, mode, system) {
   const content = [{ type: 'text', text: prompt }];
   if (image) content.unshift({ type: 'image_url', image_url: { url: image, detail: 'high' } });
   const response = await fetch(`${base}/chat/completions`, {
@@ -54,7 +54,7 @@ async function probe(name, image, prompt, mode) {
     headers: { Authorization: `Bearer ${process.env.MIDSCENE_MODEL_API_KEY}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ model, temperature: 0,
       thinking: { type: 'disabled' }, max_tokens: 1024,
-      messages: [{ role: 'user', content }] }),
+      messages: [...(system ? [{ role: 'system', content: system }] : []), { role: 'user', content }] }),
     signal: AbortSignal.timeout(90_000),
   });
   const data = await response.json();
@@ -75,6 +75,12 @@ await probe('no-image', undefined, blind, 'negative-control');
 for (const [name, fixture] of fixtures) {
   const wrong = name === 'gradient' ? fixtures.get('input').demand : fixtures.get('gradient').demand;
   await probe(name, fixture.image, `Is this statement true in the screenshot? Return a boolean and visible evidence: ${wrong}`, 'mismatched-assertion');
+}
+const system = await readFile(new URL('./diagnostic-insight-system.txt', import.meta.url), 'utf8');
+for (const [name, fixture] of fixtures) {
+  const query = { StatementIsTruthy: `Boolean, based on the current screenshot and its contents if provided, unless the user explicitly asks to compare with reference images, whether the following statement is true: ${fixture.demand}` };
+  const prompt = `\n<PageDescription>\n\n</PageDescription>\n\n<DATA_DEMAND>\n${JSON.stringify(query, null, 2)}\n</DATA_DEMAND>\n`;
+  for (let trial = 1; trial <= 3; trial++) await probe(name, fixture.image, prompt, `original-insight-${trial}`, system);
 }
 const rows = results.map(r => `| ${r.name} | ${r.mode} | ${r.promptTokens ?? '-'} | ${(r.response ?? '').replaceAll('|', '\\|').replaceAll('\n', '<br>')} |`);
 const summary = `## Vision capability diagnostic\n\nActual response model: \`${results[0]?.model}\`\n\n| Image | Probe | Input tokens | Response |\n|---|---|---|---|\n${rows.join('\n')}\n`;

@@ -61,17 +61,18 @@ async function probe(name, image, prompt, mode, system) {
   const result = { name, mode, http: response.status, model: data.model,
     promptTokens: data.usage?.prompt_tokens,
     imageSha256: image ? createHash('sha256').update(Buffer.from(image.split(',')[1], 'base64')).digest('hex') : null,
-    prompt, response: data.choices?.[0]?.message?.content };
+    prompt, response: data.choices?.[0]?.message?.content, errorCode: data.error?.code };
   results.push(result);
   console.log(JSON.stringify(result));
   await writeFile(join(output, 'results.json'), JSON.stringify(results, null, 2));
-  if (!response.ok) throw new Error(`Vision probe: HTTP ${response.status}`);
+  if (!response.ok && mode !== 'invalid-image-control') throw new Error(`Vision probe: HTTP ${response.status}`);
 }
 const blind = 'Describe only what is actually visible in the attached screenshot. Transcribe all visible text exactly. Describe any graphic and its colors. If you cannot see an image, say so. Do not guess.';
 for (const [name, fixture] of fixtures) {
   await probe(name, fixture.image, blind, 'blind-description');
 }
 await probe('no-image', undefined, blind, 'negative-control');
+await probe('invalid-jpeg', 'data:image/jpeg;base64,SGVsbG8=', blind, 'invalid-image-control');
 for (const [name, fixture] of fixtures) {
   const wrong = name === 'gradient' ? fixtures.get('input').demand : fixtures.get('gradient').demand;
   await probe(name, fixture.image, `Is this statement true in the screenshot? Return a boolean and visible evidence: ${wrong}`, 'mismatched-assertion');

@@ -43,13 +43,16 @@ for (const file of await readdir(reportDir)) {
 if (fixtures.size !== 3) throw new Error(`Expected three fixtures, got ${fixtures.size}`);
 const results = [];
 const base = process.env.MIDSCENE_MODEL_BASE_URL.replace(/\/+$/, '');
+const model = process.env.VISION_USE_HISTORICAL_MODEL === 'true'
+  ? 'ep-20260921115426-jf8vm' : process.env.MIDSCENE_MODEL_NAME;
+console.log(JSON.stringify({ configuredModel: model, modelFamily: process.env.MIDSCENE_MODEL_FAMILY }));
 async function probe(name, image, prompt, mode) {
   const content = [{ type: 'text', text: prompt }];
   if (image) content.unshift({ type: 'image_url', image_url: { url: image, detail: 'high' } });
   const response = await fetch(`${base}/chat/completions`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${process.env.MIDSCENE_MODEL_API_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model: process.env.MIDSCENE_MODEL_NAME, temperature: 0,
+    body: JSON.stringify({ model, temperature: 0,
       thinking: { type: 'disabled' }, max_tokens: 1024,
       messages: [{ role: 'user', content }] }),
     signal: AbortSignal.timeout(90_000),

@@ -44,7 +44,7 @@ if (fixtures.size !== 3) throw new Error(`Expected three fixtures, got ${fixture
 const results = [];
 const base = process.env.MIDSCENE_MODEL_BASE_URL.replace(/\/+$/, '');
 const model = process.env.VISION_USE_HISTORICAL_MODEL === 'true'
-  ? 'ep-20260921115426-jf8vm' : process.env.MIDSCENE_MODEL_NAME;
+  ? 'deepseek-v4-flash-ga-260731' : process.env.MIDSCENE_MODEL_NAME;
 console.log(JSON.stringify({ configuredModel: model, modelFamily: process.env.MIDSCENE_MODEL_FAMILY }));
 async function probe(name, image, prompt, mode, system) {
   const content = [{ type: 'text', text: prompt }];

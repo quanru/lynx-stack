@@ -16,6 +16,11 @@ name: Midscene AI E2E (web-core shell)
 
 on:
   workflow_dispatch:
+    inputs:
+      diagnose-model:
+        description: "Run image capability controls only, without building the workspace"
+        type: boolean
+        default: false
   push:
     branches: [main]
     paths: &ai-e2e-paths
@@ -41,7 +46,35 @@ env:
   NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection
 
 jobs:
+  vision-diagnostic:
+    if: github.event_name == 'workflow_dispatch' && inputs.diagnose-model
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: "24"
+      - name: Compare image-only evidence and negative controls
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MIDSCENE_MODEL_API_KEY: ${{ secrets.MIDSCENE_MODEL_API_KEY }}
+          MIDSCENE_MODEL_NAME: ${{ secrets.MIDSCENE_MODEL_NAME }}
+          MIDSCENE_MODEL_BASE_URL: ${{ secrets.MIDSCENE_MODEL_BASE_URL }}
+        run: node packages/web-platform/web-core-e2e/midscene/scripts/diagnose-vision.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vision-diagnostic
+          path: vision-diagnostic/results.json
+
   renderer-parity:
+    if: ${{ !inputs.diagnose-model }}
     name: Check cross-repository report renderer parity
     runs-on: ubuntu-latest
     permissions:

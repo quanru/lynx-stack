@@ -2,7 +2,7 @@
 
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
-`<lynx-view>` and a worker. Playwright handles precise DOM and network checks,
+`<lynx-view>` and a worker. Playwright handles the exact event-result check,
 while Midscene validates visual interaction semantics. Local validation on
 September 20, 2026 passed all 5 cases.
 
@@ -50,11 +50,14 @@ npm test -- --project web-shell
   to roughly one quarter of a 393 px viewport screenshot, so use relative
   descriptions such as "a small square" or "roughly a quarter of the page
   width."
-- Use the deterministic `web.expect` and `web.expectResponse`
-  nodes for exact values, box dimensions, image decode state, and resource
-  responses. Use `aiAct` for input editing, including focus and keyboard actions.
-  Reserve visual
-  assertions for color, spatial relationships, and other visual semantics.
+- Use `aiWaitFor` for page readiness instead of fixed sleeps.
+- Use `aiAct` for input editing, including focus and keyboard actions.
+- Retain `web.expect` only for the upstream input-event contract: exact
+  `innerText` equality with `foobar-6-6`, without trimming whitespace.
+- The original Playwright pixel snapshots and exact assertions are unchanged.
+  AI rendering assertions are additive semantic coverage, not equal-precision
+  replacements for pixel snapshots. HTTP/decode/initial-value checks added by
+  this POC have been removed; they were not assertions in the original cases.
 
 The model preflight reads an image-only OCR challenge before the workspace
 build. Text connectivity or HTTP 200 alone does not establish visual capability.

@@ -10,8 +10,10 @@ Keep the vendored renderer byte-for-byte aligned with
 `lynx/testing/ai_e2e/scripts/render-ci-summary.mjs`.
 
 Use `aiAct` for visible user interactions instead of custom selector-based
-action nodes. Keep exact resource and event-payload assertions separate from
-actions. Verify model vision with an image-only challenge; text-only preflight
+action nodes. Preserve assertions required by the original upstream case;
+do not replace exact event-payload or pixel comparisons with AI judgment.
+Use aiWaitFor for readiness, without adding redundant validation contracts.
+Verify model vision with an image-only challenge; text-only preflight
 responses and HTTP 200 do not prove the endpoint reads screenshots. Record the
 actual response model version when diagnosing failures, because endpoint IDs
 may be retargeted. Do not attribute base64 refusal messages to small UI elements

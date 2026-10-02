@@ -41,8 +41,11 @@ the provider.
 - Preflight must verify an image-only OCR challenge, not merely a text response
   or HTTP 200. The expected answer is absent from the prompt.
 - `web.fill` is removed. Input focus, keyboard actions, and editing use `aiAct`.
-- The logo case retains exact resource checks and adds `aiAssert` visual
-  evidence. HTTP status and successful image decoding are not UI actions.
+- The logo case uses `aiWaitFor` and `aiAssert` for additive visual coverage.
+  Extra HTTP/decode checks were removed on October 2; the original Playwright
+  pixel snapshot is unchanged and is not replaced by the AI assertion.
+- The input case retains exact `innerText === 'foobar-6-6'` validation after
+  `aiAct`. AI does not decide whether the event payload is exactly correct.
 - Gradient assertions no longer require bold weight absent from the fixture.
 - Existing text-only-model "passes" must not be treated as verified visual
   outcomes. Retries do not solve missing visual capability.

@@ -1,0 +1,92 @@
+# Midscene AI E2E for the web-core-e2e shell
+
+This directory adds a visual-semantic layer to the package's existing
+Playwright E2E suite. ReactLynx renders inside the open shadow root of
+`<lynx-view>` and a worker. Playwright handles the exact event-result check,
+while Midscene validates visual interaction semantics. Local validation on
+September 20, 2026 passed all 5 cases.
+
+## Why this is a separate directory
+
+This directory sits one level below the `packages/web-platform/*` pnpm
+workspace glob and is not a workspace member. It has its own `package.json`
+and lockfile, installs with `npm ci`, and does not affect the repository's pnpm
+or Turbo dependency graph. Playwright is pinned to the repository's version,
+`1.61.1`.
+
+## Cases
+
+| YAML                          | Case bundles                                                 | Coverage                                                                     |
+| ----------------------------- | ------------------------------------------------------------ | ---------------------------------------------------------------------------- |
+| `cases/web/shell.yaml` (2)    | `basic-bindtap`                                              | Visual click and pink-to-green round-trip through the shadow root and worker |
+| `cases/web/elements.yaml` (3) | `basic-element-text-color`, `-image-src`, `-input-bindinput` | Gradient text, remote image loading, and input-event value mirroring         |
+
+## Run locally
+
+Install repository dependencies and build the workspace first with
+`pnpm turbo build --filter='@lynx-js/web-core-e2e...'`. The build must produce
+this package's `dist/*.web.bundle` files. Node.js 24.11 or later is required by
+the repository's engines constraint.
+
+```bash
+# Terminal 1: start the development shell on PORT=3080 by default.
+cd packages/web-platform/web-core-e2e
+pnpm run serve
+
+# Terminal 2: run Midscene.
+cd packages/web-platform/web-core-e2e/midscene
+npm ci
+cp .env.example .env       # Add multimodal model credentials; do not commit.
+set -a && source .env && set +a
+npm test -- --project web-shell
+```
+
+## Case-writing guidelines
+
+- Use `aiAct` for visible user interactions. Describe the user goal instead of
+  decomposing it into `aiTap`, `aiScroll`, or other atomic AI operations.
+- Use `aiAssert` for visual outcomes and semantic UI state.
+- Do not assert fixed screenshot pixels. Device pixel ratio scales 100 CSS px
+  to roughly one quarter of a 393 px viewport screenshot, so use relative
+  descriptions such as "a small square" or "roughly a quarter of the page
+  width."
+- Use `aiWaitFor` for page readiness instead of fixed sleeps.
+- Use `aiAct` for input editing, including focus and keyboard actions.
+- Retain `web.expect` only for the upstream input-event contract: exact
+  `innerText` equality with `foobar-6-6`, without trimming whitespace.
+- The original Playwright pixel snapshots and exact assertions are unchanged.
+  AI rendering assertions are additive semantic coverage, not equal-precision
+  replacements for pixel snapshots. HTTP/decode/initial-value checks added by
+  this POC have been removed; they were not assertions in the original cases.
+
+The model preflight reads an image-only OCR challenge before the workspace
+build. Text connectivity or HTTP 200 alone does not establish visual capability.
+See [model diagnostics](./MODEL_DIAGNOSTICS.md) for the historical base64-as-text
+failure and the controlled comparison with the current model.
+
+The companion workflow is `.github/workflows/midscene-web.yml`. It uses the
+official Playwright 1.61.1 container, Node.js 24, Turbo builds, and the Rsbuild
+development server. Configure `MIDSCENE_MODEL_API_KEY`,
+`MIDSCENE_MODEL_NAME`, `MIDSCENE_MODEL_BASE_URL`, and
+`MIDSCENE_MODEL_FAMILY` as secrets. Optionally set
+`MIDSCENE_PAGES_BRANCH=main` to publish Pages reports after pushes to `main`.
+Same-repository pull requests also publish review evidence. The Web job and
+the publishing job each add an Actions Summary with totals, durations, failure
+details, and linked screenshots. Each screenshot and case name opens the exact
+step in the platform report. The publishing summary's HTML link opens the
+Midscene Test-generated report index, not a custom report page. Reports use
+`runs/<run-id>-<attempt>/` paths and are retained on the
+`midscene-pages-archive` branch, so later Pages deployments do not replace old
+Summary targets. External-fork pull requests run a model-free type and
+report-contract check, but are intentionally excluded from credentialed E2E
+runs; maintainers must validate on a trusted same-repository branch before
+treating the suite as an upstream PR gate.
+
+The report renderer is vendored from the native Lynx suite so this workflow
+remains self-contained. `scripts/check-renderer-parity.sh` compares it with the
+canonical renderer in the sibling `lynx` repository and fails on drift. The
+check runs before credentialed Web E2E and also runs weekly on its own, without
+model credentials or Pages publication. It checks `develop` by default,
+falling back to the native feature branch while the fork PR is unmerged. For
+upstream integration, merge the native suite first so the canonical file exists
+on `lynx/develop`.

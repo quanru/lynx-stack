@@ -1,0 +1,21 @@
+{
+  "name": "web-core-e2e-midscene",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI-driven E2E over the web-core-e2e shell via Midscene + Playwright.",
+  "type": "module",
+  "scripts": {
+    "nodes": "midscene-test nodes",
+    "test": "midscene-test",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@midscene/core": "1.13.1",
+    "@midscene/test": "1.13.1",
+    "@midscene/web": "1.13.1",
+    "@types/node": "^22.0.0",
+    "playwright": "1.61.1",
+    "tsx": "4.23.13",
+    "typescript": "^5.8.3"
+  }
+}

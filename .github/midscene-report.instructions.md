@@ -9,10 +9,20 @@ HTML file, while file-backed screenshots produce a directory with `index.html`.
 Keep the vendored renderer byte-for-byte aligned with
 `lynx/testing/ai_e2e/scripts/render-ci-summary.mjs`.
 
-Test-job Summaries must work without a Pages URL. Publish screenshot and native
-report links only after deployment succeeds. Missing Pages configuration must
-show setup instructions in the Summary while preserving result artifacts.
-The publication branch defaults to the repository default branch.
+If Pages is unavailable, show the repository setup path in the job Summary and
+skip publication without failing the test jobs. Gate the reusable publisher on
+the publication artifact upload outcome, not just the preparation job result.
+
+The upstream Pages site also hosts the production website. Route both website
+and Midscene deployments through `workflow-pages.yml`, with reports reserved
+under `/midscene/`. Hold the shared publisher concurrency lock across archive
+restore, composition, persistence, and deployment. Preserve the other component
+on every update. Never deploy a report-only artifact over the upstream website;
+archive early reports until the first website build initializes the shared site.
+Resolve the public origin from Pages metadata, including custom domains. Keep
+producer summaries artifact-only and add linked screenshots after deployment
+succeeds. Default publication to the repository default branch without requiring
+an Actions variable. Initial Pages enablement still needs a repository admin.
 
 Use `aiAct` for visible user interactions instead of custom selector-based
 action nodes. Preserve assertions required by the original upstream case;

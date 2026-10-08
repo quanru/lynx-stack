@@ -68,24 +68,43 @@ The companion workflow is `.github/workflows/midscene-web.yml`. It uses the
 official Playwright 1.61.1 container, Node.js 24, Turbo builds, and the Rsbuild
 development server. Configure `MIDSCENE_MODEL_API_KEY`,
 `MIDSCENE_MODEL_NAME`, `MIDSCENE_MODEL_BASE_URL`, and
-`MIDSCENE_MODEL_FAMILY` as secrets. Optionally set
-`MIDSCENE_PAGES_BRANCH` to override publication on the repository default branch.
-Same-repository pull requests also publish review evidence. The Web job immediately
-shows results and artifact links without waiting for Pages. Only after successful
-deployment does the publishing Summary show linked screenshots. Each screenshot and case name opens the exact
-step in the platform report. The publishing summary's HTML link opens the
-Midscene Test-generated report index, not a custom report page. Reports use
-`runs/<run-id>-<attempt>/` paths and are retained on the
-`midscene-pages-archive` branch, so later Pages deployments do not replace old
-Summary targets. External-fork pull requests run a model-free type and
+`MIDSCENE_MODEL_FAMILY` as secrets in the destination repository; fork secrets
+are not transferred by merging a pull request. Pages publication defaults to
+the repository's default branch (`main` upstream). `MIDSCENE_PAGES_BRANCH`
+can override it. Same-repository pull requests also publish review evidence.
+The Web job always writes results and artifact access to Summary. The publisher
+adds screenshots and exact-step HTML links only after deployment succeeds.
+
+The existing website and reports share `.github/workflows/workflow-pages.yml`.
+The website owns the root, REPL, and GenUI paths. Reports own
+`/midscene/runs/<run-id>-<attempt>/`; upstream URLs use
+`https://lynx-stack.dev/midscene/`, resolved from Pages metadata rather than an
+assumed github.io origin. Both producers serialize archive updates and deployment
+with the same concurrency group. The `pages-site-archive` branch retains the
+composed site, including older report screenshots. A website rebuild removes
+obsolete website files while preserving `/midscene/`; a report publication
+preserves the website. Never deploy the report artifact directly to Pages.
+
+On the first upstream run, reports that finish before the website build are
+archived without deploying a report-only site. The first successful `Deploy`
+website build publishes both. If that build fails, fix and rerun it; the existing
+website remains live and report artifacts remain downloadable. Forks can publish
+a report-only site and retain their previous root-level report URLs during the
+archive migration.
+
+Before merging, a repository administrator must ensure Settings → Pages → Build
+and deployment uses **GitHub Actions**, and the `github-pages` environment permits
+the default branch (and same-repository PR refs if PR publication is wanted).
+The workflows need `contents: write` for the archive branch, `pages: write`, and
+`id-token: write`; repository rules must allow archive updates. A normal
+`GITHUB_TOKEN` cannot enable Pages for the first time. The upstream website already
+uses Actions Pages, so no separate Midscene Pages site should be created.
+Merge the native companion PR first for the cross-repository renderer check.
+
+External-fork pull requests run a model-free type and
 report-contract check, but are intentionally excluded from credentialed E2E
 runs; maintainers must validate on a trusted same-repository branch before
 treating the suite as an upstream PR gate.
-
-Enable Settings → Pages → Build and deployment → Source → GitHub Actions once.
-Missing Pages configuration produces a warning and a Summary with these setup
-steps, while test results and downloadable reports remain available. Failed or
-skipped publication does not advertise unavailable online links or screenshots.
 
 The report renderer is vendored from the native Lynx suite so this workflow
 remains self-contained. `scripts/check-renderer-parity.sh` compares it with the
@@ -95,3 +114,10 @@ model credentials or Pages publication. It checks `develop` by default,
 falling back to the native feature branch while the fork PR is unmerged. For
 upstream integration, merge the native suite first so the canonical file exists
 on `lynx/develop`.
+
+### Pages setup fallback
+
+If Pages is unavailable, publication emits a warning and a Summary with the setup
+path: Settings → Pages → Build and deployment → Source → GitHub Actions.
+It skips deployment without failing the test jobs. Case results and downloadable
+native reports remain in the test job Summaries and Actions artifacts.

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
-test('publication defaults to the default branch and only exposes deployed links', async () => {
+test('results do not advertise unpublished links and missing Pages skips publication', async () => {
   const workflow = await readFile(
     new URL(
       '../../../../../.github/workflows/midscene-web.yml',
@@ -10,8 +10,16 @@ test('publication defaults to the default branch and only exposes deployed links
     ),
     'utf8',
   );
+  const publisher = await readFile(
+    new URL(
+      '../../../../../.github/workflows/workflow-pages.yml',
+      import.meta.url,
+    ),
+    'utf8',
+  );
   const [tests, publication] = workflow.split('  pages-report:');
   assert.doesNotMatch(tests, /--pages-url/);
+  assert.ok(tests.includes('--links-published false'));
   assert.ok(
     publication.includes(
       'vars.MIDSCENE_PAGES_BRANCH || github.event.repository.default_branch',
@@ -25,14 +33,12 @@ test('publication defaults to the default branch and only exposes deployed links
     ),
   );
   assert.ok(
-    publication.includes('--output "$RUNNER_TEMP/published-summary.md"'),
+    publication.includes('needs.pages-report.outputs.ready == \'true\''),
   );
   assert.ok(
-    publication.includes('if: steps.deployment.outcome == \'success\''),
-  );
-  assert.ok(
-    publication.indexOf('Show verified report links')
-      > publication.indexOf('id: deployment'),
+    publisher.includes(
+      'steps.deployment.outcome == \'success\' && inputs.component == \'midscene\'',
+    ),
   );
   assert.doesNotMatch(publication, /--output "\$GITHUB_STEP_SUMMARY"/);
 });

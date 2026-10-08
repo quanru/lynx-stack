@@ -11,7 +11,8 @@ name: Midscene AI E2E (web-core shell)
 #   MIDSCENE_MODEL_REASONING_ENABLED
 # Optional repository variables:
 #   MIDSCENE_PAGES_BRANCH  e.g. "main" — publish HTML report to GitHub Pages
-#                          on pushes to that branch. Same-repository pull
+#                          (defaults to the repository default branch).
+#                          Same-repository pull
 #                          requests also publish review evidence.
 
 on:
@@ -20,6 +21,10 @@ on:
     branches: [main]
     paths: &ai-e2e-paths
       - ".github/workflows/midscene-web.yml"
+      - ".github/workflows/workflow-pages.yml"
+      - ".github/scripts/compose-pages-site*"
+      - ".github/workflows/workflow-website.yml"
+      - ".github/workflows/deploy-main.yml"
       - ".github/scripts/preflight-model.sh"
       - ".github/scripts/vision-preflight*"
       - "packages/web-platform/web-core-e2e/midscene/**"
@@ -53,6 +58,7 @@ jobs:
         with:
           persist-credentials: false
       - run: bash packages/web-platform/web-core-e2e/midscene/scripts/check-renderer-parity.sh
+      - run: node --test .github/scripts/compose-pages-site.test.mjs
 
   fork-contract-check:
     name: Midscene contract check (external fork)
@@ -165,7 +171,11 @@ jobs:
       - name: Run Web Midscene cases
         id: run-cases
         working-directory: packages/web-platform/web-core-e2e/midscene
-        run: npm test -- --project web-shell
+        run: |
+          echo "open files limit before: soft=$(ulimit -Sn), hard=$(ulimit -Hn)"
+          ulimit -Sn "$(ulimit -Hn)"
+          echo "open files limit after: soft=$(ulimit -Sn), hard=$(ulimit -Hn)"
+          npm test -- --project web-shell
 
       - name: Stage Web report for this attempt
         if: always()
@@ -196,7 +206,7 @@ jobs:
           node packages/web-platform/web-core-e2e/midscene/scripts/render-ci-summary.mjs \
             --title "Lynx Web × Midscene" \
             --run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
-            --pages-url "https://$GITHUB_REPOSITORY_OWNER.github.io/${GITHUB_REPOSITORY#*/}/" \
+            --links-published false \
             --entry "Web=packages/web-platform/web-core-e2e/midscene/midscene_run" \
             --result "Web=$PRODUCER_RESULT" \
             --artifact "Web=midscene-ai-e2e-web-$GITHUB_RUN_ATTEMPT" \
@@ -218,7 +228,7 @@ jobs:
     name: Publish report and evidence summary
     needs: [web-shell-ai-e2e]
     concurrency:
-      group: midscene-pages-archive
+      group: midscene-report-generation-${{ github.run_id }}
       cancel-in-progress: false
     if: >-
       always() &&
@@ -227,16 +237,12 @@ jobs:
       ((github.event_name == 'pull_request' &&
       github.event.pull_request.head.repo.full_name == github.repository) ||
       (github.event_name != 'pull_request' &&
-      github.ref_name == vars.MIDSCENE_PAGES_BRANCH))
+      github.ref_name == (vars.MIDSCENE_PAGES_BRANCH || github.event.repository.default_branch)))
     runs-on: ubuntu-latest
     permissions:
       actions: read
-      contents: write
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      contents: read
+      pages: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -276,26 +282,9 @@ jobs:
           node --test packages/web-platform/web-core-e2e/midscene/scripts/*.test.mjs
           node --test .github/scripts/vision-preflight.test.mjs
 
-      - name: Restore previously published reports
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh auth setup-git
-          archive="$RUNNER_TEMP/midscene-pages-archive"
-          site="$RUNNER_TEMP/pages-site"
-          git init "$archive"
-          git -C "$archive" remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
-          mkdir -p "$site"
-          if git -C "$archive" fetch --depth=1 origin refs/heads/midscene-pages-archive; then
-            git -C "$archive" checkout -b midscene-pages-archive FETCH_HEAD
-            git -C "$archive" archive HEAD | tar -xf - -C "$site"
-          else
-            git -C "$archive" checkout --orphan midscene-pages-archive
-          fi
-
       - name: Build native Midscene report and linked screenshot summary
         env:
-          PAGES_URL: ${{ steps.pages.outputs.base_url }}
+          PAGES_URL: ${{ steps.pages.outputs.base_url }}/midscene
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           WEB_RESULT: ${{ needs.web-shell-ai-e2e.result }}
         run: |
@@ -307,26 +296,30 @@ jobs:
             --result "Web=$WEB_RESULT" \
             --artifact "Web=midscene-ai-e2e-web-$GITHUB_RUN_ATTEMPT" \
             --site-prefix "runs/$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
-            --site-dir "$RUNNER_TEMP/pages-site" \
-            --output "$GITHUB_STEP_SUMMARY"
+            --site-dir "$RUNNER_TEMP/midscene-publication/site" \
+            --output "$RUNNER_TEMP/midscene-publication/summary.md"
 
-      - name: Persist report archive
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Upload report publication bundle
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: midscene-publication-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/midscene-publication
+          if-no-files-found: error
+
+      - name: Explain report publication failure
+        if: failure()
         run: |
-          archive="$RUNNER_TEMP/midscene-pages-archive"
-          cp -R "$RUNNER_TEMP/pages-site"/. "$archive"/
-          git -C "$archive" config user.name github-actions[bot]
-          git -C "$archive" config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git -C "$archive" add -A
-          git -C "$archive" commit -m "docs: archive Midscene report $GITHUB_RUN_ID attempt $GITHUB_RUN_ATTEMPT"
-          git -C "$archive" push origin HEAD:refs/heads/midscene-pages-archive
+          echo '❌ Report publication preparation failed. Raw HTML reports remain in the run artifacts. Check the job log, Pages configuration, and report dependencies.' >> "$GITHUB_STEP_SUMMARY"
 
-      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
-        with:
-          name: midscene-pages-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/pages-site
-      - id: deployment
-        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
-        with:
-          artifact_name: midscene-pages-${{ github.run_attempt }}
+  publish-pages:
+    needs: pages-report
+    if: always() && !cancelled() && needs.pages-report.result == 'success'
+    uses: ./.github/workflows/workflow-pages.yml
+    permissions:
+      actions: read
+      contents: write
+      pages: write
+      id-token: write
+    with:
+      component: midscene
+      artifact: midscene-publication-${{ github.run_attempt }}

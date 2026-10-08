@@ -68,16 +68,40 @@ The companion workflow is `.github/workflows/midscene-web.yml`. It uses the
 official Playwright 1.61.1 container, Node.js 24, Turbo builds, and the Rsbuild
 development server. Configure `MIDSCENE_MODEL_API_KEY`,
 `MIDSCENE_MODEL_NAME`, `MIDSCENE_MODEL_BASE_URL`, and
-`MIDSCENE_MODEL_FAMILY` as secrets. Optionally set
-`MIDSCENE_PAGES_BRANCH=main` to publish Pages reports after pushes to `main`.
-Same-repository pull requests also publish review evidence. The Web job and
-the publishing job each add an Actions Summary with totals, durations, failure
-details, and linked screenshots. Each screenshot and case name opens the exact
-step in the platform report. The publishing summary's HTML link opens the
-Midscene Test-generated report index, not a custom report page. Reports use
-`runs/<run-id>-<attempt>/` paths and are retained on the
-`midscene-pages-archive` branch, so later Pages deployments do not replace old
-Summary targets. External-fork pull requests run a model-free type and
+`MIDSCENE_MODEL_FAMILY` as secrets in the destination repository; fork secrets
+are not transferred by merging a pull request. Pages publication defaults to
+the repository's default branch (`main` upstream). `MIDSCENE_PAGES_BRANCH`
+can override it. Same-repository pull requests also publish review evidence.
+The Web job always writes results and artifact access to Summary. The publisher
+adds screenshots and exact-step HTML links only after deployment succeeds.
+
+The existing website and reports share `.github/workflows/workflow-pages.yml`.
+The website owns the root, REPL, and GenUI paths. Reports own
+`/midscene/runs/<run-id>-<attempt>/`; upstream URLs use
+`https://lynx-stack.dev/midscene/`, resolved from Pages metadata rather than an
+assumed github.io origin. Both producers serialize archive updates and deployment
+with the same concurrency group. The `pages-site-archive` branch retains the
+composed site, including older report screenshots. A website rebuild removes
+obsolete website files while preserving `/midscene/`; a report publication
+preserves the website. Never deploy the report artifact directly to Pages.
+
+On the first upstream run, reports that finish before the website build are
+archived without deploying a report-only site. The first successful `Deploy`
+website build publishes both. If that build fails, fix and rerun it; the existing
+website remains live and report artifacts remain downloadable. Forks can publish
+a report-only site and retain their previous root-level report URLs during the
+archive migration.
+
+Before merging, a repository administrator must ensure Settings → Pages → Build
+and deployment uses **GitHub Actions**, and the `github-pages` environment permits
+the default branch (and same-repository PR refs if PR publication is wanted).
+The workflows need `contents: write` for the archive branch, `pages: write`, and
+`id-token: write`; repository rules must allow archive updates. A normal
+`GITHUB_TOKEN` cannot enable Pages for the first time. The upstream website already
+uses Actions Pages, so no separate Midscene Pages site should be created.
+Merge the native companion PR first for the cross-repository renderer check.
+
+External-fork pull requests run a model-free type and
 report-contract check, but are intentionally excluded from credentialed E2E
 runs; maintainers must validate on a trusted same-repository branch before
 treating the suite as an upstream PR gate.

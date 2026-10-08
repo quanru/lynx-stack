@@ -5,6 +5,27 @@ import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 
+test('unpublished summaries retain results and artifact access without broken Pages links', () => {
+  const summary = renderSummary({
+    title: 'Unpublished report',
+    runUrl: 'https://github.com/example/project/actions/runs/123',
+    entries: [{
+      label: 'Web',
+      result: 'success',
+      run,
+      reportPath: 'runs/123-1/web/report.html',
+      cases: [{
+        ...run.projects[0].documents[0].cases[0],
+        previewPath: 'runs/123-1/web/image.png',
+      }],
+    }],
+    nativeReportPath: 'runs/123-1/report.html',
+  });
+  assert.match(summary, /All 1 cases passed/);
+  assert.match(summary, /actions\/runs\/123#artifacts/);
+  assert.doesNotMatch(summary, /<img|Open the published|github\.io/);
+});
+
 import {
   mergeNativeReports,
   preparePagesSite,

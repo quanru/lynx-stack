@@ -275,22 +275,14 @@ jobs:
     uses: ./.github/workflows/workflow-website.yml
     permissions: {}
   website-deploy:
-    timeout-minutes: 10
     needs: website-build
     if: github.repository == 'lynx-family/lynx-stack'
-    runs-on: ubuntu-26.04
-    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    uses: ./.github/workflows/workflow-pages.yml
     permissions:
-      pages: write # to deploy to Pages
-      id-token: write # to verify the deployment originates from an appropriate source
-      contents: read
-
-    # Deploy to the github-pages environment
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5
+      actions: read
+      contents: write
+      pages: write
+      id-token: write
+    with:
+      component: website
+      artifact: website-site

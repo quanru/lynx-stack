@@ -69,10 +69,10 @@ official Playwright 1.61.1 container, Node.js 24, Turbo builds, and the Rsbuild
 development server. Configure `MIDSCENE_MODEL_API_KEY`,
 `MIDSCENE_MODEL_NAME`, `MIDSCENE_MODEL_BASE_URL`, and
 `MIDSCENE_MODEL_FAMILY` as secrets. Optionally set
-`MIDSCENE_PAGES_BRANCH=main` to publish Pages reports after pushes to `main`.
-Same-repository pull requests also publish review evidence. The Web job and
-the publishing job each add an Actions Summary with totals, durations, failure
-details, and linked screenshots. Each screenshot and case name opens the exact
+`MIDSCENE_PAGES_BRANCH` to override publication on the repository default branch.
+Same-repository pull requests also publish review evidence. The Web job immediately
+shows results and artifact links without waiting for Pages. Only after successful
+deployment does the publishing Summary show linked screenshots. Each screenshot and case name opens the exact
 step in the platform report. The publishing summary's HTML link opens the
 Midscene Test-generated report index, not a custom report page. Reports use
 `runs/<run-id>-<attempt>/` paths and are retained on the
@@ -81,6 +81,11 @@ Summary targets. External-fork pull requests run a model-free type and
 report-contract check, but are intentionally excluded from credentialed E2E
 runs; maintainers must validate on a trusted same-repository branch before
 treating the suite as an upstream PR gate.
+
+Enable Settings → Pages → Build and deployment → Source → GitHub Actions once.
+Missing Pages configuration produces a warning and a Summary with these setup
+steps, while test results and downloadable reports remain available. Failed or
+skipped publication does not advertise unavailable online links or screenshots.
 
 The report renderer is vendored from the native Lynx suite so this workflow
 remains self-contained. `scripts/check-renderer-parity.sh` compares it with the

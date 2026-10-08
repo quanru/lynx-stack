@@ -9,6 +9,11 @@ HTML file, while file-backed screenshots produce a directory with `index.html`.
 Keep the vendored renderer byte-for-byte aligned with
 `lynx/testing/ai_e2e/scripts/render-ci-summary.mjs`.
 
+Test-job Summaries must work without a Pages URL. Publish screenshot and native
+report links only after deployment succeeds. Missing Pages configuration must
+show setup instructions in the Summary while preserving result artifacts.
+The publication branch defaults to the repository default branch.
+
 Use `aiAct` for visible user interactions instead of custom selector-based
 action nodes. Preserve assertions required by the original upstream case;
 do not replace exact event-payload or pixel comparisons with AI judgment.

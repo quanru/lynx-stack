@@ -23,7 +23,8 @@ Keep the upstream repository identity in the reusable workflow's
 `MIDSCENE_UPSTREAM_REPOSITORY` environment variable. Both legacy archive import
 and site composition use it; the CLI must reject missing identity configuration.
 Resolve the public origin from Pages metadata, including custom domains. Keep
-producer summaries artifact-only and add linked screenshots after deployment
+producer summaries limited to result counts and artifact downloads, without
+case tables or empty screenshot columns, and add linked screenshots after deployment
 succeeds. Default publication to the repository default branch without requiring
 an Actions variable. Initial Pages enablement still needs a repository admin.
 

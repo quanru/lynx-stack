@@ -72,7 +72,8 @@ development server. Configure `MIDSCENE_MODEL_API_KEY`,
 are not transferred by merging a pull request. Pages publication defaults to
 the repository's default branch (`main` upstream). `MIDSCENE_PAGES_BRANCH`
 can override it. Same-repository pull requests also publish review evidence.
-The Web job always writes results and artifact access to Summary. The publisher
+The Web job writes only result counts and artifact access to Summary, without
+duplicate case tables or empty screenshot columns. The publisher
 adds screenshots and exact-step HTML links only after deployment succeeds.
 
 The existing website and reports share `.github/workflows/workflow-pages.yml`.

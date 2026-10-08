@@ -13,6 +13,9 @@ on:
 permissions:
   contents: read
 
+env:
+  MIDSCENE_UPSTREAM_REPOSITORY: lynx-family/lynx-stack
+
 jobs:
   publish:
     runs-on: ubuntu-24.04
@@ -56,7 +59,7 @@ jobs:
             git -C "$archive" checkout --orphan pages-site-archive
             # Preserve existing fork Summary URLs from the report-only site.
             # Upstream has an independent website and must wait for its build.
-            if [ "$GITHUB_REPOSITORY" != lynx-family/lynx-stack ]; then
+            if [ "$GITHUB_REPOSITORY" != "$MIDSCENE_UPSTREAM_REPOSITORY" ]; then
               legacy_status=0
               git -C "$archive" ls-remote --exit-code origin refs/heads/midscene-pages-archive || legacy_status=$?
               if [ "$legacy_status" = 0 ]; then

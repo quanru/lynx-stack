@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import {
   mkdtemp,
   mkdir,
@@ -11,6 +13,53 @@ import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 import { composeSite } from './compose-pages-site.mjs';
+
+test('CLI shares the workflow upstream identity and fails closed without it', async (t) => {
+  const { site, payload } = await fixture(t);
+  const incoming = await payload('report', { 'index.html': 'report' });
+  const script = fileURLToPath(
+    new URL('./compose-pages-site.mjs', import.meta.url),
+  );
+  const run = (upstream, repository) =>
+    spawnSync(process.execPath, [
+      script,
+      site,
+      incoming,
+      'midscene',
+      repository,
+    ], {
+      encoding: 'utf8',
+      env: { ...process.env, MIDSCENE_UPSTREAM_REPOSITORY: upstream },
+    });
+  const missing = run('', 'renamed/upstream');
+  assert.notEqual(missing.status, 0);
+  assert.match(
+    missing.stderr,
+    /MIDSCENE_UPSTREAM_REPOSITORY and repository are required/,
+  );
+  await assert.rejects(readFile(path.join(site, 'midscene/index.html')), {
+    code: 'ENOENT',
+  });
+  const upstream = run('renamed/upstream', 'renamed/upstream');
+  assert.equal(upstream.status, 0, upstream.stderr);
+  assert.equal(upstream.stdout.trim(), 'ready=false');
+  await assert.rejects(readFile(path.join(site, 'index.html')), {
+    code: 'ENOENT',
+  });
+  const fork = run('renamed/upstream', 'someone/fork');
+  assert.equal(fork.status, 0, fork.stderr);
+  assert.equal(fork.stdout.trim(), 'ready=true');
+  const workflow = await readFile(
+    new URL('../workflows/workflow-pages.yml', import.meta.url),
+    'utf8',
+  );
+  assert.equal(workflow.split('lynx-family/lynx-stack').length - 1, 1);
+  assert.ok(
+    workflow.includes(
+      '"$GITHUB_REPOSITORY" != "$MIDSCENE_UPSTREAM_REPOSITORY"',
+    ),
+  );
+});
 
 async function fixture(t) {
   const root = await mkdtemp(path.join(os.tmpdir(), 'compose-pages-'));

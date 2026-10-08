@@ -57,11 +57,15 @@ if (
   process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href
 ) {
   const [site, incoming, component, repository] = process.argv.slice(2);
+  const upstream = process.env.MIDSCENE_UPSTREAM_REPOSITORY;
+  if (!upstream?.trim() || !repository?.trim()) {
+    throw new Error('MIDSCENE_UPSTREAM_REPOSITORY and repository are required');
+  }
   const ready = await composeSite({
     site,
     incoming,
     component,
-    requireWebsite: repository === 'lynx-family/lynx-stack',
+    requireWebsite: repository === upstream,
   });
   console.log(`ready=${ready}`);
 }

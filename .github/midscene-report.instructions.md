@@ -19,6 +19,9 @@ under `/midscene/`. Hold the shared publisher concurrency lock across archive
 restore, composition, persistence, and deployment. Preserve the other component
 on every update. Never deploy a report-only artifact over the upstream website;
 archive early reports until the first website build initializes the shared site.
+Keep the upstream repository identity in the reusable workflow's
+`MIDSCENE_UPSTREAM_REPOSITORY` environment variable. Both legacy archive import
+and site composition use it; the CLI must reject missing identity configuration.
 Resolve the public origin from Pages metadata, including custom domains. Keep
 producer summaries artifact-only and add linked screenshots after deployment
 succeeds. Default publication to the repository default branch without requiring

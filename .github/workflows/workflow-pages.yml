@@ -72,6 +72,7 @@ jobs:
       - name: Compose and archive the site
         id: compose
         env:
+          GH_TOKEN: ${{ github.token }}
           COMPONENT: ${{ inputs.component }}
         run: |
           incoming="$RUNNER_TEMP/pages-incoming"
@@ -109,4 +110,4 @@ jobs:
       - name: Explain publication failure
         if: failure()
         run: |
-          echo '❌ Pages publication failed. Download the report artifact from this run. A repository administrator must enable Settings → Pages → GitHub Actions and allow this ref in the github-pages environment. Existing site content is preserved in pages-site-archive.' >> "$GITHUB_STEP_SUMMARY"
+          echo '❌ Pages publication failed. Download the report artifact from this run. Check the failed step, archive branch write access, Settings → Pages → GitHub Actions, and the github-pages environment deployment rules.' >> "$GITHUB_STEP_SUMMARY"

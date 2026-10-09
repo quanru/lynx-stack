@@ -38,6 +38,9 @@ checks deterministic; do not round measurements or replace pixel contracts with
 AI judgment. Create visual report evidence before exact assertions can fail.
 Keep the 85-case expansion contract test aligned with the original source tests,
 not only with a second copy of the migrated YAML's expected values.
+Midscene 1.13.1 `test.maxConcurrency` limits projects, not cases. A single
+project remains serial regardless of this setting. Do not claim case-level
+parallelism without separate project shards and independently scoped registries.
 Verify model vision with an image-only challenge; text-only preflight
 responses and HTTP 200 do not prove the endpoint reads screenshots. Record the
 actual response model version when diagnosing failures, because endpoint IDs

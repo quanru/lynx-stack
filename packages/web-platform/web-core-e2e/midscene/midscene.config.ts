@@ -155,7 +155,9 @@ export default defineTestProject<WebProjectContext>({
     },
   ],
   test: {
-    maxConcurrency: 3,
+    // Midscene 1.13.1 applies this limit to projects, not cases. Keep this
+    // single project serial; case concurrency requires separately scoped shards.
+    maxConcurrency: 1,
     testTimeout: 180_000,
   },
   output: {

@@ -35,8 +35,10 @@ only once. No snapshot-only, unconditionally skipped, or injected-API tests are
 included to inflate the count. This is Chromium client-rendered coverage, not a
 replacement for the original SSR or multi-browser matrix.
 
-Three cases can run concurrently, with separate browser contexts, pages, agents,
-and report filenames keyed by case run ID. Each case retains two bounded retries;
+The single project runs cases serially, with separate browser contexts, pages,
+agents, and report filenames keyed by case run ID. Midscene 1.13.1 applies
+`maxConcurrency` to projects, not cases; increasing it cannot parallelize this
+project. Each case retains two bounded retries;
 reports expose retries rather than hiding them behind an aggregate pass count.
 
 ### Interaction migration batch

@@ -3,7 +3,7 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 170 cases: the
+while Midscene drives user interactions. The suite contains 173 cases: the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
 ReactLynx migrations, plus 15 continuation cases with original deterministic
 assertion values, 26 original web-elements CSS/attribute contracts and two
@@ -14,8 +14,8 @@ and the original setState callback, lazy-component instance-isolation,
 frame-element JavaScript property, four relative-coordinate contracts, the error
 display contract, the original input bindinput payload contract, and two
 shadow-root stylesheet inclusion contracts and two main-thread autoScroll
-contracts, two setNativeProps text-count contracts and three rpx/ppx dimension
-contracts.
+contracts, two setNativeProps text-count contracts, three rpx/ppx dimension
+contracts and three updateData/processData API contracts.
 The 147-case four-shard run passed in
 [run 37940214877](https://github.com/quanru/lynx-stack/actions/runs/37940214877),
 including report generation and Pages publication. Downloaded publication
@@ -27,7 +27,8 @@ In the earlier 144-case run, the textarea input filter case required one retry:
 its old action goal incorrectly demanded that
 filtered punctuation remain visible. The local correction retains the complete
 original input payload and exact `foobar` assertion, but stops after sending the
-input rather than trying to undo application filtering. It needs hosted validation.
+input rather than trying to undo application filtering. It passed in the later
+160-case run described below.
 The previous 153-case batch failed in
 [run 37944694673](https://github.com/quanru/lynx-stack/actions/runs/37944694673).
 Shard 2 failed during endpoint preflight with a network connection timeout,
@@ -37,21 +38,27 @@ Shard 3 completed with 37/38 passing. Its lazy-component readiness incorrectly
 required a visible Load Component label, but the fixture's raw view child text
 does not render. Local screenshots confirm an unlabelled red square. The local
 correction uses visible colors/relationships while retaining four clicks and six
-exact CSS assertions; credentialed validation is still pending.
+exact CSS assertions; this correction passed in the 160-case run below.
 Shard 1 completed with 38/39 passing. The animation event case's action traces
 and screenshots show missed text targets: one pixel left of the animation line,
 the transition line instead of animation, and blank space below the second
 section. Exact assertions correctly failed. Local action descriptions now require
 word centers and adjacent-line relationships, with standard `aiAct` deepLocate
 and caching disabled. SDK 1.13.1 then performs dedicated visual grounding instead
-of directly executing the planning model's point. A new CI run must validate it;
+of directly executing the planning model's point. The 160-case run passed this
+case on its first attempt;
 no coordinates, selector actions, atomic action nodes or changed assertions are added.
-The pushed 160-case batch at `8c3ea9e` is running in
+The 160-case batch at `8c3ea9e` passed in
 [run 37948938294](https://github.com/quanru/lynx-stack/actions/runs/37948938294).
-The seven additions after 153 cases are not yet hosted-verified. Two further
+All 160 cases passed, with 161 attempts: only `basic-lazy-component-multi`
+retried once. Report generation and Pages succeeded. The downloaded publication
+has 160 linked screenshots; all 165 unique published screenshot/report URLs
+returned HTTP 200. The seven additions after 153 cases are now hosted-verified.
+The next 13 cases have not run in hosted CI yet: two further
 shadow-root stylesheet cases, two autoScroll cases and two setNativeProps
-text-count cases, one scroll-view CSS case and three rpx/ppx cases are local-only
-while this run completes.
+text-count cases, one scroll-view CSS case, three rpx/ppx cases and three
+updateData/processData cases. Eleven non-AI translations pass locally; the two
+autoScroll AI translations await hosted execution.
 The animation translations retain original event-sequence match counts and CSS
 checks, with ordinary clicks through `aiAct`. No local model credentials are
 configured; local checks do not make AI calls.
@@ -62,7 +69,7 @@ The external-bundle case and its unchanged original Chromium test both passed
 locally on the first attempt. `web.expect` with `matchingText`/`count` uses the
 same public `page.getByText` locator and checks the complete count, without
 selecting the first match or requiring visibility. Duplicate matches fail the
-original count-one contract. All 68 model-free checks and typechecking pass.
+original count-one contract. All 70 model-free checks and typechecking pass.
 The unchanged middleware original also passes locally. Its migration retains
 the separate `/middleware` URL, two ordinary `aiAct` clicks, and immediate
 inline-style substring reads; it does not extend the original Chromium-only,
@@ -71,15 +78,15 @@ split-by-experience, split-by-module and all-in-one development mode also pass
 locally. Their translations preserve `hasdir=true`, original computed CSS or
 single-read inline styles, and the original client-only scope. Both stylesheet
 translations passed locally on their first attempt, with two linked screenshots
-and complete HTML reports. The development-mode and middleware AI clicks still
-require hosted execution; no local model calls were made.
+and complete HTML reports. The development-mode and middleware translations
+passed in hosted run 37948938294; no local model calls were made.
 
 The original frame-element mapping and its translation both passed locally on
 their first attempt. The adapter reads the actual JavaScript `tagName`, not an
 attribute or a case-folded surrogate.
 
 The four relative-coordinate originals pass locally. Three translations without
-AI clicks also pass on their first attempt; the tap translation awaits CI.
+AI clicks also pass on their first attempt; all four passed in hosted run 37948938294.
 `web.prepareLynxView` installs only the original offset/transform fixture before
 navigation, not a selector-based user action. Browser verification found two
 initialization hazards: serialized function helpers from the config loader, and
@@ -91,7 +98,8 @@ Original CSS assertions and fixture routes remain unchanged; an origin-position
 green result alone is not accepted as migration evidence.
 The error-display original and translation also passed locally on their first
 attempt. The input bindinput original passes locally; its AI translation retains
-Enter, the complete `foobar` payload and the exact `foobar-6-6` result, and awaits CI.
+Enter, the complete `foobar` payload and the exact `foobar-6-6` result, and passed
+in hosted run 37948938294.
 
 Both shadow-root stylesheet originals and their YAML translations passed locally
 on their first attempts. They retain the original inline-style and fetched-link
@@ -131,6 +139,13 @@ callback, and VM checks execute the literal script, without an implicit function
 wrapper that would hide a top-level return error. This is fixture/API setup, not
 a selector-based user action. Missing or duplicate LynxViews fail closed.
 
+All three updateData/processData originals and translations pass locally on
+their first attempts. They retain the actual `updateData` calls, complete
+`{ mockData: 'updatedData' }` payload, default/`useless`/`processData` modes,
+original waits and ordered pink/green computed CSS assertions. Ordered AST
+contracts compare API arguments, routes, waits and assertions, rather than
+accepting a matching final screenshot. No custom API action node is added.
+
 This directory sits one level below the `packages/web-platform/*` pnpm
 workspace glob and is not a workspace member. It has its own `package.json`
 and lockfile, installs with `npm ci`, and does not affect the repository's pnpm
@@ -158,8 +173,8 @@ or Turbo dependency graph. Playwright is pinned to the repository's version,
 `text-count.yaml` also retains `expectNoText` as an exact zero-match assertion,
 not a substring or visibility check. `reentrant-lazy.yaml` preserves the original
 four clicks and six indexed computed-style assertions, including the idempotent
-second Load Component click. Both unchanged originals pass locally; translation
-execution is pending.
+second Load Component click. Both unchanged originals pass locally; the
+translations passed in hosted run 37948938294.
 
 `cases/web/directory-bundles.yaml` and `directory-interactions.yaml` add three original directory-bundle cases,
 retaining the `hasdir=true` entry point rather than testing a flat bundle instead.

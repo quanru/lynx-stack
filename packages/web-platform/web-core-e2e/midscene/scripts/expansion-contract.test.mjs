@@ -26,6 +26,7 @@ for (
     ['remaining-inputs', 1],
     ['shadow-stylesheets', 2],
     ['unit-dimensions', 3],
+    ['update-data', 3],
   ]
 ) {
   test(`${count} ${file} migrations retain original assertion counts, values, CSS order, and clicks`, async () => {
@@ -295,8 +296,9 @@ for (
       }
       assert.doesNotMatch(
         body,
-        /diffScreenShot|toMatchSnapshot|test\.skip\(true|addInitScript|page\.evaluate/,
+        /diffScreenShot|toMatchSnapshot|test\.skip\(true|addInitScript/,
       );
+      if (file !== 'update-data') assert.doesNotMatch(body, /page\.evaluate/);
       const assertions = [];
       const variables = new Map();
       function locatorSpec(node) {
@@ -518,6 +520,7 @@ for (
                   'directory-interactions',
                   'shadow-stylesheets',
                   'unit-dimensions',
+                  'update-data',
                 ].includes(file)
               ? ['javascript']
               : []),

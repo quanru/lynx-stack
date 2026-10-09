@@ -1,0 +1,63 @@
+cases:
+  - name: api-updateData
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-updateData"
+      - recordToReport: Before checking original updateData contract
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(255, 192, 203)",
+        }
+      - javascript: "(() => { document.querySelector('lynx-view').updateData({ mockData: 'updatedData' }); return true; })()"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 50))"
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+      - recordToReport: Original updateData payload and CSS contract passed
+  - name: api-updateData-processData
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-updateData-processData"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before checking original default processData contract
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(255, 192, 203)",
+        }
+      - javascript: "(() => { document.querySelector('lynx-view').updateData({ mockData: 'updatedData' }); return true; })()"
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+      - recordToReport: Original default processData payload and CSS contract passed
+  - name: api-updateData-processData-not-default
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-updateData-processData"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before checking original named processData contracts
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(255, 192, 203)",
+        }
+      - javascript: "(() => { document.querySelector('lynx-view').updateData({ mockData: 'updatedData' }, 'useless'); return true; })()"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(255, 192, 203)",
+        }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - javascript: "(() => { document.querySelector('lynx-view').updateData({ mockData: 'updatedData' }, 'processData'); return true; })()"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+      - recordToReport: Original named processData rejection and update contracts passed

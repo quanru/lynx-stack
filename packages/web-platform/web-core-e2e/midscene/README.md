@@ -38,7 +38,10 @@ replacement for the original SSR or multi-browser matrix.
 The single project runs cases serially, with separate browser contexts, pages,
 agents, and report filenames keyed by case run ID. Midscene 1.13.1 applies
 `maxConcurrency` to projects, not cases; increasing it cannot parallelize this
-project. Each case retains two bounded retries;
+project. CI runs four independent jobs, each with a balanced partition of the
+case definitions. Each job remains serial internally. Partitioning preserves
+all steps and document lifecycle fields and rejects duplicate case names.
+Each case retains two bounded retries;
 reports expose retries rather than hiding them behind an aggregate pass count.
 
 ### Interaction migration batch
@@ -81,9 +84,19 @@ npm ci
 cp .env.example .env       # Add multimodal model credentials; do not commit.
 set -a && source .env && set +a
 npm test -- --project web-shell
+
+# Run the same partition used by CI (one-based index, total shard count).
+node scripts/run-shard.mjs 1 4
 ```
 
 ## Case-writing guidelines
+
+Shard artifacts retain their index, total count, commit SHA, case names, and
+producer outcome. Publication selects the latest attempt independently for
+each shard, so a partial rerun keeps successful sibling reports. Missing shards
+remain failures in Summary. Reports are kept in separate directories to avoid
+overwriting runner indexes, then merged into the HTML report; passed cases
+remain in the collapsed appendix with linked screenshots.
 
 - Use `aiAct` for visible user interactions. Describe the user goal instead of
   decomposing it into `aiTap`, `aiScroll`, or other atomic AI operations.

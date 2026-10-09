@@ -82,11 +82,16 @@ jobs:
           node --test ../../../../.github/scripts/vision-preflight.test.mjs
 
   web-shell-ai-e2e:
-    name: Midscene AI E2E · Web (web-core shell)
+    name: Midscene AI E2E · Web (shard ${{ matrix.shard }}/4)
     needs: [renderer-parity]
     if: github.event_name != 'schedule' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        shard: [1, 2, 3, 4]
     env:
       MIDSCENE_MODEL_API_KEY: ${{ secrets.MIDSCENE_MODEL_API_KEY }}
       MIDSCENE_MODEL_NAME: ${{ secrets.MIDSCENE_MODEL_NAME }}
@@ -181,10 +186,13 @@ jobs:
           echo "open files limit before: soft=$(ulimit -Sn), hard=$(ulimit -Hn)"
           ulimit -Sn "$(ulimit -Hn)"
           echo "open files limit after: soft=$(ulimit -Sn), hard=$(ulimit -Hn)"
-          npm test -- --project web-shell
+          node scripts/run-shard.mjs ${{ matrix.shard }} 4
 
       - name: Stage Web report for this attempt
         if: always()
+        env:
+          SHARD_INDEX: ${{ matrix.shard }}
+          PRODUCER_RESULT: ${{ steps.run-cases.outcome == 'success' && 'success' || 'failure' }}
         run: |
           target="$RUNNER_TEMP/midscene-upload/attempt-$GITHUB_RUN_ATTEMPT"
           mkdir -p "$target"
@@ -193,13 +201,14 @@ jobs:
           if [ -d "$report" ]; then
             cp -R "$report"/. "$target"/
           fi
+          node -e 'require("fs").writeFileSync(process.argv[1], JSON.stringify({sha: process.env.GITHUB_SHA, index: Number(process.env.SHARD_INDEX), count: 4, attempt: Number(process.env.GITHUB_RUN_ATTEMPT), result: process.env.PRODUCER_RESULT}))' "$target/result.json"
 
       - name: Upload Web report
         id: upload-report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: midscene-ai-e2e-web-${{ github.run_attempt }}
+          name: midscene-ai-e2e-web-shard-${{ matrix.shard }}-4-${{ github.run_attempt }}
           path: ${{ runner.temp }}/midscene-upload
           if-no-files-found: warn
           retention-days: 14
@@ -210,12 +219,12 @@ jobs:
           PRODUCER_RESULT: ${{ steps.run-cases.outcome == 'success' && steps.upload-report.outcome == 'success' && 'success' || 'failure' }}
         run: |
           node packages/web-platform/web-core-e2e/midscene/scripts/render-ci-summary.mjs \
-            --title "Lynx Web × Midscene" \
+            --title "Lynx Web × Midscene · shard ${{ matrix.shard }}/4" \
             --run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
             --links-published false \
             --entry "Web=packages/web-platform/web-core-e2e/midscene/midscene_run" \
             --result "Web=$PRODUCER_RESULT" \
-            --artifact "Web=midscene-ai-e2e-web-$GITHUB_RUN_ATTEMPT" \
+            --artifact "Web=midscene-ai-e2e-web-shard-${{ matrix.shard }}-4-$GITHUB_RUN_ATTEMPT" \
             --site-prefix "runs/$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
             --site-dir "$RUNNER_TEMP/midscene-job-summary" \
             --job-summary-only true \
@@ -225,7 +234,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: midscene-ai-e2e-log-web-shell-${{ github.run_attempt }}
+          name: midscene-ai-e2e-log-web-shell-shard-${{ matrix.shard }}-${{ github.run_attempt }}
           path: /tmp/web-shell.log
           if-no-files-found: ignore
           retention-days: 14
@@ -270,18 +279,9 @@ jobs:
       - name: Download report
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          pattern: midscene-ai-e2e-web-*
+          pattern: midscene-ai-e2e-web-shard-*
           path: ${{ runner.temp }}/midscene-artifacts
-          merge-multiple: true
-
-      - name: Select latest report attempt
-        run: |
-          latest="$(find "$RUNNER_TEMP/midscene-artifacts" \
-            -mindepth 1 -maxdepth 1 -type d \
-            -name 'attempt-*' -print | sort -V | tail -n 1)"
-          test -n "$latest"
-          mkdir -p "$RUNNER_TEMP/midscene-report"
-          cp -R "$latest"/. "$RUNNER_TEMP/midscene-report"/
+          merge-multiple: false
 
       - id: pages
         continue-on-error: true
@@ -307,18 +307,9 @@ jobs:
         env:
           PAGES_URL: ${{ steps.pages.outputs.base_url }}/midscene
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          WEB_RESULT: ${{ needs.web-shell-ai-e2e.result }}
+          MIDSCENE_SHARD_COUNT: "4"
         run: |
-          node packages/web-platform/web-core-e2e/midscene/scripts/render-ci-summary.mjs \
-            --title "Lynx Web × Midscene" \
-            --run-url "$RUN_URL" \
-            --pages-url "$PAGES_URL" \
-            --entry "Web=$RUNNER_TEMP/midscene-report" \
-            --result "Web=$WEB_RESULT" \
-            --artifact "Web=midscene-ai-e2e-web-$GITHUB_RUN_ATTEMPT" \
-            --site-prefix "runs/$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
-            --site-dir "$RUNNER_TEMP/midscene-publication/site" \
-            --output "$RUNNER_TEMP/midscene-publication/summary.md"
+          node packages/web-platform/web-core-e2e/midscene/scripts/publish-shards.mjs
 
       - name: Upload report publication bundle
         id: upload-publication

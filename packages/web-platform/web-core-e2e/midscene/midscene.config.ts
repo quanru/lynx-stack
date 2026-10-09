@@ -147,7 +147,11 @@ export default defineTestProject<WebProjectContext>({
         }),
         webExpectNode,
       ],
-      files: { include: ['cases/web/**/*.{yaml,yml}'] },
+      files: {
+        include: [
+          process.env.MIDSCENE_CASE_FILES ?? 'cases/web/**/*.{yaml,yml}',
+        ],
+      },
       variables: {
         // Served by the web-core-e2e Rsbuild development shell on PORT=3080 by default.
         shellUrl: process.env.WEB_SHELL_URL ?? 'http://localhost:3080/',

@@ -3,13 +3,14 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 151 cases: the
+while Midscene drives user interactions. The suite contains 153 cases: the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
 ReactLynx migrations, plus 15 continuation cases with original deterministic
 assertion values, 25 original web-elements CSS/attribute contracts and two
 CSS variable fallback contracts, two frame auto-sizing contracts, and the original
 external-bundle evaluation/stylesheet contract, two animation callback cases,
-the separate middleware entry-point contract, and three directory-bundle contracts.
+the separate middleware entry-point contract, three directory-bundle contracts,
+and the original setState callback and lazy-component instance-isolation contracts.
 The 144-case
 four-shard run passed in
 [run 37936010087](https://github.com/quanru/lynx-stack/actions/runs/37936010087),
@@ -33,7 +34,7 @@ The external-bundle case and its unchanged original Chromium test both passed
 locally on the first attempt. `web.expect` with `matchingText`/`count` uses the
 same public `page.getByText` locator and checks the complete count, without
 selecting the first match or requiring visibility. Duplicate matches fail the
-original count-one contract. All 46 model-free checks and typechecking pass.
+original count-one contract. All 47 model-free checks and typechecking pass.
 The unchanged middleware original also passes locally. Its migration retains
 the separate `/middleware` URL, two ordinary `aiAct` clicks, and immediate
 inline-style substring reads; it does not extend the original Chromium-only,
@@ -66,6 +67,12 @@ or Turbo dependency graph. Playwright is pinned to the repository's version,
 | `cases/web/frame-sizing.yaml` (2)         | Frame auto-height and auto-width                                                                                      | Exact attributes and their negation; original immediate numeric height comparison               |
 | `cases/web/text-count.yaml` (3)           | External bundle, animation events and animation frames                                                                | Original getByText match counts, event sequences and computed background color                  |
 | `cases/web/middleware.yaml` (1)           | Middleware basic-bindtap entry point                                                                                  | Original middleware URL, two clicks and single-read inline-style substring checks               |
+
+`text-count.yaml` also retains `expectNoText` as an exact zero-match assertion,
+not a substring or visibility check. `reentrant-lazy.yaml` preserves the original
+four clicks and six indexed computed-style assertions, including the idempotent
+second Load Component click. Both unchanged originals pass locally; translation
+execution is pending.
 
 `cases/web/directory-bundles.yaml` and `directory-interactions.yaml` add three original directory-bundle cases,
 retaining the `hasdir=true` entry point rather than testing a flat bundle instead.

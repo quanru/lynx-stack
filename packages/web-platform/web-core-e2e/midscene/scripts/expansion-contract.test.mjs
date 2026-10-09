@@ -14,10 +14,11 @@ for (
     ['attributes', 18, 'web-elements'],
     ['css-fallback', 2, 'web', 'reactlynx-css-var-fallback.spec.ts'],
     ['frame-sizing', 2],
-    ['text-count', 3],
+    ['text-count', 4],
     ['middleware', 1, 'web', 'middleware.spec.ts'],
     ['directory-bundles', 2],
     ['directory-interactions', 1],
+    ['reentrant-lazy', 1],
   ]
 ) {
   test(`${count} ${file} migrations retain original assertion counts, values, CSS order, and clicks`, async () => {
@@ -120,6 +121,21 @@ for (
         item.name + ' must be an original test, not a split or invented case',
       );
       const body = original.getText(ast);
+      if (file === 'reentrant-lazy') {
+        const actions = item.steps.filter(step => step.aiAct).map(step =>
+          step.aiAct.prompt
+        );
+        assert.equal(actions.length, 4);
+        for (const index of [0, 2]) {
+          assert.match(actions[index], /red square labelled "Load Component"/);
+        }
+        assert.match(actions[1], /BLUE.*RIGHT.*upper row ABOVE/);
+        assert.match(actions[3], /BLUE.*RIGHT.*lower row BELOW/);
+        for (const prompt of actions) {
+          assert.match(prompt, /Stop after that single click/);
+          assert.doesNotMatch(prompt, /\b\d+\s*(?:px|pixels)\b|#[\w-]+/);
+        }
+      }
       if (file.startsWith('directory-')) {
         assert.match(body, /goto\(page, title, undefined, true\)/);
         assert.equal(
@@ -217,12 +233,17 @@ for (
       function scan(node) {
         if (
           ts.isCallExpression(node)
-          && node.expression.getText(ast) === 'expectHasText'
+          && ['expectHasText', 'expectNoText'].includes(
+            node.expression.getText(ast),
+          )
         ) {
           assert.ok(ts.isStringLiteral(node.arguments[1]));
           assertions.push({
             matcher: 'textCount',
-            args: [node.arguments[1].text, '1'],
+            args: [
+              node.arguments[1].text,
+              node.expression.getText(ast) === 'expectHasText' ? '1' : '0',
+            ],
           });
         }
         if (ts.isVariableDeclaration(node) && node.initializer) {

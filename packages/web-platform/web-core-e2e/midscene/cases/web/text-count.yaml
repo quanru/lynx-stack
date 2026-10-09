@@ -1,5 +1,13 @@
 # Preserve expectHasText's getByText(...).toHaveCount(1), not innerText inclusion.
 cases:
+  - name: basic-setsate-with-cb
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-setsate-with-cb"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original setState callback text counts
+      - web.expect: { matchingText: awesome, count: 1 }
+      - web.expect: { matchingText: success, count: 0 }
+      - recordToReport: Original setState callback positive and negative text counts passed
   - name: external-bundle
     steps:
       - gotoUrl: "${shellUrl}?casename=external-bundle"

@@ -115,56 +115,68 @@ const webExpectNode = defineNode<ExpectInput, void, WebProjectContext>({
 // creates the registry later. A project-level slot connects those lifecycles.
 // getAgent uses execution.context; releaseAgent only receives runId and uses
 // the slot closure.
-const registrySlot: { current?: AgentRegistry } = {};
+function createWebProject(
+  name: string,
+  include: string,
+  variables: Record<string, string>,
+) {
+  // Each project owns its registry: one project's teardown must never release
+  // another project's agent, even when the runner executes both projects.
+  const registrySlot: { current?: AgentRegistry } = {};
+  return {
+    name,
+    setup: defineProjectSetup<WebProjectContext>({
+      name: 'web',
+      async setup(args) {
+        const context = await webSetup.setup(args);
+        registrySlot.current = context.agentRegistry;
+        return context;
+      },
+    }),
+    nodes: [
+      ...createMidsceneNodes<WebProjectContext>({
+        agentClass: PlaywrightAgent,
+        agentProvider: {
+          getAgent: (runId, execution) =>
+            execution.context.agentRegistry.getAgent(runId),
+          releaseAgent: (runId) => {
+            if (!registrySlot.current) {
+              throw new Error(
+                'agentRegistry is unavailable before project setup.',
+              );
+            }
+            return registrySlot.current.releaseAgent(runId);
+          },
+        } satisfies AgentProvider<WebProjectContext>,
+      }),
+      webExpectNode,
+    ],
+    files: { include: [include] },
+    variables,
+    // Bound retries for transient worker/Wasm startup and interaction timing.
+    // Missing vision capability must fail preflight; retries cannot repair a
+    // text-only model path or make its hallucinated observations trustworthy.
+    retry: 2,
+  };
+}
 
 export default defineTestProject<WebProjectContext>({
   projects: [
-    {
-      name: 'web-shell',
-      setup: defineProjectSetup<WebProjectContext>({
-        name: 'web',
-        async setup(args) {
-          const context = await webSetup.setup(args);
-          registrySlot.current = context.agentRegistry;
-          return context;
-        },
-      }),
-      nodes: [
-        ...createMidsceneNodes<WebProjectContext>({
-          agentClass: PlaywrightAgent,
-          agentProvider: {
-            getAgent: (runId, execution) =>
-              execution.context.agentRegistry.getAgent(runId),
-            releaseAgent: (runId) => {
-              if (!registrySlot.current) {
-                throw new Error(
-                  'agentRegistry is unavailable before project setup.',
-                );
-              }
-              return registrySlot.current.releaseAgent(runId);
-            },
-          } satisfies AgentProvider<WebProjectContext>,
-        }),
-        webExpectNode,
-      ],
-      files: {
-        include: [
-          process.env.MIDSCENE_CASE_FILES ?? 'cases/web/**/*.{yaml,yml}',
-        ],
-      },
-      variables: {
-        // Served by the web-core-e2e Rsbuild development shell on PORT=3080 by default.
-        shellUrl: process.env.WEB_SHELL_URL ?? 'http://localhost:3080/',
-      },
-      // Bound retries for transient worker/Wasm startup and interaction timing.
-      // Missing vision capability must fail preflight; retries cannot repair a
-      // text-only model path or make its hallucinated observations trustworthy.
-      retry: 2,
-    },
+    createWebProject(
+      'web-shell',
+      process.env.MIDSCENE_CASE_FILES ?? 'cases/web/**/*.{yaml,yml}',
+      { shellUrl: process.env.WEB_SHELL_URL ?? 'http://localhost:3080/' },
+    ),
+    createWebProject(
+      'web-elements',
+      process.env.MIDSCENE_ELEMENTS_CASE_FILES
+        ?? 'cases/web-elements/**/*.{yaml,yml}',
+      { elementsUrl: process.env.WEB_ELEMENTS_URL ?? 'http://localhost:3081/' },
+    ),
   ],
   test: {
     // Midscene 1.13.1 applies this limit to projects, not cases. Keep this
-    // single project serial; case concurrency requires separately scoped shards.
+    // projects serial; case concurrency requires separately scoped shards.
     maxConcurrency: 1,
     testTimeout: 180_000,
   },

@@ -33,7 +33,10 @@ export function partitionDocuments(documents, index, count) {
 
 export async function loadDocuments(root) {
   const paths = discoverTestFiles(root, {
-    include: ['cases/web/**/*.{yaml,yml}'],
+    include: [
+      'cases/web/**/*.{yaml,yml}',
+      'cases/web-elements/**/*.{yaml,yml}',
+    ],
   }).sort();
   return Promise.all(
     paths.map(async path => ({
@@ -69,18 +72,34 @@ export async function materializeShard(root, documents, index, count) {
       'SDK discovery did not find every generated shard document.',
     );
   }
-  return { directory, include, names };
+  const projects = [
+    ...new Set(selected.map(({ path }) => {
+      if (path.startsWith('cases/web/')) return 'web-shell';
+      if (path.startsWith('cases/web-elements/')) return 'web-elements';
+      throw new Error(`Unknown case project: ${path}`);
+    })),
+  ];
+  const prefix = relative(root, directory);
+  return {
+    directory,
+    include,
+    names,
+    projects,
+    shellInclude: `${prefix}/cases/web/**/*.{yaml,yml}`,
+    elementsInclude: `${prefix}/cases/web-elements/**/*.{yaml,yml}`,
+  };
 }
 
 async function main() {
   const root = resolve(fileURLToPath(new URL('../', import.meta.url)));
   const [index, count] = process.argv.slice(2).map(Number);
-  const { include, names } = await materializeShard(
-    root,
-    await loadDocuments(root),
-    index,
-    count,
-  );
+  const { shellInclude, elementsInclude, projects, names } =
+    await materializeShard(
+      root,
+      await loadDocuments(root),
+      index,
+      count,
+    );
   console.log(`Shard ${index}/${count}: ${names.length} cases`);
   const manifest = { index, count, names, sha: process.env.GITHUB_SHA ?? null };
   await mkdir(resolve(root, 'midscene_run'), { recursive: true });
@@ -90,14 +109,14 @@ async function main() {
   );
   const child = spawn(process.execPath, [
     resolve(root, 'node_modules/@midscene/test/bin/midscene-test'),
-    '--project',
-    'web-shell',
+    ...projects.flatMap(name => ['--project', name]),
   ], {
     cwd: root,
     stdio: 'inherit',
     env: {
       ...process.env,
-      MIDSCENE_CASE_FILES: include,
+      MIDSCENE_CASE_FILES: shellInclude,
+      MIDSCENE_ELEMENTS_CASE_FILES: elementsInclude,
     },
   });
   for (const signal of ['SIGINT', 'SIGTERM']) {

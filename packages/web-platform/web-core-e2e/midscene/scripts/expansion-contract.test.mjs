@@ -6,23 +6,38 @@ import { collectWorkflowDocument } from '@midscene/test';
 import { loadTestProject } from '@midscene/test/config';
 import { fileURLToPath } from 'node:url';
 
-for (const [file, count] of [['expansion', 85], ['continuation', 15]]) {
+for (
+  const [file, count, suite = 'web'] of [
+    ['expansion', 85],
+    ['continuation', 15],
+    ['contracts', 7, 'web-elements'],
+    ['attributes', 18, 'web-elements'],
+  ]
+) {
   test(`${count} ${file} migrations retain original assertion counts, values, CSS order, and clicks`, async () => {
     const root = fileURLToPath(new URL('../', import.meta.url));
     const loaded = await loadTestProject(root + '/midscene.config.ts');
-    const project = loaded.projects[0];
+    const project = loaded.projects.find(item =>
+      item.name
+        === (suite === 'web' ? 'web-shell' : 'web-elements')
+    );
     const document = collectWorkflowDocument({
       projectId: project.projectId,
       projectName: project.name,
-      sourcePath: `cases/web/${file}.yaml`,
-      absolutePath: root + `/cases/web/${file}.yaml`,
+      sourcePath: `cases/${suite}/${file}.yaml`,
+      absolutePath: root + `/cases/${suite}/${file}.yaml`,
     }, {
       resolveNode: project.nodes.get.bind(project.nodes),
       variables: project.variables,
       env: process.env,
     });
     const source = readFileSync(
-      new URL('../../tests/reactlynx.spec.ts', import.meta.url),
+      new URL(
+        suite === 'web'
+          ? '../../tests/reactlynx.spec.ts'
+          : '../../../web-elements/tests/web-elements.spec.ts',
+        import.meta.url,
+      ),
       'utf8',
     );
     const ast = ts.createSourceFile(
@@ -32,14 +47,25 @@ for (const [file, count] of [['expansion', 85], ['continuation', 15]]) {
       true,
     );
     const originals = new Map();
-    function visit(node) {
+    function visit(node, group = '') {
+      if (
+        ts.isCallExpression(node)
+        && node.expression.getText(ast) === 'test.describe'
+        && ts.isStringLiteral(node.arguments[0])
+      ) {
+        group = node.arguments[0].text;
+      }
       if (
         ts.isCallExpression(node) && node.expression.getText(ast) === 'test'
         && ts.isStringLiteral(node.arguments[0])
       ) {
-        originals.set(node.arguments[0].text, node);
+        const title = node.arguments[0].text;
+        const key = suite === 'web-elements' && !title.includes('/')
+          ? group + '/' + title
+          : title;
+        originals.set(key, node);
       }
-      ts.forEachChild(node, visit);
+      ts.forEachChild(node, child => visit(child, group));
     }
     visit(ast);
     assert.equal(document.cases.length, count);
@@ -78,7 +104,8 @@ for (const [file, count] of [['expansion', 85], ['continuation', 15]]) {
           assert.match(toggles[1], /LEFT pink neighbor green/);
         }
       }
-      const original = originals.get(item.name);
+      const originalName = item.name.replace(/^web-elements\//, '');
+      const original = originals.get(originalName);
       assert.ok(
         original,
         item.name + ' must be an original test, not a split or invented case',
@@ -107,6 +134,9 @@ for (const [file, count] of [['expansion', 85], ['continuation', 15]]) {
             return { selector: node.arguments[0].text, index: 0 };
           }
           const result = locatorSpec(node.expression.expression);
+          if (result && node.expression.name.text === 'getAttribute') {
+            return { ...result, attribute: node.arguments[0].text };
+          }
           if (result && node.expression.name.text === 'nth') {
             return { ...result, index: Number(node.arguments[0].getText(ast)) };
           }
@@ -172,7 +202,10 @@ for (const [file, count] of [['expansion', 85], ['continuation', 15]]) {
         const originalCheck = assertions[i];
         assert.deepEqual(
           { selector: check.selector, index: check.index ?? 0 },
-          originalCheck.locator,
+          {
+            selector: originalCheck.locator?.selector,
+            index: originalCheck.locator?.index,
+          },
           item.name + ' original assertion target',
         );
         const expected = check.text ?? check.textContains ?? check.value
@@ -190,6 +223,13 @@ for (const [file, count] of [['expansion', 85], ['continuation', 15]]) {
             item.name,
           );
         } else {
+          if (originalCheck.locator?.attribute) {
+            assert.equal(
+              check.attribute,
+              originalCheck.locator.attribute,
+              item.name,
+            );
+          }
           assert.equal(String(expected), originalCheck.args[0], item.name);
         }
       }
@@ -207,21 +247,44 @@ for (const [file, count] of [['expansion', 85], ['continuation', 15]]) {
         ),
         item.name + ' report evidence',
       );
+      const firstCheck = item.steps.findIndex(step => step['web.expect']);
       assert.ok(
-        item.steps[1].aiWaitFor || item.steps[1].aiAct
-          || item.steps[1].recordToReport,
+        item.steps.slice(1, firstCheck < 0 ? undefined : firstCheck).some(
+          step => step.aiWaitFor || step.aiAct || step.recordToReport,
+        ),
         item.name
           + ' must create visual evidence before exact assertions can fail',
       );
       assert.ok(
         item.steps.every(step =>
-          ['gotoUrl', 'aiWaitFor', 'aiAct', 'web.expect', 'recordToReport']
+          [
+            'gotoUrl',
+            'aiWaitFor',
+            'aiAct',
+            'web.expect',
+            'recordToReport',
+            ...(suite === 'web-elements' ? ['javascript'] : []),
+          ]
             .includes(
               Object.keys(step)[0],
             )
         ),
         item.name + ' supported nodes',
       );
+      if (suite === 'web-elements') {
+        const javascriptSteps = item.steps.filter(step => step.javascript);
+        assert.equal(javascriptSteps.length, 1);
+        assert.equal(
+          javascriptSteps[0].javascript.script,
+          'document.fonts.ready.then(() => true)',
+        );
+        assert.equal(item.steps[1], javascriptSteps[0]);
+        assert.equal(
+          item.steps[0].gotoUrl.url,
+          project.variables.elementsUrl + 'tests/fixtures/'
+            + item.name.replace(/^web-elements\//, '') + '.html',
+        );
+      }
     }
   });
 }

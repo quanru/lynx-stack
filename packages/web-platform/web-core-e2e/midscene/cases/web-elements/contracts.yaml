@@ -1,0 +1,86 @@
+# Exact CSS contracts from web-elements/tests/web-elements.spec.ts.
+# The independent Rsbuild server serves the original HTML fixtures unchanged.
+cases:
+  - name: web-elements/layout/lynx-display-do-not-use-flatten-tree
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/layout/lynx-display-do-not-use-flatten-tree.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking original flex shrink contracts
+      - web.expect: { selector: "#x-list-child", css: flex-shrink, equals: "1" }
+      - web.expect: {
+          selector: "#x-refresh-view-child",
+          css: flex-shrink,
+          equals: "1",
+        }
+      - recordToReport: Original list and refresh-view flex shrink contracts passed
+  - name: web-elements/x-view/dataset-attr-false-value
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-view/dataset-attr-false-value.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the false dataset value CSS contract
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+      - recordToReport: Original false dataset value CSS contract passed
+  - name: web-elements/filter-image/event-load
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/filter-image/event-load.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original filter-image load event result
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+      - recordToReport: Original filter-image load event result passed
+  - name: web-elements/filter-image/event-error
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/filter-image/event-error.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original filter-image error event result
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+      - recordToReport: Original filter-image error event result passed
+  - name: web-elements/x-image/event-load
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-image/event-load.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original x-image load event result
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+      - recordToReport: Original x-image load event result passed
+  - name: web-elements/x-image/event-error
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-image/event-error.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original x-image error event result
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+      - recordToReport: Original x-image error event result passed
+  - name: web-elements/x-swiper/x-swiper-basic-default-justify-content-flex-start
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-swiper/x-swiper-basic-default-justify-content-flex-start.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking original swiper alignment contracts
+      - web.expect: {
+          selector: "x-view:has(#target)",
+          css: justify-content,
+          equals: center,
+        }
+      - web.expect: {
+          selector: "#target",
+          css: justify-content,
+          equals: flex-start,
+        }
+      - recordToReport: Original swiper alignment contracts passed

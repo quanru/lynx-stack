@@ -169,6 +169,21 @@ jobs:
           cat /tmp/web-shell.log >&2 || true
           exit 1
 
+      - name: Start independent web-elements fixture server
+        working-directory: packages/web-platform/web-elements
+        run: |
+          PORT=3081 nohup pnpm run serve > /tmp/web-elements.log 2>&1 &
+          for _ in $(seq 1 60); do
+            if curl -fsS 'http://localhost:3081/tests/fixtures/x-view/dataset-attr-false-value.html' >/dev/null; then
+              echo "web-elements fixture server is ready"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error:: web-elements fixture server did not become ready" >&2
+          cat /tmp/web-elements.log >&2 || true
+          exit 1
+
       - name: Install Midscene test dependencies
         working-directory: packages/web-platform/web-core-e2e/midscene
         run: npm ci --no-audit --no-fund
@@ -235,7 +250,9 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: midscene-ai-e2e-log-web-shell-shard-${{ matrix.shard }}-${{ github.run_attempt }}
-          path: /tmp/web-shell.log
+          path: |
+            /tmp/web-shell.log
+            /tmp/web-elements.log
           if-no-files-found: ignore
           retention-days: 14
 

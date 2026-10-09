@@ -1,14 +1,16 @@
-# Midscene AI E2E for the web-core-e2e shell
+# Midscene E2E for web-core and web-elements
 
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 115 cases: the
+while Midscene drives user interactions. The suite contains 140 cases: the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
 ReactLynx migrations, plus 15 continuation cases with original deterministic
-assertion values. The preceding 100-case four-shard run passed in
-[run 37914898612](https://github.com/quanru/lynx-stack/actions/runs/37914898612);
-the new cases require separate hosted validation.
+assertion values, and 25 original web-elements CSS/attribute contracts. The 115-case
+four-shard run passed in
+[run 37924702935](https://github.com/quanru/lynx-stack/actions/runs/37924702935),
+including report generation and Pages publication. The 25 web-elements cases
+require separate hosted validation.
 
 ## Why this is a separate directory
 
@@ -20,12 +22,15 @@ or Turbo dependency graph. Playwright is pinned to the repository's version,
 
 ## Cases
 
-| YAML                            | Case bundles                                                                               | Coverage                                                                                        |
-| ------------------------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
-| `cases/web/shell.yaml` (2)      | `basic-bindtap`                                                                            | Visual click and pink-to-green round-trip through the shadow root and worker                    |
-| `cases/web/elements.yaml` (3)   | `basic-element-text-color`, `-image-src`, `-input-bindinput`                               | Gradient text, remote image loading, and input-event value mirroring                            |
-| `cases/web/events.yaml` (10)    | Global events, tap payloads, simultaneous handlers, and x-input                            | AI-driven interactions with exact upstream attribute, text, and input-value checks              |
-| `cases/web/expansion.yaml` (85) | Styling, lazy components, frames, native-module results, events, inputs, and linear layout | Original assertion sequences, computed CSS, exact bounding-box dimensions, text, and attributes |
+| YAML                                      | Case bundles                                                                                                          | Coverage                                                                                        |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `cases/web/shell.yaml` (2)                | `basic-bindtap`                                                                                                       | Visual click and pink-to-green round-trip through the shadow root and worker                    |
+| `cases/web/elements.yaml` (3)             | `basic-element-text-color`, `-image-src`, `-input-bindinput`                                                          | Gradient text, remote image loading, and input-event value mirroring                            |
+| `cases/web/events.yaml` (10)              | Global events, tap payloads, simultaneous handlers, and x-input                                                       | AI-driven interactions with exact upstream attribute, text, and input-value checks              |
+| `cases/web/expansion.yaml` (85)           | Styling, lazy components, frames, native-module results, events, inputs, and linear layout                            | Original assertion sequences, computed CSS, exact bounding-box dimensions, text, and attributes |
+| `cases/web/continuation.yaml` (15)        | Dataset, image/scroll sizing, animations, exposure, invoke callbacks, CSS removal, textarea, nested layout and reload | Original deterministic assertions and click counts                                              |
+| `cases/web-elements/contracts.yaml` (7)   | Layout, dataset, filter-image and x-image events, swiper alignment                                                    | Original HTML fixtures, font readiness, and exact computed CSS                                  |
+| `cases/web-elements/attributes.yaml` (18) | Input type/inputmode, spellcheck and enterkeyhint propagation                                                         | Exact attributes on the original inner input and textarea elements                              |
 
 Both expansion batches map each case name to the same test in
 `../tests/reactlynx.spec.ts`; the two event-trigger cases share the original
@@ -46,10 +51,10 @@ or requiring a valid image resource where the original only checks dimensions.
 If an exact assertion later fails, its link opens the failed step while its
 preview uses the nearest preceding capture from that same attempt.
 
-The single project runs cases serially, with separate browser contexts, pages,
+The two independent projects run cases serially, with separate browser contexts, pages,
 agents, and report filenames keyed by case run ID. Midscene 1.13.1 applies
-`maxConcurrency` to projects, not cases; increasing it cannot parallelize this
-project. CI runs four independent jobs, each with a balanced partition of the
+`maxConcurrency` to projects, not cases; increasing it cannot parallelize cases
+within a project. CI runs four independent jobs, each with a balanced partition of the
 case definitions. Each job remains serial internally. Partitioning preserves
 all steps and document lifecycle fields and rejects duplicate case names.
 Each case retains two bounded retries;
@@ -80,7 +85,7 @@ multi-browser/SSR matrix. The Midscene project runs Chromium CSR.
 ## Run locally
 
 Install repository dependencies and build the workspace first with
-`pnpm turbo build --filter='@lynx-js/web-core-e2e...'`. The build must produce
+`pnpm turbo build`. The build must produce
 this package's `dist/*.web.bundle` files. Node.js 24.11 or later is required by
 the repository's engines constraint.
 
@@ -89,16 +94,31 @@ the repository's engines constraint.
 cd packages/web-platform/web-core-e2e
 pnpm run serve
 
-# Terminal 2: run Midscene.
+# Terminal 2: start the independent HTML fixture server.
+cd packages/web-platform/web-elements
+PORT=3081 pnpm run serve
+
+# Terminal 3: run Midscene.
 cd packages/web-platform/web-core-e2e/midscene
 npm ci
 cp .env.example .env       # Add multimodal model credentials; do not commit.
 set -a && source .env && set +a
 npm test -- --project web-shell
+npm test -- --project web-elements
 
 # Run the same partition used by CI (one-based index, total shard count).
 node scripts/run-shard.mjs 1 4
 ```
+
+All 25 web-elements cases passed locally on the first attempt using
+the real Chromium browser and standard report captures, without model calls.
+The matching 25 unchanged upstream Playwright cases also passed against the same
+source checkout and server (Chromium, one worker, 4.2 seconds). This verifies the
+original and migrated contracts for this batch, not the multi-browser matrix.
+The source fixtures and upstream tests are unchanged. `javascript` is used only
+for the original `document.fonts.ready` prerequisite, not selector-based actions.
+Hosted validation remains pending. The local full workspace build was attempted
+but blocked by missing `cargo`; it is not a passing build result.
 
 ## Case-writing guidelines
 

@@ -67,28 +67,42 @@ test('generated JSON-in-YAML shards collect through the real SDK with unchanged 
   const root = fileURLToPath(new URL('../', import.meta.url));
   const directory = await mkdtemp(join(tmpdir(), 'midscene-shard-collection-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
-  const { projects: [project] } = await loadTestProject(
+  const { projects } = await loadTestProject(
     join(root, 'midscene.config.ts'),
   );
-  const options = {
-    resolveNode: project.nodes.get.bind(project.nodes),
-    variables: project.variables,
-    env: process.env,
-  };
-  const collect = absolutePath =>
-    collectWorkflowDocument({
+  const collect = absolutePath => {
+    const project = projects.find(item =>
+      item.name
+        === (absolutePath.includes('/cases/web-elements/')
+          ? 'web-elements'
+          : 'web-shell')
+    );
+    assert.ok(project);
+    const options = {
+      resolveNode: project.nodes.get.bind(project.nodes),
+      variables: project.variables,
+      env: process.env,
+    };
+    return collectWorkflowDocument({
       projectId: project.projectId,
       projectName: project.name,
       sourcePath: absolutePath,
       absolutePath,
     }, options);
+  };
   const documents = await loadDocuments(root);
   const original = documents.flatMap(item =>
     collect(join(root, item.path)).cases.map(item => item.definition)
   );
   const actual = [];
   for (let index = 1; index <= 4; index++) {
-    const { include, names } = await materializeShard(
+    const {
+      include,
+      names,
+      projects: selectedProjects,
+      shellInclude,
+      elementsInclude,
+    } = await materializeShard(
       directory,
       documents,
       index,
@@ -96,6 +110,22 @@ test('generated JSON-in-YAML shards collect through the real SDK with unchanged 
     );
     const discovered = discoverTestFiles(directory, { include: [include] });
     assert.ok(discovered.length > 0);
+    const shellFiles = discoverTestFiles(directory, {
+      include: [shellInclude],
+    });
+    const elementsFiles = discoverTestFiles(directory, {
+      include: [elementsInclude],
+    });
+    assert.equal(shellFiles.length + elementsFiles.length, discovered.length);
+    assert.equal(
+      new Set([...shellFiles, ...elementsFiles]).size,
+      discovered.length,
+    );
+    assert.equal(selectedProjects.includes('web-shell'), shellFiles.length > 0);
+    assert.equal(
+      selectedProjects.includes('web-elements'),
+      elementsFiles.length > 0,
+    );
     const partition = [];
     for (const path of discovered) {
       actual.push(...collect(path).cases.map(item => item.definition));

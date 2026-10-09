@@ -10,7 +10,7 @@ export interface ExpectInput {
   value?: string;
   attribute?: string;
   css?: string;
-  property?: 'tagName';
+  property?: 'tagName' | 'scrollTop';
   shadowCssHostRule?: true;
   bounds?: 'width' | 'height';
   equals?: string | number;
@@ -128,8 +128,10 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
         || (css === undefined && attribute === undefined)))
     || (input.immediate !== undefined
       && (typeof input.immediate !== 'boolean'
-        || (bounds === undefined && attribute === undefined)))
-    || (greaterThan !== undefined && bounds === undefined)
+        || (bounds === undefined && attribute === undefined
+          && property !== 'scrollTop')))
+    || (greaterThan !== undefined && bounds === undefined
+      && property !== 'scrollTop')
     || (attribute !== undefined
       ? typeof attribute !== 'string' || !attribute
         || Number(equals !== undefined) + Number(contains !== undefined) !== 1
@@ -137,8 +139,13 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
       ? typeof css !== 'string' || !css || typeof equals !== 'string'
         || contains !== undefined
       : property !== undefined
-      ? property !== 'tagName' || typeof equals !== 'string'
-        || contains !== undefined
+      ? property === 'scrollTop'
+        ? input.immediate !== true
+          || Number(equals !== undefined) + Number(greaterThan !== undefined)
+            !== 1
+          || !Number.isFinite(equals ?? greaterThan) || contains !== undefined
+        : property !== 'tagName' || typeof equals !== 'string'
+          || contains !== undefined
       : bounds !== undefined
       ? !['width', 'height'].includes(bounds)
         || Number(equals !== undefined) + Number(greaterThan !== undefined)
@@ -152,7 +159,10 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
     );
   }
   const expected = text ?? textContains ?? value ?? equals ?? contains;
-  if (bounds === undefined && typeof expected !== 'string') {
+  if (
+    bounds === undefined && property !== 'scrollTop'
+    && typeof expected !== 'string'
+  ) {
     throw new Error('web.expect requires a string expected value.');
   }
   if (!input.immediate) {
@@ -174,7 +184,9 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
           css,
         )
         : property !== undefined
-        ? locator.evaluate(element => element.tagName)
+        ? property === 'scrollTop'
+          ? locator.evaluate(element => element.scrollTop)
+          : locator.evaluate(element => element.tagName)
         : bounds !== undefined
         ? locator.boundingBox().then((box) => box?.[bounds] ?? null)
         : attribute !== undefined

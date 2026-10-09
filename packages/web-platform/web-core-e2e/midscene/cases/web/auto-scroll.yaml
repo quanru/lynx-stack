@@ -1,0 +1,39 @@
+cases:
+  - name: basic-main-query-selector
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-main-query-selector"
+      - sleep: { ms: 100 }
+      - web.expect: {
+          selector: scroll-view,
+          property: scrollTop,
+          equals: 0,
+          immediate: true,
+        }
+      - aiAct: Click the center of the visible text "Tap me to enable auto-scroll" once. Do not manually scroll or click the colored items.
+      - sleep: { ms: 3000 }
+      - web.expect: {
+          selector: scroll-view,
+          property: scrollTop,
+          greaterThan: 100,
+          immediate: true,
+        }
+      - recordToReport: Original main-thread querySelector autoScroll contract passed
+  - name: basic-ref-main-invoke-ui-method
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-ref-main-invoke-ui-method"
+      - sleep: { ms: 100 }
+      - web.expect: {
+          selector: "#scroll-view",
+          property: scrollTop,
+          equals: 0,
+          immediate: true,
+        }
+      - aiAct: Click the center of the visible text "Tap me to enable auto-scroll" once. Do not manually scroll or click the gradient items.
+      - sleep: { ms: 2000 }
+      - web.expect: {
+          selector: "#scroll-view",
+          property: scrollTop,
+          greaterThan: 100,
+          immediate: true,
+        }
+      - recordToReport: Original main-thread ref invoke autoScroll contract passed

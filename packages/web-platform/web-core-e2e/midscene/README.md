@@ -3,7 +3,7 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 162 cases: the
+while Midscene drives user interactions. The suite contains 164 cases: the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
 ReactLynx migrations, plus 15 continuation cases with original deterministic
 assertion values, 25 original web-elements CSS/attribute contracts and two
@@ -13,7 +13,8 @@ the separate middleware entry-point contract, three directory-bundle contracts,
 and the original setState callback, lazy-component instance-isolation,
 frame-element JavaScript property, four relative-coordinate contracts, the error
 display contract, the original input bindinput payload contract, and two
-shadow-root stylesheet inclusion contracts.
+shadow-root stylesheet inclusion contracts and two main-thread autoScroll
+contracts.
 The 147-case four-shard run passed in
 [run 37940214877](https://github.com/quanru/lynx-stack/actions/runs/37940214877),
 including report generation and Pages publication. Downloaded publication
@@ -47,7 +48,8 @@ no coordinates, selector actions, atomic action nodes or changed assertions are 
 The pushed 160-case batch at `8c3ea9e` is running in
 [run 37948938294](https://github.com/quanru/lynx-stack/actions/runs/37948938294).
 The seven additions after 153 cases are not yet hosted-verified. Two further
-shadow-root stylesheet cases are local-only while this run completes.
+shadow-root stylesheet cases and two autoScroll cases are local-only while this
+run completes.
 The animation translations retain original event-sequence match counts and CSS
 checks, with ordinary clicks through `aiAct`. No local model credentials are
 configured; local checks do not make AI calls.
@@ -58,7 +60,7 @@ The external-bundle case and its unchanged original Chromium test both passed
 locally on the first attempt. `web.expect` with `matchingText`/`count` uses the
 same public `page.getByText` locator and checks the complete count, without
 selecting the first match or requiring visibility. Duplicate matches fail the
-original count-one contract. All 60 model-free checks and typechecking pass.
+original count-one contract. All 62 model-free checks and typechecking pass.
 The unchanged middleware original also passes locally. Its migration retains
 the separate `/middleware` URL, two ordinary `aiAct` clicks, and immediate
 inline-style substring reads; it does not extend the original Chromium-only,
@@ -95,6 +97,13 @@ concatenation, exact `/:host\s*,\s*lynx-view\s*\{/` regular expression and singl
 read. Computed CSS, screenshot appearance, polling and swallowed fetch errors
 are not substitutes for stylesheet inclusion in the actual shadow root. These
 two cases have not run in hosted CI yet.
+
+Both unchanged main-thread autoScroll originals pass locally. The translations
+use one ordinary `aiAct` click, then read the actual `scrollTop` JavaScript
+property once: exactly zero before the click and strictly greater than 100
+afterward. Standard `sleep` nodes retain the original 100 ms setup and 3000/2000
+ms observation windows; no extra retries, polling, manual scroll action or
+visual substitute is added. Their AI execution awaits hosted CI.
 
 This directory sits one level below the `packages/web-platform/*` pnpm
 workspace glob and is not a workspace member. It has its own `package.json`

@@ -14,7 +14,7 @@ remain in scope as deterministic contracts, not visual AI tests.
 Run `node scripts/inventory-upstream.mjs` to refresh this source inventory.
 These are source declarations, including named skipped tests, not runtime case
 counts. Loops, browser projects, SSR variants, and conditional skips change the
-runtime denominator. Do not subtract the 162 YAML cases from these totals:
+runtime denominator. Do not subtract the 164 YAML cases from these totals:
 the pilot cases are not one-to-one replacements, and upstream names can repeat.
 
 | Suite/file                                      | Source declarations | Migration status                                                                                                      |
@@ -45,8 +45,11 @@ case total.
 The latest fully successful batch is 147/147 in run 37940214877. The subsequent
 153-case run executed 115 cases (113 passed, two failed); 38 were blocked by
 endpoint preflight. The pushed 160-case batch is running in 37948938294. The two
-additional shadow stylesheet translations and their originals passed locally;
-162 collected cases must not be described as 162 hosted-verified migrations.
+additional shadow stylesheet translations and their originals passed locally.
+Two further autoScroll originals pass locally; their `aiAct` translations retain
+the original fixed observation windows and immediate numeric property reads,
+but await hosted execution. The 164 collected cases must not be described as
+164 hosted-verified migrations.
 
 1. Four independent CI shards partition YAML cases by stable file/case order.
    At most two shards run concurrently; cases within a shard remain serial.

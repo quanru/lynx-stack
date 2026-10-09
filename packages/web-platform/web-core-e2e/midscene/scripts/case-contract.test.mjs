@@ -130,9 +130,7 @@ test('ten interaction migrations retain the original assertion targets and value
     const name = section.split('\n')[0];
     assert.ok(section.includes(`?casename=${name}\n`));
     assert.match(section, /- aiAct:/);
-    const assertions = section.split('\n').filter((line) =>
-      line.includes('- web.expect:')
-    );
+    const assertions = section.match(/- web\.expect:\s*\{[^}]*\}/g) ?? [];
     assert.equal(assertions.length, expected[name].length, name);
     expected[name].forEach(([selector, attribute, operator, value], index) => {
       assert.ok(assertions[index].includes(`selector: "${selector}"`), name);

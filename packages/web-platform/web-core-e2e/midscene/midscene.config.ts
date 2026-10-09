@@ -11,6 +11,10 @@ import type {
 } from '@midscene/test/midscene';
 import { chromium, type Browser, type Page } from 'playwright';
 import { expectWebValue, type ExpectInput } from './expectation.js';
+import {
+  prepareLynxViewStyle,
+  type FixtureStyleInput,
+} from './fixture-style.js';
 
 // @midscene/core writes agent reports to
 // <cwd>/midscene_run/report/<reportFileName>.html. releaseAgent must return the
@@ -98,7 +102,7 @@ const webSetup = defineProjectSetup<WebProjectContext>({
 const webExpectNode = defineNode<ExpectInput, void, WebProjectContext>({
   name: 'web.expect',
   description:
-    'Preserve upstream text, input value, attribute, computed CSS, and bounding-box assertions through the open Lynx shadow root.',
+    'Preserve upstream text, input value, attribute, JavaScript property, computed CSS, and bounding-box assertions through the open Lynx shadow root.',
   async execute(execution) {
     if (execution.scope !== 'case') {
       throw new Error('web.expect can only be used as a case-level step.');
@@ -112,6 +116,25 @@ const webExpectNode = defineNode<ExpectInput, void, WebProjectContext>({
         ),
       execution.input,
     );
+  },
+});
+
+const webFixtureStyleNode = defineNode<
+  FixtureStyleInput,
+  void,
+  WebProjectContext
+>({
+  name: 'web.prepareLynxView',
+  description:
+    'Install the original offset or transform fixture before navigation and initial layout events.',
+  async execute(execution) {
+    if (execution.scope !== 'case') {
+      throw new Error(
+        'web.prepareLynxView can only be used as a case-level step.',
+      );
+    }
+    const page = await execution.context.getPage(execution.case.runId);
+    await prepareLynxViewStyle(page, execution.input);
   },
 });
 
@@ -154,6 +177,7 @@ function createWebProject(
         } satisfies AgentProvider<WebProjectContext>,
       }),
       webExpectNode,
+      webFixtureStyleNode,
     ],
     files: { include: [include] },
     variables,

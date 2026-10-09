@@ -1,0 +1,11 @@
+cases:
+  - name: api-frame-element-map
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-frame-element-map"
+      - recordToReport: Before checking the original mapped element JavaScript property
+      - web.expect: {
+          selector: "#target",
+          property: tagName,
+          equals: LYNX-VIEW,
+        }
+      - recordToReport: Original frame element tagName property passed

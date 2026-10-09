@@ -10,6 +10,7 @@ export interface ExpectInput {
   value?: string;
   attribute?: string;
   css?: string;
+  property?: 'tagName';
   bounds?: 'width' | 'height';
   equals?: string | number;
   greaterThan?: number;
@@ -60,6 +61,7 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
     value,
     attribute,
     css,
+    property,
     bounds,
     equals,
     greaterThan,
@@ -72,6 +74,7 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
     value !== undefined,
     attribute !== undefined,
     css !== undefined,
+    property !== undefined,
     bounds !== undefined,
   ];
   if (
@@ -92,6 +95,9 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
       : css !== undefined
       ? typeof css !== 'string' || !css || typeof equals !== 'string'
         || contains !== undefined
+      : property !== undefined
+      ? property !== 'tagName' || typeof equals !== 'string'
+        || contains !== undefined
       : bounds !== undefined
       ? !['width', 'height'].includes(bounds)
         || Number(equals !== undefined) + Number(greaterThan !== undefined)
@@ -110,9 +116,10 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
   }
   if (!input.immediate) {
     await locator.waitFor({
-      state: css !== undefined || attribute !== undefined
-        ? 'attached'
-        : 'visible',
+      state:
+        css !== undefined || attribute !== undefined || property !== undefined
+          ? 'attached'
+          : 'visible',
       timeout: timeoutMs,
     });
   }
@@ -125,6 +132,8 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
             getComputedStyle(element).getPropertyValue(property),
           css,
         )
+        : property !== undefined
+        ? locator.evaluate(element => element.tagName)
         : bounds !== undefined
         ? locator.boundingBox().then((box) => box?.[bounds] ?? null)
         : attribute !== undefined
@@ -151,7 +160,8 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
     if (input.immediate || Date.now() >= deadline) {
       throw new Error(
         `web.expect ${selector} ${
-          css ?? bounds ?? attribute ?? (value !== undefined ? 'value' : 'text')
+          css ?? property ?? bounds ?? attribute
+            ?? (value !== undefined ? 'value' : 'text')
         } timed out; expected ${input.not ? 'not ' : ''}${
           substring !== undefined ? 'to contain ' : ''
         }${

@@ -133,6 +133,45 @@ test('immediate attributes retain a single raw read without waiting into a pass'
   }
 });
 
+test('tagName uses the original JavaScript property, not an attribute or case-folded string', async () => {
+  const locator = {
+    waitFor: async ({ state }) => assert.equal(state, 'attached'),
+    evaluate: async fn =>
+      fn({
+        tagName: 'LYNX-VIEW',
+        getAttribute() {
+          throw new Error('must not use attributes');
+        },
+      }),
+  };
+  await expectWebValue(locator, {
+    selector: '#target',
+    property: 'tagName',
+    equals: 'LYNX-VIEW',
+  });
+  for (const tagName of ['lynx-view', ' LYNX-VIEW ', null]) {
+    await assert.rejects(
+      expectWebValue({ ...locator, evaluate: async fn => fn({ tagName }) }, {
+        selector: '#target',
+        property: 'tagName',
+        equals: 'LYNX-VIEW',
+        timeoutMs: 1,
+      }),
+      /timed out/,
+    );
+  }
+  for (const property of ['textContent', 'height', '']) {
+    await assert.rejects(
+      expectWebValue(locator, {
+        selector: '#target',
+        property,
+        equals: 'LYNX-VIEW',
+      }),
+      /web.expect requires/,
+    );
+  }
+});
+
 test('malformed assertions fail closed', async () => {
   for (
     const input of [

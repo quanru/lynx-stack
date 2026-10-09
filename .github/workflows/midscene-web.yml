@@ -201,6 +201,7 @@ jobs:
           echo "open files limit before: soft=$(ulimit -Sn), hard=$(ulimit -Hn)"
           ulimit -Sn "$(ulimit -Hn)"
           echo "open files limit after: soft=$(ulimit -Sn), hard=$(ulimit -Hn)"
+          node scripts/check-fixture-style.mjs
           node scripts/run-shard.mjs ${{ matrix.shard }} 4
 
       - name: Stage Web report for this attempt

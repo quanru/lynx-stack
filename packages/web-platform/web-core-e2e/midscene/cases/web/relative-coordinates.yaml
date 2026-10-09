@@ -1,0 +1,34 @@
+cases:
+  - name: api-bindlayoutchange-lynx-view-relative
+    steps:
+      - web.prepareLynxView: { style: offset }
+      - gotoUrl: "${shellUrl}?casename=api-bindlayoutchange-lynx-view-relative"
+      - recordToReport: Offset fixture before the original layout event assertion
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+      - recordToReport: Original offset layout event result passed
+  - name: api-bindlayoutchange-lynx-view-relative-transformed
+    steps:
+      - web.prepareLynxView: { style: transform }
+      - gotoUrl: "${shellUrl}?casename=api-bindlayoutchange-lynx-view-relative"
+      - recordToReport: Transformed fixture before the original first measurement assertion
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+      - recordToReport: Original transformed first measurement result passed
+  - name: api-boundingclientrect-lynx-view-relative
+    steps:
+      - web.prepareLynxView: { style: offset }
+      - gotoUrl: "${shellUrl}?casename=api-boundingclientrect-lynx-view-relative"
+      - recordToReport: Offset fixture before the original boundingClientRect assertion
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+      - recordToReport: Original view relative boundingClientRect result passed

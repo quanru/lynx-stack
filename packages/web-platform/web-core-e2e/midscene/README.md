@@ -3,30 +3,41 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 153 cases: the
+while Midscene drives user interactions. The suite contains 158 cases: the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
 ReactLynx migrations, plus 15 continuation cases with original deterministic
 assertion values, 25 original web-elements CSS/attribute contracts and two
 CSS variable fallback contracts, two frame auto-sizing contracts, and the original
 external-bundle evaluation/stylesheet contract, two animation callback cases,
 the separate middleware entry-point contract, three directory-bundle contracts,
-and the original setState callback and lazy-component instance-isolation contracts.
-The 144-case
-four-shard run passed in
-[run 37936010087](https://github.com/quanru/lynx-stack/actions/runs/37936010087),
+and the original setState callback, lazy-component instance-isolation,
+frame-element JavaScript property and four relative-coordinate contracts.
+The 147-case four-shard run passed in
+[run 37940214877](https://github.com/quanru/lynx-stack/actions/runs/37940214877),
 including report generation and Pages publication. Downloaded publication
-evidence has 144 linked screenshots and no missing report/preview targets; all
-149 unique published report/preview URLs returned HTTP 200. The textarea input
-filter case required one retry: its old action goal incorrectly demanded that
+evidence has 147 linked screenshots and no missing report/preview targets; all
+152 unique published report/preview URLs returned HTTP 200. There were 148
+attempts, with only `basic-css-var` retried. The animation and external-bundle
+translations passed on their first attempts.
+In the earlier 144-case run, the textarea input filter case required one retry:
+its old action goal incorrectly demanded that
 filtered punctuation remain visible. The local correction retains the complete
 original input payload and exact `foobar` assertion, but stops after sending the
 input rather than trying to undo application filtering. It needs hosted validation.
-The 147-case batch is running in
-[run 37940214877](https://github.com/quanru/lynx-stack/actions/runs/37940214877).
+The pushed 153-case batch is running in
+[run 37944694673](https://github.com/quanru/lynx-stack/actions/runs/37944694673).
+Shard 2 failed during endpoint preflight with a network connection timeout,
+before any case executed. Other shards are still running; rerun that shard
+after the workflow finishes, without cancelling their evidence.
+Shard 3 completed with 37/38 passing. Its lazy-component readiness incorrectly
+required a visible Load Component label, but the fixture's raw view child text
+does not render. Local screenshots confirm an unlabelled red square. The local
+correction uses visible colors/relationships while retaining four clicks and six
+exact CSS assertions; credentialed validation is still pending.
+The five newer cases are local additions and are not yet hosted-verified.
 The animation translations retain original event-sequence match counts and CSS
-checks, with ordinary clicks through `aiAct`. Their unchanged originals pass
-locally, but the translations require credentialed CI execution; no local model
-credentials are configured.
+checks, with ordinary clicks through `aiAct`. No local model credentials are
+configured; local checks do not make AI calls.
 
 ## Why this is a separate directory
 
@@ -34,7 +45,7 @@ The external-bundle case and its unchanged original Chromium test both passed
 locally on the first attempt. `web.expect` with `matchingText`/`count` uses the
 same public `page.getByText` locator and checks the complete count, without
 selecting the first match or requiring visibility. Duplicate matches fail the
-original count-one contract. All 47 model-free checks and typechecking pass.
+original count-one contract. All 54 model-free checks and typechecking pass.
 The unchanged middleware original also passes locally. Its migration retains
 the separate `/middleware` URL, two ordinary `aiAct` clicks, and immediate
 inline-style substring reads; it does not extend the original Chromium-only,
@@ -46,6 +57,22 @@ translations passed locally on their first attempt, with two linked screenshots
 and complete HTML reports. The development-mode and middleware AI clicks still
 require hosted execution; no local model calls were made.
 
+The original frame-element mapping and its translation both passed locally on
+their first attempt. The adapter reads the actual JavaScript `tagName`, not an
+attribute or a case-folded surrogate.
+
+The four relative-coordinate originals pass locally. Three translations without
+AI clicks also pass on their first attempt; the tap translation awaits CI.
+`web.prepareLynxView` installs only the original offset/transform fixture before
+navigation, not a selector-based user action. Browser verification found two
+initialization hazards: serialized function helpers from the config loader, and
+the original helper observing `document.documentElement` before `<html>` exists.
+The adapter sends literal browser source, and both helpers now observe Document.
+`scripts/check-fixture-style.mjs` uses the real SDK loader and browser to require
+actual `(200, 200)` placement and no page errors before CI executes cases.
+Original CSS assertions and fixture routes remain unchanged; an origin-position
+green result alone is not accepted as migration evidence.
+
 This directory sits one level below the `packages/web-platform/*` pnpm
 workspace glob and is not a workspace member. It has its own `package.json`
 and lockfile, installs with `npm ci`, and does not affect the repository's pnpm
@@ -54,19 +81,21 @@ or Turbo dependency graph. Playwright is pinned to the repository's version,
 
 ## Cases
 
-| YAML                                      | Case bundles                                                                                                          | Coverage                                                                                        |
-| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `cases/web/shell.yaml` (2)                | `basic-bindtap`                                                                                                       | Visual click and pink-to-green round-trip through the shadow root and worker                    |
-| `cases/web/elements.yaml` (3)             | `basic-element-text-color`, `-image-src`, `-input-bindinput`                                                          | Gradient text, remote image loading, and input-event value mirroring                            |
-| `cases/web/events.yaml` (10)              | Global events, tap payloads, simultaneous handlers, and x-input                                                       | AI-driven interactions with exact upstream attribute, text, and input-value checks              |
-| `cases/web/expansion.yaml` (85)           | Styling, lazy components, frames, native-module results, events, inputs, and linear layout                            | Original assertion sequences, computed CSS, exact bounding-box dimensions, text, and attributes |
-| `cases/web/continuation.yaml` (15)        | Dataset, image/scroll sizing, animations, exposure, invoke callbacks, CSS removal, textarea, nested layout and reload | Original deterministic assertions and click counts                                              |
-| `cases/web-elements/contracts.yaml` (7)   | Layout, dataset, filter-image and x-image events, swiper alignment                                                    | Original HTML fixtures, font readiness, and exact computed CSS                                  |
-| `cases/web-elements/attributes.yaml` (18) | Input type/inputmode, spellcheck and enterkeyhint propagation                                                         | Exact attributes on the original inner input and textarea elements                              |
-| `cases/web/css-fallback.yaml` (2)         | CSS variable fallback and nested fallback                                                                             | Original computed background color, with font readiness and standard report captures            |
-| `cases/web/frame-sizing.yaml` (2)         | Frame auto-height and auto-width                                                                                      | Exact attributes and their negation; original immediate numeric height comparison               |
-| `cases/web/text-count.yaml` (4)           | External bundle, animation callbacks and setState callback                                                            | Original positive/zero getByText counts, event sequences and computed background color          |
-| `cases/web/middleware.yaml` (1)           | Middleware basic-bindtap entry point                                                                                  | Original middleware URL, two clicks and single-read inline-style substring checks               |
+| YAML                                                                             | Case bundles                                                                                                          | Coverage                                                                                        |
+| -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `cases/web/shell.yaml` (2)                                                       | `basic-bindtap`                                                                                                       | Visual click and pink-to-green round-trip through the shadow root and worker                    |
+| `cases/web/elements.yaml` (3)                                                    | `basic-element-text-color`, `-image-src`, `-input-bindinput`                                                          | Gradient text, remote image loading, and input-event value mirroring                            |
+| `cases/web/events.yaml` (10)                                                     | Global events, tap payloads, simultaneous handlers, and x-input                                                       | AI-driven interactions with exact upstream attribute, text, and input-value checks              |
+| `cases/web/expansion.yaml` (85)                                                  | Styling, lazy components, frames, native-module results, events, inputs, and linear layout                            | Original assertion sequences, computed CSS, exact bounding-box dimensions, text, and attributes |
+| `cases/web/continuation.yaml` (15)                                               | Dataset, image/scroll sizing, animations, exposure, invoke callbacks, CSS removal, textarea, nested layout and reload | Original deterministic assertions and click counts                                              |
+| `cases/web-elements/contracts.yaml` (7)                                          | Layout, dataset, filter-image and x-image events, swiper alignment                                                    | Original HTML fixtures, font readiness, and exact computed CSS                                  |
+| `cases/web-elements/attributes.yaml` (18)                                        | Input type/inputmode, spellcheck and enterkeyhint propagation                                                         | Exact attributes on the original inner input and textarea elements                              |
+| `cases/web/css-fallback.yaml` (2)                                                | CSS variable fallback and nested fallback                                                                             | Original computed background color, with font readiness and standard report captures            |
+| `cases/web/frame-sizing.yaml` (2)                                                | Frame auto-height and auto-width                                                                                      | Exact attributes and their negation; original immediate numeric height comparison               |
+| `cases/web/text-count.yaml` (4)                                                  | External bundle, animation callbacks and setState callback                                                            | Original positive/zero getByText counts, event sequences and computed background color          |
+| `cases/web/middleware.yaml` (1)                                                  | Middleware basic-bindtap entry point                                                                                  | Original middleware URL, two clicks and single-read inline-style substring checks               |
+| `cases/web/properties.yaml` (1)                                                  | Frame element mapping                                                                                                 | Original exact JavaScript tagName property                                                      |
+| `cases/web/relative-coordinates.yaml` (3) and `relative-coordinate-tap.yaml` (1) | Offset layout, transformed layout, tap and boundingClientRect                                                         | Pre-navigation initialization, original routes and exact computed CSS                           |
 
 `text-count.yaml` also retains `expectNoText` as an exact zero-match assertion,
 not a substring or visibility check. `reentrant-lazy.yaml` preserves the original

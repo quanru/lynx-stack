@@ -19,6 +19,9 @@ for (
     ['directory-bundles', 2],
     ['directory-interactions', 1],
     ['reentrant-lazy', 1],
+    ['properties', 1],
+    ['relative-coordinates', 3],
+    ['relative-coordinate-tap', 1],
   ]
 ) {
   test(`${count} ${file} migrations retain original assertion counts, values, CSS order, and clicks`, async () => {
@@ -121,18 +124,54 @@ for (
         item.name + ' must be an original test, not a split or invented case',
       );
       const body = original.getText(ast);
+      if (file.startsWith('relative-coordinate')) {
+        const transformed = item.name.endsWith('-transformed');
+        assert.deepEqual(item.steps[0], {
+          'web.prepareLynxView': {
+            style: transformed ? 'transform' : 'offset',
+          },
+        });
+        assert.match(body, /await installLynxViewStyle\(page,/);
+        assert.ok(
+          body.indexOf('installLynxViewStyle') < body.indexOf('await goto'),
+        );
+        assert.match(
+          body,
+          transformed
+            ? /installLynxViewStyle\(page, 'transform: translate\(200px, 200px\);'\)/
+            : /installLynxViewStyle\(page, offsetCss\)/,
+        );
+        assert.match(
+          source,
+          /const offsetCss = 'margin-top: 200px; margin-left: 200px;'/,
+        );
+        assert.equal(
+          item.steps[1].gotoUrl.url,
+          project.variables.shellUrl + '?casename='
+            + (transformed
+              ? 'api-bindlayoutchange-lynx-view-relative'
+              : item.name),
+        );
+        if (transformed) {
+          assert.match(
+            body,
+            /goto\(page, 'api-bindlayoutchange-lynx-view-relative'\)/,
+          );
+        }
+      }
       if (file === 'reentrant-lazy') {
         const actions = item.steps.filter(step => step.aiAct).map(step =>
           step.aiAct.prompt
         );
         assert.equal(actions.length, 4);
         for (const index of [0, 2]) {
-          assert.match(actions[index], /red square labelled "Load Component"/);
+          assert.match(actions[index], /RED square with no visible text/);
         }
         assert.match(actions[1], /BLUE.*RIGHT.*upper row ABOVE/);
         assert.match(actions[3], /BLUE.*RIGHT.*lower row BELOW/);
         for (const prompt of actions) {
           assert.match(prompt, /Stop after that single click/);
+          assert.doesNotMatch(prompt, /labelled|Load Component/);
           assert.doesNotMatch(prompt, /\b\d+\s*(?:px|pixels)\b|#[\w-]+/);
         }
       }
@@ -258,6 +297,7 @@ for (
           if (
             [
               'toHaveCSS',
+              'toHaveJSProperty',
               'toHaveText',
               'toContainText',
               'toContain',
@@ -324,6 +364,12 @@ for (
             ...originalCheck.args,
             originalCheck.not,
           ], item.name);
+        } else if (originalCheck.matcher === 'toHaveJSProperty') {
+          assert.deepEqual(
+            [check.property, expected],
+            originalCheck.args,
+            item.name,
+          );
         } else if (originalCheck.matcher === 'toHaveAttribute') {
           assert.equal(check.attribute, originalCheck.args[0], item.name);
           assert.equal(
@@ -387,6 +433,9 @@ for (
             'aiAct',
             'web.expect',
             'recordToReport',
+            ...(file.startsWith('relative-coordinate')
+              ? ['web.prepareLynxView']
+              : []),
             ...(suite === 'web-elements'
                 || [
                   'css-fallback',

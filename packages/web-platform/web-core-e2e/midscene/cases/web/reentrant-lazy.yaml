@@ -2,22 +2,22 @@ cases:
   - name: basic-lazy-component-when-need-with-itself
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-lazy-component-when-need-with-itself"
-      - aiWaitFor: A red square labelled Load Component appears below a green-and-blue row.
-      - aiAct: Click the red square labelled "Load Component" once. Stop after that single click.
+      - aiWaitFor: A RED square with no visible text appears directly below the GREEN square in the top green-and-blue row.
+      - aiAct: Click the RED square with no visible text directly below the top row's GREEN square once. Stop after that single click.
       - web.expect: {
           selector: "#target1",
           index: 0,
           css: background-color,
           equals: "rgb(0, 128, 0)",
         }
-      - aiAct: Click the BLUE square on the RIGHT in the upper row ABOVE the red Load Component square once, so its LEFT green neighbor becomes pink. Do not click the lower row. Stop after that single click.
+      - aiAct: Click the BLUE square on the RIGHT in the upper row ABOVE the RED square once, so its LEFT green neighbor becomes pink. Do not click the lower row. Stop after that single click.
       - web.expect: {
           selector: "#target1",
           index: 0,
           css: background-color,
           equals: "rgb(255, 192, 203)",
         }
-      - aiAct: Click the same red square labelled "Load Component" exactly one time. Stop after that single click.
+      - aiAct: Click the same RED square with no visible text BETWEEN the upper and lower rows exactly one time. Stop after that single click.
       - web.expect: {
           selector: "#target1",
           index: 0,
@@ -30,7 +30,7 @@ cases:
           css: background-color,
           equals: "rgb(0, 128, 0)",
         }
-      - aiAct: Click the BLUE square on the RIGHT in the lower row BELOW the red Load Component square once, so its LEFT green neighbor becomes pink. Do not click the upper row. Stop after that single click.
+      - aiAct: Click the BLUE square on the RIGHT in the lower row BELOW the RED square once, so its LEFT green neighbor becomes pink. Do not click the upper row. Stop after that single click.
       - web.expect: {
           selector: "#target1",
           index: 0,

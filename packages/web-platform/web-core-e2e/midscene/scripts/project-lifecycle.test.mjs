@@ -4,6 +4,7 @@ import { createRequire } from 'node:module';
 import vm from 'node:vm';
 import test from 'node:test';
 import ts from 'typescript';
+import { prepareLynxViewStyle } from '../fixture-style.ts';
 
 test('projects keep independent registries and release only their own case resources', async () => {
   const events = [];
@@ -27,6 +28,7 @@ test('projects keep independent registries and release only their own case resou
       createMidsceneNodes: options => [{ provider: options.agentProvider }],
     },
     './expectation.js': { expectWebValue: () => {} },
+    './fixture-style.js': { prepareLynxViewStyle },
     playwright: {
       chromium: {
         async launch() {

@@ -68,6 +68,10 @@ test('85 migrations retain original assertion counts, values, CSS order, and cli
       if (item.name.includes('multi')) {
         assert.match(toggles[0], /upper half/);
         assert.match(toggles[1], /lower half/);
+        const finalWait = item.steps.at(-1).aiWaitFor.prompt;
+        assert.match(finalWait, /continuous pink column on the left/);
+        assert.match(finalWait, /upper and lower halves/);
+        assert.doesNotMatch(finalWait, /two pink squares/i);
       } else {
         assert.match(toggles[0], /LEFT green neighbor pink/);
         assert.match(toggles[1], /LEFT pink neighbor green/);

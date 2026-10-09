@@ -1085,7 +1085,7 @@ cases:
           "css": "background-color",
           "equals": "rgb(255, 192, 203)",
         }
-      - aiWaitFor: "Two pink squares and two blue squares are visible."
+      - aiWaitFor: "The colored block has a continuous pink column on the left and a continuous blue column on the right. Both the upper and lower halves of the left column are pink."
 
   - name: basic-lazy-component-multi-import
     steps:
@@ -1129,7 +1129,7 @@ cases:
           "css": "background-color",
           "equals": "rgb(255, 192, 203)",
         }
-      - aiWaitFor: "Two pink squares and two blue squares are visible."
+      - aiWaitFor: "The colored block has a continuous pink column on the left and a continuous blue column on the right. Both the upper and lower halves of the left column are pink."
 
   - name: basic-lazy-component-when-needed
     steps:

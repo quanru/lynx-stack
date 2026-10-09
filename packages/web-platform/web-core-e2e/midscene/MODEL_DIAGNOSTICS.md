@@ -85,5 +85,14 @@ introduced. Contract tests guard those spatial goals and continue comparing all
 original selectors, indices, values, and assertion sequences. Agent-level
 `aiContexts.aiAct` also reinforces the active protocol's coordinate convention,
 including the normalization formula and full-image center, without supplying
-target coordinates or changing the adapter. A fresh hosted
-run is required to establish that the revised goals resolve the failures.
+target coordinates or changing the adapter.
+
+Run [37902693708](https://github.com/quanru/lynx-stack/actions/runs/37902693708)
+passed 98 of 100 cases. All five lazy-component cases passed their original
+exact assertions. The two stacked-row cases failed only the final additive
+visual wait: it described four separate squares, but adjacent same-color rows
+form two uninterrupted columns without visible boundaries. That wait now
+describes a pink left column (both upper and lower halves) and a blue right
+column. Individual observer assertions remain unchanged and establish that
+both original targets changed color. A fresh full run must verify this final
+description correction.

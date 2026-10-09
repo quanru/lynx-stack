@@ -22,23 +22,3 @@ cases:
           equals: "rgb(0, 128, 0)",
         }
       - recordToReport: Original split-by-module stylesheet contract passed
-  - name: config-mode-dev-with-all-in-one
-    steps:
-      - gotoUrl: "${shellUrl}?casename=config-mode-dev-with-all-in-one&hasdir=true"
-      - javascript: "document.fonts.ready.then(() => true)"
-      - recordToReport: Before exercising the original all-in-one development bundle
-      - aiAct: Click the pink square at the top-left once. Stop after that single click.
-      - web.expect: {
-          selector: "#target",
-          attribute: style,
-          contains: green,
-          immediate: true,
-        }
-      - aiAct: Click the green square at the top-left once. Stop after that single click.
-      - web.expect: {
-          selector: "#target",
-          attribute: style,
-          contains: pink,
-          immediate: true,
-        }
-      - recordToReport: Original development bundle click and inline-style contracts passed

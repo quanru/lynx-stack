@@ -16,7 +16,8 @@ for (
     ['frame-sizing', 2],
     ['text-count', 3],
     ['middleware', 1, 'web', 'middleware.spec.ts'],
-    ['directory-bundles', 3],
+    ['directory-bundles', 2],
+    ['directory-interactions', 1],
   ]
 ) {
   test(`${count} ${file} migrations retain original assertion counts, values, CSS order, and clicks`, async () => {
@@ -119,7 +120,7 @@ for (
         item.name + ' must be an original test, not a split or invented case',
       );
       const body = original.getText(ast);
-      if (file === 'directory-bundles') {
+      if (file.startsWith('directory-')) {
         assert.match(body, /goto\(page, title, undefined, true\)/);
         assert.equal(
           item.steps[0].gotoUrl.url,
@@ -371,6 +372,7 @@ for (
                   'text-count',
                   'middleware',
                   'directory-bundles',
+                  'directory-interactions',
                 ].includes(file)
               ? ['javascript']
               : []),
@@ -383,6 +385,7 @@ for (
       );
       if (
         suite === 'web-elements'
+        || file === 'directory-interactions'
         || ['css-fallback', 'text-count', 'middleware', 'directory-bundles']
           .includes(file)
       ) {
@@ -402,7 +405,7 @@ for (
             ? project.variables.shellUrl
               + 'middleware?casename=/dist/basic-bindtap.web.bundle'
             : project.variables.shellUrl + '?casename=' + item.name
-              + (file === 'directory-bundles' ? '&hasdir=true' : ''),
+              + (file.startsWith('directory-') ? '&hasdir=true' : ''),
         );
       }
     }

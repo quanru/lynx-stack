@@ -10,7 +10,7 @@ for (
   const [file, count, suite = 'web', sourceFile = 'reactlynx.spec.ts'] of [
     ['expansion', 85],
     ['continuation', 15],
-    ['contracts', 7, 'web-elements'],
+    ['contracts', 8, 'web-elements'],
     ['attributes', 18, 'web-elements'],
     ['css-fallback', 2, 'web', 'reactlynx-css-var-fallback.spec.ts'],
     ['frame-sizing', 2],
@@ -25,6 +25,7 @@ for (
     ['error-display', 1],
     ['remaining-inputs', 1],
     ['shadow-stylesheets', 2],
+    ['unit-dimensions', 3],
   ]
 ) {
   test(`${count} ${file} migrations retain original assertion counts, values, CSS order, and clicks`, async () => {
@@ -516,6 +517,7 @@ for (
                   'directory-bundles',
                   'directory-interactions',
                   'shadow-stylesheets',
+                  'unit-dimensions',
                 ].includes(file)
               ? ['javascript']
               : []),

@@ -1,6 +1,13 @@
 # Exact CSS contracts from web-elements/tests/web-elements.spec.ts.
 # The independent Rsbuild server serves the original HTML fixtures unchanged.
 cases:
+  - name: web-elements/scroll-view/scroll-view-must-linear
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/scroll-view/scroll-view-must-linear.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original linear scroll-view flex-shrink contract
+      - web.expect: { selector: "#target", css: flex-shrink, equals: "0" }
+      - recordToReport: Original linear scroll-view flex-shrink contract passed
   - name: web-elements/layout/lynx-display-do-not-use-flatten-tree
     steps:
       - gotoUrl: "${elementsUrl}tests/fixtures/layout/lynx-display-do-not-use-flatten-tree.html"

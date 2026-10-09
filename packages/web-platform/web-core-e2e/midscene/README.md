@@ -3,10 +3,10 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 166 cases: the
+while Midscene drives user interactions. The suite contains 170 cases: the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
 ReactLynx migrations, plus 15 continuation cases with original deterministic
-assertion values, 25 original web-elements CSS/attribute contracts and two
+assertion values, 26 original web-elements CSS/attribute contracts and two
 CSS variable fallback contracts, two frame auto-sizing contracts, and the original
 external-bundle evaluation/stylesheet contract, two animation callback cases,
 the separate middleware entry-point contract, three directory-bundle contracts,
@@ -14,7 +14,8 @@ and the original setState callback, lazy-component instance-isolation,
 frame-element JavaScript property, four relative-coordinate contracts, the error
 display contract, the original input bindinput payload contract, and two
 shadow-root stylesheet inclusion contracts and two main-thread autoScroll
-contracts and two setNativeProps text-count contracts.
+contracts, two setNativeProps text-count contracts and three rpx/ppx dimension
+contracts.
 The 147-case four-shard run passed in
 [run 37940214877](https://github.com/quanru/lynx-stack/actions/runs/37940214877),
 including report generation and Pages publication. Downloaded publication
@@ -49,7 +50,8 @@ The pushed 160-case batch at `8c3ea9e` is running in
 [run 37948938294](https://github.com/quanru/lynx-stack/actions/runs/37948938294).
 The seven additions after 153 cases are not yet hosted-verified. Two further
 shadow-root stylesheet cases, two autoScroll cases and two setNativeProps
-text-count cases are local-only while this run completes.
+text-count cases, one scroll-view CSS case and three rpx/ppx cases are local-only
+while this run completes.
 The animation translations retain original event-sequence match counts and CSS
 checks, with ordinary clicks through `aiAct`. No local model credentials are
 configured; local checks do not make AI calls.
@@ -60,7 +62,7 @@ The external-bundle case and its unchanged original Chromium test both passed
 locally on the first attempt. `web.expect` with `matchingText`/`count` uses the
 same public `page.getByText` locator and checks the complete count, without
 selecting the first match or requiring visibility. Duplicate matches fail the
-original count-one contract. All 66 model-free checks and typechecking pass.
+original count-one contract. All 68 model-free checks and typechecking pass.
 The unchanged middleware original also passes locally. Its migration retains
 the separate `/middleware` URL, two ordinary `aiAct` clicks, and immediate
 inline-style substring reads; it does not extend the original Chromium-only,
@@ -115,6 +117,20 @@ while existing upstream `toHaveCount` translations keep their polling semantics.
 Standard `javascript` timers avoid the model configuration required by SDK
 `sleep`; no model calls or custom wait nodes are needed. Hosted proof is pending.
 
+The additional web-elements `scroll-view-must-linear` translation preserves the
+original `#target` computed `flex-shrink: 0` assertion. Its unchanged original
+passes against the fixture server on port 3081; all eight cases in the translated
+contract file pass locally on their first attempts. It does not replace any
+neighboring scroll-view pixel, fading-edge or CDP scroll-event case.
+
+All three rpx/ppx dimension originals and their corrected YAML translations pass
+locally. Standard JavaScript applies the original fixture's 50 px container width
+and, for rpx, `--rpx-unit: 1cqw`; both target width and height must remain exactly
+`10px`. AST checks compare the mutation statements with the original locator
+callback, and VM checks execute the literal script, without an implicit function
+wrapper that would hide a top-level return error. This is fixture/API setup, not
+a selector-based user action. Missing or duplicate LynxViews fail closed.
+
 This directory sits one level below the `packages/web-platform/*` pnpm
 workspace glob and is not a workspace member. It has its own `package.json`
 and lockfile, installs with `npm ci`, and does not affect the repository's pnpm
@@ -130,7 +146,7 @@ or Turbo dependency graph. Playwright is pinned to the repository's version,
 | `cases/web/events.yaml` (10)                                                     | Global events, tap payloads, simultaneous handlers, and x-input                                                       | AI-driven interactions with exact upstream attribute, text, and input-value checks              |
 | `cases/web/expansion.yaml` (85)                                                  | Styling, lazy components, frames, native-module results, events, inputs, and linear layout                            | Original assertion sequences, computed CSS, exact bounding-box dimensions, text, and attributes |
 | `cases/web/continuation.yaml` (15)                                               | Dataset, image/scroll sizing, animations, exposure, invoke callbacks, CSS removal, textarea, nested layout and reload | Original deterministic assertions and click counts                                              |
-| `cases/web-elements/contracts.yaml` (7)                                          | Layout, dataset, filter-image and x-image events, swiper alignment                                                    | Original HTML fixtures, font readiness, and exact computed CSS                                  |
+| `cases/web-elements/contracts.yaml` (8)                                          | Layout, dataset, filter-image and x-image events, swiper alignment and scroll-view linear shrink                      | Original HTML fixtures, font readiness, and exact computed CSS                                  |
 | `cases/web-elements/attributes.yaml` (18)                                        | Input type/inputmode, spellcheck and enterkeyhint propagation                                                         | Exact attributes on the original inner input and textarea elements                              |
 | `cases/web/css-fallback.yaml` (2)                                                | CSS variable fallback and nested fallback                                                                             | Original computed background color, with font readiness and standard report captures            |
 | `cases/web/frame-sizing.yaml` (2)                                                | Frame auto-height and auto-width                                                                                      | Exact attributes and their negation; original immediate numeric height comparison               |

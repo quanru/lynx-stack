@@ -14,7 +14,7 @@ remain in scope as deterministic contracts, not visual AI tests.
 Run `node scripts/inventory-upstream.mjs` to refresh this source inventory.
 These are source declarations, including named skipped tests, not runtime case
 counts. Loops, browser projects, SSR variants, and conditional skips change the
-runtime denominator. Do not subtract the 166 YAML cases from these totals:
+runtime denominator. Do not subtract the 170 YAML cases from these totals:
 the pilot cases are not one-to-one replacements, and upstream names can repeat.
 
 | Suite/file                                      | Source declarations | Migration status                                                                                                      |
@@ -49,8 +49,12 @@ additional shadow stylesheet translations and their originals passed locally.
 Two further autoScroll originals pass locally; their `aiAct` translations retain
 the original fixed observation windows and immediate numeric property reads,
 but await hosted execution. Two further setNativeProps text-count originals and
-translations pass locally, including the exact sequential count sum. The 166
-collected cases must not be described as 166 hosted-verified migrations.
+translations pass locally, including the exact sequential count sum. The
+scroll-view linear-shrink original and translation also pass locally; all eight
+cases in its contract file passed on their first attempts. Three rpx/ppx dimension
+originals and corrected translations also pass locally, retaining the original
+fixture mutations and exact width/height assertions. The 170 collected cases
+must not be described as 170 hosted-verified migrations.
 
 1. Four independent CI shards partition YAML cases by stable file/case order.
    At most two shards run concurrently; cases within a shard remain serial.

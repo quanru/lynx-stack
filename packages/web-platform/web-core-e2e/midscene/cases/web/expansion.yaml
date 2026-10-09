@@ -331,7 +331,7 @@ cases:
       - gotoUrl: "${shellUrl}?casename=api-frame-data-update"
       - aiWaitFor: "The text data:before is visible."
       - web.expect: { "selector": "#frame-data", "text": "data:before" }
-      - aiAct: "Click the text update exactly once."
+      - aiAct: "Click directly on the center of the letters in the standalone word update exactly once. It is the fourth line of text, below global:, separated by a blank gap. Target the letters, not the blank area underneath, to change data:before to data:after. Stop after that single click."
       - web.expect: { "selector": "#frame-data", "text": "data:after" }
       - aiWaitFor: "The text data:after is visible."
 
@@ -523,7 +523,7 @@ cases:
   - name: config-css-remove-scope-false-display-linear
     steps:
       - gotoUrl: "${shellUrl}?casename=config-css-remove-scope-false-display-linear"
-      - aiWaitFor: "Page content is visible."
+      - aiWaitFor: "A green square is visible."
       - web.expect: {
           "selector": "#sub",
           "css": "--lynx-display",
@@ -555,7 +555,7 @@ cases:
   - name: basic-element-svg-bindload
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-element-svg-bindload"
-      - aiWaitFor: "A green area is visible."
+      - aiWaitFor: "A black basketball icon is visible."
       - web.expect: {
           "selector": "#result",
           "css": "background-color",

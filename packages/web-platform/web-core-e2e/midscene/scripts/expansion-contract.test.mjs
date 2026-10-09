@@ -127,6 +127,12 @@ for (
       );
       const body = original.getText(ast);
       if (item.name === 'api-animation-event') {
+        for (const action of item.steps.filter(step => step.aiAct)) {
+          assert.deepEqual(action.aiAct.options, {
+            deepLocate: true,
+            cacheable: false,
+          });
+        }
         const actions = item.steps.filter(step => step.aiAct).map(step =>
           step.aiAct.prompt
         );

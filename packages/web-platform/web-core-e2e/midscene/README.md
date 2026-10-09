@@ -39,7 +39,10 @@ Shard 1 completed with 38/39 passing. The animation event case's action traces
 and screenshots show missed text targets: one pixel left of the animation line,
 the transition line instead of animation, and blank space below the second
 section. Exact assertions correctly failed. Local action descriptions now require
-word centers and adjacent-line relationships; a new CI run must validate them.
+word centers and adjacent-line relationships, with standard `aiAct` deepLocate
+and caching disabled. SDK 1.13.1 then performs dedicated visual grounding instead
+of directly executing the planning model's point. A new CI run must validate it;
+no coordinates, selector actions, atomic action nodes or changed assertions are added.
 The seven newer cases are local additions and are not yet hosted-verified.
 The animation translations retain original event-sequence match counts and CSS
 checks, with ordinary clicks through `aiAct`. No local model credentials are

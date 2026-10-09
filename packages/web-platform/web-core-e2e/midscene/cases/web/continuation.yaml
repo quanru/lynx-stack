@@ -188,7 +188,7 @@ cases:
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-element-x-textarea-input-filter"
       - aiWaitFor: A bordered text area containing bindinput is visible near the upper-left.
-      - aiAct: Focus the text area and press Enter, then select all of its contents and replace them with "foobar!@#)". Finish with the caret at the end.
+      - aiAct: 'Focus the text area, press Enter, then replace all its contents by entering the literal string "foobar!@#)" exactly once. Enter every character including punctuation. The application intentionally filters punctuation; completion means sending that input, not retaining the unfiltered text. Stop after that single entry; do not retry or correct the filtered result.'
       - web.expect: { selector: ".result", text: foobar }
 
   - name: basic-flex-nested-linear-setting

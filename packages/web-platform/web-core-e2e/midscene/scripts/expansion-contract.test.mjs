@@ -114,6 +114,29 @@ for (
         item.name + ' must be an original test, not a split or invented case',
       );
       const body = original.getText(ast);
+      if (item.name === 'basic-element-x-textarea-input-filter') {
+        assert.match(body, /locator\('textarea'\)\.press\('Enter'\)/);
+        assert.match(body, /locator\('textarea'\)\.fill\('foobar!@#\)'\)/);
+        const actions = item.steps.filter(step => step.aiAct);
+        assert.equal(actions.length, 1);
+        const prompt = actions[0].aiAct.prompt;
+        assert.match(prompt, /press Enter/);
+        assert.match(prompt, /literal string "foobar!@#\)" exactly once/);
+        assert.match(prompt, /Enter every character including punctuation/);
+        assert.match(
+          prompt,
+          /completion means sending that input, not retaining the unfiltered text/,
+        );
+        assert.match(prompt, /do not retry or correct the filtered result/);
+        const fixture = readFileSync(
+          new URL(
+            '../../tests/reactlynx/basic-element-x-textarea-input-filter/index.jsx',
+            import.meta.url,
+          ),
+          'utf8',
+        );
+        assert.ok(fixture.includes('input-filter=\'[^a-zA-Z0-9]\''));
+      }
       assert.doesNotMatch(
         body,
         /diffScreenShot|toMatchSnapshot|test\.skip\(true|addInitScript|page\.evaluate/,

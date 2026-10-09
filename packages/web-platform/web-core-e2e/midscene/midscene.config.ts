@@ -10,7 +10,11 @@ import type {
   MidsceneUIAgent,
 } from '@midscene/test/midscene';
 import { chromium, type Browser, type Page } from 'playwright';
-import { expectWebValue, type ExpectInput } from './expectation.js';
+import {
+  expectWebCount,
+  expectWebValue,
+  type ExpectInput,
+} from './expectation.js';
 import {
   prepareLynxViewStyle,
   type FixtureStyleInput,
@@ -108,6 +112,16 @@ const webExpectNode = defineNode<ExpectInput, void, WebProjectContext>({
       throw new Error('web.expect can only be used as a case-level step.');
     }
     const page = await execution.context.getPage(execution.case.runId);
+    if (execution.input.matchingTexts !== undefined) {
+      await expectWebCount(async () => {
+        let total = 0;
+        for (const text of execution.input.matchingTexts!) {
+          total += await page.getByText(text).count();
+        }
+        return total;
+      }, execution.input);
+      return;
+    }
     await expectWebValue(
       execution.input.matchingText !== undefined
         ? page.getByText(execution.input.matchingText)

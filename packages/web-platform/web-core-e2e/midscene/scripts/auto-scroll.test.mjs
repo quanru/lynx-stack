@@ -91,10 +91,11 @@ test('auto-scroll translations retain original selectors, read order, thresholds
     assert.equal(clickTargets.length, 1);
     assert.deepEqual(item.steps.map(step => Object.keys(step)[0]), [
       'gotoUrl',
-      'sleep',
+      'javascript',
+      'recordToReport',
       'web.expect',
       'aiAct',
-      'sleep',
+      'javascript',
       'web.expect',
       'recordToReport',
     ]);
@@ -103,23 +104,27 @@ test('auto-scroll translations retain original selectors, read order, thresholds
       project.variables.shellUrl + '?casename=' + item.name,
     );
     assert.deepEqual(
-      item.steps.filter(step => step.sleep).map(step => step.sleep.ms),
-      waits,
+      item.steps.filter(step => step.javascript).map(step =>
+        step.javascript.script
+      ),
+      waits.map(ms =>
+        `new Promise(resolve => setTimeout(() => resolve(true), ${ms}))`
+      ),
     );
-    assert.deepEqual(item.steps[2]['web.expect'], {
+    assert.deepEqual(item.steps[3]['web.expect'], {
       selector,
       property: 'scrollTop',
       equals: 0,
       immediate: true,
     });
-    assert.deepEqual(item.steps[5]['web.expect'], {
+    assert.deepEqual(item.steps[6]['web.expect'], {
       selector,
       property: 'scrollTop',
       greaterThan: 100,
       immediate: true,
     });
-    assert.match(item.steps[3].aiAct.prompt, /Tap me to enable auto-scroll/);
-    assert.match(item.steps[3].aiAct.prompt, /Do not manually scroll/);
+    assert.match(item.steps[4].aiAct.prompt, /Tap me to enable auto-scroll/);
+    assert.match(item.steps[4].aiAct.prompt, /Do not manually scroll/);
   }
 });
 

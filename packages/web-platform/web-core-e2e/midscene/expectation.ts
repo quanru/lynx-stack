@@ -3,6 +3,7 @@ import type { Locator } from 'playwright';
 export interface ExpectInput {
   selector?: string;
   matchingText?: string;
+  matchingTexts?: string[];
   count?: number;
   index?: number;
   text?: string;
@@ -19,6 +20,52 @@ export interface ExpectInput {
   contains?: string;
   not?: boolean;
   timeoutMs?: number;
+}
+
+// Keep count assertions independent of locator visibility. Aggregate reads are
+// supplied in source order by the caller, not merged into a visible text query.
+export async function expectWebCount(
+  readCount: () => Promise<number>,
+  input: ExpectInput,
+) {
+  const {
+    matchingText,
+    matchingTexts,
+    count,
+    timeoutMs = 15_000,
+    immediate = false,
+  } = input;
+  const single = typeof matchingText === 'string'
+    && matchingTexts === undefined;
+  const aggregate = matchingText === undefined && Array.isArray(matchingTexts)
+    && matchingTexts.length > 0
+    && matchingTexts.every(text => typeof text === 'string');
+  if (
+    (!single && !aggregate) || !Number.isInteger(count) || count! < 0
+    || typeof immediate !== 'boolean' || !Number.isFinite(timeoutMs)
+    || timeoutMs <= 0
+    || Object.keys(input).some(key =>
+      !['matchingText', 'matchingTexts', 'count', 'timeoutMs', 'immediate']
+        .includes(key)
+    )
+  ) {
+    throw new Error(
+      'web.expect requires matchingText or matchingTexts and a nonnegative integer count only.',
+    );
+  }
+  const deadline = Date.now() + timeoutMs;
+  for (;;) {
+    const actual = await readCount();
+    if (actual === count) return;
+    if (immediate || Date.now() >= deadline) {
+      throw new Error(
+        `web.expect text ${
+          JSON.stringify(matchingText ?? matchingTexts)
+        } expected count ${count}, got ${actual}`,
+      );
+    }
+    await new Promise(resolve => setTimeout(resolve, Math.min(200, timeoutMs)));
+  }
 }
 
 // Same value source as upstream getInShadowCSS: include both inline styles and
@@ -64,36 +111,19 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
     }
     return;
   }
-  if (input.matchingText !== undefined || input.count !== undefined) {
-    const { matchingText, count, timeoutMs = 15_000 } = input;
-    if (
-      typeof matchingText !== 'string' || !Number.isInteger(count) || count! < 0
-      || !Number.isFinite(timeoutMs) || timeoutMs <= 0
-      || Object.keys(input).some(key =>
-        !['matchingText', 'count', 'timeoutMs'].includes(key)
-      )
-    ) {
+  if (
+    input.matchingText !== undefined || input.matchingTexts !== undefined
+    || input.count !== undefined
+  ) {
+    // Aggregate counts need the Page-level path in web.expect, not one locator.
+    if (input.matchingTexts !== undefined) {
       throw new Error(
-        'web.expect requires matchingText and a nonnegative integer count only.',
+        'web.expect aggregate counts require the Page count adapter.',
       );
     }
     // Match upstream page.getByText(text).toHaveCount(n), including hidden
     // matches and duplicate elements. No nth(), visibility gate or innerText.
-    const deadline = Date.now() + timeoutMs;
-    for (;;) {
-      const actual = await locator.count();
-      if (actual === count) return;
-      if (Date.now() >= deadline) {
-        throw new Error(
-          `web.expect text ${
-            JSON.stringify(matchingText)
-          } expected count ${count}, got ${actual}`,
-        );
-      }
-      await new Promise(resolve =>
-        setTimeout(resolve, Math.min(200, timeoutMs))
-      );
-    }
+    return expectWebCount(() => locator.count(), input);
   }
   const {
     selector,

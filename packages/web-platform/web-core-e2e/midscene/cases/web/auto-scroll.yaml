@@ -2,7 +2,8 @@ cases:
   - name: basic-main-query-selector
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-main-query-selector"
-      - sleep: { ms: 100 }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before checking the original main-thread querySelector scrollTop
       - web.expect: {
           selector: scroll-view,
           property: scrollTop,
@@ -10,7 +11,7 @@ cases:
           immediate: true,
         }
       - aiAct: Click the center of the visible text "Tap me to enable auto-scroll" once. Do not manually scroll or click the colored items.
-      - sleep: { ms: 3000 }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 3000))"
       - web.expect: {
           selector: scroll-view,
           property: scrollTop,
@@ -21,7 +22,8 @@ cases:
   - name: basic-ref-main-invoke-ui-method
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-ref-main-invoke-ui-method"
-      - sleep: { ms: 100 }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before checking the original main-thread ref scrollTop
       - web.expect: {
           selector: "#scroll-view",
           property: scrollTop,
@@ -29,7 +31,7 @@ cases:
           immediate: true,
         }
       - aiAct: Click the center of the visible text "Tap me to enable auto-scroll" once. Do not manually scroll or click the gradient items.
-      - sleep: { ms: 2000 }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 2000))"
       - web.expect: {
           selector: "#scroll-view",
           property: scrollTop,

@@ -3,7 +3,7 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 160 cases: the
+while Midscene drives user interactions. The suite contains 162 cases: the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
 ReactLynx migrations, plus 15 continuation cases with original deterministic
 assertion values, 25 original web-elements CSS/attribute contracts and two
@@ -12,7 +12,8 @@ external-bundle evaluation/stylesheet contract, two animation callback cases,
 the separate middleware entry-point contract, three directory-bundle contracts,
 and the original setState callback, lazy-component instance-isolation,
 frame-element JavaScript property, four relative-coordinate contracts, the error
-display contract and the original input bindinput payload contract.
+display contract, the original input bindinput payload contract, and two
+shadow-root stylesheet inclusion contracts.
 The 147-case four-shard run passed in
 [run 37940214877](https://github.com/quanru/lynx-stack/actions/runs/37940214877),
 including report generation and Pages publication. Downloaded publication
@@ -25,11 +26,11 @@ its old action goal incorrectly demanded that
 filtered punctuation remain visible. The local correction retains the complete
 original input payload and exact `foobar` assertion, but stops after sending the
 input rather than trying to undo application filtering. It needs hosted validation.
-The pushed 153-case batch is running in
+The previous 153-case batch failed in
 [run 37944694673](https://github.com/quanru/lynx-stack/actions/runs/37944694673).
 Shard 2 failed during endpoint preflight with a network connection timeout,
-before any case executed. Other shards are still running; rerun that shard
-after the workflow finishes, without cancelling their evidence.
+before any of its 38 cases executed. Shard 4 passed 38/38. In total, 113/115
+executed cases passed; 38 did not execute. Report publication succeeded.
 Shard 3 completed with 37/38 passing. Its lazy-component readiness incorrectly
 required a visible Load Component label, but the fixture's raw view child text
 does not render. Local screenshots confirm an unlabelled red square. The local
@@ -43,7 +44,10 @@ word centers and adjacent-line relationships, with standard `aiAct` deepLocate
 and caching disabled. SDK 1.13.1 then performs dedicated visual grounding instead
 of directly executing the planning model's point. A new CI run must validate it;
 no coordinates, selector actions, atomic action nodes or changed assertions are added.
-The seven newer cases are local additions and are not yet hosted-verified.
+The pushed 160-case batch at `8c3ea9e` is running in
+[run 37948938294](https://github.com/quanru/lynx-stack/actions/runs/37948938294).
+The seven additions after 153 cases are not yet hosted-verified. Two further
+shadow-root stylesheet cases are local-only while this run completes.
 The animation translations retain original event-sequence match counts and CSS
 checks, with ordinary clicks through `aiAct`. No local model credentials are
 configured; local checks do not make AI calls.
@@ -54,7 +58,7 @@ The external-bundle case and its unchanged original Chromium test both passed
 locally on the first attempt. `web.expect` with `matchingText`/`count` uses the
 same public `page.getByText` locator and checks the complete count, without
 selecting the first match or requiring visibility. Duplicate matches fail the
-original count-one contract. All 56 model-free checks and typechecking pass.
+original count-one contract. All 60 model-free checks and typechecking pass.
 The unchanged middleware original also passes locally. Its migration retains
 the separate `/middleware` URL, two ordinary `aiAct` clicks, and immediate
 inline-style substring reads; it does not extend the original Chromium-only,
@@ -84,6 +88,13 @@ green result alone is not accepted as migration evidence.
 The error-display original and translation also passed locally on their first
 attempt. The input bindinput original passes locally; its AI translation retains
 Enter, the complete `foobar` payload and the exact `foobar-6-6` result, and awaits CI.
+
+Both shadow-root stylesheet originals and their YAML translations passed locally
+on their first attempts. They retain the original inline-style and fetched-link
+concatenation, exact `/:host\s*,\s*lynx-view\s*\{/` regular expression and single
+read. Computed CSS, screenshot appearance, polling and swallowed fetch errors
+are not substitutes for stylesheet inclusion in the actual shadow root. These
+two cases have not run in hosted CI yet.
 
 This directory sits one level below the `packages/web-platform/*` pnpm
 workspace glob and is not a workspace member. It has its own `package.json`

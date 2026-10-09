@@ -2,7 +2,10 @@
 
 The scope includes web-core-e2e and web-elements, not only ReactLynx examples.
 Original tests, fixtures, snapshots, browser variants, and SSR variants remain
-unchanged until equivalent verification has run successfully. Unit tests and
+unchanged until equivalent verification has run successfully, except for the
+documented fixture-initialization defect in `installLynxViewStyle`: observing
+Document instead of a not-yet-created documentElement makes its existing offset
+and transform cases actually exercise their intended placement. Unit tests and
 benchmarks are not UI migration candidates. Server-rendering integration tests
 remain in scope as deterministic contracts, not visual AI tests.
 
@@ -11,14 +14,14 @@ remain in scope as deterministic contracts, not visual AI tests.
 Run `node scripts/inventory-upstream.mjs` to refresh this source inventory.
 These are source declarations, including named skipped tests, not runtime case
 counts. Loops, browser projects, SSR variants, and conditional skips change the
-runtime denominator. Do not subtract the 160 YAML cases from these totals:
+runtime denominator. Do not subtract the 162 YAML cases from these totals:
 the pilot cases are not one-to-one replacements, and upstream names can repeat.
 
 | Suite/file                                      | Source declarations | Migration status                                                                                                      |
 | ----------------------------------------------- | ------------------: | --------------------------------------------------------------------------------------------------------------------- |
 | web-core-e2e/reactlynx.spec.ts                  |                 342 | 115 YAML cases passed across four hosted shards in run 37924702935; pixel contracts remain separate                   |
 | web-core-e2e/web-core.test.ts                   |                  35 | Pending exact API/callback contract integration                                                                       |
-| web-core-e2e/reactlynx-css-var-fallback.spec.ts |                   2 | Both Chromium client cases and unchanged originals passed locally; hosted, SSR and other browsers pending             |
+| web-core-e2e/reactlynx-css-var-fallback.spec.ts |                   2 | Both Chromium client cases passed locally and in hosted run 37940214877; SSR and other browsers pending               |
 | web-core-e2e/ssr-no-js.spec.ts                  |                   2 | Pending; loops expand runtime coverage                                                                                |
 | web-core-e2e/middleware.spec.ts                 |                   1 | Original Chromium client case passed locally; translation collected with exact source contracts, AI execution pending |
 | web-core-e2e/server-tests/server-e2e.test.ts    |                  17 | Pending deterministic server HTML snapshot integration                                                                |
@@ -38,6 +41,12 @@ reported 341 counted ordinary `test()` calls only. Neither count is an executed
 case total.
 
 ## Execution and acceptance
+
+The latest fully successful batch is 147/147 in run 37940214877. The subsequent
+153-case run executed 115 cases (113 passed, two failed); 38 were blocked by
+endpoint preflight. The pushed 160-case batch is running in 37948938294. The two
+additional shadow stylesheet translations and their originals passed locally;
+162 collected cases must not be described as 162 hosted-verified migrations.
 
 1. Four independent CI shards partition YAML cases by stable file/case order.
    At most two shards run concurrently; cases within a shard remain serial.

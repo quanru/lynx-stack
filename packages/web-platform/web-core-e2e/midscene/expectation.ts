@@ -11,6 +11,7 @@ export interface ExpectInput {
   attribute?: string;
   css?: string;
   property?: 'tagName';
+  shadowCssHostRule?: true;
   bounds?: 'width' | 'height';
   equals?: string | number;
   greaterThan?: number;
@@ -20,9 +21,49 @@ export interface ExpectInput {
   timeoutMs?: number;
 }
 
+// Same value source as upstream getInShadowCSS: include both inline styles and
+// fetched shadow-root stylesheets, not computed style or document-level CSS.
+export async function readShadowCSS(element: Element) {
+  const shadowRoot = element.shadowRoot!;
+  const inlineCSS = Array.from(
+    shadowRoot.querySelectorAll('style'),
+    style => style.textContent ?? '',
+  );
+  const linkedCSS = await Promise.all(
+    Array.from(
+      shadowRoot.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]'),
+      link => fetch(link.href).then(response => response.text()),
+    ),
+  );
+  return inlineCSS.concat(linkedCSS).join('\n');
+}
+
 // Match the original assertion's value source and comparison, without trimming
 // event payloads or substituting a visual approximation.
 export async function expectWebValue(locator: Locator, input: ExpectInput) {
+  if (input.shadowCssHostRule !== undefined) {
+    if (
+      input.shadowCssHostRule !== true || typeof input.selector !== 'string'
+      || !input.selector
+      || (input.index !== undefined
+        && (!Number.isInteger(input.index) || input.index < 0))
+      || Object.keys(input).some(key =>
+        !['selector', 'index', 'shadowCssHostRule'].includes(key)
+      )
+    ) {
+      throw new Error(
+        'web.expect shadowCssHostRule requires a selector and optional index only.',
+      );
+    }
+    // Original expect(rawString).toMatch is one read, not eventual polling.
+    const actual = await locator.evaluate(readShadowCSS);
+    if (!/:host\s*,\s*lynx-view\s*\{/.test(actual)) {
+      throw new Error(
+        'web.expect shadow CSS does not contain the original host rule.',
+      );
+    }
+    return;
+  }
   if (input.matchingText !== undefined || input.count !== undefined) {
     const { matchingText, count, timeoutMs = 15_000 } = input;
     if (

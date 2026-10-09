@@ -1,0 +1,16 @@
+cases:
+  - name: api-frame-shadow-css
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-frame-src"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original nested frame stylesheet contract
+      - web.expect: { selector: "#frame-ready", text: "frame:ready" }
+      - web.expect: { selector: "#target", shadowCssHostRule: true }
+      - recordToReport: Original nested frame shadow stylesheet rule passed
+  - name: lynx-view styles are included in its shadow root
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-lynx-view-not-auto"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original Lynx view stylesheet contract
+      - web.expect: { selector: lynx-view, shadowCssHostRule: true }
+      - recordToReport: Original Lynx view shadow stylesheet rule passed

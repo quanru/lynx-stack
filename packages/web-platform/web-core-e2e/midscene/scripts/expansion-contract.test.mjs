@@ -24,6 +24,7 @@ for (
     ['relative-coordinate-tap', 1],
     ['error-display', 1],
     ['remaining-inputs', 1],
+    ['shadow-stylesheets', 2],
   ]
 ) {
   test(`${count} ${file} migrations retain original assertion counts, values, CSS order, and clicks`, async () => {
@@ -126,6 +127,16 @@ for (
         item.name + ' must be an original test, not a split or invented case',
       );
       const body = original.getText(ast);
+      if (file === 'shadow-stylesheets') {
+        const route = item.name === 'api-frame-shadow-css'
+          ? 'api-frame-src'
+          : 'basic-element-lynx-view-not-auto';
+        assert.match(body, new RegExp('goto\\(page, \'' + route + '\'\\)'));
+        assert.equal(
+          item.steps[0].gotoUrl.url,
+          project.variables.shellUrl + '?casename=' + route,
+        );
+      }
       if (item.name === 'api-animation-event') {
         for (const action of item.steps.filter(step => step.aiAct)) {
           assert.deepEqual(action.aiAct.options, {
@@ -293,6 +304,12 @@ for (
           || ts.isNonNullExpression(node)
         ) return locatorSpec(node.expression);
         if (ts.isIdentifier(node)) return variables.get(node.text);
+        if (
+          ts.isCallExpression(node)
+          && node.expression.getText(ast) === 'getInShadowCSS'
+        ) {
+          return { ...locatorSpec(node.arguments[0]), shadowCssHostRule: true };
+        }
         if (ts.isPropertyAccessExpression(node)) {
           if (['height', 'width'].includes(node.name.text)) {
             return { ...locatorSpec(node.expression), bounds: node.name.text };
@@ -346,6 +363,7 @@ for (
             [
               'toHaveCSS',
               'toHaveJSProperty',
+              'toMatch',
               'toHaveText',
               'toContainText',
               'toContain',
@@ -412,6 +430,12 @@ for (
             ...originalCheck.args,
             originalCheck.not,
           ], item.name);
+        } else if (originalCheck.matcher === 'toMatch') {
+          assert.equal(originalCheck.locator.shadowCssHostRule, true);
+          assert.equal(check.shadowCssHostRule, true);
+          assert.deepEqual(originalCheck.args, [
+            '/:host\\s*,\\s*lynx-view\\s*\\{/',
+          ]);
         } else if (originalCheck.matcher === 'toHaveJSProperty') {
           assert.deepEqual(
             [check.property, expected],
@@ -491,6 +515,7 @@ for (
                   'middleware',
                   'directory-bundles',
                   'directory-interactions',
+                  'shadow-stylesheets',
                 ].includes(file)
               ? ['javascript']
               : []),

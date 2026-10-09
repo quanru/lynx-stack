@@ -1,0 +1,14 @@
+# Preserve expectHasText's getByText(...).toHaveCount(1), not innerText inclusion.
+cases:
+  - name: external-bundle
+    steps:
+      - gotoUrl: "${shellUrl}?casename=external-bundle"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking external bundle evaluation and stylesheet contracts
+      - web.expect: { matchingText: hello-from-external, count: 1 }
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(1, 2, 3)",
+        }
+      - recordToReport: Original external bundle contracts passed

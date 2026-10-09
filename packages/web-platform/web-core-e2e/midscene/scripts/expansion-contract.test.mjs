@@ -14,6 +14,7 @@ for (
     ['attributes', 18, 'web-elements'],
     ['css-fallback', 2, 'web', 'reactlynx-css-var-fallback.spec.ts'],
     ['frame-sizing', 2],
+    ['text-count', 1],
   ]
 ) {
   test(`${count} ${file} migrations retain original assertion counts, values, CSS order, and clicks`, async () => {
@@ -150,6 +151,16 @@ for (
         return undefined;
       }
       function scan(node) {
+        if (
+          ts.isCallExpression(node)
+          && node.expression.getText(ast) === 'expectHasText'
+        ) {
+          assert.ok(ts.isStringLiteral(node.arguments[1]));
+          assertions.push({
+            matcher: 'textCount',
+            args: [node.arguments[1].text, '1'],
+          });
+        }
         if (ts.isVariableDeclaration(node) && node.initializer) {
           const spec = locatorSpec(node.initializer);
           if (spec) variables.set(node.name.getText(ast), spec);
@@ -206,6 +217,13 @@ for (
       for (let i = 0; i < checks.length; i++) {
         const check = checks[i];
         const originalCheck = assertions[i];
+        if (originalCheck.matcher === 'textCount') {
+          assert.deepEqual(check, {
+            matchingText: originalCheck.args[0],
+            count: Number(originalCheck.args[1]),
+          });
+          continue;
+        }
         assert.deepEqual(
           { selector: check.selector, index: check.index ?? 0 },
           {
@@ -284,7 +302,8 @@ for (
             'aiAct',
             'web.expect',
             'recordToReport',
-            ...(suite === 'web-elements' || file === 'css-fallback'
+            ...(suite === 'web-elements'
+                || ['css-fallback', 'text-count'].includes(file)
               ? ['javascript']
               : []),
           ]
@@ -294,7 +313,10 @@ for (
         ),
         item.name + ' supported nodes',
       );
-      if (suite === 'web-elements' || file === 'css-fallback') {
+      if (
+        suite === 'web-elements'
+        || ['css-fallback', 'text-count'].includes(file)
+      ) {
         const javascriptSteps = item.steps.filter(step => step.javascript);
         assert.equal(javascriptSteps.length, 1);
         assert.equal(

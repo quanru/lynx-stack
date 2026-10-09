@@ -1,7 +1,9 @@
 import type { Locator } from 'playwright';
 
 export interface ExpectInput {
-  selector: string;
+  selector?: string;
+  matchingText?: string;
+  count?: number;
   index?: number;
   text?: string;
   textContains?: string;
@@ -20,6 +22,37 @@ export interface ExpectInput {
 // Match the original assertion's value source and comparison, without trimming
 // event payloads or substituting a visual approximation.
 export async function expectWebValue(locator: Locator, input: ExpectInput) {
+  if (input.matchingText !== undefined || input.count !== undefined) {
+    const { matchingText, count, timeoutMs = 15_000 } = input;
+    if (
+      typeof matchingText !== 'string' || !Number.isInteger(count) || count! < 0
+      || !Number.isFinite(timeoutMs) || timeoutMs <= 0
+      || Object.keys(input).some(key =>
+        !['matchingText', 'count', 'timeoutMs'].includes(key)
+      )
+    ) {
+      throw new Error(
+        'web.expect requires matchingText and a nonnegative integer count only.',
+      );
+    }
+    // Match upstream page.getByText(text).toHaveCount(n), including hidden
+    // matches and duplicate elements. No nth(), visibility gate or innerText.
+    const deadline = Date.now() + timeoutMs;
+    for (;;) {
+      const actual = await locator.count();
+      if (actual === count) return;
+      if (Date.now() >= deadline) {
+        throw new Error(
+          `web.expect text ${
+            JSON.stringify(matchingText)
+          } expected count ${count}, got ${actual}`,
+        );
+      }
+      await new Promise(resolve =>
+        setTimeout(resolve, Math.min(200, timeoutMs))
+      );
+    }
+  }
   const {
     selector,
     text,

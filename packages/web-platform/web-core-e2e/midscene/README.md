@@ -3,18 +3,26 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 144 cases: the
+while Midscene drives user interactions. The suite contains 145 cases: the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
 ReactLynx migrations, plus 15 continuation cases with original deterministic
 assertion values, 25 original web-elements CSS/attribute contracts and two
-CSS variable fallback contracts and two frame auto-sizing contracts. The 140-case
+CSS variable fallback contracts, two frame auto-sizing contracts, and the original
+external-bundle evaluation/stylesheet contract. The 142-case
 four-shard run passed in
-[run 37928102242](https://github.com/quanru/lynx-stack/actions/runs/37928102242),
+[run 37931947134](https://github.com/quanru/lynx-stack/actions/runs/37931947134),
 including report generation and Pages publication. Downloaded publication
-evidence has 140 linked screenshots and no missing report/preview targets.
-The next CSS fallback and frame sizing cases require separate hosted validation.
+evidence has 142 linked screenshots and no missing report/preview targets; all
+147 unique published report/preview URLs returned HTTP 200. The frame sizing
+batch is in run 37936010087; external-bundle is locally validated, not yet hosted.
 
 ## Why this is a separate directory
+
+The external-bundle case and its unchanged original Chromium test both passed
+locally on the first attempt. `web.expect` with `matchingText`/`count` uses the
+same public `page.getByText` locator and checks the complete count, without
+selecting the first match or requiring visibility. Duplicate matches fail the
+original count-one contract. All 42 model-free checks and typechecking pass.
 
 This directory sits one level below the `packages/web-platform/*` pnpm
 workspace glob and is not a workspace member. It has its own `package.json`
@@ -35,6 +43,7 @@ or Turbo dependency graph. Playwright is pinned to the repository's version,
 | `cases/web-elements/attributes.yaml` (18) | Input type/inputmode, spellcheck and enterkeyhint propagation                                                         | Exact attributes on the original inner input and textarea elements                              |
 | `cases/web/css-fallback.yaml` (2)         | CSS variable fallback and nested fallback                                                                             | Original computed background color, with font readiness and standard report captures            |
 | `cases/web/frame-sizing.yaml` (2)         | Frame auto-height and auto-width                                                                                      | Exact attributes and their negation; original immediate numeric height comparison               |
+| `cases/web/text-count.yaml` (1)           | External bundle evaluation and stylesheet                                                                             | Original getByText match count and computed background color                                    |
 
 Both expansion batches map each case name to the same test in
 `../tests/reactlynx.spec.ts`; the two event-trigger cases share the original

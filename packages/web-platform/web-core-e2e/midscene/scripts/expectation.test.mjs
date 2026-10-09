@@ -19,6 +19,45 @@ function locatorFor(values) {
   };
 }
 
+test('text count preserves zero and duplicate matches without visibility or nth selection', async () => {
+  for (const count of [0, 1, 2]) {
+    await expectWebValue({ count: async () => count }, {
+      matchingText: 'hello-from-external',
+      count,
+    });
+  }
+  for (const count of [0, 2]) {
+    await assert.rejects(
+      expectWebValue({ count: async () => count }, {
+        matchingText: 'hello-from-external',
+        count: 1,
+        timeoutMs: 1,
+      }),
+      /expected count 1/,
+    );
+  }
+  for (
+    const input of [
+      { matchingText: 'x' },
+      { count: 1 },
+      { matchingText: 'x', count: -1 },
+      { matchingText: 'x', count: 0.5 },
+      { matchingText: 'x', count: 1, selector: '#target' },
+      { matchingText: 'x', count: 1, text: 'x' },
+      { matchingText: 'x', count: 1, timeoutMs: 0 },
+    ]
+  ) {
+    await assert.rejects(
+      expectWebValue({
+        count: async () => {
+          throw new Error('must not read');
+        },
+      }, input),
+      /web.expect requires/,
+    );
+  }
+});
+
 test('exact text and input values do not trim, coerce, or accept substrings', async () => {
   for (const mode of ['text', 'value']) {
     const locator = locatorFor(['foobar-6-6']);

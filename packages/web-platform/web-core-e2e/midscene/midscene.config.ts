@@ -105,7 +105,11 @@ const webExpectNode = defineNode<ExpectInput, void, WebProjectContext>({
     }
     const page = await execution.context.getPage(execution.case.runId);
     await expectWebValue(
-      page.locator(execution.input.selector).nth(execution.input.index ?? 0),
+      execution.input.matchingText !== undefined
+        ? page.getByText(execution.input.matchingText)
+        : page.locator(execution.input.selector ?? '').nth(
+          execution.input.index ?? 0,
+        ),
       execution.input,
     );
   },

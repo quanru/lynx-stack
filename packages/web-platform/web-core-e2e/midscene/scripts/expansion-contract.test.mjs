@@ -14,7 +14,7 @@ for (
     ['attributes', 18, 'web-elements'],
     ['css-fallback', 2, 'web', 'reactlynx-css-var-fallback.spec.ts'],
     ['frame-sizing', 2],
-    ['text-count', 1],
+    ['text-count', 3],
   ]
 ) {
   test(`${count} ${file} migrations retain original assertion counts, values, CSS order, and clicks`, async () => {

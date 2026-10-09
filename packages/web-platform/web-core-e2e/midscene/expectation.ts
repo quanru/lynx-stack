@@ -10,6 +10,8 @@ export interface ExpectInput {
   css?: string;
   bounds?: 'width' | 'height';
   equals?: string | number;
+  greaterThan?: number;
+  immediate?: boolean;
   contains?: string;
   not?: boolean;
   timeoutMs?: number;
@@ -27,6 +29,7 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
     css,
     bounds,
     equals,
+    greaterThan,
     contains,
     timeoutMs = 15_000,
   } = input;
@@ -44,7 +47,11 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
     || (input.index !== undefined
       && (!Number.isInteger(input.index) || input.index < 0))
     || (input.not !== undefined
-      && (typeof input.not !== 'boolean' || css === undefined))
+      && (typeof input.not !== 'boolean'
+        || (css === undefined && attribute === undefined)))
+    || (input.immediate !== undefined
+      && (typeof input.immediate !== 'boolean' || bounds === undefined))
+    || (greaterThan !== undefined && bounds === undefined)
     || (attribute !== undefined
       ? typeof attribute !== 'string' || !attribute
         || Number(equals !== undefined) + Number(contains !== undefined) !== 1
@@ -52,8 +59,10 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
       ? typeof css !== 'string' || !css || typeof equals !== 'string'
         || contains !== undefined
       : bounds !== undefined
-      ? !['width', 'height'].includes(bounds) || typeof equals !== 'number'
-        || !Number.isFinite(equals) || contains !== undefined
+      ? !['width', 'height'].includes(bounds)
+        || Number(equals !== undefined) + Number(greaterThan !== undefined)
+          !== 1
+        || !Number.isFinite(equals ?? greaterThan) || contains !== undefined
       : equals !== undefined || contains !== undefined)
     || !Number.isFinite(timeoutMs) || timeoutMs <= 0
   ) {
@@ -65,10 +74,14 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
   if (bounds === undefined && typeof expected !== 'string') {
     throw new Error('web.expect requires a string expected value.');
   }
-  await locator.waitFor({
-    state: css !== undefined ? 'attached' : 'visible',
-    timeout: timeoutMs,
-  });
+  if (!input.immediate) {
+    await locator.waitFor({
+      state: css !== undefined || attribute !== undefined
+        ? 'attached'
+        : 'visible',
+      timeout: timeoutMs,
+    });
+  }
   const deadline = Date.now() + timeoutMs;
   for (;;) {
     const actual = await (
@@ -87,19 +100,31 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
         : locator.innerText()
     );
     const substring = textContains ?? contains;
-    const matches = text !== undefined
+    const matches = greaterThan !== undefined
+      ? typeof actual === 'number' && actual > greaterThan
+      : text !== undefined
       ? actual === text
       : substring !== undefined
       ? typeof actual === 'string' && actual.includes(substring)
       : actual === expected;
-    if (input.not ? actual !== null && !matches : matches) return;
-    if (Date.now() >= deadline) {
+    // Playwright's not.toHaveAttribute passes for an absent attribute on an
+    // existing element. Missing CSS/bounding data must still fail closed.
+    if (
+      input.not
+        ? (attribute !== undefined || actual !== null) && !matches
+        : matches
+    ) return;
+    if (input.immediate || Date.now() >= deadline) {
       throw new Error(
         `web.expect ${selector} ${
           css ?? bounds ?? attribute ?? (value !== undefined ? 'value' : 'text')
         } timed out; expected ${input.not ? 'not ' : ''}${
           substring !== undefined ? 'to contain ' : ''
-        }${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`,
+        }${
+          greaterThan !== undefined
+            ? 'greater than ' + greaterThan
+            : JSON.stringify(expected)
+        }, got ${JSON.stringify(actual)}`,
       );
     }
     await new Promise((resolve) =>

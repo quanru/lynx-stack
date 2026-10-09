@@ -13,6 +13,7 @@ for (
     ['contracts', 7, 'web-elements'],
     ['attributes', 18, 'web-elements'],
     ['css-fallback', 2, 'web', 'reactlynx-css-var-fallback.spec.ts'],
+    ['frame-sizing', 2],
   ]
 ) {
   test(`${count} ${file} migrations retain original assertion counts, values, CSS order, and clicks`, async () => {
@@ -125,6 +126,9 @@ for (
         ) return locatorSpec(node.expression);
         if (ts.isIdentifier(node)) return variables.get(node.text);
         if (ts.isPropertyAccessExpression(node)) {
+          if (['height', 'width'].includes(node.name.text)) {
+            return { ...locatorSpec(node.expression), bounds: node.name.text };
+          }
           return locatorSpec(node.expression);
         }
         if (
@@ -165,6 +169,7 @@ for (
               'toBe',
               'toEqual',
               'toStrictEqual',
+              'toBeGreaterThan',
             ].includes(matcher)
           ) {
             let expectation = node.expression.expression;
@@ -219,9 +224,24 @@ for (
         } else if (originalCheck.matcher === 'toHaveAttribute') {
           assert.equal(check.attribute, originalCheck.args[0], item.name);
           assert.equal(
-            '/' + check.contains + '/g',
+            check.contains !== undefined
+              ? '/' + check.contains + '/g'
+              : check.equals,
             originalCheck.args[1],
             item.name,
+          );
+          assert.equal(check.not ?? false, originalCheck.not, item.name);
+        } else if (originalCheck.matcher === 'toBeGreaterThan') {
+          assert.equal(check.bounds, originalCheck.locator.bounds, item.name);
+          assert.equal(
+            check.greaterThan,
+            Number(originalCheck.args[0]),
+            item.name,
+          );
+          assert.equal(
+            check.immediate,
+            true,
+            item.name + ' must not turn a single read into polling',
           );
         } else {
           if (originalCheck.locator?.attribute) {

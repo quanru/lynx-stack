@@ -3,16 +3,16 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 142 cases: the
+while Midscene drives user interactions. The suite contains 144 cases: the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
 ReactLynx migrations, plus 15 continuation cases with original deterministic
 assertion values, 25 original web-elements CSS/attribute contracts and two
-CSS variable fallback contracts. The 140-case
+CSS variable fallback contracts and two frame auto-sizing contracts. The 140-case
 four-shard run passed in
 [run 37928102242](https://github.com/quanru/lynx-stack/actions/runs/37928102242),
 including report generation and Pages publication. Downloaded publication
 evidence has 140 linked screenshots and no missing report/preview targets.
-The next two CSS fallback cases require separate hosted validation.
+The next CSS fallback and frame sizing cases require separate hosted validation.
 
 ## Why this is a separate directory
 
@@ -34,6 +34,7 @@ or Turbo dependency graph. Playwright is pinned to the repository's version,
 | `cases/web-elements/contracts.yaml` (7)   | Layout, dataset, filter-image and x-image events, swiper alignment                                                    | Original HTML fixtures, font readiness, and exact computed CSS                                  |
 | `cases/web-elements/attributes.yaml` (18) | Input type/inputmode, spellcheck and enterkeyhint propagation                                                         | Exact attributes on the original inner input and textarea elements                              |
 | `cases/web/css-fallback.yaml` (2)         | CSS variable fallback and nested fallback                                                                             | Original computed background color, with font readiness and standard report captures            |
+| `cases/web/frame-sizing.yaml` (2)         | Frame auto-height and auto-width                                                                                      | Exact attributes and their negation; original immediate numeric height comparison               |
 
 Both expansion batches map each case name to the same test in
 `../tests/reactlynx.spec.ts`; the two event-trigger cases share the original
@@ -125,6 +126,14 @@ The next two CSS fallback cases and their unchanged original Chromium tests
 also passed locally, with both migrated cases passing on their first attempt.
 Their source assertion targets, values and counts are checked separately against
 `reactlynx-css-var-fallback.spec.ts`. SSR and other browsers remain pending.
+
+The next two frame sizing cases and their unchanged original Chromium tests
+also passed locally, with both migrated cases passing on the first attempt.
+Attribute negation accepts an absent attribute on an existing element, matching
+Playwright. The auto-height bounds check retains its original single numeric
+read (`greaterThan: 0`, `immediate: true`), not a visual size approximation or
+retry-until-positive check. The 142-case run 37931947134 does not include this
+subsequent local batch. Local typechecking and all 40 model-free checks pass.
 
 After installing the pinned Rust 1.97.1 toolchain and WASM targets, the full
 local `pnpm turbo build --env-mode=loose` passed all 74 tasks. Loose mode is

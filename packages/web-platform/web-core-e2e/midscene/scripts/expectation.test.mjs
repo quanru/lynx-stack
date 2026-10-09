@@ -93,6 +93,10 @@ test('malformed assertions fail closed', async () => {
       { bounds: 'width', equals: '100' },
       { bounds: 'left', equals: 100 },
       { bounds: 'width', equals: NaN },
+      { bounds: 'width', greaterThan: '0' },
+      { bounds: 'width', greaterThan: 0, equals: 100 },
+      { css: 'width', equals: '100px', greaterThan: 0 },
+      { text: 'x', immediate: true },
       { text: 'x', not: true },
       { text: 'x', index: -1 },
       { text: 'x', index: 0.5 },
@@ -104,6 +108,45 @@ test('malformed assertions fail closed', async () => {
       /web.expect requires/,
     );
     assert.equal(locator.calls.length, 0);
+  }
+});
+
+test('original negative attributes accept absence but reject the forbidden exact value', async () => {
+  for (const value of [null, '', '100px']) {
+    await expectWebValue(locatorFor([value]), {
+      selector: '#target',
+      attribute: 'height',
+      equals: 'auto',
+      not: true,
+    });
+  }
+  await assert.rejects(
+    expectWebValue(locatorFor(['auto']), {
+      selector: '#target',
+      attribute: 'height',
+      equals: 'auto',
+      not: true,
+      timeoutMs: 1,
+    }),
+    /timed out/,
+  );
+});
+
+test('immediate numeric bounds do not round, coerce, wait, or retry into a pass', async () => {
+  const input = {
+    selector: '#target',
+    bounds: 'height',
+    greaterThan: 0,
+    immediate: true,
+  };
+  await expectWebValue(locatorFor([{ height: 0.1 }]), input);
+  for (const box of [null, { height: 0 }, { height: -1 }, { height: '1' }]) {
+    const locator = locatorFor([box, { height: 1 }]);
+    locator.waitFor = async () => {
+      throw new Error('must not add a visibility wait');
+    };
+    await assert.rejects(expectWebValue(locator, input), /timed out/);
+    assert.equal(locator.calls.length, 1);
   }
 });
 

@@ -1,0 +1,42 @@
+# Preserve attribute negation (including absent attributes) and the original
+# immediate numeric bounding-box check. A visual frame does not prove these APIs.
+cases:
+  - name: api-frame-auto-height
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-frame-auto-height"
+      - recordToReport: Before checking original auto-height frame contracts
+      - web.expect: {
+          selector: "#target",
+          attribute: auto-height,
+          equals: "true",
+        }
+      - web.expect: {
+          selector: "#target",
+          attribute: height,
+          equals: auto,
+          not: true,
+        }
+      - web.expect: { selector: "#target", css: contain, equals: content }
+      - web.expect: {
+          selector: "#target",
+          bounds: height,
+          greaterThan: 0,
+          immediate: true,
+        }
+      - recordToReport: Original auto-height frame contracts passed
+  - name: api-frame-auto-width
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-frame-auto-width"
+      - recordToReport: Before checking original auto-width frame contracts
+      - web.expect: {
+          selector: "#target",
+          attribute: auto-width,
+          equals: "true",
+        }
+      - web.expect: {
+          selector: "#target",
+          attribute: width,
+          equals: auto,
+          not: true,
+        }
+      - recordToReport: Original auto-width frame contracts passed

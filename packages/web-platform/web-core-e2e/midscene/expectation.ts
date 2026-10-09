@@ -83,7 +83,8 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
       && (typeof input.not !== 'boolean'
         || (css === undefined && attribute === undefined)))
     || (input.immediate !== undefined
-      && (typeof input.immediate !== 'boolean' || bounds === undefined))
+      && (typeof input.immediate !== 'boolean'
+        || (bounds === undefined && attribute === undefined)))
     || (greaterThan !== undefined && bounds === undefined)
     || (attribute !== undefined
       ? typeof attribute !== 'string' || !attribute

@@ -115,6 +115,24 @@ test('attributes preserve exact equality versus substring matching', async () =>
   );
 });
 
+test('immediate attributes retain a single raw read without waiting into a pass', async () => {
+  const input = {
+    selector: '#target',
+    attribute: 'style',
+    contains: 'green',
+    immediate: true,
+  };
+  await expectWebValue(locatorFor(['background:green;']), input);
+  for (const value of [null, '', 'background:pink;']) {
+    const locator = locatorFor([value, 'background:green;']);
+    locator.waitFor = async () => {
+      throw new Error('must not add a wait');
+    };
+    await assert.rejects(expectWebValue(locator, input), /timed out/);
+    assert.deepEqual(locator.calls, [['attribute', 'style']]);
+  }
+});
+
 test('malformed assertions fail closed', async () => {
   for (
     const input of [

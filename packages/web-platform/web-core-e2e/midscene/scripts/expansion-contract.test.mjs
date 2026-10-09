@@ -15,6 +15,7 @@ for (
     ['css-fallback', 2, 'web', 'reactlynx-css-var-fallback.spec.ts'],
     ['frame-sizing', 2],
     ['text-count', 3],
+    ['middleware', 1, 'web', 'middleware.spec.ts'],
   ]
 ) {
   test(`${count} ${file} migrations retain original assertion counts, values, CSS order, and clicks`, async () => {
@@ -107,13 +108,36 @@ for (
           assert.match(toggles[1], /LEFT pink neighbor green/);
         }
       }
-      const originalName = item.name.replace(/^web-elements\//, '');
+      const originalName = item.name.replace(
+        /^(?:web-elements|middleware)\//,
+        '',
+      );
       const original = originals.get(originalName);
       assert.ok(
         original,
         item.name + ' must be an original test, not a split or invented case',
       );
       const body = original.getText(ast);
+      if (file === 'middleware') {
+        assert.match(source, /test\.skip\(ENABLE_MULTI_THREAD \|\| isSSR/);
+        assert.match(source, /test\.skip\(browserName !== 'chromium'/);
+        assert.match(
+          source,
+          /middleware\?casename=\/dist\/\$\{testname\}\.web\.bundle/,
+        );
+        assert.equal(
+          item.steps[0].gotoUrl.url,
+          project.variables.shellUrl
+            + 'middleware?casename=/dist/basic-bindtap.web.bundle',
+        );
+        for (const check of item.steps.filter(step => step['web.expect'])) {
+          assert.equal(
+            check['web.expect'].immediate,
+            true,
+            'original getAttribute is a single read, not an eventual assertion',
+          );
+        }
+      }
       if (item.name === 'basic-element-x-textarea-input-filter') {
         assert.match(body, /locator\('textarea'\)\.press\('Enter'\)/);
         assert.match(body, /locator\('textarea'\)\.fill\('foobar!@#\)'\)/);
@@ -326,7 +350,7 @@ for (
             'web.expect',
             'recordToReport',
             ...(suite === 'web-elements'
-                || ['css-fallback', 'text-count'].includes(file)
+                || ['css-fallback', 'text-count', 'middleware'].includes(file)
               ? ['javascript']
               : []),
           ]
@@ -338,7 +362,7 @@ for (
       );
       if (
         suite === 'web-elements'
-        || ['css-fallback', 'text-count'].includes(file)
+        || ['css-fallback', 'text-count', 'middleware'].includes(file)
       ) {
         const javascriptSteps = item.steps.filter(step => step.javascript);
         assert.equal(javascriptSteps.length, 1);
@@ -352,6 +376,9 @@ for (
           suite === 'web-elements'
             ? project.variables.elementsUrl + 'tests/fixtures/'
               + item.name.replace(/^web-elements\//, '') + '.html'
+            : file === 'middleware'
+            ? project.variables.shellUrl
+              + 'middleware?casename=/dist/basic-bindtap.web.bundle'
             : project.variables.shellUrl + '?casename=' + item.name,
         );
       }

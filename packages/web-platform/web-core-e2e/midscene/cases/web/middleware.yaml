@@ -1,0 +1,22 @@
+# Chromium client-only, matching the original middleware suite's eligibility.
+cases:
+  - name: middleware/basic-bindtap
+    steps:
+      - gotoUrl: "${shellUrl}middleware?casename=/dist/basic-bindtap.web.bundle"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before exercising the original middleware entry point
+      - aiAct: Click the pink square at the top-left once. Stop after that single click.
+      - web.expect: {
+          selector: "#target",
+          attribute: style,
+          contains: green,
+          immediate: true,
+        }
+      - aiAct: Click the green square at the top-left once. Stop after that single click.
+      - web.expect: {
+          selector: "#target",
+          attribute: style,
+          contains: pink,
+          immediate: true,
+        }
+      - recordToReport: Original middleware click and inline-style contracts passed

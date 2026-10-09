@@ -3,9 +3,12 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 100 cases: the
+while Midscene drives user interactions. The suite contains 115 cases: the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
-ReactLynx migrations with the original deterministic assertion values.
+ReactLynx migrations, plus 15 continuation cases with original deterministic
+assertion values. The preceding 100-case four-shard run passed in
+[run 37914898612](https://github.com/quanru/lynx-stack/actions/runs/37914898612);
+the new cases require separate hosted validation.
 
 ## Why this is a separate directory
 
@@ -24,7 +27,7 @@ or Turbo dependency graph. Playwright is pinned to the repository's version,
 | `cases/web/events.yaml` (10)    | Global events, tap payloads, simultaneous handlers, and x-input                            | AI-driven interactions with exact upstream attribute, text, and input-value checks              |
 | `cases/web/expansion.yaml` (85) | Styling, lazy components, frames, native-module results, events, inputs, and linear layout | Original assertion sequences, computed CSS, exact bounding-box dimensions, text, and attributes |
 
-The 85-case expansion maps each case name to the same test in
+Both expansion batches map each case name to the same test in
 `../tests/reactlynx.spec.ts`; the two event-trigger cases share the original
 `basic-event-trigger` fixture. `scripts/expansion-contract.test.mjs` checks the
 original assertion targets/indices, counts, values, CSS ordering/negation, and
@@ -34,6 +37,14 @@ The repeated upstream `config-css-selector-false-type-selector` name is counted
 only once. No snapshot-only, unconditionally skipped, or injected-API tests are
 included to inflate the count. This is Chromium client-rendered coverage, not a
 replacement for the original SSR or multi-browser matrix.
+
+The 15 continuation cases cover dataset events, image/scroll dimensions,
+animations, exposure, invoke callbacks, CSS removal, textarea filtering, nested
+layout and reload. Standard `recordToReport` captures provide evidence for
+intentionally nonvisual style/size contracts, without inventing visual assertions
+or requiring a valid image resource where the original only checks dimensions.
+If an exact assertion later fails, its link opens the failed step while its
+preview uses the nearest preceding capture from that same attempt.
 
 The single project runs cases serially, with separate browser contexts, pages,
 agents, and report filenames keyed by case run ID. Midscene 1.13.1 applies

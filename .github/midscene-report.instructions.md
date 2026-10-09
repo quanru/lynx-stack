@@ -46,3 +46,9 @@ responses and HTTP 200 do not prove the endpoint reads screenshots. Record the
 actual response model version when diagnosing failures, because endpoint IDs
 may be retargeted. Do not attribute base64 refusal messages to small UI elements
 without a model-isolated control experiment.
+
+For original contracts with intentionally nonvisual fixtures, use standard
+recordToReport captures instead of inventing visual assertions. Extract their
+recorder screenshot references as well as UI-context screenshots. When an exact
+assertion has no agent trace, retain the failed-step HTML link and use the
+nearest preceding capture from the same attempt for its preview.

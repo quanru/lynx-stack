@@ -3,8 +3,9 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 15 cases, including
-10 interaction migrations with the original deterministic assertion values.
+while Midscene drives user interactions. The suite contains 100 cases: the
+original five-case pilot, ten event migrations, and 85 additional one-to-one
+ReactLynx migrations with the original deterministic assertion values.
 
 ## Why this is a separate directory
 
@@ -16,11 +17,25 @@ or Turbo dependency graph. Playwright is pinned to the repository's version,
 
 ## Cases
 
-| YAML                          | Case bundles                                                    | Coverage                                                                           |
-| ----------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `cases/web/shell.yaml` (2)    | `basic-bindtap`                                                 | Visual click and pink-to-green round-trip through the shadow root and worker       |
-| `cases/web/elements.yaml` (3) | `basic-element-text-color`, `-image-src`, `-input-bindinput`    | Gradient text, remote image loading, and input-event value mirroring               |
-| `cases/web/events.yaml` (10)  | Global events, tap payloads, simultaneous handlers, and x-input | AI-driven interactions with exact upstream attribute, text, and input-value checks |
+| YAML                            | Case bundles                                                                               | Coverage                                                                                        |
+| ------------------------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| `cases/web/shell.yaml` (2)      | `basic-bindtap`                                                                            | Visual click and pink-to-green round-trip through the shadow root and worker                    |
+| `cases/web/elements.yaml` (3)   | `basic-element-text-color`, `-image-src`, `-input-bindinput`                               | Gradient text, remote image loading, and input-event value mirroring                            |
+| `cases/web/events.yaml` (10)    | Global events, tap payloads, simultaneous handlers, and x-input                            | AI-driven interactions with exact upstream attribute, text, and input-value checks              |
+| `cases/web/expansion.yaml` (85) | Styling, lazy components, frames, native-module results, events, inputs, and linear layout | Original assertion sequences, computed CSS, exact bounding-box dimensions, text, and attributes |
+
+The 85-case expansion maps each case name to the same test in
+`../tests/reactlynx.spec.ts`; the two event-trigger cases share the original
+`basic-event-trigger` fixture. `scripts/expansion-contract.test.mjs` checks the
+original assertion counts, values, CSS ordering/negation, and click counts.
+The repeated upstream `config-css-selector-false-type-selector` name is counted
+only once. No snapshot-only, unconditionally skipped, or injected-API tests are
+included to inflate the count. This is Chromium client-rendered coverage, not a
+replacement for the original SSR or multi-browser matrix.
+
+Three cases can run concurrently, with separate browser contexts, pages, agents,
+and report filenames keyed by case run ID. Each case retains two bounded retries;
+reports expose retries rather than hiding them behind an aggregate pass count.
 
 ### Interaction migration batch
 
@@ -76,7 +91,9 @@ npm test -- --project web-shell
 - Use `aiWaitFor` for page readiness instead of fixed sleeps.
 - Use `aiAct` for input editing, including focus and keyboard actions.
 - Retain `web.expect` for upstream deterministic assertions: exact text, input
-  values, attribute equality, and attribute substring checks. Text comparisons
+  values, attribute equality, attribute substring checks, computed CSS, and
+  numeric bounding-box equality. CSS negation is explicit, and an absent element
+  cannot satisfy it. Repeated selectors use a zero-based `index`. Text comparisons
   do not trim whitespace. Do not substitute AI judgment for event payloads.
 - The original Playwright pixel snapshots and exact assertions are unchanged.
   AI rendering assertions are additive semantic coverage, not equal-precision

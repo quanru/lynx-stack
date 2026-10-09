@@ -94,14 +94,14 @@ const webSetup = defineProjectSetup<WebProjectContext>({
 const webExpectNode = defineNode<ExpectInput, void, WebProjectContext>({
   name: 'web.expect',
   description:
-    'Preserve upstream text, input value, and attribute assertions through the open Lynx shadow root.',
+    'Preserve upstream text, input value, attribute, computed CSS, and bounding-box assertions through the open Lynx shadow root.',
   async execute(execution) {
     if (execution.scope !== 'case') {
       throw new Error('web.expect can only be used as a case-level step.');
     }
     const page = await execution.context.getPage(execution.case.runId);
     await expectWebValue(
-      page.locator(execution.input.selector).first(),
+      page.locator(execution.input.selector).nth(execution.input.index ?? 0),
       execution.input,
     );
   },
@@ -155,7 +155,7 @@ export default defineTestProject<WebProjectContext>({
     },
   ],
   test: {
-    maxConcurrency: 1,
+    maxConcurrency: 3,
     testTimeout: 180_000,
   },
   output: {

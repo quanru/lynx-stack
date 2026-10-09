@@ -2,11 +2,16 @@ import type { Locator } from 'playwright';
 
 export interface ExpectInput {
   selector: string;
+  index?: number;
   text?: string;
+  textContains?: string;
   value?: string;
   attribute?: string;
-  equals?: string;
+  css?: string;
+  bounds?: 'width' | 'height';
+  equals?: string | number;
   contains?: string;
+  not?: boolean;
   timeoutMs?: number;
 }
 
@@ -16,56 +21,85 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
   const {
     selector,
     text,
+    textContains,
     value,
     attribute,
+    css,
+    bounds,
     equals,
     contains,
     timeoutMs = 15_000,
   } = input;
   const modes = [
     text !== undefined,
+    textContains !== undefined,
     value !== undefined,
     attribute !== undefined,
+    css !== undefined,
+    bounds !== undefined,
   ];
   if (
     modes.filter(Boolean).length !== 1
+    || !selector
+    || (input.index !== undefined
+      && (!Number.isInteger(input.index) || input.index < 0))
+    || (input.not !== undefined
+      && (typeof input.not !== 'boolean' || css === undefined))
     || (attribute !== undefined
       ? typeof attribute !== 'string' || !attribute
         || Number(equals !== undefined) + Number(contains !== undefined) !== 1
+      : css !== undefined
+      ? typeof css !== 'string' || !css || typeof equals !== 'string'
+        || contains !== undefined
+      : bounds !== undefined
+      ? !['width', 'height'].includes(bounds) || typeof equals !== 'number'
+        || !Number.isFinite(equals) || contains !== undefined
       : equals !== undefined || contains !== undefined)
     || !Number.isFinite(timeoutMs) || timeoutMs <= 0
   ) {
     throw new Error(
-      'web.expect requires one text, value, or attribute assertion and a positive timeout.',
+      'web.expect requires one valid text, value, attribute, CSS, or bounds assertion and a positive timeout.',
     );
   }
-  const expected = text ?? value ?? equals ?? contains;
-  if (typeof expected !== 'string') {
+  const expected = text ?? textContains ?? value ?? equals ?? contains;
+  if (bounds === undefined && typeof expected !== 'string') {
     throw new Error('web.expect requires a string expected value.');
   }
-  await locator.waitFor({ state: 'visible', timeout: timeoutMs });
+  await locator.waitFor({
+    state: css !== undefined ? 'attached' : 'visible',
+    timeout: timeoutMs,
+  });
   const deadline = Date.now() + timeoutMs;
   for (;;) {
     const actual = await (
-      attribute !== undefined
+      css !== undefined
+        ? locator.evaluate(
+          (element, property) =>
+            getComputedStyle(element).getPropertyValue(property),
+          css,
+        )
+        : bounds !== undefined
+        ? locator.boundingBox().then((box) => box?.[bounds] ?? null)
+        : attribute !== undefined
         ? locator.getAttribute(attribute)
         : value !== undefined
         ? locator.inputValue()
         : locator.innerText()
     );
+    const substring = textContains ?? contains;
     const matches = text !== undefined
       ? actual === text
-      : contains !== undefined
-      ? actual !== null && actual.includes(contains)
+      : substring !== undefined
+      ? typeof actual === 'string' && actual.includes(substring)
       : actual === expected;
-    if (matches) return;
+    if (input.not ? actual !== null && !matches : matches) return;
     if (Date.now() >= deadline) {
       throw new Error(
         `web.expect ${selector} ${
-          attribute ?? (value !== undefined ? 'value' : 'text')
-        } timed out; expected ${contains !== undefined ? 'to contain ' : ''}${
-          JSON.stringify(expected)
-        }, got ${JSON.stringify(actual)}`,
+          css ?? bounds ?? attribute ?? (value !== undefined ? 'value' : 'text')
+        } timed out; expected ${input.not ? 'not ' : ''}${
+          substring !== undefined ? 'to contain ' : ''
+        }${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`,
       );
     }
     await new Promise((resolve) =>

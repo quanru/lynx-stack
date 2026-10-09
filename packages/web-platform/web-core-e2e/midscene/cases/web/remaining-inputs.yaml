@@ -1,0 +1,7 @@
+cases:
+  - name: basic-element-input-bindinput
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-input-bindinput"
+      - aiAct: Focus the visible input field, press Enter, then replace its contents with the literal string "foobar" exactly once. Stop after sending that input.
+      - web.expect: { selector: .result, text: foobar-6-6 }
+      - recordToReport: Original input value and event length payload passed

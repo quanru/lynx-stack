@@ -3,7 +3,7 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 158 cases: the
+while Midscene drives user interactions. The suite contains 160 cases: the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
 ReactLynx migrations, plus 15 continuation cases with original deterministic
 assertion values, 25 original web-elements CSS/attribute contracts and two
@@ -11,7 +11,8 @@ CSS variable fallback contracts, two frame auto-sizing contracts, and the origin
 external-bundle evaluation/stylesheet contract, two animation callback cases,
 the separate middleware entry-point contract, three directory-bundle contracts,
 and the original setState callback, lazy-component instance-isolation,
-frame-element JavaScript property and four relative-coordinate contracts.
+frame-element JavaScript property, four relative-coordinate contracts, the error
+display contract and the original input bindinput payload contract.
 The 147-case four-shard run passed in
 [run 37940214877](https://github.com/quanru/lynx-stack/actions/runs/37940214877),
 including report generation and Pages publication. Downloaded publication
@@ -34,7 +35,12 @@ required a visible Load Component label, but the fixture's raw view child text
 does not render. Local screenshots confirm an unlabelled red square. The local
 correction uses visible colors/relationships while retaining four clicks and six
 exact CSS assertions; credentialed validation is still pending.
-The five newer cases are local additions and are not yet hosted-verified.
+Shard 1 completed with 38/39 passing. The animation event case's action traces
+and screenshots show missed text targets: one pixel left of the animation line,
+the transition line instead of animation, and blank space below the second
+section. Exact assertions correctly failed. Local action descriptions now require
+word centers and adjacent-line relationships; a new CI run must validate them.
+The seven newer cases are local additions and are not yet hosted-verified.
 The animation translations retain original event-sequence match counts and CSS
 checks, with ordinary clicks through `aiAct`. No local model credentials are
 configured; local checks do not make AI calls.
@@ -45,7 +51,7 @@ The external-bundle case and its unchanged original Chromium test both passed
 locally on the first attempt. `web.expect` with `matchingText`/`count` uses the
 same public `page.getByText` locator and checks the complete count, without
 selecting the first match or requiring visibility. Duplicate matches fail the
-original count-one contract. All 54 model-free checks and typechecking pass.
+original count-one contract. All 56 model-free checks and typechecking pass.
 The unchanged middleware original also passes locally. Its migration retains
 the separate `/middleware` URL, two ordinary `aiAct` clicks, and immediate
 inline-style substring reads; it does not extend the original Chromium-only,
@@ -72,6 +78,9 @@ The adapter sends literal browser source, and both helpers now observe Document.
 actual `(200, 200)` placement and no page errors before CI executes cases.
 Original CSS assertions and fixture routes remain unchanged; an origin-position
 green result alone is not accepted as migration evidence.
+The error-display original and translation also passed locally on their first
+attempt. The input bindinput original passes locally; its AI translation retains
+Enter, the complete `foobar` payload and the exact `foobar-6-6` result, and awaits CI.
 
 This directory sits one level below the `packages/web-platform/*` pnpm
 workspace glob and is not a workspace member. It has its own `package.json`

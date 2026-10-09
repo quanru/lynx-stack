@@ -35,14 +35,14 @@ cases:
       - gotoUrl: "${shellUrl}?casename=api-animation-event"
       - javascript: "document.fonts.ready.then(() => true)"
       - recordToReport: Before checking original transition and animation event sequences
-      - aiAct: Click "toggle transition 1" beneath "view animator test" once. Stop after that single click.
+      - aiAct: Click the CENTER of the visible words "toggle transition 1" directly below test box1 in the UPPER view animator test section once. Stay inside the words, not at their left edge. Do not click the animation line below. Stop after that single click.
       - web.expect: {
           selector: "#blue0",
           css: background-color,
           equals: "rgb(0, 0, 238)",
         }
       - web.expect: { matchingText: "transitionstart transitionend", count: 1 }
-      - aiAct: Click "toggle animation 1" beneath "view animator test" once. Stop after that single click.
+      - aiAct: Click the CENTER of the visible words "toggle animation 1" in the UPPER view animator test section once. This is the line directly BELOW "toggle transition 1" and ABOVE the text animator test heading. Stay inside the words, not at their left edge. Do not click the transition line above. Stop after that single click.
       - web.expect: {
           selector: "#blue0",
           css: background-color,
@@ -52,7 +52,7 @@ cases:
           matchingText: "animationstart animationiteration animationend",
           count: 1,
         }
-      - aiAct: Click "toggle transition 2" beneath "text animator test" once. Stop after that single click.
+      - aiAct: Click the CENTER of the visible words "toggle transition 2" directly below test box2 in the LOWER text animator test section once. It is ABOVE "toggle animation 2" and the event log lines. Stay inside the words, not at their left edge or in blank space below the event logs. Stop after that single click.
       - web.expect: {
           selector: "#blue1",
           css: background-color,
@@ -62,7 +62,7 @@ cases:
           matchingText: "transitionstart transitionend transitionstart transitionend",
           count: 1,
         }
-      - aiAct: Click "toggle animation 2" beneath "text animator test" once. Stop after that single click.
+      - aiAct: Click the CENTER of the visible words "toggle animation 2" in the LOWER text animator test section once. It is directly BELOW "toggle transition 2" and ABOVE the event log lines. Stay inside the words, not at their left edge or in blank space below the event logs. Stop after that single click.
       - web.expect: {
           selector: "#blue1",
           css: background-color,

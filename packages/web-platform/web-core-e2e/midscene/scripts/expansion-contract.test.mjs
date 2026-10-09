@@ -22,6 +22,8 @@ for (
     ['properties', 1],
     ['relative-coordinates', 3],
     ['relative-coordinate-tap', 1],
+    ['error-display', 1],
+    ['remaining-inputs', 1],
   ]
 ) {
   test(`${count} ${file} migrations retain original assertion counts, values, CSS order, and clicks`, async () => {
@@ -124,6 +126,46 @@ for (
         item.name + ' must be an original test, not a split or invented case',
       );
       const body = original.getText(ast);
+      if (item.name === 'api-animation-event') {
+        const actions = item.steps.filter(step => step.aiAct).map(step =>
+          step.aiAct.prompt
+        );
+        assert.equal(actions.length, 4);
+        for (
+          const [index, label] of [
+            'toggle transition 1',
+            'toggle animation 1',
+            'toggle transition 2',
+            'toggle animation 2',
+          ].entries()
+        ) {
+          assert.ok(
+            actions[index].includes(
+              'CENTER of the visible words "' + label + '"',
+            ),
+          );
+          assert.match(
+            actions[index],
+            /Stay inside the words, not at their left edge/,
+          );
+          assert.match(actions[index], /Stop after that single click/);
+          assert.doesNotMatch(
+            actions[index],
+            /\b\d+\s*(?:px|pixels)\b|#[\w-]+/,
+          );
+        }
+      }
+      if (file === 'remaining-inputs') {
+        assert.match(body, /locator\('input'\)\.press\('Enter'\)/);
+        assert.match(body, /locator\('input'\)\.fill\('foobar'\)/);
+        const actions = item.steps.filter(step => step.aiAct);
+        assert.equal(actions.length, 1);
+        assert.match(actions[0].aiAct.prompt, /press Enter/);
+        assert.match(
+          actions[0].aiAct.prompt,
+          /literal string "foobar" exactly once/,
+        );
+      }
       if (file.startsWith('relative-coordinate')) {
         const transformed = item.name.endsWith('-transformed');
         assert.deepEqual(item.steps[0], {

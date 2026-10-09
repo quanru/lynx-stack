@@ -65,7 +65,7 @@ or Turbo dependency graph. Playwright is pinned to the repository's version,
 | `cases/web-elements/attributes.yaml` (18) | Input type/inputmode, spellcheck and enterkeyhint propagation                                                         | Exact attributes on the original inner input and textarea elements                              |
 | `cases/web/css-fallback.yaml` (2)         | CSS variable fallback and nested fallback                                                                             | Original computed background color, with font readiness and standard report captures            |
 | `cases/web/frame-sizing.yaml` (2)         | Frame auto-height and auto-width                                                                                      | Exact attributes and their negation; original immediate numeric height comparison               |
-| `cases/web/text-count.yaml` (3)           | External bundle, animation events and animation frames                                                                | Original getByText match counts, event sequences and computed background color                  |
+| `cases/web/text-count.yaml` (4)           | External bundle, animation callbacks and setState callback                                                            | Original positive/zero getByText counts, event sequences and computed background color          |
 | `cases/web/middleware.yaml` (1)           | Middleware basic-bindtap entry point                                                                                  | Original middleware URL, two clicks and single-read inline-style substring checks               |
 
 `text-count.yaml` also retains `expectNoText` as an exact zero-match assertion,

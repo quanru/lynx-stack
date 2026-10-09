@@ -69,10 +69,21 @@ continuous color columns. Most taps again hit the left column; one hit the
 lower blue row while the assertion correctly checked the upper observer.
 The load-on-demand case likewise clicked the left observer below its load control.
 
+The raw action output reveals a coordinate-space error, not merely failure to
+recognize blue: one response emitted `locate.point: [150, 40]` for a 393 × 851
+screenshot. Midscene 1.13.1's DeepSeek adapter requires 0–1000 normalized points,
+so it correctly converted that response to `[59, 34]`. The response used values
+consistent with screenshot pixels while declaring normalized coordinates.
+Do not compensate by rescaling every response: some responses already use
+normalized values, so such a workaround would corrupt valid actions.
+
 The revised `aiAct` goals identify the right-hand blue target, the neighboring
 observer's color transition, and, for stacked rows, the upper/lower half of the
 blue column. They retain exactly one click per original action. No pixel
 coordinates, selector-based actions, fixture changes, or weaker assertions were
 introduced. Contract tests guard those spatial goals and continue comparing all
-original selectors, indices, values, and assertion sequences. A fresh hosted
+original selectors, indices, values, and assertion sequences. Agent-level
+`aiContexts.aiAct` also reinforces the active protocol's coordinate convention,
+including the normalization formula and full-image center, without supplying
+target coordinates or changing the adapter. A fresh hosted
 run is required to establish that the revised goals resolve the failures.

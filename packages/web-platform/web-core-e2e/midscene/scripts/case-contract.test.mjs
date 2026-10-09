@@ -15,6 +15,18 @@ const expectation = readFileSync(
   'utf8',
 );
 
+test('agent action guidance distinguishes protocol coordinates from screenshot pixels', () => {
+  assert.match(config, /aiContexts:\s*\{\s*aiAct:/);
+  assert.match(config, /active action protocol/);
+  assert.match(config, /x \/ screenshot width \* 1000/);
+  assert.match(config, /y \/ screenshot height \* 1000/);
+  assert.match(
+    config,
+    /Do not label raw screenshot pixels as normalized coordinates/,
+  );
+  assert.doesNotMatch(config, /aiActionContext:|aiActContext:/);
+});
+
 test('input editing uses aiAct without a custom selector-based action node', () => {
   assert.doesNotMatch(
     config + cases,

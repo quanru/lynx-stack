@@ -65,6 +65,10 @@ const webSetup = defineProjectSetup<WebProjectContext>({
           const page = await getPage(runId);
           agent = new PlaywrightAgent(page, {
             reportFileName: `web-${runId}.html`,
+            aiContexts: {
+              aiAct:
+                'Follow the coordinate format requested by the active action protocol. When it requests normalized 0–1000 coordinates, convert screenshot pixel positions using x / screenshot width * 1000 and y / screenshot height * 1000 before emitting locate.point. Do not label raw screenshot pixels as normalized coordinates. The center of the full screenshot is [500, 500] in that normalized format, regardless of its pixel dimensions. Check that the converted point lies inside the described target, using its left/right and upper/lower relationships.',
+            },
           });
           agents.set(runId, agent);
         }

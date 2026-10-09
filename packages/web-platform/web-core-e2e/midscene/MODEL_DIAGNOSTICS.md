@@ -53,3 +53,26 @@ the provider.
 Temporary diagnostic workflow inputs and implementation were removed after
 the experiments. The run logs and diagnostic artifacts retain the evidence;
 ordinary E2E remains self-contained and does not depend on old artifacts.
+
+## October 9 lazy-component grounding failures
+
+Run [37880317126](https://github.com/quanru/lynx-stack/actions/runs/37880317126)
+passed 95 of 100 cases. Five lazy-component cases failed all three attempts at
+the first green-to-pink assertion. The agent reports contain exactly one tap
+per failed toggle, so these failures were not caused by repeated toggling.
+
+The fixture places a green observer to the left of a blue click target. In the
+single-pair screenshots, the blue target occupies x=100..200; recorded taps
+landed at x=59 or x=75, inside the non-interactive green observer. The two-pair
+fixtures stack identical rows with no gap, making the screenshot look like two
+continuous color columns. Most taps again hit the left column; one hit the
+lower blue row while the assertion correctly checked the upper observer.
+The load-on-demand case likewise clicked the left observer below its load control.
+
+The revised `aiAct` goals identify the right-hand blue target, the neighboring
+observer's color transition, and, for stacked rows, the upper/lower half of the
+blue column. They retain exactly one click per original action. No pixel
+coordinates, selector-based actions, fixture changes, or weaker assertions were
+introduced. Contract tests guard those spatial goals and continue comparing all
+original selectors, indices, values, and assertion sequences. A fresh hosted
+run is required to establish that the revised goals resolve the failures.

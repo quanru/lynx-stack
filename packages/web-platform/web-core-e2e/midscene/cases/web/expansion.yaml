@@ -954,13 +954,13 @@ cases:
           "css": "background-color",
           "equals": "rgb(0, 128, 0)",
         }
-      - aiAct: "Click the blue square exactly once."
+      - aiAct: "Click the center of the BLUE square on the RIGHT of the horizontal pair exactly once, to turn its LEFT green neighbor pink. The blue square is the right-hand half of the colored pair. Do not click the left square. Stop after that single click."
       - web.expect: {
           "selector": "#target1",
           "css": "background-color",
           "equals": "rgb(255, 192, 203)",
         }
-      - aiAct: "Click the blue square exactly once."
+      - aiAct: "Click the center of the BLUE square on the RIGHT of the horizontal pair exactly once, to turn its LEFT pink neighbor green. The blue square is the right-hand half of the colored pair. Do not click the left square. Stop after that single click."
       - web.expect: {
           "selector": "#target1",
           "css": "background-color",
@@ -977,13 +977,13 @@ cases:
           "css": "background-color",
           "equals": "rgb(0, 128, 0)",
         }
-      - aiAct: "Click the blue square exactly once."
+      - aiAct: "Click the center of the BLUE square on the RIGHT of the horizontal pair exactly once, to turn its LEFT green neighbor pink. The blue square is the right-hand half of the colored pair. Do not click the left square. Stop after that single click."
       - web.expect: {
           "selector": "#target1",
           "css": "background-color",
           "equals": "rgb(255, 192, 203)",
         }
-      - aiAct: "Click the blue square exactly once."
+      - aiAct: "Click the center of the BLUE square on the RIGHT of the horizontal pair exactly once, to turn its LEFT pink neighbor green. The blue square is the right-hand half of the colored pair. Do not click the left square. Stop after that single click."
       - web.expect: {
           "selector": "#target1",
           "css": "background-color",
@@ -1059,7 +1059,7 @@ cases:
           "css": "background-color",
           "equals": "rgb(0, 128, 0)",
         }
-      - aiAct: "Click the upper blue square exactly once. Stop after that single click."
+      - aiAct: "Click once in the center of the upper half of the BLUE column on the RIGHT of the two-column colored block. This is the top-right square, immediately to the right of the upper green square. Turn only the upper-left green square pink; do not click the left column or the lower half. Stop after one click."
       - web.expect: {
           "selector": "#target1",
           "index": 0,
@@ -1072,7 +1072,7 @@ cases:
           "css": "background-color",
           "equals": "rgb(0, 128, 0)",
         }
-      - aiAct: "Click the lower blue square exactly once. Stop after that single click."
+      - aiAct: "Click once in the center of the lower half of the BLUE column on the RIGHT of the two-column colored block. This is the bottom-right square, immediately to the right of the remaining lower green square. Turn the lower-left green square pink while leaving the upper-left square pink. Stop after one click."
       - web.expect: {
           "selector": "#target1",
           "index": 0,
@@ -1103,7 +1103,7 @@ cases:
           "css": "background-color",
           "equals": "rgb(0, 128, 0)",
         }
-      - aiAct: "Click the upper blue square exactly once. Stop after that single click."
+      - aiAct: "Click once in the center of the upper half of the BLUE column on the RIGHT of the two-column colored block. This is the top-right square, immediately to the right of the upper green square. Turn only the upper-left green square pink; do not click the left column or the lower half. Stop after one click."
       - web.expect: {
           "selector": "#target1",
           "index": 0,
@@ -1116,7 +1116,7 @@ cases:
           "css": "background-color",
           "equals": "rgb(0, 128, 0)",
         }
-      - aiAct: "Click the lower blue square exactly once. Stop after that single click."
+      - aiAct: "Click once in the center of the lower half of the BLUE column on the RIGHT of the two-column colored block. This is the bottom-right square, immediately to the right of the remaining lower green square. Turn the lower-left green square pink while leaving the upper-left square pink. Stop after one click."
       - web.expect: {
           "selector": "#target1",
           "index": 0,
@@ -1141,14 +1141,14 @@ cases:
           "css": "background-color",
           "equals": "rgb(0, 128, 0)",
         }
-      - aiAct: "Click the blue square exactly once."
+      - aiAct: "Click the center of the BLUE square on the RIGHT of the horizontal pair exactly once, to turn its LEFT green neighbor pink. The blue square is the right-hand half of the colored pair, below the red Load Component control. Do not click the left square. Stop after that single click."
       - web.expect: {
           "selector": "#target1",
           "index": 0,
           "css": "background-color",
           "equals": "rgb(255, 192, 203)",
         }
-      - aiAct: "Click the blue square exactly once."
+      - aiAct: "Click the center of the BLUE square on the RIGHT of the horizontal pair exactly once, to turn its LEFT pink neighbor green. The blue square is the right-hand half of the colored pair, below the red Load Component control. Do not click the left square. Stop after that single click."
       - web.expect: {
           "selector": "#target1",
           "index": 0,

@@ -47,6 +47,32 @@ test('85 migrations retain original assertion counts, values, CSS order, and cli
     steps: definition.steps.map(step => ({ [step.node]: step.input })),
   }));
   for (const item of cases) {
+    const lazyToggleCases = [
+      'basic-lazy-component',
+      'basic-lazy-component-relative-path',
+      'basic-lazy-component-multi',
+      'basic-lazy-component-multi-import',
+      'basic-lazy-component-when-needed',
+    ];
+    if (lazyToggleCases.includes(item.name)) {
+      const actions = item.steps.filter(step => step.aiAct).map(step =>
+        step.aiAct.prompt
+      );
+      const toggles = actions.slice(-2);
+      assert.equal(toggles.length, 2);
+      for (const prompt of toggles) {
+        assert.match(prompt, /BLUE.*RIGHT/);
+        assert.match(prompt, /Stop after (?:that single|one) click/);
+        assert.doesNotMatch(prompt, /\b\d+\s*(?:px|pixels)\b|#[\w-]+/);
+      }
+      if (item.name.includes('multi')) {
+        assert.match(toggles[0], /upper half/);
+        assert.match(toggles[1], /lower half/);
+      } else {
+        assert.match(toggles[0], /LEFT green neighbor pink/);
+        assert.match(toggles[1], /LEFT pink neighbor green/);
+      }
+    }
     const original = originals.get(item.name);
     assert.ok(
       original,

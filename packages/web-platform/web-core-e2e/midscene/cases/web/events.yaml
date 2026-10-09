@@ -3,13 +3,13 @@ cases:
     steps:
       - gotoUrl: ${shellUrl}?casename=basic-global-bind
       - aiWaitFor: A blue square is above a pink square near the top-left of the page.
-      - aiAct: Click the blue square once.
+      - aiAct: Click the upper blue square exactly once to turn the lower pink square green. Stop after that single click.
       - web.expect: {
           selector: "#observer",
           attribute: "style",
           contains: "green",
         }
-      - aiAct: Click the blue square once again.
+      - aiAct: Click the upper blue square exactly once to turn the lower green square pink. Stop after that single click.
       - web.expect: {
           selector: "#observer",
           attribute: "style",

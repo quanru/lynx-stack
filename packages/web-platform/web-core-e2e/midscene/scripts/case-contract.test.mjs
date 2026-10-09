@@ -122,6 +122,11 @@ test('ten interaction migrations retain the original assertion targets and value
     ]],
   };
   assert.equal(sections.length, 10);
+  assert.match(
+    sections[0],
+    /turn the lower green square pink\. Stop after that single click/,
+  );
+  assert.doesNotMatch(sections[0], /once again/);
   assert.deepEqual(
     sections.map((section) => section.split('\n')[0]).sort(),
     Object.keys(expected).sort(),

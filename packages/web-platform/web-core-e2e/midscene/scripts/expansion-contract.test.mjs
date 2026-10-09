@@ -16,6 +16,7 @@ for (
     ['frame-sizing', 2],
     ['text-count', 3],
     ['middleware', 1, 'web', 'middleware.spec.ts'],
+    ['directory-bundles', 3],
   ]
 ) {
   test(`${count} ${file} migrations retain original assertion counts, values, CSS order, and clicks`, async () => {
@@ -118,6 +119,21 @@ for (
         item.name + ' must be an original test, not a split or invented case',
       );
       const body = original.getText(ast);
+      if (file === 'directory-bundles') {
+        assert.match(body, /goto\(page, title, undefined, true\)/);
+        assert.equal(
+          item.steps[0].gotoUrl.url,
+          project.variables.shellUrl + '?casename=' + item.name
+            + '&hasdir=true',
+        );
+        assert.match(source, /if \(hasDir\) \{\s*url \+= '&hasdir=true'/);
+        assert.match(body, /test\.(?:skip|fixme)\(isSSR/);
+        for (
+          const step of item.steps.filter(step => step['web.expect']?.attribute)
+        ) {
+          assert.equal(step['web.expect'].immediate, true);
+        }
+      }
       if (file === 'middleware') {
         assert.match(source, /test\.skip\(ENABLE_MULTI_THREAD \|\| isSSR/);
         assert.match(source, /test\.skip\(browserName !== 'chromium'/);
@@ -350,7 +366,12 @@ for (
             'web.expect',
             'recordToReport',
             ...(suite === 'web-elements'
-                || ['css-fallback', 'text-count', 'middleware'].includes(file)
+                || [
+                  'css-fallback',
+                  'text-count',
+                  'middleware',
+                  'directory-bundles',
+                ].includes(file)
               ? ['javascript']
               : []),
           ]
@@ -362,7 +383,8 @@ for (
       );
       if (
         suite === 'web-elements'
-        || ['css-fallback', 'text-count', 'middleware'].includes(file)
+        || ['css-fallback', 'text-count', 'middleware', 'directory-bundles']
+          .includes(file)
       ) {
         const javascriptSteps = item.steps.filter(step => step.javascript);
         assert.equal(javascriptSteps.length, 1);
@@ -379,7 +401,8 @@ for (
             : file === 'middleware'
             ? project.variables.shellUrl
               + 'middleware?casename=/dist/basic-bindtap.web.bundle'
-            : project.variables.shellUrl + '?casename=' + item.name,
+            : project.variables.shellUrl + '?casename=' + item.name
+              + (file === 'directory-bundles' ? '&hasdir=true' : ''),
         );
       }
     }

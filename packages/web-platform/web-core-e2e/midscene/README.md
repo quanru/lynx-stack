@@ -3,8 +3,8 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene validates visual interaction semantics. Local validation on
-September 20, 2026 passed all 5 cases.
+while Midscene drives user interactions. The suite contains 15 cases, including
+10 interaction migrations with the original deterministic assertion values.
 
 ## Why this is a separate directory
 
@@ -16,10 +16,33 @@ or Turbo dependency graph. Playwright is pinned to the repository's version,
 
 ## Cases
 
-| YAML                          | Case bundles                                                 | Coverage                                                                     |
-| ----------------------------- | ------------------------------------------------------------ | ---------------------------------------------------------------------------- |
-| `cases/web/shell.yaml` (2)    | `basic-bindtap`                                              | Visual click and pink-to-green round-trip through the shadow root and worker |
-| `cases/web/elements.yaml` (3) | `basic-element-text-color`, `-image-src`, `-input-bindinput` | Gradient text, remote image loading, and input-event value mirroring         |
+| YAML                          | Case bundles                                                    | Coverage                                                                           |
+| ----------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `cases/web/shell.yaml` (2)    | `basic-bindtap`                                                 | Visual click and pink-to-green round-trip through the shadow root and worker       |
+| `cases/web/elements.yaml` (3) | `basic-element-text-color`, `-image-src`, `-input-bindinput`    | Gradient text, remote image loading, and input-event value mirroring               |
+| `cases/web/events.yaml` (10)  | Global events, tap payloads, simultaneous handlers, and x-input | AI-driven interactions with exact upstream attribute, text, and input-value checks |
+
+### Interaction migration batch
+
+Each row maps one original `tests/reactlynx.spec.ts` case to the same-named
+case in `events.yaml`. The fixtures and original Playwright tests are unchanged.
+Readiness uses `aiWaitFor`; user actions use `aiAct`.
+
+| Original case                       | Preserved assertions                                                               |
+| ----------------------------------- | ---------------------------------------------------------------------------------- |
+| `basic-global-bind`                 | Observer style contains green after the first target tap and pink after the second |
+| `basic-global-bindkeydown`          | Observer style contains green after the a key                                      |
+| `basic-global-bindkeydown-key`      | `data-key === Enter`                                                               |
+| `basic-global-bindkeydown-code`     | `data-code === KeyA`                                                               |
+| `basic-bindtap-detail`              | Target style contains green, then pink                                             |
+| `basic-event-target-id`             | Target style contains green, then pink                                             |
+| `basic-bindtap-simultaneous`        | Green style, `data-mts-clicked === true`, and `BTS Clicked` text                   |
+| `basic-element-x-input-bindfocus`   | Exact `bindfocus` result text                                                      |
+| `basic-element-x-input-bindconfirm` | Exact `bindconfirm` result text                                                    |
+| `basic-element-x-input-bindinput`   | Initial input value `bindinput`, then `foobar-6-6` result text                     |
+
+These cases do not replace pixel snapshots, low-level CDP API checks, or the
+multi-browser/SSR matrix. The Midscene project runs Chromium CSR.
 
 ## Run locally
 
@@ -52,8 +75,9 @@ npm test -- --project web-shell
   width."
 - Use `aiWaitFor` for page readiness instead of fixed sleeps.
 - Use `aiAct` for input editing, including focus and keyboard actions.
-- Retain `web.expect` only for the upstream input-event contract: exact
-  `innerText` equality with `foobar-6-6`, without trimming whitespace.
+- Retain `web.expect` for upstream deterministic assertions: exact text, input
+  values, attribute equality, and attribute substring checks. Text comparisons
+  do not trim whitespace. Do not substitute AI judgment for event payloads.
 - The original Playwright pixel snapshots and exact assertions are unchanged.
   AI rendering assertions are additive semantic coverage, not equal-precision
   replacements for pixel snapshots. HTTP/decode/initial-value checks added by

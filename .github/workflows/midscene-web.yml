@@ -168,6 +168,12 @@ jobs:
         working-directory: packages/web-platform/web-core-e2e/midscene
         run: npm ci --no-audit --no-fund
 
+      - name: Validate case collection and exact assertion contracts
+        working-directory: packages/web-platform/web-core-e2e/midscene
+        run: |
+          npm run typecheck
+          node --test scripts/*.test.mjs
+
       - name: Run Web Midscene cases
         id: run-cases
         working-directory: packages/web-platform/web-core-e2e/midscene

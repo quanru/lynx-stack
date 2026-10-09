@@ -10,6 +10,7 @@ import type {
   MidsceneUIAgent,
 } from '@midscene/test/midscene';
 import { chromium, type Browser, type Page } from 'playwright';
+import { expectWebValue, type ExpectInput } from './expectation.js';
 
 // @midscene/core writes agent reports to
 // <cwd>/midscene_run/report/<reportFileName>.html. releaseAgent must return the
@@ -90,39 +91,19 @@ const webSetup = defineProjectSetup<WebProjectContext>({
   },
 });
 
-// Preserve the upstream input-event contract exactly. AI controls the user
-// interaction, but the final event payload is not delegated to visual judgment.
-interface ExpectInput {
-  selector: string;
-  text: string;
-  timeoutMs?: number;
-}
-
 const webExpectNode = defineNode<ExpectInput, void, WebProjectContext>({
   name: 'web.expect',
-  description: 'Assert exact rendered text through the open Lynx shadow root.',
+  description:
+    'Preserve upstream text, input value, and attribute assertions through the open Lynx shadow root.',
   async execute(execution) {
     if (execution.scope !== 'case') {
       throw new Error('web.expect can only be used as a case-level step.');
     }
-    const { selector, text, timeoutMs = 15_000 } = execution.input;
     const page = await execution.context.getPage(execution.case.runId);
-    const locator = page.locator(selector).first();
-    await locator.waitFor({ state: 'visible', timeout: timeoutMs });
-    const deadline = Date.now() + timeoutMs;
-    let actual: string | null = null;
-    for (;;) {
-      actual = await locator.innerText().catch(() => null);
-      if (actual === text) return;
-      if (Date.now() >= deadline) {
-        throw new Error(
-          `text of ${selector} timed out; expected ${
-            JSON.stringify(text)
-          }, got ${JSON.stringify(actual)}`,
-        );
-      }
-      await new Promise((resolve) => setTimeout(resolve, 200));
-    }
+    await expectWebValue(
+      page.locator(execution.input.selector).first(),
+      execution.input,
+    );
   },
 });
 

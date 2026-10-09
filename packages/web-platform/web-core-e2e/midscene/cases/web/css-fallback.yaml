@@ -1,0 +1,25 @@
+# Chromium client-rendering contracts from reactlynx-css-var-fallback.spec.ts.
+# Original SSR and other browser variants remain pending, not implied by these cases.
+cases:
+  - name: basic-css-var-fallback-background-color
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-css-var-fallback-background-color"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original CSS variable fallback color
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+      - recordToReport: Original CSS variable fallback color passed
+  - name: basic-css-var-nested-fallback-background-color
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-css-var-nested-fallback-background-color"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original nested CSS variable fallback color
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+      - recordToReport: Original nested CSS variable fallback color passed

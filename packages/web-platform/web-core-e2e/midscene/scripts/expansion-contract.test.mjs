@@ -7,11 +7,12 @@ import { loadTestProject } from '@midscene/test/config';
 import { fileURLToPath } from 'node:url';
 
 for (
-  const [file, count, suite = 'web'] of [
+  const [file, count, suite = 'web', sourceFile = 'reactlynx.spec.ts'] of [
     ['expansion', 85],
     ['continuation', 15],
     ['contracts', 7, 'web-elements'],
     ['attributes', 18, 'web-elements'],
+    ['css-fallback', 2, 'web', 'reactlynx-css-var-fallback.spec.ts'],
   ]
 ) {
   test(`${count} ${file} migrations retain original assertion counts, values, CSS order, and clicks`, async () => {
@@ -34,7 +35,7 @@ for (
     const source = readFileSync(
       new URL(
         suite === 'web'
-          ? '../../tests/reactlynx.spec.ts'
+          ? '../../tests/' + sourceFile
           : '../../../web-elements/tests/web-elements.spec.ts',
         import.meta.url,
       ),
@@ -263,7 +264,9 @@ for (
             'aiAct',
             'web.expect',
             'recordToReport',
-            ...(suite === 'web-elements' ? ['javascript'] : []),
+            ...(suite === 'web-elements' || file === 'css-fallback'
+              ? ['javascript']
+              : []),
           ]
             .includes(
               Object.keys(step)[0],
@@ -271,7 +274,7 @@ for (
         ),
         item.name + ' supported nodes',
       );
-      if (suite === 'web-elements') {
+      if (suite === 'web-elements' || file === 'css-fallback') {
         const javascriptSteps = item.steps.filter(step => step.javascript);
         assert.equal(javascriptSteps.length, 1);
         assert.equal(
@@ -281,8 +284,10 @@ for (
         assert.equal(item.steps[1], javascriptSteps[0]);
         assert.equal(
           item.steps[0].gotoUrl.url,
-          project.variables.elementsUrl + 'tests/fixtures/'
-            + item.name.replace(/^web-elements\//, '') + '.html',
+          suite === 'web-elements'
+            ? project.variables.elementsUrl + 'tests/fixtures/'
+              + item.name.replace(/^web-elements\//, '') + '.html'
+            : project.variables.shellUrl + '?casename=' + item.name,
         );
       }
     }

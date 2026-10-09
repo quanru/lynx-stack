@@ -5,8 +5,12 @@ import { mkdtemp, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { collectWorkflowDocument } from '@midscene/test';
-import { loadTestProject } from '@midscene/test/config';
-import { loadDocuments, partitionDocuments } from './run-shard.mjs';
+import { discoverTestFiles, loadTestProject } from '@midscene/test/config';
+import {
+  loadDocuments,
+  partitionDocuments,
+  materializeShard,
+} from './run-shard.mjs';
 
 test('four shards partition every original case once without changing steps or lifecycle', async () => {
   const documents = await loadDocuments(
@@ -84,13 +88,20 @@ test('generated JSON-in-YAML shards collect through the real SDK with unchanged 
   );
   const actual = [];
   for (let index = 1; index <= 4; index++) {
-    for (
-      const [ordinal, item] of partitionDocuments(documents, index, 4).entries()
-    ) {
-      const path = join(directory, `${index}-${ordinal}.yaml`);
-      await writeFile(path, JSON.stringify(item.document));
+    const { include, names } = await materializeShard(
+      directory,
+      documents,
+      index,
+      4,
+    );
+    const discovered = discoverTestFiles(directory, { include: [include] });
+    assert.ok(discovered.length > 0);
+    const partition = [];
+    for (const path of discovered) {
       actual.push(...collect(path).cases.map(item => item.definition));
+      partition.push(...collect(path).cases.map(item => item.definition.name));
     }
+    assert.deepEqual(partition.sort(), names.sort());
   }
   assert.equal(actual.length, original.length);
   for (const item of actual) {

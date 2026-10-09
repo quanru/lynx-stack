@@ -43,14 +43,13 @@ export async function loadDocuments(root) {
   );
 }
 
-async function main() {
-  const root = resolve(fileURLToPath(new URL('../', import.meta.url)));
-  const [index, count] = process.argv.slice(2).map(Number);
-  const selected = partitionDocuments(await loadDocuments(root), index, count);
+export async function materializeShard(root, documents, index, count) {
+  const selected = partitionDocuments(documents, index, count);
   if (!selected.length) {
     throw new Error('Shard is empty; reduce the shard count.');
   }
-  const parent = resolve(root, '.midscene/shards');
+  // SDK discovery always excludes .midscene/**, even with an explicit include.
+  const parent = resolve(root, '.midscene-shards');
   await mkdir(parent, { recursive: true });
   const directory = await mkdtemp(`${parent}/${index}-${count}-`);
   for (const { path, document } of selected) {
@@ -61,6 +60,26 @@ async function main() {
   }
   const names = selected.flatMap(item =>
     item.document.cases.map(item => item.name)
+  );
+  const include = `${relative(root, directory)}/**/*.yaml`;
+  if (
+    discoverTestFiles(root, { include: [include] }).length !== selected.length
+  ) {
+    throw new Error(
+      'SDK discovery did not find every generated shard document.',
+    );
+  }
+  return { directory, include, names };
+}
+
+async function main() {
+  const root = resolve(fileURLToPath(new URL('../', import.meta.url)));
+  const [index, count] = process.argv.slice(2).map(Number);
+  const { include, names } = await materializeShard(
+    root,
+    await loadDocuments(root),
+    index,
+    count,
   );
   console.log(`Shard ${index}/${count}: ${names.length} cases`);
   const manifest = { index, count, names, sha: process.env.GITHUB_SHA ?? null };
@@ -78,7 +97,7 @@ async function main() {
     stdio: 'inherit',
     env: {
       ...process.env,
-      MIDSCENE_CASE_FILES: `${relative(root, directory)}/**/*.yaml`,
+      MIDSCENE_CASE_FILES: include,
     },
   });
   for (const signal of ['SIGINT', 'SIGTERM']) {

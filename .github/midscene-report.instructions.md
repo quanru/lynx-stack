@@ -32,6 +32,12 @@ Use `aiAct` for visible user interactions instead of custom selector-based
 action nodes. Preserve assertions required by the original upstream case;
 do not replace exact event-payload or pixel comparisons with AI judgment.
 Use aiWaitFor for readiness, without adding redundant validation contracts.
+When migrating a new case, map every original assertion target, repeated-selector
+index, value, comparison, and interaction sequence. Keep exact CSS and bounding-box
+checks deterministic; do not round measurements or replace pixel contracts with
+AI judgment. Create visual report evidence before exact assertions can fail.
+Keep the 85-case expansion contract test aligned with the original source tests,
+not only with a second copy of the migrated YAML's expected values.
 Verify model vision with an image-only challenge; text-only preflight
 responses and HTTP 200 do not prove the endpoint reads screenshots. Record the
 actual response model version when diagnosing failures, because endpoint IDs

@@ -27,7 +27,9 @@ or Turbo dependency graph. Playwright is pinned to the repository's version,
 The 85-case expansion maps each case name to the same test in
 `../tests/reactlynx.spec.ts`; the two event-trigger cases share the original
 `basic-event-trigger` fixture. `scripts/expansion-contract.test.mjs` checks the
-original assertion counts, values, CSS ordering/negation, and click counts.
+original assertion targets/indices, counts, values, CSS ordering/negation, and
+click counts. Each added case creates visual evidence before deterministic
+assertions can fail, so those failures still have an agent report and screenshot.
 The repeated upstream `config-css-selector-false-type-selector` name is counted
 only once. No snapshot-only, unconditionally skipped, or injected-API tests are
 included to inflate the count. This is Chromium client-rendered coverage, not a

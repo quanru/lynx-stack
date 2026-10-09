@@ -58,7 +58,36 @@ test('85 migrations retain original assertion counts, values, CSS order, and cli
       /diffScreenShot|toMatchSnapshot|test\.skip\(true|addInitScript|page\.evaluate/,
     );
     const assertions = [];
+    const variables = new Map();
+    function locatorSpec(node) {
+      if (
+        ts.isAwaitExpression(node) || ts.isParenthesizedExpression(node)
+        || ts.isNonNullExpression(node)
+      ) return locatorSpec(node.expression);
+      if (ts.isIdentifier(node)) return variables.get(node.text);
+      if (ts.isPropertyAccessExpression(node)) {
+        return locatorSpec(node.expression);
+      }
+      if (
+        ts.isCallExpression(node)
+        && ts.isPropertyAccessExpression(node.expression)
+      ) {
+        if (node.expression.name.text === 'locator') {
+          return { selector: node.arguments[0].text, index: 0 };
+        }
+        const result = locatorSpec(node.expression.expression);
+        if (result && node.expression.name.text === 'nth') {
+          return { ...result, index: Number(node.arguments[0].getText(ast)) };
+        }
+        return result;
+      }
+      return undefined;
+    }
     function scan(node) {
+      if (ts.isVariableDeclaration(node) && node.initializer) {
+        const spec = locatorSpec(node.initializer);
+        if (spec) variables.set(node.name.getText(ast), spec);
+      }
       if (
         ts.isCallExpression(node)
         && ts.isPropertyAccessExpression(node.expression)
@@ -76,7 +105,18 @@ test('85 migrations retain original assertion counts, values, CSS order, and cli
             'toStrictEqual',
           ].includes(matcher)
         ) {
+          let expectation = node.expression.expression;
+          if (
+            ts.isPropertyAccessExpression(expectation)
+            && expectation.name.text === 'not'
+          ) expectation = expectation.expression;
+          assert.ok(
+            ts.isCallExpression(expectation)
+              && expectation.expression.getText(ast) === 'expect',
+            item.name,
+          );
           assertions.push({
+            locator: locatorSpec(expectation.arguments[0]),
             matcher,
             args: node.arguments.map(arg =>
               ts.isStringLiteral(arg) ? arg.text : arg.getText(ast)
@@ -99,6 +139,11 @@ test('85 migrations retain original assertion counts, values, CSS order, and cli
     for (let i = 0; i < checks.length; i++) {
       const check = checks[i];
       const originalCheck = assertions[i];
+      assert.deepEqual(
+        { selector: check.selector, index: check.index ?? 0 },
+        originalCheck.locator,
+        item.name + ' original assertion target',
+      );
       const expected = check.text ?? check.textContains ?? check.value
         ?? check.equals ?? check.contains;
       if (originalCheck.matcher === 'toHaveCSS') {
@@ -128,6 +173,11 @@ test('85 migrations retain original assertion counts, values, CSS order, and cli
     assert.ok(
       item.steps.some(step => step.aiWaitFor || step.aiAct),
       item.name + ' report evidence',
+    );
+    assert.ok(
+      item.steps[1].aiWaitFor || item.steps[1].aiAct,
+      item.name
+        + ' must create visual evidence before exact assertions can fail',
     );
     assert.ok(
       item.steps.every(step =>

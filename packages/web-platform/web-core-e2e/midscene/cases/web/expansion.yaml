@@ -329,6 +329,7 @@ cases:
   - name: api-frame-data-update
     steps:
       - gotoUrl: "${shellUrl}?casename=api-frame-data-update"
+      - aiWaitFor: "The text data:before is visible."
       - web.expect: { "selector": "#frame-data", "text": "data:before" }
       - aiAct: "Click the text update exactly once."
       - web.expect: { "selector": "#frame-data", "text": "data:after" }
@@ -482,7 +483,7 @@ cases:
   - name: config-css-remove-scope-false
     steps:
       - gotoUrl: "${shellUrl}?casename=config-css-remove-scope-false"
-      - aiWaitFor: "Red and green areas are visible."
+      - aiWaitFor: "A green square is visible."
       - web.expect: {
           "selector": "#index",
           "css": "background-color",
@@ -507,7 +508,7 @@ cases:
   - name: config-css-remove-scope-true
     steps:
       - gotoUrl: "${shellUrl}?casename=config-css-remove-scope-true"
-      - aiWaitFor: "Green areas are visible."
+      - aiWaitFor: "A green square is visible."
       - web.expect: {
           "selector": "#index",
           "css": "background-color",
@@ -564,6 +565,7 @@ cases:
   - name: basic-style-remove
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-style-remove"
+      - aiWaitFor: "A green square is visible."
       - web.expect: {
           "selector": "#target",
           "css": "background-color",
@@ -586,6 +588,7 @@ cases:
   - name: basic-style-remove-one-property
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-style-remove-one-property"
+      - aiWaitFor: "A green square is visible."
       - web.expect: {
           "selector": "#target",
           "css": "background-color",
@@ -656,6 +659,7 @@ cases:
   - name: basic-page-event
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-page-event"
+      - aiWaitFor: "A pink square is visible."
       - web.expect: {
           "selector": "#target",
           "css": "background-color",
@@ -682,12 +686,12 @@ cases:
   - name: basic-lazy-component-css-selector-false-exchange-class
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-lazy-component-css-selector-false-exchange-class"
+      - aiWaitFor: "A green square is visible."
       - web.expect: {
           "selector": "#target",
           "css": "background-color",
           "equals": "rgb(0, 128, 0)",
         }
-      - aiWaitFor: "A green square is visible."
       - aiAct: "Click the green square exactly once. Stop after that single click."
       - web.expect: {
           "selector": "#target",
@@ -704,12 +708,12 @@ cases:
   - name: basic-lazy-component-css-selector-false-inline-css-change-same-time
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-lazy-component-css-selector-false-inline-css-change-same-time"
+      - aiWaitFor: "A yellow square is visible."
       - web.expect: {
           "selector": "#target",
           "css": "background-color",
           "equals": "rgb(255, 255, 0)",
         }
-      - aiWaitFor: "A yellow square is visible."
       - aiAct: "Click the yellow square exactly once. Stop after that single click."
       - web.expect: {
           "selector": "#target",
@@ -726,12 +730,12 @@ cases:
   - name: basic-lazy-component-css-selector-false-remove-all
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-lazy-component-css-selector-false-remove-all"
+      - aiWaitFor: "A green square is visible."
       - web.expect: {
           "selector": "#target",
           "css": "background-color",
           "equals": "rgb(0, 128, 0)",
         }
-      - aiWaitFor: "A green square is visible."
       - aiAct: "Click the green square exactly once. Stop after that single click."
       - web.expect: {
           "selector": "#target",
@@ -742,12 +746,12 @@ cases:
   - name: basic-lazy-component-css-selector-false-remove-css-and-reuse-css
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-lazy-component-css-selector-false-remove-css-and-reuse-css"
+      - aiWaitFor: "A yellow square is visible."
       - web.expect: {
           "selector": "#target",
           "css": "background-color",
           "equals": "rgb(255, 255, 0)",
         }
-      - aiWaitFor: "A yellow square is visible."
       - aiAct: "Click the yellow square exactly once. Stop after that single click."
       - web.expect: {
           "selector": "#target",
@@ -764,12 +768,12 @@ cases:
   - name: basic-lazy-component-css-selector-false-remove-css-and-style-collapsed
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-lazy-component-css-selector-false-remove-css-and-style-collapsed"
+      - aiWaitFor: "A green square is visible."
       - web.expect: {
           "selector": "#target",
           "css": "background-color",
           "equals": "rgb(0, 128, 0)",
         }
-      - aiWaitFor: "A green square is visible."
       - aiAct: "Click the green square exactly once. Stop after that single click."
       - web.expect: {
           "selector": "#target",
@@ -786,12 +790,12 @@ cases:
   - name: basic-lazy-component-css-selector-false-remove-inline-style-and-reuse-css
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-lazy-component-css-selector-false-remove-inline-style-and-reuse-css"
+      - aiWaitFor: "A green square is visible."
       - web.expect: {
           "selector": "#target",
           "css": "background-color",
           "equals": "rgb(0, 128, 0)",
         }
-      - aiWaitFor: "A green square is visible."
       - aiAct: "Click the green square exactly once. Stop after that single click."
       - web.expect: {
           "selector": "#target",
@@ -818,12 +822,12 @@ cases:
   - name: config-css-selector-false-exchange-class
     steps:
       - gotoUrl: "${shellUrl}?casename=config-css-selector-false-exchange-class"
+      - aiWaitFor: "A green square is visible."
       - web.expect: {
           "selector": "#target",
           "css": "background-color",
           "equals": "rgb(0, 128, 0)",
         }
-      - aiWaitFor: "A green square is visible."
       - aiAct: "Click the green square exactly once. Stop after that single click."
       - web.expect: {
           "selector": "#target",
@@ -840,12 +844,12 @@ cases:
   - name: config-css-selector-false-inline-css-change-same-time
     steps:
       - gotoUrl: "${shellUrl}?casename=config-css-selector-false-inline-css-change-same-time"
+      - aiWaitFor: "A yellow square is visible."
       - web.expect: {
           "selector": "#target",
           "css": "background-color",
           "equals": "rgb(255, 255, 0)",
         }
-      - aiWaitFor: "A yellow square is visible."
       - aiAct: "Click the yellow square exactly once. Stop after that single click."
       - web.expect: {
           "selector": "#target",
@@ -862,12 +866,12 @@ cases:
   - name: config-css-selector-false-remove-all
     steps:
       - gotoUrl: "${shellUrl}?casename=config-css-selector-false-remove-all"
+      - aiWaitFor: "A green square is visible."
       - web.expect: {
           "selector": "#target",
           "css": "background-color",
           "equals": "rgb(0, 128, 0)",
         }
-      - aiWaitFor: "A green square is visible."
       - aiAct: "Click the green square exactly once. Stop after that single click."
       - web.expect: {
           "selector": "#target",
@@ -878,12 +882,12 @@ cases:
   - name: config-css-selector-false-remove-css-and-reuse-css
     steps:
       - gotoUrl: "${shellUrl}?casename=config-css-selector-false-remove-css-and-reuse-css"
+      - aiWaitFor: "A yellow square is visible."
       - web.expect: {
           "selector": "#target",
           "css": "background-color",
           "equals": "rgb(255, 255, 0)",
         }
-      - aiWaitFor: "A yellow square is visible."
       - aiAct: "Click the yellow square exactly once. Stop after that single click."
       - web.expect: {
           "selector": "#target",
@@ -900,12 +904,12 @@ cases:
   - name: config-css-selector-false-remove-css-and-style-collapsed
     steps:
       - gotoUrl: "${shellUrl}?casename=config-css-selector-false-remove-css-and-style-collapsed"
+      - aiWaitFor: "A green square is visible."
       - web.expect: {
           "selector": "#target",
           "css": "background-color",
           "equals": "rgb(0, 128, 0)",
         }
-      - aiWaitFor: "A green square is visible."
       - aiAct: "Click the green square exactly once. Stop after that single click."
       - web.expect: {
           "selector": "#target",
@@ -922,12 +926,12 @@ cases:
   - name: config-css-selector-false-remove-inline-style-and-reuse-css
     steps:
       - gotoUrl: "${shellUrl}?casename=config-css-selector-false-remove-inline-style-and-reuse-css"
+      - aiWaitFor: "A green square is visible."
       - web.expect: {
           "selector": "#target",
           "css": "background-color",
           "equals": "rgb(0, 128, 0)",
         }
-      - aiWaitFor: "A green square is visible."
       - aiAct: "Click the green square exactly once. Stop after that single click."
       - web.expect: {
           "selector": "#target",
@@ -944,6 +948,7 @@ cases:
   - name: basic-lazy-component
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-lazy-component"
+      - aiWaitFor: "A green square is visible."
       - web.expect: {
           "selector": "#target1",
           "css": "background-color",
@@ -966,6 +971,7 @@ cases:
   - name: basic-lazy-component-relative-path
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-lazy-component-relative-path"
+      - aiWaitFor: "A green square is visible."
       - web.expect: {
           "selector": "#target1",
           "css": "background-color",
@@ -988,6 +994,7 @@ cases:
   - name: basic-lazy-component-mts-bindtap
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-lazy-component-mts-bindtap"
+      - aiWaitFor: "A pink square is visible."
       - web.expect: {
           "selector": "#target",
           "css": "background-color",
@@ -1039,6 +1046,7 @@ cases:
   - name: basic-lazy-component-multi
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-lazy-component-multi"
+      - aiWaitFor: "A green square is visible."
       - web.expect: {
           "selector": "#target1",
           "index": 0,
@@ -1082,6 +1090,7 @@ cases:
   - name: basic-lazy-component-multi-import
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-lazy-component-multi-import"
+      - aiWaitFor: "A green square is visible."
       - web.expect: {
           "selector": "#target1",
           "index": 0,

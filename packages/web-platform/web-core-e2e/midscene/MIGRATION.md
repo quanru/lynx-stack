@@ -42,6 +42,16 @@ case total.
 
 ## Execution and acceptance
 
+The next local collection reaches 435 cases, including 226 pixel cases.
+Seventeen more static web-elements callbacks replay the complete original
+source, including font readiness and fixed waits. Their snapshot directory and
+subcase both use the full test title; nested PNG paths are retained exactly,
+without basename normalization. Every fixture and original Linux PNG exists;
+zero pixel tolerance and the original full-page/animation settings remain.
+Callbacks with extra guards, user actions, assertions or screenshot overrides
+are excluded. These additions introduce no new node or AI assertion and await
+hosted Linux execution; no original pixel suite runs locally on macOS.
+
 The next local batch expands retained worker/runtime, SVG/selection/iframe and
 Markdown API runners to the original Chromium, Firefox and WebKit projects.
 Performance remains Chromium-only because its source uses CDP metrics.

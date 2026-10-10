@@ -42,7 +42,12 @@ case total.
 
 ## Execution and acceptance
 
-The next local collection reaches 451 cases, including 241 pixel cases.
+The next local collection reaches 452 cases, including 242 pixel cases.
+
+The complete original `autoScroll` callback retains all four ordered API calls,
+both 500ms waits, three unchanged Linux PNG checkpoints, and the Chromium-only
+guard. It tests programmatic scrolling rather than user gestures; the retained
+Firefox/WebKit skip is not reported as a pass.
 Four guarded static callbacks retain their complete source, unchanged Linux
 PNGs and original browser skip matrix. The two unconditional percentage-cyclic
 skips remain excluded on every browser. These four translations cover only

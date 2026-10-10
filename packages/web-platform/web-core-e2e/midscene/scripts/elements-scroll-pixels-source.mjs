@@ -5,7 +5,11 @@ import ts from 'typescript';
 
 // Replay original programmatic scroll-offset API tests, not user gestures.
 // Reject every unhandled statement, guard, action, assertion and override.
-export async function originalScrollPixels(methods = false) {
+export async function originalScrollPixels(
+  methods = false,
+  browserName = 'chromium',
+) {
+  assert.ok(['chromium', 'firefox', 'webkit'].includes(browserName));
   const ast = ts.createSourceFile(
     'elements.ts',
     readFileSync(
@@ -33,7 +37,9 @@ export async function originalScrollPixels(methods = false) {
       || !ts.isPropertyAccessExpression(body.expression)
       || body.expression.expression.getText(ast)
         !== fn.parameters[0].name.getText(ast)
-      || !['scrollTo', 'scrollIntoView'].includes(body.expression.name.text)
+      || !['scrollTo', 'scrollIntoView', 'autoScroll'].includes(
+        body.expression.name.text,
+      )
       || body.arguments.length !== 1
     ) return false;
     function literal(node) {
@@ -88,13 +94,13 @@ export async function originalScrollPixels(methods = false) {
       ts.isCallExpression(node) && node.expression.getText(ast) === 'test'
       && ts.isStringLiteral(node.arguments[0]) && node.arguments[1]?.body
     ) {
-      const calls = node.arguments[1].body.statements.map(statement =>
-        ts.isExpressionStatement(statement)
-          && ts.isAwaitExpression(statement.expression)
-          && ts.isCallExpression(statement.expression.expression)
+      const calls = node.arguments[1].body.statements.map(statement => {
+        if (!ts.isExpressionStatement(statement)) return;
+        const expression = ts.isAwaitExpression(statement.expression)
           ? statement.expression.expression
-          : undefined
-      );
+          : statement.expression;
+        return ts.isCallExpression(expression) ? expression : undefined;
+      });
       if (
         calls.some(call =>
           call && (methods ? methodCall(call) : assignmentCall(call))
@@ -102,6 +108,11 @@ export async function originalScrollPixels(methods = false) {
         && calls.every(call =>
           call
           && (assignmentCall(call) || methods && methodCall(call)
+            || methods && call.expression.getText(ast) === 'test.skip'
+              && call.arguments.length === 2
+              && call.arguments[0].getText(ast).replace(/\s/g, '')
+                === 'browserName!==\'chromium\''
+              && ts.isStringLiteral(call.arguments[1])
             || ['gotoWebComponentPage', 'wait'].includes(
               call.expression.getText(ast),
             )
@@ -120,6 +131,7 @@ export async function originalScrollPixels(methods = false) {
   }
   visit(ast);
   const cases = [];
+  const skipped = Symbol('original browser skip');
   for (const { title, callback } of callbacks) {
     assert.ok(title.includes('/'));
     const steps = [];
@@ -148,6 +160,11 @@ export async function originalScrollPixels(methods = false) {
         target: ts.ScriptTarget.ES2022,
       }),
       {
+        test: {
+          skip: condition => {
+            if (condition) throw skipped;
+          },
+        },
         async gotoWebComponentPage(actualPage, fixture) {
           assert.equal(actualPage, page);
           assert.equal(fixture, title);
@@ -178,7 +195,15 @@ export async function originalScrollPixels(methods = false) {
         },
       },
     );
-    await run({ page }, { title });
+    try {
+      await run({ page, browserName }, { title });
+    } catch (error) {
+      if (error !== skipped) throw error;
+      assert.equal(navigation, 0);
+      assert.equal(snapshots, 0);
+      assert.deepEqual(steps, []);
+      continue;
+    }
     assert.equal(navigation, 1);
     assert.ok(snapshots > 0);
     cases.push({ name: 'web-elements/' + title, steps });

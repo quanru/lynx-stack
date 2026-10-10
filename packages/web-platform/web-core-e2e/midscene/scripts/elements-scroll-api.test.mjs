@@ -6,9 +6,10 @@ import YAML from 'yaml';
 import { originalScrollPixels } from './elements-scroll-pixels-source.mjs';
 import { originalPixelOptions } from '../web-pixels.ts';
 
-test('six complete scroll method callbacks retain their API arguments and eleven exact PNG checkpoints', async () => {
+test('seven complete scroll method callbacks retain their API arguments and fourteen exact PNG checkpoints', async () => {
   const cases = await originalScrollPixels(true);
   assert.deepEqual(cases.map(item => item.name), [
+    'web-elements/scroll-view/method-auto-scroll',
     'web-elements/scroll-view/scroll-to',
     'web-elements/scroll-view/scroll-into-view-basic',
     'web-elements/scroll-view/scroll-into-view-basic-x',
@@ -28,11 +29,21 @@ test('six complete scroll method callbacks retain their API arguments and eleven
   assert.deepEqual(translated.cases, cases);
   assert.equal(translated.afterEach.length, 1);
   const calls = [];
+  const waits = [];
   const context = {
-    setTimeout,
+    setTimeout: (callback, ms) => {
+      waits.push(ms);
+      callback();
+    },
     document: {
       fonts: { ready: Promise.resolve() },
       querySelectorAll: selector => [{
+        autoScroll: options =>
+          calls.push([
+            selector,
+            'autoScroll',
+            JSON.parse(JSON.stringify(options)),
+          ]),
         scrollTo: options =>
           calls.push([
             selector,
@@ -52,6 +63,10 @@ test('six complete scroll method callbacks retain their API arguments and eleven
     },
   };
   const expected = [
+    ['scroll-view', 'autoScroll', { start: true, rate: 50 }],
+    ['scroll-view', 'autoScroll', { start: false, rate: 100 }],
+    ['scroll-view', 'autoScroll', { start: true, rate: 100 }],
+    ['scroll-view', 'autoScroll', { start: false, rate: 100 }],
     ['scroll-view', 'scrollTo', { index: 2 }],
     ['scroll-view', 'scrollTo', { index: 0 }],
     ['scroll-view', 'scrollTo', { offset: 50 }],
@@ -92,8 +107,27 @@ test('six complete scroll method callbacks retain their API arguments and eleven
       }
     }
   }
-  assert.equal(pixels, 11);
+  assert.equal(pixels, 14);
   assert.deepEqual(calls, expected);
+  assert.deepEqual(waits, [500, 500, 100, 100, 100, 100, 100]);
+});
+
+test('autoScroll preserves Chromium-only source guard and both original 500ms waits', async () => {
+  const chromium = await originalScrollPixels(true);
+  const autoScroll = chromium[0];
+  assert.equal(autoScroll.name, 'web-elements/scroll-view/method-auto-scroll');
+  assert.equal(
+    autoScroll.steps.filter(step => step.javascript?.includes('setTimeout'))
+      .length,
+    2,
+  );
+  for (const browserName of ['firefox', 'webkit']) {
+    assert.deepEqual(
+      await originalScrollPixels(true, browserName),
+      chromium.slice(1),
+    );
+  }
+  await assert.rejects(originalScrollPixels(true, 'unknown'));
 });
 
 test('two programmatic scroll API callbacks preserve whole originals and all five original PNGs', async () => {

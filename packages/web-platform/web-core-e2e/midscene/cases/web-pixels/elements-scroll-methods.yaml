@@ -1,6 +1,25 @@
 afterEach:
   - recordToReport: Programmatic scroll method pixel evidence, including failures
 cases:
+  - name: web-elements/scroll-view/method-auto-scroll
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/scroll-view/method-auto-scroll.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/method-auto-scroll/initial
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"scroll-view\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.autoScroll({ start: true, rate: 50 }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 500))
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"scroll-view\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.autoScroll({ start: false, rate: 100 }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/method-auto-scroll/auto-scroll-slow-rate
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"scroll-view\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.autoScroll({ start: true, rate: 100 }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 500))
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"scroll-view\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.autoScroll({ start: false, rate: 100 }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/method-auto-scroll/auto-scroll-changed-high-rate
   - name: web-elements/scroll-view/scroll-to
     steps:
       - gotoUrl: ${elementsUrl}tests/fixtures/scroll-view/scroll-to.html

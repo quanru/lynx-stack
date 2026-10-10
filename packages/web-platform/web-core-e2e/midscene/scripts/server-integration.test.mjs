@@ -3,6 +3,40 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import YAML from 'yaml';
 
+test('Firefox container setup fixes the observed root/home UID mismatch without changing HOME or browser guards', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const job = workflow.jobs['web-shell-ai-e2e'];
+  const steps = job.steps;
+  const matching = steps.filter(step =>
+    step.name === 'Align container home ownership for Firefox'
+  );
+  assert.equal(matching.length, 1);
+  const step = matching[0];
+  assert.equal(step.shell, 'bash');
+  assert.ok(step.run.includes('test "$(id -u)" = "0"'));
+  assert.ok(step.run.includes('test ! -L /github/home'));
+  assert.ok(step.run.includes('chown -- "$(id -u):$(id -g)" /github/home'));
+  assert.ok(
+    step.run.includes('test "$(stat -c %u /github/home)" = "$(id -u)"'),
+  );
+  assert.ok(!step.run.includes('-R'));
+  assert.ok(!/HOME\s*=|MOZ_.*SANDBOX/.test(JSON.stringify(job)));
+  assert.ok(
+    steps.indexOf(step)
+      < steps.findIndex(item =>
+        item.name === 'Validate original worker and runtime API contracts'
+      ),
+  );
+});
+
 test('the original server HTML snapshot runner executes once without snapshot updates', () => {
   const workflow = YAML.parse(
     readFileSync(

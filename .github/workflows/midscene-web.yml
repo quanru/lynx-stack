@@ -99,7 +99,7 @@ jobs:
       MIDSCENE_MODEL_FAMILY: ${{ secrets.MIDSCENE_MODEL_FAMILY }}
       MIDSCENE_MODEL_REASONING_ENABLED: ${{ secrets.MIDSCENE_MODEL_REASONING_ENABLED }}
     # Same image the official Playwright web jobs use: browsers preinstalled
-    # (/ms-playwright) and system libraries ready for headless Chromium.
+    # (/ms-playwright) and system libraries ready for all three browsers.
     container:
       image: mcr.microsoft.com/playwright:v1.61.1-resolute
       env:
@@ -114,6 +114,20 @@ jobs:
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
         with:
           node-version: "24"
+
+      - name: Align container home ownership for Firefox
+        shell: bash
+        # GitHub mounts /github/home with the image's pwuser ownership, while
+        # this root container needs apt/corepack for the source build. Firefox
+        # refuses root launches when that home directory belongs to another UID.
+        # Change only the container mount's directory owner, never HOME or files.
+        run: |
+          set -euo pipefail
+          test "$(id -u)" = "0"
+          test -d /github/home
+          test ! -L /github/home
+          chown -- "$(id -u):$(id -g)" /github/home
+          test "$(stat -c %u /github/home)" = "$(id -u)"
 
       - name: Enable pnpm via corepack
         run: |

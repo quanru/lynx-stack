@@ -43,6 +43,12 @@ case total.
 ## Execution and acceptance
 
 The next local collection reaches 447 cases, including 237 pixel cases.
+Run 38037300565's first shard was blocked before UI cases: Firefox refused
+root execution because /github/home belonged to pwuser. The next workflow
+changes only that mounted directory's owner to the actual container UID,
+with explicit root/directory/non-symlink checks. It does not override HOME,
+disable browser sandbox checks, remove browser variants or relax source tests.
+Other shards remain useful and must finish before this correction is pushed.
 One additional complete scrollend callback retains the programmatic 200-pixel
 offset, 300 ms wait, one event read, exact event count and all five payload
 field checks. Missing fields or extra events fail without later polling.

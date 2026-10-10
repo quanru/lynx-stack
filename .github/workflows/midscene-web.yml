@@ -154,6 +154,13 @@ jobs:
         run: |
           pnpm turbo build --filter='@lynx-js/web-core-e2e...'
 
+      - name: Validate original server-rendering HTML snapshots
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-core-e2e
+        # Deterministic non-UI contracts retain their original runner and snapshots.
+        # CI forbids creating missing snapshots; never pass an update flag.
+        run: pnpm exec rstest --config rstest.config.ts
+
       - name: Start web-core-e2e dev shell
         working-directory: packages/web-platform/web-core-e2e
         run: |

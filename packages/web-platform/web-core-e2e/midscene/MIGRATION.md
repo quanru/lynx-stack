@@ -42,7 +42,7 @@ case total.
 
 ## Execution and acceptance
 
-Current local collection is 417 with 116 model-free checks. Three hydrated SSR
+Current local collection is 417 with 117 model-free checks. Three hydrated SSR
 CSS inheritance cases replay the complete original callbacks, waits, attributes
 and CSS assertions, with one visual Update action each. Their original SSR
 interaction failed before the fixture repair: the client script was not loaded
@@ -52,6 +52,13 @@ fixture now loads the existing client module and maps the unchanged public
 callbacks pass locally after the repair; four CSS fallback translations and four
 JavaScript-disabled translations retain their original acceptance. Hosted AI
 acceptance of the new SSR interactions remains pending.
+
+The original 17 server-rendering HTML snapshots now execute once in shard 1
+using the unchanged Rstest runner/configuration and existing snapshots. All 17
+pass locally with zero added/updated snapshots. CI mode prohibits missing
+snapshot creation; no update flag is passed. These non-UI checks are separate
+from the 417 YAML cases and are not reported as screenshot-backed AI cases.
+Hosted execution of the new integration is pending.
 
 The current swiper action correction describes the right-hand panel, matching
 both the original Linux PNGs and original-profile browser geometry. A browser

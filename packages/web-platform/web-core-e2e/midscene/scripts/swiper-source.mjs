@@ -5,8 +5,8 @@ import ts from 'typescript';
 
 export const redPanelClick =
   'Click once in the center of the red panel with a black border at the top of the page. Do not swipe or perform another action.';
-export const lowerPanelClick =
-  'Click once in the center of the lower colored panel with a black border, below the upper green panel. Do not click the upper panel, swipe, or perform another action.';
+export const rightPanelClick =
+  'Click once in the center of the RIGHT-HAND colored panel with a black border at the top of the page, to the RIGHT of the green panel. The two panels are side by side, not stacked. Do not click the left panel, swipe, or perform another action.';
 export const listClick =
   'Click the visible text "scrollToPosition" once. Do not scroll manually or perform another action.';
 
@@ -28,7 +28,7 @@ export async function originalSwiperPixels() {
       'basic-element-x-swiper-mode-' + mode,
       [mode, redPanelClick],
     ]),
-    ['basic-element-x-swiper-current', ['swiper-1', lowerPanelClick]],
+    ['basic-element-x-swiper-current', ['swiper-1', rightPanelClick]],
     ['basic-element-list-scroll-to-position', ['#scrollToPosition', listClick]],
   ]);
   const callbacks = new Map();

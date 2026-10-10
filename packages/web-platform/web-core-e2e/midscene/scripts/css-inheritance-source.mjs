@@ -3,7 +3,8 @@ import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
 import ts from 'typescript';
 
-export async function originalCSSInheritance() {
+export async function originalCSSInheritance(ssr = false) {
+  assert.equal(typeof ssr, 'boolean');
   const ast = ts.createSourceFile(
     'original.ts',
     readFileSync(
@@ -13,8 +14,11 @@ export async function originalCSSInheritance() {
     ts.ScriptTarget.Latest,
     true,
   );
-  let callback, settings;
+  let callback, settings, goto;
   function visit(node) {
+    if (ts.isVariableDeclaration(node) && node.name.getText(ast) === 'goto') {
+      goto = node.initializer;
+    }
     if (
       ts.isCallExpression(node) && node.expression.getText(ast) === 'test'
       && ts.isTemplateExpression(node.arguments[0])
@@ -30,7 +34,7 @@ export async function originalCSSInheritance() {
     ts.forEachChild(node, visit);
   }
   visit(ast);
-  assert.ok(callback);
+  assert.ok(callback && goto);
   const cases = [];
   for (const setting of settings) {
     const name = 'config-css-inheritance-' + setting;
@@ -51,12 +55,13 @@ export async function originalCSSInheritance() {
     });
     const context = {
       setting,
-      goto: async (_page, title) => {
-        assert.equal(title, name);
-        steps.push({ gotoUrl: '${shellUrl}?casename=' + name }, {
-          javascript: 'document.fonts.ready.then(() => true)',
-        });
-      },
+      isSSR: ssr,
+      document: { fonts: { ready: Promise.resolve() } },
+      wait: async ms =>
+        steps.push({
+          javascript:
+            `new Promise(resolve => setTimeout(() => resolve(true), ${ms}))`,
+        }),
       expect: target => ({
         toHaveCSS: async (css, equals) =>
           steps.push({
@@ -92,13 +97,29 @@ export async function originalCSSInheritance() {
       }),
     };
     const run = runInNewContext(
-      ts.transpile('(' + callback.getText(ast) + ')', {
-        target: ts.ScriptTarget.ES2022,
-      }),
+      ts.transpile(
+        'const goto = ' + goto.getText(ast) + '; (' + callback.getText(ast)
+          + ')',
+        {
+          target: ts.ScriptTarget.ES2022,
+        },
+      ),
       context,
     );
-    await run({ page: { locator } }, { title: name });
-    cases.push({ name, steps });
+    await run({
+      page: {
+        locator,
+        async goto(url, options) {
+          assert.equal(options.waitUntil, 'load');
+          steps.push({ gotoUrl: '${shellUrl}' + url.slice(1) });
+        },
+        async evaluate(callback) {
+          await callback();
+          steps.push({ javascript: 'document.fonts.ready.then(() => true)' });
+        },
+      },
+    }, { title: name });
+    cases.push({ name: (ssr ? 'ssr/' : '') + name, steps });
   }
   return cases;
 }

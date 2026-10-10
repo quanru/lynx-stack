@@ -194,6 +194,12 @@ jobs:
           npm run typecheck
           node --test scripts/*.test.mjs
 
+      - name: Validate original SSR loader and visual target geometry
+        working-directory: packages/web-platform/web-core-e2e/midscene
+        run: |
+          node scripts/check-ssr-client.mjs
+          node scripts/check-swiper-target.mjs
+
       - name: Run Web Midscene cases
         id: run-cases
         working-directory: packages/web-platform/web-core-e2e/midscene

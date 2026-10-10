@@ -26,6 +26,32 @@ test('all three templated CSS inheritance cases preserve complete original callb
   }
 });
 
+test('three hydrated SSR inheritance branches retain the complete original goto helper and Update assertions', async () => {
+  const source = await originalCSSInheritance(true);
+  const migrated = YAML.parse(
+    readFileSync(
+      new URL('../cases/web/css-inheritance-ssr.yaml', import.meta.url),
+      'utf8',
+    ),
+  );
+  assert.deepEqual(migrated.cases, source);
+  assert.equal(source.length, 3);
+  for (const item of source) {
+    assert.ok(item.steps[0].gotoUrl.startsWith('${shellUrl}ssr?casename='));
+    assert.equal(
+      item.steps[2].javascript,
+      'new Promise(resolve => setTimeout(() => resolve(true), 300))',
+    );
+    assert.equal(item.steps.filter(step => step.aiAct).length, 1);
+    assert.ok(
+      item.steps.filter(step => step['web.expect']).every(step =>
+        step['web.expect'].timeoutMs === 5000
+      ),
+    );
+  }
+  assert.ok(migrated.afterEach[0].recordToReport);
+});
+
 test('attribute equals null requires actual absence, not a false/empty/undefined value', async () => {
   const input = {
     selector: '[part="page"]',

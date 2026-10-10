@@ -42,7 +42,25 @@ case total.
 
 ## Execution and acceptance
 
-Current local collection is 414 with 114 model-free checks and typechecking
+Current local collection is 417 with 116 model-free checks. Three hydrated SSR
+CSS inheritance cases replay the complete original callbacks, waits, attributes
+and CSS assertions, with one visual Update action each. Their original SSR
+interaction failed before the fixture repair: the client script was not loaded
+as a module, and its hydration URL pointed to a missing output directory. The
+fixture now loads the existing client module and maps the unchanged public
+`/dist/ssr/` URL to the actual client bundle. All three unchanged original SSR
+callbacks pass locally after the repair; four CSS fallback translations and four
+JavaScript-disabled translations retain their original acceptance. Hosted AI
+acceptance of the new SSR interactions remains pending.
+
+The current swiper action correction describes the right-hand panel, matching
+both the original Linux PNGs and original-profile browser geometry. A browser
+guard verifies the two panels remain side by side without clicking selectors.
+It corrects the previous lower-panel description; all click counts, waits and
+PNG assertions remain unchanged. The pushed 405-case run failed that case;
+the corrected prompt is not yet hosted-validated.
+
+The preceding local collection was 414 with 114 model-free checks and typechecking
 passing, including 209 pixel cases. Seven further elements swiper callbacks
 retain all current/indicator API mutations, autoplay waits, Chromium guards and
 original PNGs. Eight clipped indicator baselines preserve exactly the original

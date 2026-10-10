@@ -1,4 +1,22 @@
 cases:
+  - name: basic-mts-bindtap
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-mts-bindtap"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before original main-thread tap callback
+      - aiAct: Click the pink square at the top-left once. Stop after that single click.
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.expect: { consoleTexts: ["hello world"] }
+      - recordToReport: Original main-thread tap callback was observed
+  - name: basic-mts-systeminfo
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-mts-systeminfo"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before original main-thread SystemInfo callback
+      - aiAct: Click the pink square at the top-left once. Stop after that single click.
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.expect: { consoleTexts: ["hello world"] }
+      - recordToReport: Original main-thread SystemInfo platform condition passed
   - name: api-updateData-callback
     steps:
       - gotoUrl: "${shellUrl}?casename=api-updateData-callback"

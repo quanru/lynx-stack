@@ -21,6 +21,7 @@ import {
 } from './fixture-style.js';
 import {
   createConsoleEvidence,
+  captureConsoleMessage,
   expectWebRuntime,
   type RuntimeExpectInput,
 } from './runtime-contract.js';
@@ -72,7 +73,9 @@ const webSetup = defineProjectSetup<WebProjectContext>({
         });
         page = await context.newPage();
         const evidence = createConsoleEvidence();
-        page.on('console', message => evidence.record(message.text()));
+        page.on('console', message => {
+          void captureConsoleMessage(message, evidence);
+        });
         consoleEvidence.set(runId, evidence);
         pages.set(runId, page);
       }
@@ -140,6 +143,7 @@ const webExpectNode = defineNode<
     if (
       execution.input.consoleTexts !== undefined
       || execution.input.workerCountAtMost !== undefined
+      || execution.input.consoleError !== undefined
     ) {
       expectWebRuntime(
         execution.input,

@@ -3,7 +3,7 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 182 cases: the
+while Midscene drives user interactions. The suite contains 190 cases: the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
 ReactLynx migrations, plus 15 continuation cases with original deterministic
 assertion values, 26 original web-elements CSS/attribute contracts and two
@@ -17,7 +17,8 @@ shadow-root stylesheet inclusion contracts and two main-thread autoScroll
 contracts, two setNativeProps text-count contracts, three rpx/ppx dimension
 contracts, three updateData/processData API contracts and three reload/viewport
 unit contracts, three exact console callback/global contracts, two worker
-lifecycle contracts and one performance timing-key contract.
+lifecycle contracts, one performance timing-key contract, two main-thread
+click/console contracts, one global-event API contract and five error-payload contracts.
 The 147-case four-shard run passed in
 [run 37940214877](https://github.com/quanru/lynx-stack/actions/runs/37940214877),
 including report generation and Pages publication. Downloaded publication
@@ -75,7 +76,7 @@ The external-bundle case and its unchanged original Chromium test both passed
 locally on the first attempt. `web.expect` with `matchingText`/`count` uses the
 same public `page.getByText` locator and checks the complete count, without
 selecting the first match or requiring visibility. Duplicate matches fail the
-original count-one contract. All 74 model-free checks and typechecking pass.
+original count-one contract. All 77 model-free checks and typechecking pass.
 The unchanged middleware original also passes locally. Its migration retains
 the separate `/middleware` URL, two ordinary `aiAct` clicks, and immediate
 inline-style substring reads; it does not extend the original Chromium-only,
@@ -176,6 +177,25 @@ nodes. Console evidence is case/project scoped, bounded and never persisted as
 arbitrary logs. Overflow fails rather than accepting partial evidence. A local
 replay of all nine current additions has nine screenshots and all 14 local
 image/HTML targets exist. Hosted validation of these six additions is pending.
+
+Three further originals pass locally: two main-thread tap/SystemInfo callbacks
+and `sendGlobalEvent`. Both taps use one ordinary `aiAct` click and retain exact
+`hello world` console occurrence checks after the original 100 ms waits. They
+still require hosted AI execution. The global-event YAML also passes locally
+on its first attempt, retaining the actual event name, array payload and both
+ordered CSS assertions.
+
+Five error callback originals and translations pass locally on their first
+attempts. The existing `web.expect` checks exact main/background file names,
+release strings, error messages, numeric source-map coordinates and a nonempty
+string stack within the original 500 ms windows. Read-only console argument
+projections stay in memory and retain one complete event per conjunction.
+Assertions never wait for pending extraction or combine fields from different
+events. Extraction failures and bounded-evidence overflow cannot pass.
+Differential checks execute the unchanged original callbacks on 180 valid and
+malformed events. These five additions are client-only here; SSR support is
+not newly claimed. All 14 additions after the pushed 176-case head await hosted
+validation; 12 non-AI translations pass locally, with two AI clicks pending.
 
 This directory sits one level below the `packages/web-platform/*` pnpm
 workspace glob and is not a workspace member. It has its own `package.json`

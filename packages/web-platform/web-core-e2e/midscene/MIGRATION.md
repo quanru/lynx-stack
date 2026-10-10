@@ -14,7 +14,7 @@ remain in scope as deterministic contracts, not visual AI tests.
 Run `node scripts/inventory-upstream.mjs` to refresh this source inventory.
 These are source declarations, including named skipped tests, not runtime case
 counts. Loops, browser projects, SSR variants, and conditional skips change the
-runtime denominator. Do not subtract the 182 YAML cases from these totals:
+runtime denominator. Do not subtract the 190 YAML cases from these totals:
 the pilot cases are not one-to-one replacements, and upstream names can repeat.
 
 | Suite/file                                      | Source declarations | Migration status                                                                                                                                                 |
@@ -70,7 +70,18 @@ and translated executions pass locally on their first attempts; all 74
 model-free checks pass. They retain pre-navigation Page console listeners,
 original waits, exact messages/API arguments, worker upper bounds 3/2/1,
 both removals and all 13 timing keys. No polling, page-console monkey patch,
-custom action node or benchmark-equivalence claim is introduced. The five pilot cases
+custom action node or benchmark-equivalence claim is introduced. Three further
+cases preserve two main-thread click/console callbacks and the global-event
+API payload/CSS contract. Their originals pass locally; the global-event YAML
+also passes first attempt, while the two `aiAct` translations await hosted AI.
+Five further error-payload originals and translations pass locally, preserving
+500 ms windows, strict type/value predicates, source-map coordinates, messages,
+nonempty stacks, file names and release strings. The unchanged source callbacks
+match the new predicates across 180 valid/malformed event inputs. Pending
+extraction cannot extend the observation window, nor can different events
+contribute fields to one conjunction. Collection is now 190 with 77 local
+model-free checks passing; these 14 additions after the pushed 176-case head
+are not yet hosted-verified. The five pilot cases
 are not one-to-one source migrations.
 
 1. Four independent CI shards partition YAML cases by stable file/case order.

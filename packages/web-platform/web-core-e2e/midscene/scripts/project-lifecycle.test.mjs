@@ -7,6 +7,7 @@ import ts from 'typescript';
 import { prepareLynxViewStyle } from '../fixture-style.ts';
 import {
   createConsoleEvidence,
+  captureConsoleMessage,
   expectWebRuntime,
 } from '../runtime-contract.ts';
 
@@ -33,7 +34,11 @@ test('projects keep independent registries and release only their own case resou
     },
     './expectation.js': { expectWebValue: () => {} },
     './fixture-style.js': { prepareLynxViewStyle },
-    './runtime-contract.js': { createConsoleEvidence, expectWebRuntime },
+    './runtime-contract.js': {
+      createConsoleEvidence,
+      captureConsoleMessage,
+      expectWebRuntime,
+    },
     playwright: {
       chromium: {
         async launch() {

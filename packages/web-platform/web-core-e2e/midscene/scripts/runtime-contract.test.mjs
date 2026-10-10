@@ -235,12 +235,24 @@ test('console and worker YAML preserve original messages, callback API, waits an
           assert.equal(booleanAssertions, 1);
         } else {
           assert.deepEqual(checks.flatMap(c => c.consoleTexts), messages);
-          assert.equal(booleanAssertions, 2);
+          assert.equal(
+            booleanAssertions,
+            item.name.startsWith('basic-mts-') ? 1 : 2,
+          );
         }
         assert.ok(
           body.getText(ast).indexOf('page.on(\'console\'')
             < body.getText(ast).indexOf('goto(page'),
         );
+        const originalClicks =
+          (body.getText(ast).match(/await target\.click\(\)/g) ?? []).length;
+        assert.equal(item.steps.filter(s => s.aiAct).length, originalClicks);
+        if (originalClicks) {
+          assert.match(
+            item.steps.find(s => s.aiAct).aiAct,
+            /pink square.*once.*single click/,
+          );
+        }
       } else {
         const script = scripts.at(-1);
         const timing = Object.fromEntries(timingKeys.map(key => [key, 0]));

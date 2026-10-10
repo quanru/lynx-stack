@@ -1,0 +1,35 @@
+cases:
+  - name: api-updateData-callback
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-updateData-callback"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 1000))"
+      - recordToReport: Before original updateData success callback
+      - javascript: |
+          (() => {
+            document.querySelector('lynx-view').updateData(
+              { mockData: 'updatedData' }, 'default', () => { console.log('update Data success'); }
+            );
+            return true;
+          })()
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.expect: { consoleTexts: ["update Data success"] }
+      - recordToReport: Original updateData callback occurred within its observation window
+  - name: api-global-disallowed-vars
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-global-disallowed-vars"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 200))"
+      - recordToReport: Before original main/background global isolation assertions
+      - web.expect: {
+          consoleTexts: [
+            "main thread: undefined, undefined",
+            "background thread: undefined, undefined",
+          ],
+        }
+      - recordToReport: Both original exact global isolation console messages were observed
+  - name: api-globalThis
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-globalThis"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 200))"
+      - recordToReport: Before original main/background globalThis assertions
+      - web.expect: { consoleTexts: ["mtsFoo 123", "btsFoo 123"] }
+      - recordToReport: Both original exact globalThis console messages were observed

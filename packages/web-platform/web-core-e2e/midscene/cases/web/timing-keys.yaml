@@ -1,0 +1,27 @@
+# This checks original API key existence, not benchmark thresholds or SSR support.
+cases:
+  - name: api-lynx-performance
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-lynx-performance"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 1000))"
+      - recordToReport: Before original performance event CSS and timing-key assertions
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 200))"
+      - javascript: |
+          (() => {
+            const timingKeys = Object.keys(globalThis.timing);
+            for (const key of [
+              'create_lynx_start', 'dispatch_start', 'layout_start', 'layout_end',
+              'load_core_start', 'ui_operation_flush_end', 'ui_operation_flush_start',
+              'decode_start', 'decode_end', 'lepus_execute_start', 'load_template_start',
+              'data_processor_start', 'data_processor_end'
+            ]) {
+              if (!timingKeys.includes(key)) throw new Error('Original timing key missing: ' + key);
+            }
+            return true;
+          })()
+      - recordToReport: Original performance callback CSS and all thirteen timing keys passed

@@ -3,7 +3,7 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 176 cases: the
+while Midscene drives user interactions. The suite contains 182 cases: the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
 ReactLynx migrations, plus 15 continuation cases with original deterministic
 assertion values, 26 original web-elements CSS/attribute contracts and two
@@ -16,7 +16,8 @@ display contract, the original input bindinput payload contract, and two
 shadow-root stylesheet inclusion contracts and two main-thread autoScroll
 contracts, two setNativeProps text-count contracts, three rpx/ppx dimension
 contracts, three updateData/processData API contracts and three reload/viewport
-unit contracts.
+unit contracts, three exact console callback/global contracts, two worker
+lifecycle contracts and one performance timing-key contract.
 The 147-case four-shard run passed in
 [run 37940214877](https://github.com/quanru/lynx-stack/actions/runs/37940214877),
 including report generation and Pages publication. Downloaded publication
@@ -74,7 +75,7 @@ The external-bundle case and its unchanged original Chromium test both passed
 locally on the first attempt. `web.expect` with `matchingText`/`count` uses the
 same public `page.getByText` locator and checks the complete count, without
 selecting the first match or requiring visibility. Duplicate matches fail the
-original count-one contract. All 71 model-free checks and typechecking pass.
+original count-one contract. All 74 model-free checks and typechecking pass.
 The unchanged middleware original also passes locally. Its migration retains
 the separate `/middleware` URL, two ordinary `aiAct` clicks, and immediate
 inline-style substring reads; it does not extend the original Chromium-only,
@@ -161,6 +162,20 @@ CSS assertions, including 500 px transformed units and 250 px container units.
 Source contract checks compare ordered API bodies, waits and assertions. No
 selector-based UI action or custom action/wait node is introduced. Hosted
 execution of these three additions is pending.
+
+Six further runtime originals and YAML translations pass locally on their first
+attempts. Console listeners attach to each case's Page before navigation, as in
+the originals; exact message occurrences include worker console events and
+retain the original 200 ms/100 ms observation windows without polling.
+`updateData` retains its payload, `default` mode and real callback. Worker
+checks read `page.workers().length` once, retaining the original upper bounds
+3/2/1 and both actual LynxView removals. Performance coverage retains its green
+CSS assertion and all 13 timing keys; it is not benchmark threshold coverage.
+These are additional modes of the existing `web.expect`, not atomic action
+nodes. Console evidence is case/project scoped, bounded and never persisted as
+arbitrary logs. Overflow fails rather than accepting partial evidence. A local
+replay of all nine current additions has nine screenshots and all 14 local
+image/HTML targets exist. Hosted validation of these six additions is pending.
 
 This directory sits one level below the `packages/web-platform/*` pnpm
 workspace glob and is not a workspace member. It has its own `package.json`

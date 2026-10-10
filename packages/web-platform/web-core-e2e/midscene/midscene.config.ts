@@ -19,6 +19,11 @@ import {
   prepareLynxViewStyle,
   type FixtureStyleInput,
 } from './fixture-style.js';
+import {
+  createConsoleEvidence,
+  expectWebRuntime,
+  type RuntimeExpectInput,
+} from './runtime-contract.js';
 
 // @midscene/core writes agent reports to
 // <cwd>/midscene_run/report/<reportFileName>.html. releaseAgent must return the
@@ -37,6 +42,7 @@ interface WebProjectContext {
   agentRegistry: AgentRegistry;
   // Return the Playwright Page for a case run to web.expect.
   getPage(runId: string): Promise<Page>;
+  getConsoleEvidence(runId: string): ReturnType<typeof createConsoleEvidence>;
 }
 
 // Playwright drives Chromium against the web-core-e2e development shell.
@@ -53,6 +59,10 @@ const webSetup = defineProjectSetup<WebProjectContext>({
 
     const pages = new Map<string, Page>();
     const agents = new Map<string, PlaywrightAgent>();
+    const consoleEvidence = new Map<
+      string,
+      ReturnType<typeof createConsoleEvidence>
+    >();
 
     const getPage = async (runId: string) => {
       let page = pages.get(runId);
@@ -61,6 +71,9 @@ const webSetup = defineProjectSetup<WebProjectContext>({
           viewport: { width: 393, height: 851 },
         });
         page = await context.newPage();
+        const evidence = createConsoleEvidence();
+        page.on('console', message => evidence.record(message.text()));
+        consoleEvidence.set(runId, evidence);
         pages.set(runId, page);
       }
       return page;
@@ -87,6 +100,7 @@ const webSetup = defineProjectSetup<WebProjectContext>({
         const page = pages.get(runId);
         agents.delete(runId);
         pages.delete(runId);
+        consoleEvidence.delete(runId);
         if (agent) await agent.destroy();
         if (page) await page.context().close();
         // Return a report path only after an AI task caused core to write the
@@ -99,11 +113,22 @@ const webSetup = defineProjectSetup<WebProjectContext>({
     return {
       agentRegistry: registry,
       getPage,
+      getConsoleEvidence(runId) {
+        const evidence = consoleEvidence.get(runId);
+        if (!evidence) {
+          throw new Error('Console evidence requires a live case page.');
+        }
+        return evidence;
+      },
     };
   },
 });
 
-const webExpectNode = defineNode<ExpectInput, void, WebProjectContext>({
+const webExpectNode = defineNode<
+  ExpectInput & RuntimeExpectInput,
+  void,
+  WebProjectContext
+>({
   name: 'web.expect',
   description:
     'Preserve upstream text, input value, attribute, JavaScript property, computed CSS, and bounding-box assertions through the open Lynx shadow root.',
@@ -112,6 +137,17 @@ const webExpectNode = defineNode<ExpectInput, void, WebProjectContext>({
       throw new Error('web.expect can only be used as a case-level step.');
     }
     const page = await execution.context.getPage(execution.case.runId);
+    if (
+      execution.input.consoleTexts !== undefined
+      || execution.input.workerCountAtMost !== undefined
+    ) {
+      expectWebRuntime(
+        execution.input,
+        execution.context.getConsoleEvidence(execution.case.runId),
+        () => page.workers().length,
+      );
+      return;
+    }
     if (execution.input.matchingTexts !== undefined) {
       await expectWebCount(async () => {
         let total = 0;

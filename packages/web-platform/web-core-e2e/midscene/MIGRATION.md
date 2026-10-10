@@ -14,7 +14,7 @@ remain in scope as deterministic contracts, not visual AI tests.
 Run `node scripts/inventory-upstream.mjs` to refresh this source inventory.
 These are source declarations, including named skipped tests, not runtime case
 counts. Loops, browser projects, SSR variants, and conditional skips change the
-runtime denominator. Do not subtract the 176 YAML cases from these totals:
+runtime denominator. Do not subtract the 182 YAML cases from these totals:
 the pilot cases are not one-to-one replacements, and upstream names can repeat.
 
 | Suite/file                                      | Source declarations | Migration status                                                                                                                                                 |
@@ -62,7 +62,15 @@ timing contracts. Three further reload/viewport originals and translations pass
 locally, retaining immediate shadow-page counts, global-props API payloads and
 inline-style reads, three viewport reload phases, six CSS assertions and original
 waits. All 71 model-free checks and typechecking pass. These three additions
-bring collection to 176 but are not yet hosted-verified. The five pilot cases
+bring collection to 176 but are not yet hosted-verified. Six further runtime
+cases bring local collection to 182: updateData success callback, two exact
+main/background global console contracts, two immediate worker-count/release
+contracts and one performance event CSS/timing-key contract. All six original
+and translated executions pass locally on their first attempts; all 74
+model-free checks pass. They retain pre-navigation Page console listeners,
+original waits, exact messages/API arguments, worker upper bounds 3/2/1,
+both removals and all 13 timing keys. No polling, page-console monkey patch,
+custom action node or benchmark-equivalence claim is introduced. The five pilot cases
 are not one-to-one source migrations.
 
 1. Four independent CI shards partition YAML cases by stable file/case order.

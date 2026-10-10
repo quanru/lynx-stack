@@ -5,6 +5,10 @@ import vm from 'node:vm';
 import test from 'node:test';
 import ts from 'typescript';
 import { prepareLynxViewStyle } from '../fixture-style.ts';
+import {
+  createConsoleEvidence,
+  expectWebRuntime,
+} from '../runtime-contract.ts';
 
 test('projects keep independent registries and release only their own case resources', async () => {
   const events = [];
@@ -29,6 +33,7 @@ test('projects keep independent registries and release only their own case resou
     },
     './expectation.js': { expectWebValue: () => {} },
     './fixture-style.js': { prepareLynxViewStyle },
+    './runtime-contract.js': { createConsoleEvidence, expectWebRuntime },
     playwright: {
       chromium: {
         async launch() {
@@ -43,7 +48,14 @@ test('projects keep independent registries and release only their own case resou
                   events.push(['context', id]);
                 },
                 async newPage() {
-                  return { id, context: () => context };
+                  return {
+                    id,
+                    context: () => context,
+                    on(event, callback) {
+                      assert.equal(event, 'console');
+                      callback({ text: () => 'browser-' + id });
+                    },
+                  };
                 },
               };
               return context;
@@ -84,8 +96,15 @@ test('projects keep independent registries and release only their own case resou
   const first = await shellContext.agentRegistry.getAgent(runId);
   assert.equal(await shellContext.agentRegistry.getAgent(runId), first);
   const second = await elementsContext.agentRegistry.getAgent(runId);
+  shellContext.getConsoleEvidence(runId).expectTexts(['browser-1']);
+  assert.throws(
+    () => shellContext.getConsoleEvidence(runId).expectTexts(['browser-2']),
+    /not observed/,
+  );
+  elementsContext.getConsoleEvidence(runId).expectTexts(['browser-2']);
   assert.notEqual(first, second);
   await shell.nodes[0].provider.releaseAgent(runId);
+  assert.throws(() => shellContext.getConsoleEvidence(runId), /live case page/);
   assert.deepEqual(events, [['agent', 1], ['context', 1]]);
   assert.equal(await elementsContext.agentRegistry.getAgent(runId), second);
   await elements.nodes[0].provider.releaseAgent(runId);

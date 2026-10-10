@@ -58,6 +58,21 @@ export const pixelOptions = {
   isNot: false,
 } as const;
 
+type OriginalPixelOptions = Omit<typeof pixelOptions, 'maxDiffPixelRatio'> & {
+  maxDiffPixelRatio: number;
+};
+// This one original test explicitly overrides the helper's zero-ratio default.
+// Keep it bound to the exact source PNG; YAML cannot relax arbitrary baselines.
+export function originalPixelOptions(baseline: string): OriginalPixelOptions {
+  return {
+    ...pixelOptions,
+    maxDiffPixelRatio:
+      baseline === 'x-textarea/placeholder-font-size/font-size/index'
+        ? 0.02
+        : 0,
+  };
+}
+
 interface ScreenshotResult {
   errorMessage?: string;
   actual?: Buffer;
@@ -75,7 +90,7 @@ export async function expectWebPixels(
   runId: string,
 ) {
   if (
-    !/^[a-zA-Z0-9_-]+(?:\/[a-zA-Z0-9_-]+){2,}$/.test(baseline)
+    !/^[a-zA-Z0-9_-]+(?:\/[a-zA-Z0-9_-]+)+$/.test(baseline)
     || !/^[a-zA-Z0-9_-]+$/.test(runId)
   ) throw new Error('Invalid pixel baseline or run identity.');
   const expected = await readFile(
@@ -86,13 +101,16 @@ export async function expectWebPixels(
   );
   const backend = (page as Page & {
     _expectScreenshot?: (
-      options: typeof pixelOptions & { expected: Buffer },
+      options: OriginalPixelOptions & { expected: Buffer },
     ) => Promise<ScreenshotResult>;
   })._expectScreenshot;
   if (typeof backend !== 'function') {
     throw new Error('Pinned Playwright screenshot backend is unavailable.');
   }
-  const result = await backend.call(page, { ...pixelOptions, expected });
+  const result = await backend.call(page, {
+    ...originalPixelOptions(baseline),
+    expected,
+  });
   if (!result || typeof result !== 'object') {
     throw new Error('Invalid Playwright screenshot comparison result.');
   }

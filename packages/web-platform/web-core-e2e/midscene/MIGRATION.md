@@ -42,6 +42,14 @@ case total.
 
 ## Execution and acceptance
 
+Current local collection is 286 with 97 model-free checks. Three further static
+pixels preserve textarea color, placeholder font size and default-display path
+normalization. The one original placeholder test explicitly sets mismatch ratio
+0.02; this is hard-bound to its exact source PNG, not an input allowing other
+tests to relax. Other baselines retain ratio 0 and original perceptual defaults.
+All original statements, waits, PNGs and options are checked; Linux execution
+of this local batch remains pending.
+
 Local collection is now 283 with 95 model-free checks. Two more original pixel
 flows retain updateGlobalProps' exact blue payload and ordered snapshots, and
 the frame height/weight removals plus exact viewport style. Original callback
@@ -74,6 +82,8 @@ pass from the repository root and the unchanged public-matcher differential
 passes in an isolated synthetic fixture tree. Local collection is now 276;
 the extra twelve component pixel cases await hosted execution. This run has no
 successful Pages deployment and is not a fully accepted integration checkpoint.
+
+### Historical batch notes (statuses as recorded)
 
 Latest fully successful head `e171662` passed 176/176 on first attempts in run
 38016292683, including report generation and Pages. Downloaded publication has

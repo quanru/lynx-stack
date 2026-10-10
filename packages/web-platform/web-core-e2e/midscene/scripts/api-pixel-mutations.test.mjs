@@ -5,7 +5,7 @@ import { runInNewContext } from 'node:vm';
 import ts from 'typescript';
 import YAML from 'yaml';
 
-test('two API pixel flows preserve every original ordered mutation, snapshot and wait', async () => {
+test('four API pixel flows preserve every original ordered mutation, snapshot and wait', async () => {
   const ast = ts.createSourceFile(
     'original.ts',
     readFileSync(
@@ -21,7 +21,7 @@ test('two API pixel flows preserve every original ordered mutation, snapshot and
       'utf8',
     ),
   ).cases;
-  assert.equal(cases.length, 2);
+  assert.equal(cases.length, 4);
   const originals = new Map();
   function visit(node) {
     if (
@@ -38,6 +38,12 @@ test('two API pixel flows preserve every original ordered mutation, snapshot and
         events.push(['updateGlobalProps', JSON.parse(JSON.stringify(value))]),
       removeAttribute: name => events.push(['removeAttribute', name]),
       setAttribute: (name, value) => events.push(['setAttribute', name, value]),
+      shadowRoot: {
+        querySelector: selector => {
+          events.push(['shadowQuerySelector', selector]);
+          return view;
+        },
+      },
     };
     const document = {
       querySelector(selector) {
@@ -51,6 +57,7 @@ test('two API pixel flows preserve every original ordered mutation, snapshot and
       document,
       page: {
         evaluate: callback => callback(),
+        evaluateHandle: callback => callback(),
         locator: selector => ({
           click: async () => events.push(['click', selector]),
         }),
@@ -67,6 +74,9 @@ test('two API pixel flows preserve every original ordered mutation, snapshot and
   };
   for (const item of cases) {
     const original = harness();
+    original.elementName = item.name.includes('x-viewpager-ng')
+      ? 'x-viewpager-ng'
+      : 'lynx-view';
     const callback = ts.transpile(
       '(' + originals.get(item.name).getText(ast) + ')',
       { target: ts.ScriptTarget.ES2022 },
@@ -79,6 +89,21 @@ test('two API pixel flows preserve every original ordered mutation, snapshot and
       if (step.gotoUrl) {
         assert.equal(step.gotoUrl, '${shellUrl}?casename=' + item.name);
         translated.events.push(['goto', item.name]);
+      } else if (step.aiAct) {
+        assert.equal(
+          item.name,
+          'basic-element-x-viewpager-ng-method-selecttab',
+        );
+        assert.equal(
+          step.aiAct.prompt,
+          'Click once in the center of the large red panel with a black border at the top of the page. Do not swipe or perform another action.',
+        );
+        assert.deepEqual(step.aiAct.options, {
+          deepLocate: true,
+          cacheable: false,
+        });
+        assert.deepEqual(Object.keys(step), ['aiAct']);
+        translated.events.push(['click', 'x-viewpager-ng']);
       } else if (step['web.pixels']) {
         const baseline = step['web.pixels'].baseline;
         assert.deepEqual(Object.keys(step['web.pixels']), ['baseline']);

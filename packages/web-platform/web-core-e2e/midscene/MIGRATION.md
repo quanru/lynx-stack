@@ -42,7 +42,13 @@ case total.
 
 ## Execution and acceptance
 
-Current local collection is 379 with 102 model-free checks, including 185 pixel
+Current local collection is 381 with 102 model-free checks, including 187 pixel
+cases. Two local viewpager flows retain the original attribute mutation or
+single method-selectTab click and ordered before/after PNGs. Source callback
+replay checks the full sequence. Only the visible click becomes aiAct. These
+two additions are not pushed while the 379-case hosted run is active.
+
+The latest pushed collection is 379 with 102 model-free checks, including 185 pixel
 cases. The latest 54 describe-scoped web-elements static callbacks are replayed
 in full with their unchanged original title helper. Fixture names, eight
 placeholder PNG aliases, input/textarea simpleTitle snapshots and all original

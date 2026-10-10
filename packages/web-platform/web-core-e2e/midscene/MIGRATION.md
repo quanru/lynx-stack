@@ -42,7 +42,14 @@ case total.
 
 ## Execution and acceptance
 
-Current local collection is 387 with 103 model-free checks, including 193 pixel
+Current local collection is 396 with 105 model-free checks, including 202 pixel
+cases. Nine additional web-elements public API flows preserve attribute
+mutations and addText/setValue/sendDelEvent argument order, all original PNGs,
+fixed waits and the shared x-input/method fixture used by textarea originals.
+Scripted clicks/focus/input operations are excluded by the source whitelist.
+All 17 additions after pushed 379 remain local while its CI runs.
+
+The preceding local collection was 387 with 103 model-free checks, including 193 pixel
 cases. Six further swiper/list flows preserve full source callbacks, original
 fixed waits and PNGs, exact click counts and Chromium conditions. Ordinary
 clicks use aiAct; no scripted DOM clicks or relaxed pixel defaults are added.

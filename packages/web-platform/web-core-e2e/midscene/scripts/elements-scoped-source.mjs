@@ -4,9 +4,10 @@ import path from 'node:path';
 import vm from 'node:vm';
 import ts from 'typescript';
 
-// Replay only complete static source callbacks. Any extra action, guard,
-// assertion or screenshot override excludes the callback from this batch.
-export async function originalScopedPixels() {
+// Replay only complete static or explicitly allowed public-API callbacks.
+// Extra UI actions, guards, assertions and screenshot overrides exclude a case.
+export async function originalScopedPixels(mode = 'static') {
+  assert.ok(['static', 'api'].includes(mode));
   const ast = ts.createSourceFile(
     'elements.ts',
     readFileSync(
@@ -44,6 +45,10 @@ export async function originalScopedPixels() {
         statements.length >= 3 && ts.isVariableStatement(statements[0])
         && statements[0].getText(ast).replace(/\s/g, '')
           === 'consttitle=getTitle(titlePath);'
+        && (mode === 'static'
+          || statements.some(statement =>
+            statement.getText(ast).includes('.evaluate(')
+          ))
         && statements.slice(1).every(statement => {
           if (
             !ts.isExpressionStatement(statement)
@@ -52,6 +57,33 @@ export async function originalScopedPixels() {
           ) return false;
           const call = statement.expression.expression;
           const kind = call.expression.getText(ast);
+          if (
+            mode === 'api'
+            && /^page\.locator\(.+\)\.evaluate$/.test(kind.replace(/\s+/g, ''))
+          ) {
+            const callback = call.arguments[0];
+            if (
+              !callback || !ts.isArrowFunction(callback)
+              || callback.parameters.length !== 1
+            ) return false;
+            const parameter = callback.parameters[0].name.getText(ast);
+            const expressions = ts.isBlock(callback.body)
+              ? callback.body.statements.map(statement =>
+                ts.isExpressionStatement(statement)
+                  ? statement.expression
+                  : undefined
+              )
+              : [callback.body];
+            return expressions.length > 0
+              && expressions.every(expression =>
+                expression
+                && ts.isCallExpression(expression)
+                && ts.isPropertyAccessExpression(expression.expression)
+                && expression.expression.expression.getText(ast) === parameter
+                && ['setAttribute', 'addText', 'setValue', 'sendDelEvent']
+                  .includes(expression.expression.name.text)
+              );
+          }
           return ['gotoWebComponentPage', 'wait', 'diffScreenShot'].includes(
             kind,
           )
@@ -100,12 +132,25 @@ export async function originalScopedPixels() {
       ts.transpile(source, { target: ts.ScriptTarget.ES2022 }),
       context,
     );
-    await runnable({ page: {} }, {
+    const page = mode === 'static' ? {} : {
+      locator: selector => ({
+        evaluate: async callback => {
+          assert.equal(typeof selector, 'string');
+          steps.push({
+            javascript: `(${callback.toString()})(document.querySelector(${
+              JSON.stringify(selector)
+            }))`,
+          });
+        },
+      }),
+    };
+    await runnable({ page }, {
       title,
       titlePath: ['web-elements.spec.ts', ...parents, title],
     });
-    assert.equal(fixture, path.join(parents.at(-1), title));
-    results.push({ name: 'web-elements/' + fixture, steps });
+    const originalTitle = path.join(parents.at(-1), title);
+    if (mode === 'static') assert.equal(fixture, originalTitle);
+    results.push({ name: 'web-elements/' + originalTitle, steps });
   }
   return results;
 }

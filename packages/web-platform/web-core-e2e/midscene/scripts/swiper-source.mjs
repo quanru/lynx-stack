@@ -8,7 +8,7 @@ export const redPanelClick =
 export const rightPanelClick =
   'Click once in the center of the RIGHT-HAND colored panel with a black border at the top of the page, to the RIGHT of the green panel. The two panels are side by side, not stacked. Do not click the left panel, swipe, or perform another action.';
 export const listClick =
-  'Click the visible text "scrollToPosition" once. Do not scroll manually or perform another action.';
+  'Click once on the center of the black letters "scrollToPosition" at the LEFT edge, IMMEDIATELY BELOW the bottom green border of the fifth yellow numbered box. The letters are at the TOP edge of the white area, not in the blank white space farther down. Do not scroll manually or perform another action.';
 
 export async function originalSwiperPixels() {
   const ast = ts.createSourceFile(

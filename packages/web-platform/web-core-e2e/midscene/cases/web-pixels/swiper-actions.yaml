@@ -124,8 +124,11 @@ cases:
           baseline: list/basic-element-list-scroll-to-position/initial
       - javascript: new Promise(resolve => setTimeout(() => resolve(true), 1000))
       - aiAct:
-          prompt: Click the visible text "scrollToPosition" once. Do not scroll manually
-            or perform another action.
+          prompt: Click once on the center of the black letters "scrollToPosition" at the
+            LEFT edge, IMMEDIATELY BELOW the bottom green border of the fifth
+            yellow numbered box. The letters are at the TOP edge of the white
+            area, not in the blank white space farther down. Do not scroll
+            manually or perform another action.
           options:
             deepLocate: true
             cacheable: false

@@ -67,6 +67,16 @@ It corrects the previous lower-panel description; all click counts, waits and
 PNG assertions remain unchanged. The pushed 405-case run failed that case;
 the corrected prompt is not yet hosted-validated.
 
+Shard 3 also failed `basic-element-list-scroll-to-position` on all three
+attempts: actual pixels retain items 1–5 instead of original items 11–15.
+The action reports place taps in blank white space below the label. SDK 1.13.1
+deepLocate derives its search crop from that incorrect planning point, so it
+does not recover the visible target. The corrected prompt locates the black
+letters immediately below the fifth yellow panel, at the top of the white
+area. It retains one click and both unchanged PNG assertions. This correction
+also awaits hosted validation; no tolerance, selector click or extra retry was
+introduced.
+
 The preceding local collection was 414 with 114 model-free checks and typechecking
 passing, including 209 pixel cases. Seven further elements swiper callbacks
 retain all current/indicator API mutations, autoplay waits, Chromium guards and

@@ -3,7 +3,7 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 173 cases: the
+while Midscene drives user interactions. The suite contains 176 cases: the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
 ReactLynx migrations, plus 15 continuation cases with original deterministic
 assertion values, 26 original web-elements CSS/attribute contracts and two
@@ -15,7 +15,8 @@ frame-element JavaScript property, four relative-coordinate contracts, the error
 display contract, the original input bindinput payload contract, and two
 shadow-root stylesheet inclusion contracts and two main-thread autoScroll
 contracts, two setNativeProps text-count contracts, three rpx/ppx dimension
-contracts and three updateData/processData API contracts.
+contracts, three updateData/processData API contracts and three reload/viewport
+unit contracts.
 The 147-case four-shard run passed in
 [run 37940214877](https://github.com/quanru/lynx-stack/actions/runs/37940214877),
 including report generation and Pages publication. Downloaded publication
@@ -54,11 +55,15 @@ All 160 cases passed, with 161 attempts: only `basic-lazy-component-multi`
 retried once. Report generation and Pages succeeded. The downloaded publication
 has 160 linked screenshots; all 165 unique published screenshot/report URLs
 returned HTTP 200. The seven additions after 153 cases are now hosted-verified.
-The next 13 cases have not run in hosted CI yet: two further
+The next 13 cases passed first attempt in the 173-case batch at `65d7e5e`,
+[run 37954151485](https://github.com/quanru/lynx-stack/actions/runs/37954151485): two further
 shadow-root stylesheet cases, two autoScroll cases and two setNativeProps
 text-count cases, one scroll-view CSS case, three rpx/ppx cases and three
-updateData/processData cases. Eleven non-AI translations pass locally; the two
-autoScroll AI translations await hosted execution.
+updateData/processData cases. All 173 passed, with 174 attempts; only
+`basic-event-child-trigger` retried once. Report generation and Pages succeeded,
+with 173 linked screenshots and all 178 unique public report/image URLs HTTP 200.
+The next three reload/viewport cases pass both original and translated local
+execution on their first attempts, but require their own hosted validation.
 The animation translations retain original event-sequence match counts and CSS
 checks, with ordinary clicks through `aiAct`. No local model credentials are
 configured; local checks do not make AI calls.
@@ -69,7 +74,7 @@ The external-bundle case and its unchanged original Chromium test both passed
 locally on the first attempt. `web.expect` with `matchingText`/`count` uses the
 same public `page.getByText` locator and checks the complete count, without
 selecting the first match or requiring visibility. Duplicate matches fail the
-original count-one contract. All 70 model-free checks and typechecking pass.
+original count-one contract. All 71 model-free checks and typechecking pass.
 The unchanged middleware original also passes locally. Its migration retains
 the separate `/middleware` URL, two ordinary `aiAct` clicks, and immediate
 inline-style substring reads; it does not extend the original Chromium-only,
@@ -106,14 +111,14 @@ on their first attempts. They retain the original inline-style and fetched-link
 concatenation, exact `/:host\s*,\s*lynx-view\s*\{/` regular expression and single
 read. Computed CSS, screenshot appearance, polling and swallowed fetch errors
 are not substitutes for stylesheet inclusion in the actual shadow root. These
-two cases have not run in hosted CI yet.
+two cases passed first attempt in hosted run 37954151485.
 
 Both unchanged main-thread autoScroll originals pass locally. The translations
 use one ordinary `aiAct` click, then read the actual `scrollTop` JavaScript
 property once: exactly zero before the click and strictly greater than 100
 afterward. Standard `javascript` timers retain the original 100 ms setup and 3000/2000
 ms observation windows; no extra retries, polling, manual scroll action or
-visual substitute is added. Their AI execution awaits hosted CI.
+visual substitute is added. Both passed first attempt in hosted run 37954151485.
 
 Both setNativeProps text-count originals and YAML translations pass locally on
 their first attempts. The first preserves the sequential sum of complete
@@ -123,7 +128,8 @@ retains all three immediate count-one reads for `hello`, `--` and `world`.
 Original 500 ms waits remain unchanged. Raw count assertions use `immediate`,
 while existing upstream `toHaveCount` translations keep their polling semantics.
 Standard `javascript` timers avoid the model configuration required by SDK
-`sleep`; no model calls or custom wait nodes are needed. Hosted proof is pending.
+`sleep`; no model calls or custom wait nodes are needed. Both passed first attempt
+in hosted run 37954151485.
 
 The additional web-elements `scroll-view-must-linear` translation preserves the
 original `#target` computed `flex-shrink: 0` assertion. Its unchanged original
@@ -145,6 +151,16 @@ their first attempts. They retain the actual `updateData` calls, complete
 original waits and ordered pink/green computed CSS assertions. Ordered AST
 contracts compare API arguments, routes, waits and assertions, rather than
 accepting a matching final screenshot. No custom API action node is added.
+
+Three reload/viewport originals and YAML translations pass locally on their
+first attempts. The page-count check reads immediate shadow-root children with
+`part=page`, not a visual or eventual count. Global-props reload retains its
+original payload, optional API access, waits and immediate inline-style reads.
+Viewport-unit coverage retains all three reload phases and six positive/negative
+CSS assertions, including 500 px transformed units and 250 px container units.
+Source contract checks compare ordered API bodies, waits and assertions. No
+selector-based UI action or custom action/wait node is introduced. Hosted
+execution of these three additions is pending.
 
 This directory sits one level below the `packages/web-platform/*` pnpm
 workspace glob and is not a workspace member. It has its own `package.json`

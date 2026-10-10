@@ -14,27 +14,27 @@ remain in scope as deterministic contracts, not visual AI tests.
 Run `node scripts/inventory-upstream.mjs` to refresh this source inventory.
 These are source declarations, including named skipped tests, not runtime case
 counts. Loops, browser projects, SSR variants, and conditional skips change the
-runtime denominator. Do not subtract the 173 YAML cases from these totals:
+runtime denominator. Do not subtract the 176 YAML cases from these totals:
 the pilot cases are not one-to-one replacements, and upstream names can repeat.
 
-| Suite/file                                      | Source declarations | Migration status                                                                                                        |
-| ----------------------------------------------- | ------------------: | ----------------------------------------------------------------------------------------------------------------------- |
-| web-core-e2e/reactlynx.spec.ts                  |                 342 | ReactLynx migrations included in successful 160-case run 37948938294; pilot overlap and pixel contracts remain separate |
-| web-core-e2e/web-core.test.ts                   |                  35 | Pending exact API/callback contract integration                                                                         |
-| web-core-e2e/reactlynx-css-var-fallback.spec.ts |                   2 | Both Chromium client cases passed locally and in hosted run 37940214877; SSR and other browsers pending                 |
-| web-core-e2e/ssr-no-js.spec.ts                  |                   2 | Pending; loops expand runtime coverage                                                                                  |
-| web-core-e2e/middleware.spec.ts                 |                   1 | Original Chromium client case passed locally; translation passed in hosted run 37948938294; SSR/other browsers separate |
-| web-core-e2e/server-tests/server-e2e.test.ts    |                  17 | Pending deterministic server HTML snapshot integration                                                                  |
-| web-elements/web-elements.spec.ts               |                 296 | 25 exact CSS/attribute cases passed locally on the first attempt and in hosted run 37928102242; other cases pending     |
-| web-elements/x-markdown.spec.ts                 |                  34 | Pending                                                                                                                 |
-| web-elements/scroll-view-mouse-drag.spec.ts     |                  12 | Pending                                                                                                                 |
-| web-elements/performance.test.ts                |                   7 | Pending; preserve CDP metric thresholds                                                                                 |
-| web-elements/x-webview.spec.ts                  |                   7 | Pending                                                                                                                 |
-| web-elements/x-svg-inline.spec.ts               |                   3 | Pending; loops expand runtime coverage                                                                                  |
-| web-elements/x-foldview-ng-wheel.spec.ts        |                   3 | Pending                                                                                                                 |
-| web-elements/component-event.spec.ts            |                   2 | Pending                                                                                                                 |
-| web-elements/x-text-selection.spec.ts           |                   2 | Pending                                                                                                                 |
-| web-elements/template.spec.ts                   |                   1 | Non-UI Rust/TypeScript consistency test; retain existing runner, not an AI UI migration                                 |
+| Suite/file                                      | Source declarations | Migration status                                                                                                                                                 |
+| ----------------------------------------------- | ------------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| web-core-e2e/reactlynx.spec.ts                  |                 342 | ReactLynx migrations included in successful 173-case run 37954151485; three further reload cases pass locally; pilot overlap and pixel contracts remain separate |
+| web-core-e2e/web-core.test.ts                   |                  35 | Pending exact API/callback contract integration                                                                                                                  |
+| web-core-e2e/reactlynx-css-var-fallback.spec.ts |                   2 | Both Chromium client cases passed locally and in hosted run 37940214877; SSR and other browsers pending                                                          |
+| web-core-e2e/ssr-no-js.spec.ts                  |                   2 | Pending; loops expand runtime coverage                                                                                                                           |
+| web-core-e2e/middleware.spec.ts                 |                   1 | Original Chromium client case passed locally; translation passed in hosted run 37948938294; SSR/other browsers separate                                          |
+| web-core-e2e/server-tests/server-e2e.test.ts    |                  17 | Pending deterministic server HTML snapshot integration                                                                                                           |
+| web-elements/web-elements.spec.ts               |                 296 | 25 exact CSS/attribute cases passed locally on the first attempt and in hosted run 37928102242; other cases pending                                              |
+| web-elements/x-markdown.spec.ts                 |                  34 | Pending                                                                                                                                                          |
+| web-elements/scroll-view-mouse-drag.spec.ts     |                  12 | Pending                                                                                                                                                          |
+| web-elements/performance.test.ts                |                   7 | Pending; preserve CDP metric thresholds                                                                                                                          |
+| web-elements/x-webview.spec.ts                  |                   7 | Pending                                                                                                                                                          |
+| web-elements/x-svg-inline.spec.ts               |                   3 | Pending; loops expand runtime coverage                                                                                                                           |
+| web-elements/x-foldview-ng-wheel.spec.ts        |                   3 | Pending                                                                                                                                                          |
+| web-elements/component-event.spec.ts            |                   2 | Pending                                                                                                                                                          |
+| web-elements/x-text-selection.spec.ts           |                   2 | Pending                                                                                                                                                          |
+| web-elements/template.spec.ts                   |                   1 | Non-UI Rust/TypeScript consistency test; retain existing runner, not an AI UI migration                                                                          |
 
 The ReactLynx count includes one named `test.skip` declaration; the previously
 reported 341 counted ordinary `test()` calls only. Neither count is an executed
@@ -42,23 +42,28 @@ case total.
 
 ## Execution and acceptance
 
-The latest fully successful batch is 160/160 in run 37948938294, including report
-generation and Pages. It has 160 linked screenshots and all 165 unique published
-URLs returned HTTP 200; only basic-lazy-component-multi retried once. The earlier
+The latest fully successful batch is 173/173 in run 37954151485, including report
+generation and Pages. It has 173 linked screenshots and all 178 unique published
+URLs returned HTTP 200; only basic-event-child-trigger retried once. All 13
+additions after 160 passed first attempt, including both autoScroll AI cases. The earlier
 153-case run executed 115 cases (113 passed, two failed); 38 were blocked by
 endpoint preflight. Those action corrections passed in the 160-case run. The two
 additional shadow stylesheet translations and their originals passed locally.
 Two further autoScroll originals pass locally; their `aiAct` translations retain
 the original fixed observation windows and immediate numeric property reads,
-but await hosted execution. Two further setNativeProps text-count originals and
+and passed first hosted attempts. Two further setNativeProps text-count originals and
 translations pass locally, including the exact sequential count sum. The
 scroll-view linear-shrink original and translation also pass locally; all eight
 cases in its contract file passed on their first attempts. Three rpx/ppx dimension
 originals and corrected translations also pass locally, retaining the original
 fixture mutations and exact width/height assertions. Three updateData/processData
 originals and translations also pass locally with ordered payload/mode, CSS and
-timing contracts. The 173 collected cases must not be described as 173
-hosted-verified migrations.
+timing contracts. Three further reload/viewport originals and translations pass
+locally, retaining immediate shadow-page counts, global-props API payloads and
+inline-style reads, three viewport reload phases, six CSS assertions and original
+waits. All 71 model-free checks and typechecking pass. These three additions
+bring collection to 176 but are not yet hosted-verified. The five pilot cases
+are not one-to-one source migrations.
 
 1. Four independent CI shards partition YAML cases by stable file/case order.
    At most two shards run concurrently; cases within a shard remain serial.

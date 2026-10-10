@@ -47,7 +47,15 @@ performance contracts in shard 1. All seven pass locally with the original
 serial execution, retries and layout/style limits (3, 4 and 100). No AI action
 latency, screenshot comparison or larger threshold replaces those metrics.
 This integration remains local while run 38031009467 executes; it is separate
-from the 417 UI cases. The local model-free check count is now 119.
+from the 417 UI cases. The local model-free check count is now 120.
+
+The same local batch retains the original SVG inline geometry (six expanded
+cases), selectionchange offset/direction/listener contracts (two), and iframe
+source/load/message contracts (seven). All 15 pass locally on first attempts.
+No visible user gestures exist in these source flows: original DOM/API setup,
+route mocks, polling versus immediate checks, and exact object/geometry
+assertions remain in their existing runner. Hosted integration remains pending
+and these tests are not counted as YAML or screenshot-backed AI coverage.
 
 Current local collection is 417 with 118 model-free checks. Three hydrated SSR
 CSS inheritance cases replay the complete original callbacks, waits, attributes

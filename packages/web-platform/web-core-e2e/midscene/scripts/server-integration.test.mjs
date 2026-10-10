@@ -114,3 +114,47 @@ test('performance integration retains original CDP budgets rather than visual su
     assert.ok(source.includes(`toBeLessThanOrEqual(${limit})`));
   }
 });
+
+test('SVG selection and iframe integration preserves original deterministic runners', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const matching = Object.values(workflow.jobs).flatMap(job => job.steps ?? [])
+    .filter(step =>
+      step.name === 'Validate original SVG selection and iframe API contracts'
+    );
+  assert.equal(matching.length, 1);
+  assert.equal(matching[0].if, 'matrix.shard == 1');
+  assert.equal(
+    matching[0]['working-directory'],
+    'packages/web-platform/web-elements',
+  );
+  assert.equal(matching[0].env.PORT, '3081');
+  assert.equal(
+    matching[0].run,
+    'pnpm exec playwright test tests/x-svg-inline.spec.ts tests/x-text-selection.spec.ts tests/x-webview.spec.ts --project chromium --reporter line',
+  );
+  for (
+    const file of [
+      'x-svg-inline.spec.ts',
+      'x-text-selection.spec.ts',
+      'x-webview.spec.ts',
+    ]
+  ) {
+    const source = readFileSync(
+      new URL('../../../web-elements/tests/' + file, import.meta.url),
+      'utf8',
+    );
+    assert.ok(source.includes('from \'@lynx-js/playwright-fixtures\''));
+    assert.ok(
+      !source.includes('toHaveScreenshot'),
+      'Do not create missing platform PNGs via retained API runners',
+    );
+  }
+});

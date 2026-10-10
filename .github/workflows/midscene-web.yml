@@ -209,6 +209,14 @@ jobs:
         # Preserve the original CDP metrics, serial execution and numeric limits.
         run: pnpm exec playwright test tests/performance.test.ts --project chromium --reporter line
 
+      - name: Validate original SVG selection and iframe API contracts
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-elements
+        env:
+          PORT: "3081"
+        # These are DOM/API/geometry contracts, not scripted user UI actions.
+        run: pnpm exec playwright test tests/x-svg-inline.spec.ts tests/x-text-selection.spec.ts tests/x-webview.spec.ts --project chromium --reporter line
+
       - name: Validate case collection and exact assertion contracts
         working-directory: packages/web-platform/web-core-e2e/midscene
         run: |

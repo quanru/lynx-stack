@@ -42,6 +42,24 @@ case total.
 
 ## Execution and acceptance
 
+The next local batch expands retained worker/runtime, SVG/selection/iframe and
+Markdown API runners to the original Chromium, Firefox and WebKit projects.
+Performance remains Chromium-only because its source uses CDP metrics. Every
+retained browser command explicitly uses two workers; run local browser suites
+one at a time. Original profiles, retries, timeouts, skips, fixture ownership
+and assertions remain unchanged. Browser variants are retained deterministic
+coverage, not additional YAML or screenshot-backed AI cases. Local Firefox
+diagnostics failed during sandbox/renderer process startup; they do not prove
+an application regression or cross-browser acceptance. Linux hosted validation
+of this batch is pending, and the batch remains unpushed while run 38034593377
+validates the prior 418-case head.
+
+Current pushed head `1bf94d4` has 418 UI cases and 125 passing model-free
+checks. Run 38034593377 is in progress. Previous run 38031009467 passed shards
+2/3/4 and published reports, but shard 1 blocked on port ownership before its
+UI cases. List-scroll passed first attempt; Swiper-current was not executed.
+Older local/pending descriptions below are historical checkpoints.
+
 The newest local UI collection is 418 with 125 model-free checks. The original
 Markdown link/image event case now uses two ordinary visual `aiAct` clicks,
 retaining both original event waits, two single-read serialized payloads and

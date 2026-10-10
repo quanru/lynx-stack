@@ -166,21 +166,21 @@ jobs:
       - name: Validate original worker and runtime API contracts
         if: matrix.shard == 1
         working-directory: packages/web-platform/web-core-e2e
-        run: pnpm exec playwright test tests/web-core.test.ts --project chromium --reporter line
+        run: pnpm exec playwright test tests/web-core.test.ts --project chromium --project firefox --project webkit --workers=2 --reporter line
 
       - name: Validate original layout and style performance budgets
         if: matrix.shard == 1
         working-directory: packages/web-platform/web-elements
         env:
           PORT: "3081"
-        run: pnpm exec playwright test tests/performance.test.ts --project chromium --reporter line
+        run: pnpm exec playwright test tests/performance.test.ts --project chromium --workers=2 --reporter line
 
       - name: Validate original SVG selection and iframe API contracts
         if: matrix.shard == 1
         working-directory: packages/web-platform/web-elements
         env:
           PORT: "3081"
-        run: pnpm exec playwright test tests/x-svg-inline.spec.ts tests/x-text-selection.spec.ts tests/x-webview.spec.ts --project chromium --reporter line
+        run: pnpm exec playwright test tests/x-svg-inline.spec.ts tests/x-text-selection.spec.ts tests/x-webview.spec.ts --project chromium --project firefox --project webkit --workers=2 --reporter line
 
       - name: Validate original Markdown rendering and API contracts
         if: matrix.shard == 1
@@ -188,7 +188,7 @@ jobs:
         env:
           PORT: "3081"
         # The excluded user-click flow is translated in markdown-events.yaml.
-        run: pnpm exec playwright test tests/x-markdown.spec.ts --project chromium --grep-invert 'should fire bindlink and bindimageTap events' --reporter line
+        run: pnpm exec playwright test tests/x-markdown.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep-invert 'should fire bindlink and bindimageTap events' --reporter line
 
       - name: Start web-core-e2e dev shell
         working-directory: packages/web-platform/web-core-e2e

@@ -65,7 +65,7 @@ test('the original worker/runtime API suite retains its runner and disabled case
   );
   assert.equal(
     matching[0].run,
-    'pnpm exec playwright test tests/web-core.test.ts --project chromium --reporter line',
+    'pnpm exec playwright test tests/web-core.test.ts --project chromium --project firefox --project webkit --workers=2 --reporter line',
   );
   const source = readFileSync(
     new URL('../../tests/web-core.test.ts', import.meta.url),
@@ -102,7 +102,7 @@ test('performance integration retains original CDP budgets rather than visual su
   assert.equal(matching[0].env.PORT, '3081');
   assert.equal(
     matching[0].run,
-    'pnpm exec playwright test tests/performance.test.ts --project chromium --reporter line',
+    'pnpm exec playwright test tests/performance.test.ts --project chromium --workers=2 --reporter line',
   );
   const source = readFileSync(
     new URL('../../../web-elements/tests/performance.test.ts', import.meta.url),
@@ -138,7 +138,7 @@ test('SVG selection and iframe integration preserves original deterministic runn
   assert.equal(matching[0].env.PORT, '3081');
   assert.equal(
     matching[0].run,
-    'pnpm exec playwright test tests/x-svg-inline.spec.ts tests/x-text-selection.spec.ts tests/x-webview.spec.ts --project chromium --reporter line',
+    'pnpm exec playwright test tests/x-svg-inline.spec.ts tests/x-text-selection.spec.ts tests/x-webview.spec.ts --project chromium --project firefox --project webkit --workers=2 --reporter line',
   );
   for (
     const file of [
@@ -182,7 +182,7 @@ test('retained Markdown API runner excludes the migrated user-click flow', () =>
   assert.equal(matching[0].env.PORT, '3081');
   assert.equal(
     matching[0].run,
-    'pnpm exec playwright test tests/x-markdown.spec.ts --project chromium --grep-invert \'should fire bindlink and bindimageTap events\' --reporter line',
+    'pnpm exec playwright test tests/x-markdown.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep-invert \'should fire bindlink and bindimageTap events\' --reporter line',
   );
 });
 
@@ -217,6 +217,70 @@ test('original Playwright runners own servers before persistent Midscene fixture
       `${step.name} must run before persistent servers occupy original ports`,
     );
   }
+});
+
+test('retained browser variants bound workers without replacing original profiles or skip rules', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const runners = Object.values(workflow.jobs).flatMap(job => job.steps ?? [])
+    .filter(step =>
+      step.name?.startsWith('Validate original')
+      && step.run?.includes('playwright test')
+    );
+  assert.equal(runners.length, 4);
+  for (const step of runners) {
+    assert.ok(
+      step.run.includes('--workers=2'),
+      'Never rely on machine-dependent default browser concurrency',
+    );
+    assert.ok(
+      !/--(?:retries|timeout|update-snapshots|config)(?:[=\s]|$)/.test(
+        step.run,
+      ),
+      'Keep original retry, timing, snapshots and profiles',
+    );
+    const projects = [...step.run.matchAll(/--project (\w+)/g)].map(match =>
+      match[1]
+    );
+    assert.deepEqual(
+      projects,
+      step.name.includes('performance')
+        ? ['chromium']
+        : ['chromium', 'firefox', 'webkit'],
+    );
+  }
+  const config = readFileSync(
+    new URL(
+      '../../../playwright-fixtures/src/playwright.common.ts',
+      import.meta.url,
+    ),
+    'utf8',
+  );
+  for (
+    const profile of [
+      'devices[\'iPhone 12 Pro\']',
+      'devices[\'Pixel 5\']',
+      'devices[\'Desktop Firefox HiDPI\']',
+      'reuseExistingServer: !isCI',
+    ]
+  ) assert.ok(config.includes(profile));
+  const markdown = readFileSync(
+    new URL('../../../web-elements/tests/x-markdown.spec.ts', import.meta.url),
+    'utf8',
+  );
+  assert.ok(markdown.includes('browserName === \'webkit\''));
+  assert.ok(
+    markdown.includes(
+      'test.skip(browserName !== \'chromium\', \'selection automation is flaky\')',
+    ),
+  );
 });
 
 test('retained original failure diagnostics are archived separately without inflating AI case reports', () => {

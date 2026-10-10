@@ -42,7 +42,13 @@ case total.
 
 ## Execution and acceptance
 
-The next local collection reaches 452 cases, including 242 pixel cases.
+The next local collection reaches 456 cases, including 242 pixel cases.
+
+Four further complete layout callbacks preserve one-read overflow, inline
+toolbar style polling with its original default budget, and both layoutchange
+payloads. Only the two visible rectangle clicks use aiAct; all six numeric
+field checks and the exact target ID run against each original single payload.
+Screenshots are recorded after each case, including assertion failures.
 
 The complete original `autoScroll` callback retains all four ordered API calls,
 both 500ms waits, three unchanged Linux PNG checkpoints, and the Chromium-only

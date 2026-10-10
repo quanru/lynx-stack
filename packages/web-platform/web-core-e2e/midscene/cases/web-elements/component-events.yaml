@@ -1,0 +1,66 @@
+afterEach:
+  - recordToReport: Original component event API contract result
+cases:
+  - name: web-elements/component-events/enable-disable-reference-count
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/component-event-test.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: |-
+          if (window.eventEvents !== undefined) throw new Error('Expected initially undefined eventEvents');
+      - javascript: customElements.whenDefined('x-event-test').then(() => true)
+      - javascript: |-
+          if (!customElements.get('x-event-test')) throw new Error('Expected registered x-event-test');
+      - javascript: |-
+          const el = document.querySelector('x-event-test');
+          if (!el) throw new Error('x-event-test not found in DOM');
+          el.enableEvent('custom-event');
+      - javascript: |-
+          const events = window.eventEvents;
+          if (events.length !== 1) throw new Error('Expected one event');
+          const event = events[0];
+          if (Object.keys(event).length !== 2 || event.type !== 'custom-event' || event.status !== true) throw new Error('Expected exact enabled event');
+      - javascript: document.querySelector('x-event-test').enableEvent('custom-event')
+      - javascript: |-
+          if (window.eventEvents.length !== 1) throw new Error('Duplicate enable must not emit another event');
+      - javascript: document.querySelector('x-event-test').disableEvent('custom-event')
+      - javascript: |-
+          if (window.eventEvents.length !== 1) throw new Error('First disable must keep the event enabled');
+      - javascript: document.querySelector('x-event-test').disableEvent('custom-event')
+      - javascript: |-
+          const events = window.eventEvents;
+          if (events.length !== 2) throw new Error('Expected two events');
+          const event = events[1];
+          if (Object.keys(event).length !== 2 || event.type !== 'custom-event' || event.status !== false) throw new Error('Expected exact disabled event');
+  - name: web-elements/component-events/listener-reference-count
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/component-event-test.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: window.eventEvents = []
+      - javascript: |-
+          const el = document.querySelector('x-event-test');
+          const handler = () => {};
+          window.__handler = handler;
+          el.addEventListener('custom-event', handler);
+      - javascript: |-
+          const events = window.eventEvents;
+          if (events.length !== 1) throw new Error('Expected one event');
+          const event = events[0];
+          if (Object.keys(event).length !== 2 || event.type !== 'custom-event' || event.status !== true) throw new Error('Expected exact enabled event');
+      - javascript: |-
+          const el = document.querySelector('x-event-test');
+          const handler2 = () => {};
+          window.__handler2 = handler2;
+          el.addEventListener('custom-event', handler2);
+      - javascript: |-
+          if (window.eventEvents.length !== 1) throw new Error('Second listener must not emit another event');
+      - javascript: |-
+          document.querySelector('x-event-test').removeEventListener('custom-event', window.__handler);
+      - javascript: |-
+          if (window.eventEvents.length !== 1) throw new Error('Removing the first listener must keep the event enabled');
+      - javascript: |-
+          document.querySelector('x-event-test').removeEventListener('custom-event', window.__handler2);
+      - javascript: |-
+          const events = window.eventEvents;
+          if (events.length !== 2) throw new Error('Expected two events');
+          const event = events[1];
+          if (Object.keys(event).length !== 2 || event.type !== 'custom-event' || event.status !== false) throw new Error('Expected exact disabled event');

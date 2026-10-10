@@ -3,7 +3,7 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 403 cases: the
+while Midscene drives user interactions. The suite contains 405 cases: the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
 ReactLynx migrations, plus 15 continuation cases with original deterministic
 assertion values, 26 original web-elements CSS/attribute contracts and two
@@ -154,6 +154,20 @@ The fourth project is included in all shard partitions, manifests and report
 publication identities. Collection is 403 / 109 model-free checks; 24 cases
 after pushed 379 remain local pending hosted execution. Original Linux pixel
 environment guards are unchanged; non-pixel SSR does not claim PNG parity.
+
+Two component-event API cases preserve complete enable/disable and listener
+reference-count sequences, immediate event-array reads and exact payloads.
+Both unchanged originals and translations pass locally on first attempts using
+the independent elements server. Full callback replay and negative differentials
+reject premature disable, duplicate enable and extra payload fields identically.
+No custom node, AI call or scripted user interaction is introduced. Collection
+is 405 with 111 model-free checks; the 26 additions after 379 await hosted execution.
+
+Run 38025912330 at `c826274` now passed all 379 cases, report generation and
+Pages, with 380 attempts: only basic-lazy-component-when-need-with-itself retried
+once. All 379 rows have linked screenshots; all 384 unique public image/report
+URLs returned HTTP 200. This supersedes the earlier pending
+statuses above, not the still-local additions after that head.
 
 Do not run the original pixel suite on macOS: its matcher writes missing Darwin
 snapshots even without an update flag. A diagnostic run demonstrated that
@@ -394,7 +408,7 @@ or requiring a valid image resource where the original only checks dimensions.
 If an exact assertion later fails, its link opens the failed step while its
 preview uses the nearest preceding capture from that same attempt.
 
-The two independent projects run cases serially, with separate browser contexts, pages,
+The four independent projects run cases serially, with separate browser contexts, pages,
 agents, and report filenames keyed by case run ID. Midscene 1.13.1 applies
 `maxConcurrency` to projects, not cases; increasing it cannot parallelize cases
 within a project. CI runs four independent jobs, each with a balanced partition of the

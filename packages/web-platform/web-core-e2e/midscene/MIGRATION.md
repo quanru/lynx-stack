@@ -17,24 +17,24 @@ counts. Loops, browser projects, SSR variants, and conditional skips change the
 runtime denominator. Do not subtract YAML case totals from these declarations:
 the pilot cases are not one-to-one replacements, and upstream names can repeat.
 
-| Suite/file                                      | Source declarations | Migration status                                                                                                                                                 |
-| ----------------------------------------------- | ------------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| web-core-e2e/reactlynx.spec.ts                  |                 342 | ReactLynx migrations included in successful 173-case run 37954151485; three further reload cases pass locally; pilot overlap and pixel contracts remain separate |
-| web-core-e2e/web-core.test.ts                   |                  35 | Pending exact API/callback contract integration                                                                                                                  |
-| web-core-e2e/reactlynx-css-var-fallback.spec.ts |                   2 | Both Chromium client cases passed locally and in hosted run 37940214877; SSR and other browsers pending                                                          |
-| web-core-e2e/ssr-no-js.spec.ts                  |                   2 | Four expanded original Chromium cases and translations pass locally, first attempts; isolated JavaScript-disabled project, hosted execution pending              |
-| web-core-e2e/middleware.spec.ts                 |                   1 | Original Chromium client case passed locally; translation passed in hosted run 37948938294; SSR/other browsers separate                                          |
-| web-core-e2e/server-tests/server-e2e.test.ts    |                  17 | Pending deterministic server HTML snapshot integration                                                                                                           |
-| web-elements/web-elements.spec.ts               |                 296 | 25 exact CSS/attribute cases passed locally on the first attempt and in hosted run 37928102242; other cases pending                                              |
-| web-elements/x-markdown.spec.ts                 |                  34 | Pending                                                                                                                                                          |
-| web-elements/scroll-view-mouse-drag.spec.ts     |                  12 | Pending                                                                                                                                                          |
-| web-elements/performance.test.ts                |                   7 | Pending; preserve CDP metric thresholds                                                                                                                          |
-| web-elements/x-webview.spec.ts                  |                   7 | Pending                                                                                                                                                          |
-| web-elements/x-svg-inline.spec.ts               |                   3 | Pending; loops expand runtime coverage                                                                                                                           |
-| web-elements/x-foldview-ng-wheel.spec.ts        |                   3 | Pending                                                                                                                                                          |
-| web-elements/component-event.spec.ts            |                   2 | Pending                                                                                                                                                          |
-| web-elements/x-text-selection.spec.ts           |                   2 | Pending                                                                                                                                                          |
-| web-elements/template.spec.ts                   |                   1 | Non-UI Rust/TypeScript consistency test; retain existing runner, not an AI UI migration                                                                          |
+| Suite/file                                      | Source declarations | Migration status                                                                                                                                                           |
+| ----------------------------------------------- | ------------------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| web-core-e2e/reactlynx.spec.ts                  |                 342 | ReactLynx migrations included in successful 173-case run 37954151485; three further reload cases pass locally; pilot overlap and pixel contracts remain separate           |
+| web-core-e2e/web-core.test.ts                   |                  35 | Pending exact API/callback contract integration                                                                                                                            |
+| web-core-e2e/reactlynx-css-var-fallback.spec.ts |                   2 | Both Chromium client cases passed locally and in hosted run 37940214877; SSR and other browsers pending                                                                    |
+| web-core-e2e/ssr-no-js.spec.ts                  |                   2 | Four expanded original Chromium cases and translations pass locally, first attempts; isolated JavaScript-disabled project, hosted execution pending                        |
+| web-core-e2e/middleware.spec.ts                 |                   1 | Original Chromium client case passed locally; translation passed in hosted run 37948938294; SSR/other browsers separate                                                    |
+| web-core-e2e/server-tests/server-e2e.test.ts    |                  17 | Pending deterministic server HTML snapshot integration                                                                                                                     |
+| web-elements/web-elements.spec.ts               |                 296 | 25 exact CSS/attribute cases passed locally on the first attempt and in hosted run 37928102242; other cases pending                                                        |
+| web-elements/x-markdown.spec.ts                 |                  34 | Pending                                                                                                                                                                    |
+| web-elements/scroll-view-mouse-drag.spec.ts     |                  12 | Pending                                                                                                                                                                    |
+| web-elements/performance.test.ts                |                   7 | Pending; preserve CDP metric thresholds                                                                                                                                    |
+| web-elements/x-webview.spec.ts                  |                   7 | Pending                                                                                                                                                                    |
+| web-elements/x-svg-inline.spec.ts               |                   3 | Pending; loops expand runtime coverage                                                                                                                                     |
+| web-elements/x-foldview-ng-wheel.spec.ts        |                   3 | Pending                                                                                                                                                                    |
+| web-elements/component-event.spec.ts            |                   2 | Both original and translated Chromium API cases pass locally on first attempts; complete reference counts and immediate exact payloads preserved; hosted execution pending |
+| web-elements/x-text-selection.spec.ts           |                   2 | Pending                                                                                                                                                                    |
+| web-elements/template.spec.ts                   |                   1 | Non-UI Rust/TypeScript consistency test; retain existing runner, not an AI UI migration                                                                                    |
 
 The ReactLynx count includes one named `test.skip` declaration; the previously
 reported 341 counted ordinary `test()` calls only. Neither count is an executed
@@ -42,7 +42,21 @@ case total.
 
 ## Execution and acceptance
 
-Current local collection is 403 with 109 model-free checks, including 202 pixel
+Current local collection is 405 with 111 model-free checks, including 202 pixel
+cases. Two component-event API contracts retain the complete original enable/
+disable and listener reference counts, immediate reads and exact event payloads.
+Both original and translated cases pass locally on first attempts. Full original
+callback replay agrees with translations, including premature-disable,
+duplicate-enable and extra-field negative variants. No new custom node or
+scripted user action is introduced. The 26 additions after 379 await hosted execution.
+
+Run 38025912330 at `c826274` passed all 379 cases, reports and Pages; 380
+attempts include one retry of basic-lazy-component-when-need-with-itself. All
+379 rows have linked screenshots; all 384 unique public image/report URLs
+returned HTTP 200. This supersedes the historical pending
+statements for that head below; subsequent local additions are not yet accepted.
+
+The preceding local collection was 403 with 109 model-free checks, including 202 pixel
 cases. Four expanded SSR-no-JavaScript cases run in their own genuinely
 JavaScript-disabled Chromium/Pixel 5 contexts. Both original and translated
 cases pass locally on first attempts without model calls. Source replay,

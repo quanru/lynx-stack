@@ -1,0 +1,45 @@
+afterEach:
+  - recordToReport: Original markdown link and image event payload result
+cases:
+  - name: web-elements/x-markdown/bindlink-bindimageTap
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-markdown/events.html
+      - javascript: document.fonts.ready.then(() => true)
+      - aiAct:
+          prompt: Click once on the visible blue word "link" in the first line of markdown
+            text. Do not click the picture or perform another action.
+          options:
+            deepLocate: true
+            cacheable: false
+      - javascript: new Promise((resolve, reject) => { const deadline = Date.now() +
+          30000; const check = () => { if ((() => window._bindlink_detail !==
+          null)()) return resolve(true); if (Date.now() >= deadline) return
+          reject(new Error('Original markdown event wait timed out'));
+          requestAnimationFrame(check); }; check(); })
+      - javascript: window.__originalMarkdownPayload0 = structuredClone((() =>
+          window._bindlink_detail)())
+      - javascript: if (window.__originalMarkdownPayload0["url"] !==
+          "https://example.com") throw new Error('Original markdown exact event
+          field mismatch')
+      - javascript: if (window.__originalMarkdownPayload0["content"] !== "link") throw
+          new Error('Original markdown exact event field mismatch')
+      - javascript: if (window.__originalMarkdownPayload0["contentId"] !== "case-1")
+          throw new Error('Original markdown exact event field mismatch')
+      - aiAct:
+          prompt: Click once in the center of the visible Firefox logo picture below the
+            markdown text. Do not click the link or perform another action.
+          options:
+            deepLocate: true
+            cacheable: false
+      - javascript: new Promise((resolve, reject) => { const deadline = Date.now() +
+          30000; const check = () => { if ((() => window._bindimage_detail !==
+          null)()) return resolve(true); if (Date.now() >= deadline) return
+          reject(new Error('Original markdown event wait timed out'));
+          requestAnimationFrame(check); }; check(); })
+      - javascript: window.__originalMarkdownPayload1 = structuredClone((() =>
+          window._bindimage_detail)())
+      - javascript: if (typeof window.__originalMarkdownPayload1["url"] !== 'string' ||
+          !window.__originalMarkdownPayload1["url"].includes("/tests/fixtures/resources/firefox-logo.png"))
+          throw new Error('Original markdown event URL mismatch')
+      - javascript: if (window.__originalMarkdownPayload1["contentId"] !== "case-1")
+          throw new Error('Original markdown exact event field mismatch')

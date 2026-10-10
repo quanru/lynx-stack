@@ -1,0 +1,176 @@
+# Original input and textarea attribute propagation contracts; no visual approximation.
+cases:
+  - name: web-elements/x-input/attribute-type-digit
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-input/attribute-type-digit.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original inputmode attribute
+      - web.expect: {
+          selector: "input",
+          attribute: inputmode,
+          equals: "numeric",
+        }
+      - recordToReport: Original inputmode attribute contract passed
+  - name: web-elements/x-input/attribute-type-email
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-input/attribute-type-email.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original inputmode attribute
+      - web.expect: { selector: "input", attribute: inputmode, equals: "email" }
+      - recordToReport: Original inputmode attribute contract passed
+  - name: web-elements/x-input/attribute-type-number
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-input/attribute-type-number.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original inputmode attribute
+      - web.expect: {
+          selector: "input",
+          attribute: inputmode,
+          equals: "decimal",
+        }
+      - recordToReport: Original inputmode attribute contract passed
+  - name: web-elements/x-input/attribute-type-number-inner-input-type
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-input/attribute-type-number-inner-input-type.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original type attribute
+      - web.expect: { selector: "input", attribute: type, equals: "text" }
+      - recordToReport: Original type attribute contract passed
+  - name: web-elements/x-input/attribute-type-tel
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-input/attribute-type-tel.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original inputmode attribute
+      - web.expect: { selector: "input", attribute: inputmode, equals: "tel" }
+      - recordToReport: Original inputmode attribute contract passed
+  - name: web-elements/x-input/attribute-type-text
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-input/attribute-type-text.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original inputmode attribute
+      - web.expect: { selector: "input", attribute: inputmode, equals: "text" }
+      - recordToReport: Original inputmode attribute contract passed
+  - name: web-elements/x-input/attribute-spell-check
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-input/attribute-spell-check.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original spellcheck attribute
+      - web.expect: { selector: "input", attribute: spellcheck, equals: "true" }
+      - recordToReport: Original spellcheck attribute contract passed
+  - name: web-elements/x-input/attribute-confirm-type-send
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-input/attribute-confirm-type-send.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original enterkeyhint attribute
+      - web.expect: {
+          selector: "input",
+          attribute: enterkeyhint,
+          equals: "send",
+        }
+      - recordToReport: Original enterkeyhint attribute contract passed
+  - name: web-elements/x-input/attribute-confirm-type-search
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-input/attribute-confirm-type-search.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original enterkeyhint attribute
+      - web.expect: {
+          selector: "input",
+          attribute: enterkeyhint,
+          equals: "search",
+        }
+      - recordToReport: Original enterkeyhint attribute contract passed
+  - name: web-elements/x-input/attribute-confirm-type-next
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-input/attribute-confirm-type-next.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original enterkeyhint attribute
+      - web.expect: {
+          selector: "input",
+          attribute: enterkeyhint,
+          equals: "next",
+        }
+      - recordToReport: Original enterkeyhint attribute contract passed
+  - name: web-elements/x-input/attribute-confirm-type-go
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-input/attribute-confirm-type-go.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original enterkeyhint attribute
+      - web.expect: { selector: "input", attribute: enterkeyhint, equals: "go" }
+      - recordToReport: Original enterkeyhint attribute contract passed
+  - name: web-elements/x-input/attribute-confirm-type-done
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-input/attribute-confirm-type-done.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original enterkeyhint attribute
+      - web.expect: {
+          selector: "input",
+          attribute: enterkeyhint,
+          equals: "done",
+        }
+      - recordToReport: Original enterkeyhint attribute contract passed
+  - name: web-elements/x-textarea/attribute-spell-check
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-textarea/attribute-spell-check.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original spellcheck attribute
+      - web.expect: {
+          selector: "textarea",
+          attribute: spellcheck,
+          equals: "true",
+        }
+      - recordToReport: Original spellcheck attribute contract passed
+  - name: web-elements/x-textarea/attribute-confirm-type-send
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-textarea/attribute-confirm-type-send.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original enterkeyhint attribute
+      - web.expect: {
+          selector: "textarea",
+          attribute: enterkeyhint,
+          equals: "send",
+        }
+      - recordToReport: Original enterkeyhint attribute contract passed
+  - name: web-elements/x-textarea/attribute-confirm-type-search
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-textarea/attribute-confirm-type-search.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original enterkeyhint attribute
+      - web.expect: {
+          selector: "textarea",
+          attribute: enterkeyhint,
+          equals: "search",
+        }
+      - recordToReport: Original enterkeyhint attribute contract passed
+  - name: web-elements/x-textarea/attribute-confirm-type-next
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-textarea/attribute-confirm-type-next.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original enterkeyhint attribute
+      - web.expect: {
+          selector: "textarea",
+          attribute: enterkeyhint,
+          equals: "next",
+        }
+      - recordToReport: Original enterkeyhint attribute contract passed
+  - name: web-elements/x-textarea/attribute-confirm-type-go
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-textarea/attribute-confirm-type-go.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original enterkeyhint attribute
+      - web.expect: {
+          selector: "textarea",
+          attribute: enterkeyhint,
+          equals: "go",
+        }
+      - recordToReport: Original enterkeyhint attribute contract passed
+  - name: web-elements/x-textarea/attribute-confirm-type-done
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-textarea/attribute-confirm-type-done.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original enterkeyhint attribute
+      - web.expect: {
+          selector: "textarea",
+          attribute: enterkeyhint,
+          equals: "done",
+        }
+      - recordToReport: Original enterkeyhint attribute contract passed

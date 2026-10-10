@@ -1,0 +1,21 @@
+afterEach:
+  - recordToReport: Original cssSelector reload contract result
+cases:
+  - name: config-css-selector-false-reload
+    steps:
+      - gotoUrl: "${shellUrl}?casename=config-css-selector-false-reload"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(255, 0, 0)",
+        }
+      # reload is the actual public API under test, not a selector-driven UI action.
+      - javascript: "(() => { document.querySelector('lynx-view')?.reload(); })()"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 1000))"
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(255, 0, 0)",
+        }

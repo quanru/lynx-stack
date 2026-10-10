@@ -1,0 +1,7 @@
+cases:
+  - name: api-error
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-error"
+      - recordToReport: Before checking the original failed Lynx view display contract
+      - web.expect: { selector: lynx-view, css: display, equals: none }
+      - recordToReport: Original error hides the Lynx view

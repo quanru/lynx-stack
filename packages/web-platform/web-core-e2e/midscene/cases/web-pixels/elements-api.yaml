@@ -1,0 +1,170 @@
+afterEach:
+  - recordToReport: Original web-elements public API pixel contract result
+cases:
+  - name: web-elements/x-image/placeholder-src-change-with-placeholder-exist
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-image/placeholder-src-change-with-placeholder-exist.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: ((target) => target.setAttribute('src',
+          'path/do/not/exist'))(document.querySelector("#target"))
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-image/placeholder-src-change-with-placeholder-exist/should-show-placeholder-firefox
+      - javascript: ((target) => target.setAttribute('src',
+          '/tests/fixtures/resources/chromium-logo.png'))(document.querySelector("#target"))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-image/placeholder-src-change-with-placeholder-exist/should-show-new-src-chromium
+  - name: web-elements/x-input/attribute-maxlength-change-do-not-change-value
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-input/attribute-maxlength-change-do-not-change-value.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-input/attribute-maxlength-change-do-not-change-value/initial-10
+      - javascript: ((dom) => dom.setAttribute('maxlength',
+          '5'))(document.querySelector("#target"))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-input/attribute-maxlength-change-do-not-change-value/maxlength-changed-still-10
+      - javascript: ((dom) => dom.setAttribute('value',
+          '12345678'))(document.querySelector("#target"))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-input/attribute-maxlength-change-do-not-change-value/show-5
+  - name: web-elements/x-input/method-addText
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-input/method.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - javascript: |-
+          ((target) => {
+                  target.addText({
+                      text: 'add-text',
+                  });
+              })(document.querySelector("#target"))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-input/method-addText/show-helloadd-text
+  - name: web-elements/x-input/method-setValue
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-input/method.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - javascript: |-
+          ((target) => {
+                  target.setValue({
+                      value: 'add-text',
+                      index: 3,
+                  });
+              })(document.querySelector("#target"))
+      - javascript: |-
+          ((target) => {
+                  target.addText({
+                      text: '3',
+                  });
+              })(document.querySelector("#target"))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-input/method-setValue/add3-text
+  - name: web-elements/x-input/method-sendDelEvent
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-input/method.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - javascript: |-
+          ((target) => {
+                  target.sendDelEvent({
+                      action: 1,
+                  });
+              })(document.querySelector("#target"))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-input/method-sendDelEvent/hell
+      - javascript: |-
+          ((target) => {
+                  target.sendDelEvent({
+                      action: 0,
+                      length: 2,
+                  });
+              })(document.querySelector("#target"))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-input/method-sendDelEvent/he
+  - name: web-elements/x-textarea/attribute-maxlength-change-do-not-change-value
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-textarea/attribute-maxlength-change-do-not-change-value.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-textarea/attribute-maxlength-change-do-not-change-value/initial-10
+      - javascript: ((dom) => dom.setAttribute('maxlength',
+          '5'))(document.querySelector("#target"))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-textarea/attribute-maxlength-change-do-not-change-value/maxlength-changed-still-10
+      - javascript: ((dom) => dom.setAttribute('value',
+          '12345678'))(document.querySelector("#target"))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-textarea/attribute-maxlength-change-do-not-change-value/show-5
+  - name: web-elements/x-textarea/method-addText
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-input/method.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - javascript: |-
+          ((target) => {
+                  target.addText({
+                      text: 'add-text',
+                  });
+              })(document.querySelector("#target"))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-textarea/method-addText/show-helloadd-text
+  - name: web-elements/x-textarea/method-setValue
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-input/method.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - javascript: |-
+          ((target) => {
+                  target.setValue({
+                      value: 'add-text',
+                      index: 3,
+                  });
+              })(document.querySelector("#target"))
+      - javascript: |-
+          ((target) => {
+                  target.addText({
+                      text: '3',
+                  });
+              })(document.querySelector("#target"))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-textarea/method-setValue/add3-text
+  - name: web-elements/x-textarea/method-sendDelEvent
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-input/method.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - javascript: |-
+          ((target) => {
+                  target.sendDelEvent({
+                      action: 1,
+                  });
+              })(document.querySelector("#target"))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-textarea/method-sendDelEvent/hell
+      - javascript: |-
+          ((target) => {
+                  target.sendDelEvent({
+                      action: 0,
+                      length: 2,
+                  });
+              })(document.querySelector("#target"))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-textarea/method-sendDelEvent/he

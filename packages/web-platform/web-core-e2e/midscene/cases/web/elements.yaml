@@ -1,0 +1,30 @@
+cases:
+  # Lynx web-core-e2e: tests/reactlynx/basic-element-text-color
+  # "hello lynx" uses an 80px linear-gradient(green, yellow), validating text rendering inside the shadow root and worker.
+  - name: Styled text renders with gradient color
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-element-text-color
+      - aiWaitFor: The text "hello lynx" is visible near the top-left of the white page.
+      - aiAssert: The text "hello lynx" is rendered in very large letters near the top-left of the page. Each letter is filled with a vertical green gradient, from dark green at the top to bright yellow-green at the bottom, on a plain white background.
+
+  # Lynx web-core-e2e: tests/reactlynx/basic-element-image-src
+  # The official suite covers this case with a pixel snapshot. Its same-origin
+  # /resources/lynx-logo.jpeg source renders as <x-image id="target"> at 100x100.
+  # The upstream pixel snapshot remains unchanged in reactlynx.spec.ts.
+  # This additive AI case verifies visible semantics, not pixel equality.
+  - name: Image component renders a remote resource
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-element-image-src
+      - aiWaitFor: The square logo image is visible at the top-left of the white page.
+      - aiAssert: A black square image containing a white stylized animal head with cyan and magenta edges is visible at the top-left of the white page. It is not a blank or broken-image placeholder.
+
+  # Lynx web-core-e2e: tests/reactlynx/basic-element-input-bindinput
+  # The bindinput callback mirrors the typed value into .result below the input.
+  # aiAct owns the interaction. Exact assertions retain the official Playwright
+  # case's exact foobar-6-6 event payload contract.
+  - name: Text input mirrors typed value through bindinput
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-element-input-bindinput
+      - aiWaitFor: The bordered text input is visible near the top of the page.
+      - aiAct: Focus the bordered input containing "bindinput", press Enter, then replace its entire contents with "foobar" and leave the caret at the end.
+      - web.expect: { selector: ".result", text: "foobar-6-6" }

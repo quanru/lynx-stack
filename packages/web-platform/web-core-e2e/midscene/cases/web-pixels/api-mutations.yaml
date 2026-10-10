@@ -1,0 +1,55 @@
+afterEach:
+  - recordToReport: Original public API mutation pixel contract result
+cases:
+  - name: basic-element-x-viewpager-ng-method-selecttab
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-viewpager-ng-method-selecttab"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          baseline: x-viewpager-ng/basic-element-x-viewpager-ng-method-selecttab/initial,
+        }
+      - aiAct:
+          prompt: Click once in the center of the large red panel with a black border at the top of the page. Do not swipe or perform another action.
+          options: { deepLocate: true, cacheable: false }
+      - web.pixels: {
+          baseline: x-viewpager-ng/basic-element-x-viewpager-ng-method-selecttab/selecttab-1-green,
+        }
+  - name: basic-element-x-viewpager-ng-select-index
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-viewpager-ng-select-index"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          baseline: x-viewpager-ng/basic-element-x-viewpager-ng-select-index/select-index,
+        }
+      # Public attribute mutation is the original API under test, not a UI action.
+      - javascript: "document.querySelector('lynx-view').shadowRoot.querySelector('x-viewpager-ng')?.setAttribute('select-index', '3')"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 1000))"
+      - web.pixels: {
+          baseline: x-viewpager-ng/basic-element-x-viewpager-ng-select-index/select-index-change,
+        }
+  - name: api-updateGlobalProps
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-updateGlobalProps"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 200))"
+      - web.pixels: { baseline: api-updateGlobalProps/initial/index }
+      - javascript: "document.querySelector('lynx-view')?.updateGlobalProps({ backgroundColor: 'blue' })"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - web.pixels: { baseline: api-updateGlobalProps/blue/index }
+  - name: basic-element-lynx-view-not-auto
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-lynx-view-not-auto"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      # These exact attribute changes exercise the public frame-layout API.
+      - javascript: |
+          (() => {
+            document.querySelector('lynx-view').removeAttribute('height');
+            document.querySelector('lynx-view').removeAttribute('weight');
+            document.querySelector('lynx-view').setAttribute('style', 'display:flex; width: 100vw; height: 100vh');
+          })()
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 200))"
+      - web.pixels: {
+          baseline: lynx-view/basic-element-lynx-view-not-auto/index,
+        }

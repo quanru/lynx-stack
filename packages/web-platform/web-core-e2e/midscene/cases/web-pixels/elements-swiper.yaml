@@ -1,0 +1,113 @@
+afterEach:
+  - recordToReport: Original elements swiper API/autoplay pixel contract result
+cases:
+  - name: web-elements/x-swiper/x-swiper-set-current
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-swiper/x-swiper-set-current.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: ((dom) => dom.setAttribute('current',
+          '1'))(document.querySelector("#target"))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-swiper/x-swiper-set-current/green
+  - name: web-elements/x-swiper/x-swiper-indicator-basic
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-swiper/x-swiper-indicator-basic.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 500))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-swiper/x-swiper-indicator-basic/initial
+      - javascript: ((dom) => dom.setAttribute('current',
+          '1'))(document.querySelector("x-swiper"))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-swiper/x-swiper-indicator-basic/num-1-in-view
+      - javascript: ((dom) => dom.setAttribute('current',
+          '2'))(document.querySelector("x-swiper"))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-swiper/x-swiper-indicator-basic/num-2-in-view
+      - javascript: ((dom) => dom.setAttribute('current',
+          '0'))(document.querySelector("x-swiper"))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-swiper/x-swiper-indicator-basic/num-0-in-view
+  - name: web-elements/x-swiper/x-swiper-indicator-color
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-swiper/x-swiper-indicator-color.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-swiper/x-swiper-indicator-color/inactivate-green
+      - javascript: ((dom) => dom.setAttribute('indicator-color',
+          'rgba(0,0,255,1)'))(document.querySelector("x-swiper"))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-swiper/x-swiper-indicator-color/inactivate-blue
+  - name: web-elements/x-swiper/x-swiper-indicator-active-color
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-swiper/x-swiper-indicator-active-color.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-swiper/x-swiper-indicator-active-color/activate-green
+      - javascript: ((dom) => dom.setAttribute('indicator-active-color',
+          'rgba(0,0,255,1)'))(document.querySelector("x-swiper"))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-swiper/x-swiper-indicator-active-color/activate-blue
+  - name: web-elements/x-swiper/x-swiper-basic-autoplay
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-swiper/x-swiper-basic-autoplay.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-swiper/x-swiper-basic-autoplay/initial-red
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 400))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-swiper/x-swiper-basic-autoplay/red-not-changed
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 800))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-swiper/x-swiper-basic-autoplay/autoplay-green
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 1000))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-swiper/x-swiper-basic-autoplay/autoplay-blue
+  - name: web-elements/x-swiper/x-swiper-basic-circular-autoplay
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-swiper/x-swiper-basic-circular-autoplay.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-swiper/x-swiper-basic-circular-autoplay/initial-red
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 2200))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-swiper/x-swiper-basic-circular-autoplay/autoplay-blue
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 1000))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-swiper/x-swiper-basic-circular-autoplay/autoplay-circular-red
+  - name: web-elements/x-swiper/x-swiper-basic-autoplay-interval
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-swiper/x-swiper-basic-autoplay-interval.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-swiper/x-swiper-basic-autoplay-interval/initial-red
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 1000))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-swiper/x-swiper-basic-autoplay-interval/red-not-changed
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 800))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-swiper/x-swiper-basic-autoplay-interval/autoplay-green

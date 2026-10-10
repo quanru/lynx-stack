@@ -1,0 +1,102 @@
+afterEach:
+  - recordToReport: Programmatic scroll method pixel evidence, including failures
+cases:
+  - name: web-elements/scroll-view/method-auto-scroll
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/scroll-view/method-auto-scroll.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/method-auto-scroll/initial
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"scroll-view\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.autoScroll({ start: true, rate: 50 }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 500))
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"scroll-view\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.autoScroll({ start: false, rate: 100 }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/method-auto-scroll/auto-scroll-slow-rate
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"scroll-view\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.autoScroll({ start: true, rate: 100 }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 500))
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"scroll-view\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.autoScroll({ start: false, rate: 100 }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/method-auto-scroll/auto-scroll-changed-high-rate
+  - name: web-elements/scroll-view/scroll-to
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/scroll-view/scroll-to.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/scroll-to/initial
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"scroll-view\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.scrollTo({ index: 2 }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/scroll-to/scroll-to-two
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"scroll-view\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.scrollTo({ index: 0 }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/scroll-to/back-to-zero
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"scroll-view\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.scrollTo({ offset: 50 }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/scroll-to/offset-50
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"scroll-view\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.scrollTo({ offset: 50, index: 2 }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/scroll-to/offset-50-and-index-2
+  - name: web-elements/scroll-view/scroll-into-view-basic
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/scroll-view/scroll-into-view-basic.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"#start > x-view:nth-child(3)\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.scrollIntoView({ scrollIntoViewOptions: { block: 'start' } }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"#center > x-view:nth-child(3)\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.scrollIntoView({ scrollIntoViewOptions: { block: 'center' } }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"#end > x-view:nth-child(3)\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.scrollIntoView({ scrollIntoViewOptions: { block: 'end' } }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/scroll-into-view-basic/scrolled-into-view
+  - name: web-elements/scroll-view/scroll-into-view-basic-x
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/scroll-view/scroll-into-view-basic-x.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"#start > x-view:nth-child(3)\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.scrollIntoView({ scrollIntoViewOptions: { inline: 'start' } }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"#center > x-view:nth-child(3)\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.scrollIntoView({ scrollIntoViewOptions: { inline: 'center' } }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"#end > x-view:nth-child(3)\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.scrollIntoView({ scrollIntoViewOptions: { inline: 'end' } }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/scroll-into-view-basic-x/scrolled-into-view
+  - name: web-elements/scroll-view/scroll-into-view-text
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/scroll-view/scroll-into-view-text.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"#start > x-text\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.scrollIntoView({ scrollIntoViewOptions: { block: 'start' } }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"#center > x-text\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.scrollIntoView({ scrollIntoViewOptions: { block: 'center' } }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"#end > x-text\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.scrollIntoView({ scrollIntoViewOptions: { block: 'end' } }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/scroll-into-view-text/scrolled-into-view
+  - name: web-elements/scroll-view/scroll-into-view-text-x
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/scroll-view/scroll-into-view-text-x.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"#start > x-text\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.scrollIntoView({ scrollIntoViewOptions: { inline: 'start' } }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"#center > x-text\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.scrollIntoView({ scrollIntoViewOptions: { inline: 'center' } }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"#end > x-text\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.scrollIntoView({ scrollIntoViewOptions: { inline: 'end' } }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/scroll-into-view-text-x/scrolled-into-view
+  - name: web-elements/scroll-view/scroll-into-view-nested-scroll-view
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/scroll-view/scroll-into-view-nested-scroll-view.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: "new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll(\"#target > x-view:nth-child(3)\"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => e.scrollIntoView({ scrollIntoViewOptions: { inline: 'start' } }))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })"
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/scroll-into-view-nested-scroll-view/scrollIntoView-do-not-scroll-outer-scroll-view
+      - javascript: new Promise((resolve, reject) => { const deadline = Date.now() + 30000; const check = () => { const matches = document.querySelectorAll("#outer"); if (matches.length > 1) return reject(new Error('Original scroll API locator strictness violation')); if (matches.length === 1) { try { return resolve(((e) => (e.scrollTop = 200))(matches[0])); } catch (error) { return reject(error); } } if (Date.now() >= deadline) return reject(new Error('Original scroll API locator attachment timed out')); requestAnimationFrame(check); }; check(); })
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/scroll-into-view-nested-scroll-view/scrollIntoView-do-scrolled-inner

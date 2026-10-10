@@ -1,0 +1,24 @@
+# Preserve hasdir=true; loading the flat bundle does not exercise these contracts.
+cases:
+  - name: config-splitchunk-split-by-experience
+    steps:
+      - gotoUrl: "${shellUrl}?casename=config-splitchunk-split-by-experience&hasdir=true"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original split-by-experience bundle
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+      - recordToReport: Original split-by-experience stylesheet contract passed
+  - name: config-splitchunk-split-by-module
+    steps:
+      - gotoUrl: "${shellUrl}?casename=config-splitchunk-split-by-module&hasdir=true"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original split-by-module bundle
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+      - recordToReport: Original split-by-module stylesheet contract passed

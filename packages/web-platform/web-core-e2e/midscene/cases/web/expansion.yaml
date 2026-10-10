@@ -1,0 +1,1169 @@
+# Each case preserves the named original ReactLynx test assertions.
+# Visual steps provide report screenshots; they do not replace exact checks.
+cases:
+  - name: basic-pink-rect
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-pink-rect"
+      - aiWaitFor: "A pink square is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "height",
+          "equals": "100px",
+        }
+      - web.expect: { "selector": "#target", "css": "width", "equals": "100px" }
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 192, 203)",
+        }
+
+  - name: basic-class-selector
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-class-selector"
+      - aiWaitFor: "A pink square is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "height",
+          "equals": "100px",
+        }
+      - web.expect: { "selector": "#target", "css": "width", "equals": "100px" }
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 192, 203)",
+        }
+
+  - name: basic-setstate-in-constructor
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-setstate-in-constructor"
+      - aiWaitFor: "A green area is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+
+  - name: basic-style-combinator
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-style-combinator"
+      - aiWaitFor: "A green area is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+
+  - name: basic-style-root-selector
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-style-root-selector"
+      - aiWaitFor: "A green area is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+
+  - name: basic-mts-mainthread-nested-ref
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-mts-mainthread-nested-ref"
+      - aiWaitFor: "A green area is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+
+  - name: basic-mts-run-on-main-thread
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-mts-run-on-main-thread"
+      - aiWaitFor: "A green area is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+
+  - name: api-nativemodules-bridge-call
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-nativemodules-bridge-call"
+      - aiWaitFor: "A green area is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+
+  - name: api-nativemodules-call
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-nativemodules-call"
+      - aiWaitFor: "A green area is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+
+  - name: api-nativemodules-call-delay
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-nativemodules-call-delay"
+      - aiWaitFor: "A green area is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+
+  - name: api-SystemInfo
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-SystemInfo"
+      - aiWaitFor: "A green area is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+
+  - name: api-SystemInfo-height-width
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-SystemInfo-height-width"
+      - aiWaitFor: "A green area is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+
+  - name: api-initdata
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-initdata"
+      - aiWaitFor: "A green area is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+
+  - name: api-setSharedData
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-setSharedData"
+      - aiWaitFor: "A green area is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+
+  - name: api-queueMicrotask
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-queueMicrotask"
+      - aiWaitFor: "A green area is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+
+  - name: config-mixed-01
+    steps:
+      - gotoUrl: "${shellUrl}?casename=config-mixed-01"
+      - aiWaitFor: "A green area is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+
+  - name: api-bindlauoutchange
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-bindlauoutchange"
+      - aiWaitFor: "A green area is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+
+  - name: basic-globalProps
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-globalProps"
+      - aiWaitFor: "A pink area is visible."
+      - web.expect: {
+          "selector": "#target",
+          "attribute": "style",
+          "contains": "pink",
+        }
+
+  - name: basic-dataprocessor
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-dataprocessor"
+      - aiWaitFor: "A green area is visible."
+      - web.expect: {
+          "selector": "#target",
+          "attribute": "style",
+          "contains": "green",
+        }
+
+  - name: basic-list-rendering
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-list-rendering"
+      - aiWaitFor: "Pink, orange, and pale yellow rectangles are visible."
+      - web.expect: {
+          "selector": "#pink",
+          "attribute": "style",
+          "contains": "pink",
+        }
+      - web.expect: {
+          "selector": "#orange",
+          "attribute": "style",
+          "contains": "orange",
+        }
+      - web.expect: {
+          "selector": "#wheat",
+          "attribute": "style",
+          "contains": "wheat",
+        }
+
+  - name: basic-wrapper-element-do-not-impact-layout
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-wrapper-element-do-not-impact-layout"
+      - aiWaitFor: "Pink, orange, and pale yellow rectangles are visible."
+      - web.expect: { "selector": "#pink", "css": "width", "equals": "60px" }
+      - web.expect: {
+          "selector": "#parent > * > #orange",
+          "css": "width",
+          "equals": "60px",
+        }
+      - web.expect: {
+          "selector": "#parent > * > #wheat",
+          "css": "width",
+          "equals": "60px",
+        }
+
+  - name: basic-useeffect-hydrate
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-useeffect-hydrate"
+      - aiWaitFor: "Red, green, blue, and yellow areas are visible."
+      - web.expect: {
+          "selector": "#red",
+          "css": "background-color",
+          "equals": "rgb(255, 0, 0)",
+        }
+      - web.expect: {
+          "selector": "#green",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - web.expect: {
+          "selector": "#blue",
+          "css": "background-color",
+          "equals": "rgb(0, 0, 255)",
+        }
+      - web.expect: {
+          "selector": "#yellow",
+          "css": "background-color",
+          "equals": "rgb(255, 255, 0)",
+        }
+
+  - name: basic-replaceelement
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-replaceelement"
+      - aiWaitFor: "Red, green, blue, and yellow areas are visible."
+      - web.expect: {
+          "selector": "#red",
+          "css": "background-color",
+          "equals": "rgb(255, 0, 0)",
+        }
+      - web.expect: {
+          "selector": "#green",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - web.expect: {
+          "selector": "#blue",
+          "css": "background-color",
+          "equals": "rgb(0, 0, 255)",
+        }
+      - web.expect: {
+          "selector": "#yellow",
+          "css": "background-color",
+          "equals": "rgb(255, 255, 0)",
+        }
+
+  - name: basic-element-x-webview-bindmessage
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-webview-bindmessage"
+      - aiWaitFor: "The text hello from iframe is visible."
+      - web.expect: {
+          "selector": "#webview-message",
+          "text": "hello from iframe",
+        }
+
+  - name: api-createLynxView-browserConfig
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-createLynxView-browserConfig"
+      - aiWaitFor: "The numbers 1234 and 5678 are visible."
+      - web.expect: { "selector": "#width", "text": "1234" }
+      - web.expect: { "selector": "#height", "text": "5678" }
+
+  - name: api-frame-src
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-frame-src"
+      - aiWaitFor: "The text frame:ready is visible."
+      - web.expect: { "selector": "#frame-ready", "text": "frame:ready" }
+
+  - name: api-frame-data
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-frame-data"
+      - aiWaitFor: "The text data:from-data is visible."
+      - web.expect: { "selector": "#frame-data", "text": "data:from-data" }
+
+  - name: api-frame-global-props
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-frame-global-props"
+      - aiWaitFor: "The text global:from-global-props is visible."
+      - web.expect: {
+          "selector": "#frame-global-props",
+          "text": "global:from-global-props",
+        }
+
+  - name: api-frame-data-update
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-frame-data-update"
+      - aiWaitFor: "The text data:before is visible."
+      - web.expect: { "selector": "#frame-data", "text": "data:before" }
+      - aiAct: "Click directly on the center of the letters in the standalone word update exactly once. It is the fourth line of text, below global:, separated by a blank gap. Target the letters, not the blank area underneath, to change data:before to data:after. Stop after that single click."
+      - web.expect: { "selector": "#frame-data", "text": "data:after" }
+      - aiWaitFor: "The text data:after is visible."
+
+  - name: api-frame-bindload
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-frame-bindload"
+      - aiWaitFor: "The word success is visible."
+      - web.expect: { "selector": "#frame-load-status", "text": "0" }
+      - web.expect: { "selector": "#frame-load-message", "text": "success" }
+      - web.expect: {
+          "selector": "#frame-load-url",
+          "textContains": "/dist/api-frame-inner.web.bundle",
+        }
+
+  - name: basic-lazy-component-fail
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-lazy-component-fail"
+      - aiWaitFor: "The text Loading... is visible."
+      - web.expect: { "selector": "#fallback", "text": "Loading..." }
+
+  - name: basic-lazy-component-effect
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-lazy-component-effect"
+      - aiWaitFor: "A pink area is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 192, 203)",
+        }
+
+  - name: basic-lazy-component-css
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-lazy-component-css"
+      - aiWaitFor: "Red and orange areas are visible."
+      - web.expect: {
+          "selector": ".container",
+          "css": "background-color",
+          "equals": "rgb(255, 0, 0)",
+          "index": 0,
+        }
+      - web.expect: {
+          "selector": ".container",
+          "css": "background-color",
+          "equals": "rgb(255, 165, 0)",
+          "index": 1,
+        }
+
+  - name: basic-lazy-component-css-blank
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-lazy-component-css-blank"
+      - aiWaitFor: "A red area is visible."
+      - web.expect: {
+          "selector": ".container",
+          "css": "background-color",
+          "equals": "rgb(255, 0, 0)",
+          "index": 0,
+        }
+      - web.expect: {
+          "selector": ".container",
+          "css": "background-color",
+          "equals": "rgb(255, 165, 0)",
+          "index": 1,
+          "not": true,
+        }
+
+  - name: basic-lazy-component-css-multi
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-lazy-component-css-multi"
+      - aiWaitFor: "Red, orange, and gray areas are visible."
+      - web.expect: {
+          "selector": ".container",
+          "css": "background-color",
+          "equals": "rgb(255, 0, 0)",
+          "index": 0,
+        }
+      - web.expect: {
+          "selector": ".container",
+          "css": "background-color",
+          "equals": "rgb(255, 165, 0)",
+          "index": 1,
+        }
+      - web.expect: {
+          "selector": ".container",
+          "css": "background-color",
+          "equals": "rgb(128, 128, 128)",
+          "index": 2,
+        }
+
+  - name: basic-css-var
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-css-var"
+      - aiWaitFor: "A pink area is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 192, 203)",
+        }
+
+  - name: basic-color-not-inherit
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-color-not-inherit"
+      - aiWaitFor: "Black text is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "color",
+          "equals": "rgb(0, 0, 0)",
+        }
+
+  - name: basic-globalThis-property-bts
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-globalThis-property-bts"
+      - aiWaitFor: "A colored square is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "color",
+          "equals": "rgb(0, 0, 0)",
+        }
+
+  - name: basic-globalThis-property-mts
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-globalThis-property-mts"
+      - aiWaitFor: "A colored square is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "color",
+          "equals": "rgb(0, 0, 0)",
+        }
+
+  - name: api-get-path-info
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-get-path-info"
+      - aiWaitFor: "A green area is visible."
+      - web.expect: {
+          "selector": "#result",
+          "attribute": "style",
+          "contains": "green",
+        }
+
+  - name: api-getJSModule
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-getJSModule"
+      - aiWaitFor: "A pink area is visible."
+      - web.expect: {
+          "selector": "#target",
+          "attribute": "style",
+          "contains": "pink",
+        }
+
+  - name: config-css-remove-scope-false
+    steps:
+      - gotoUrl: "${shellUrl}?casename=config-css-remove-scope-false"
+      - aiWaitFor: "A green square is visible."
+      - web.expect: {
+          "selector": "#index",
+          "css": "background-color",
+          "equals": "rgb(255, 0, 0)",
+        }
+      - web.expect: {
+          "selector": "#sub",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+
+  - name: config-css-remove-scope-false-import-css
+    steps:
+      - gotoUrl: "${shellUrl}?casename=config-css-remove-scope-false-import-css"
+      - aiWaitFor: "A green area is visible."
+      - web.expect: {
+          "selector": "#sub",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+
+  - name: config-css-remove-scope-true
+    steps:
+      - gotoUrl: "${shellUrl}?casename=config-css-remove-scope-true"
+      - aiWaitFor: "A green square is visible."
+      - web.expect: {
+          "selector": "#index",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - web.expect: {
+          "selector": "#sub",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+
+  - name: config-css-remove-scope-false-display-linear
+    steps:
+      - gotoUrl: "${shellUrl}?casename=config-css-remove-scope-false-display-linear"
+      - aiWaitFor: "A green square is visible."
+      - web.expect: {
+          "selector": "#sub",
+          "css": "--lynx-display",
+          "equals": "linear",
+        }
+
+  - name: config-css-selector-false-type-selector
+    steps:
+      - gotoUrl: "${shellUrl}?casename=config-css-selector-false-type-selector"
+      - aiWaitFor: "A yellow square is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 255, 0)",
+        }
+      - web.expect: { "selector": "#target", "css": "width", "equals": "100px" }
+      - web.expect: {
+          "selector": "#target",
+          "css": "height",
+          "equals": "100px",
+        }
+
+  - name: basic-element-x-foldview-ng-header-width
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-foldview-ng-header-width"
+      - aiWaitFor: "A large pink rectangular area is visible."
+      - web.expect: { "selector": "#header", "css": "width", "equals": "300px" }
+
+  - name: basic-element-svg-bindload
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-svg-bindload"
+      - aiWaitFor: "A black basketball icon is visible."
+      - web.expect: {
+          "selector": "#result",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+
+  - name: basic-style-remove
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-style-remove"
+      - aiWaitFor: "A green square is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiAct: "Click the green square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 192, 203)",
+        }
+      - aiAct: "Click the pink square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiWaitFor: "A green square is visible."
+
+  - name: basic-style-remove-one-property
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-style-remove-one-property"
+      - aiWaitFor: "A green square is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiAct: "Click the green square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 192, 203)",
+        }
+      - aiAct: "Click the pink square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiWaitFor: "A green square is visible."
+
+  - name: basic-mts-bindtap-change-element-background
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-mts-bindtap-change-element-background"
+      - aiWaitFor: "A colored square is visible."
+      - aiAct: "Click the colored square exactly once."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiWaitFor: "A green square is visible."
+
+  - name: basic-mts-mainthread-ref
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-mts-mainthread-ref"
+      - aiWaitFor: "A colored square is visible."
+      - aiAct: "Click the colored square exactly once."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiWaitFor: "A green square is visible."
+
+  - name: basic-mts-run-on-background
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-mts-run-on-background"
+      - aiWaitFor: "A colored square is visible."
+      - aiAct: "Click the colored square exactly once."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiWaitFor: "A green square is visible."
+
+  - name: basic-global-bindkeydown-shift
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-global-bindkeydown-shift"
+      - aiWaitFor: "A pink square is visible."
+      - aiAct: "Press Shift+a once."
+      - web.expect: {
+          "selector": "#observer",
+          "attribute": "style",
+          "contains": "green",
+        }
+      - aiWaitFor: "A green square is visible."
+
+  - name: basic-page-event
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-page-event"
+      - aiWaitFor: "A pink square is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 192, 203)",
+        }
+      - aiAct: "Click the pink square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiWaitFor: "A green square is visible."
+
+  - name: basic-lazy-component-css-selector-false-multi-level-selector
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-lazy-component-css-selector-false-multi-level-selector"
+      - aiWaitFor: "A pink square is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 192, 203)",
+        }
+
+  - name: basic-lazy-component-css-selector-false-exchange-class
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-lazy-component-css-selector-false-exchange-class"
+      - aiWaitFor: "A green square is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiAct: "Click the green square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 255, 0)",
+        }
+      - aiAct: "Click the yellow square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgba(0, 0, 0, 0)",
+        }
+
+  - name: basic-lazy-component-css-selector-false-inline-css-change-same-time
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-lazy-component-css-selector-false-inline-css-change-same-time"
+      - aiWaitFor: "A yellow square is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 255, 0)",
+        }
+      - aiAct: "Click the yellow square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 0, 0)",
+        }
+      - aiAct: "Click the red square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 255, 0)",
+        }
+
+  - name: basic-lazy-component-css-selector-false-remove-all
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-lazy-component-css-selector-false-remove-all"
+      - aiWaitFor: "A green square is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiAct: "Click the green square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgba(0, 0, 0, 0)",
+        }
+
+  - name: basic-lazy-component-css-selector-false-remove-css-and-reuse-css
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-lazy-component-css-selector-false-remove-css-and-reuse-css"
+      - aiWaitFor: "A yellow square is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 255, 0)",
+        }
+      - aiAct: "Click the yellow square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiAct: "Click the green square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 255, 0)",
+        }
+
+  - name: basic-lazy-component-css-selector-false-remove-css-and-style-collapsed
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-lazy-component-css-selector-false-remove-css-and-style-collapsed"
+      - aiWaitFor: "A green square is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiAct: "Click the green square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 255, 0)",
+        }
+      - aiAct: "Click the yellow square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+
+  - name: basic-lazy-component-css-selector-false-remove-inline-style-and-reuse-css
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-lazy-component-css-selector-false-remove-inline-style-and-reuse-css"
+      - aiWaitFor: "A green square is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiAct: "Click the green square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 0, 0)",
+        }
+      - aiAct: "Click the red square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+
+  - name: config-css-selector-false-multi-level-selector
+    steps:
+      - gotoUrl: "${shellUrl}?casename=config-css-selector-false-multi-level-selector"
+      - aiWaitFor: "A pink square is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 192, 203)",
+        }
+
+  - name: config-css-selector-false-exchange-class
+    steps:
+      - gotoUrl: "${shellUrl}?casename=config-css-selector-false-exchange-class"
+      - aiWaitFor: "A green square is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiAct: "Click the green square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 255, 0)",
+        }
+      - aiAct: "Click the yellow square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgba(0, 0, 0, 0)",
+        }
+
+  - name: config-css-selector-false-inline-css-change-same-time
+    steps:
+      - gotoUrl: "${shellUrl}?casename=config-css-selector-false-inline-css-change-same-time"
+      - aiWaitFor: "A yellow square is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 255, 0)",
+        }
+      - aiAct: "Click the yellow square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 0, 0)",
+        }
+      - aiAct: "Click the red square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 255, 0)",
+        }
+
+  - name: config-css-selector-false-remove-all
+    steps:
+      - gotoUrl: "${shellUrl}?casename=config-css-selector-false-remove-all"
+      - aiWaitFor: "A green square is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiAct: "Click the green square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgba(0, 0, 0, 0)",
+        }
+
+  - name: config-css-selector-false-remove-css-and-reuse-css
+    steps:
+      - gotoUrl: "${shellUrl}?casename=config-css-selector-false-remove-css-and-reuse-css"
+      - aiWaitFor: "A yellow square is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 255, 0)",
+        }
+      - aiAct: "Click the yellow square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiAct: "Click the green square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 255, 0)",
+        }
+
+  - name: config-css-selector-false-remove-css-and-style-collapsed
+    steps:
+      - gotoUrl: "${shellUrl}?casename=config-css-selector-false-remove-css-and-style-collapsed"
+      - aiWaitFor: "A green square is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiAct: "Click the green square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 255, 0)",
+        }
+      - aiAct: "Click the yellow square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+
+  - name: config-css-selector-false-remove-inline-style-and-reuse-css
+    steps:
+      - gotoUrl: "${shellUrl}?casename=config-css-selector-false-remove-inline-style-and-reuse-css"
+      - aiWaitFor: "A green square is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiAct: "Click the green square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 0, 0)",
+        }
+      - aiAct: "Click the red square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+
+  - name: basic-lazy-component
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-lazy-component"
+      - aiWaitFor: "A green square is visible."
+      - web.expect: {
+          "selector": "#target1",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiAct: "Click the center of the BLUE square on the RIGHT of the horizontal pair exactly once, to turn its LEFT green neighbor pink. The blue square is the right-hand half of the colored pair. Do not click the left square. Stop after that single click."
+      - web.expect: {
+          "selector": "#target1",
+          "css": "background-color",
+          "equals": "rgb(255, 192, 203)",
+        }
+      - aiAct: "Click the center of the BLUE square on the RIGHT of the horizontal pair exactly once, to turn its LEFT pink neighbor green. The blue square is the right-hand half of the colored pair. Do not click the left square. Stop after that single click."
+      - web.expect: {
+          "selector": "#target1",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiWaitFor: "A green square is visible."
+
+  - name: basic-lazy-component-relative-path
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-lazy-component-relative-path"
+      - aiWaitFor: "A green square is visible."
+      - web.expect: {
+          "selector": "#target1",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiAct: "Click the center of the BLUE square on the RIGHT of the horizontal pair exactly once, to turn its LEFT green neighbor pink. The blue square is the right-hand half of the colored pair. Do not click the left square. Stop after that single click."
+      - web.expect: {
+          "selector": "#target1",
+          "css": "background-color",
+          "equals": "rgb(255, 192, 203)",
+        }
+      - aiAct: "Click the center of the BLUE square on the RIGHT of the horizontal pair exactly once, to turn its LEFT pink neighbor green. The blue square is the right-hand half of the colored pair. Do not click the left square. Stop after that single click."
+      - web.expect: {
+          "selector": "#target1",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiWaitFor: "A green square is visible."
+
+  - name: basic-lazy-component-mts-bindtap
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-lazy-component-mts-bindtap"
+      - aiWaitFor: "A pink square is visible."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(255, 192, 203)",
+        }
+      - aiAct: "Click the pink square exactly once. Stop after that single click."
+      - web.expect: {
+          "selector": "#target",
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiWaitFor: "A green square is visible."
+
+  - name: basic-element-x-input-focus
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-input-focus"
+      - aiAct: "Click the red square exactly once to focus the input. Do not click inside the input directly."
+      - web.expect: { "selector": ".result", "text": "bindfocus" }
+      - aiWaitFor: "The text bindfocus is visible."
+
+  - name: basic-element-x-input-ng-bindinput
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-input-ng-bindinput"
+      - aiAct: "Focus the input, press Enter, replace all its contents with \"foobar\", and leave the caret at the end."
+      - web.expect: { "selector": ".result", "text": "foobar-6-6" }
+      - aiWaitFor: "The text foobar-6-6 is visible."
+
+  - name: basic-element-x-input-input-filter
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-input-input-filter"
+      - aiAct: "Focus the input, press Enter, then replace all its contents by entering the literal string \"foobar!@#)\". Enter every character including punctuation; do not correct the filtered result."
+      - web.expect: { "selector": ".result", "text": "foobar" }
+      - aiWaitFor: "The text foobar is visible."
+
+  - name: basic-event-target-trigger
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-event-trigger"
+      - aiAct: "Click once in the large pink area, away from the small green square."
+      - web.expect: { "selector": "#target", "text": "[capture tap][bind tap]" }
+      - aiWaitFor: "The text [capture tap][bind tap] is visible."
+
+  - name: basic-event-child-trigger
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-event-trigger"
+      - aiAct: "Click the small green square exactly once."
+      - web.expect: { "selector": "#target", "text": "[capture tap][bind tap]" }
+      - aiWaitFor: "The text [capture tap][bind tap] is visible."
+
+  - name: basic-lazy-component-multi
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-lazy-component-multi"
+      - aiWaitFor: "A green square is visible."
+      - web.expect: {
+          "selector": "#target1",
+          "index": 0,
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - web.expect: {
+          "selector": "#target1",
+          "index": 1,
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiAct: "Click once in the center of the upper half of the BLUE column on the RIGHT of the two-column colored block. This is the top-right square, immediately to the right of the upper green square. Turn only the upper-left green square pink; do not click the left column or the lower half. Stop after one click."
+      - web.expect: {
+          "selector": "#target1",
+          "index": 0,
+          "css": "background-color",
+          "equals": "rgb(255, 192, 203)",
+        }
+      - web.expect: {
+          "selector": "#target1",
+          "index": 1,
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiAct: "Click once in the center of the lower half of the BLUE column on the RIGHT of the two-column colored block. This is the bottom-right square, immediately to the right of the remaining lower green square. Turn the lower-left green square pink while leaving the upper-left square pink. Stop after one click."
+      - web.expect: {
+          "selector": "#target1",
+          "index": 0,
+          "css": "background-color",
+          "equals": "rgb(255, 192, 203)",
+        }
+      - web.expect: {
+          "selector": "#target1",
+          "index": 1,
+          "css": "background-color",
+          "equals": "rgb(255, 192, 203)",
+        }
+      - aiWaitFor: "The colored block has a continuous pink column on the left and a continuous blue column on the right. Both the upper and lower halves of the left column are pink."
+
+  - name: basic-lazy-component-multi-import
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-lazy-component-multi-import"
+      - aiWaitFor: "A green square is visible."
+      - web.expect: {
+          "selector": "#target1",
+          "index": 0,
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - web.expect: {
+          "selector": "#target1",
+          "index": 1,
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiAct: "Click once in the center of the upper half of the BLUE column on the RIGHT of the two-column colored block. This is the top-right square, immediately to the right of the upper green square. Turn only the upper-left green square pink; do not click the left column or the lower half. Stop after one click."
+      - web.expect: {
+          "selector": "#target1",
+          "index": 0,
+          "css": "background-color",
+          "equals": "rgb(255, 192, 203)",
+        }
+      - web.expect: {
+          "selector": "#target1",
+          "index": 1,
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiAct: "Click once in the center of the lower half of the BLUE column on the RIGHT of the two-column colored block. This is the bottom-right square, immediately to the right of the remaining lower green square. Turn the lower-left green square pink while leaving the upper-left square pink. Stop after one click."
+      - web.expect: {
+          "selector": "#target1",
+          "index": 0,
+          "css": "background-color",
+          "equals": "rgb(255, 192, 203)",
+        }
+      - web.expect: {
+          "selector": "#target1",
+          "index": 1,
+          "css": "background-color",
+          "equals": "rgb(255, 192, 203)",
+        }
+      - aiWaitFor: "The colored block has a continuous pink column on the left and a continuous blue column on the right. Both the upper and lower halves of the left column are pink."
+
+  - name: basic-lazy-component-when-needed
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-lazy-component-when-needed"
+      - aiAct: "Click the red Load Component control exactly once."
+      - web.expect: {
+          "selector": "#target1",
+          "index": 0,
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiAct: "Click the center of the BLUE square on the RIGHT of the horizontal pair exactly once, to turn its LEFT green neighbor pink. The blue square is the right-hand half of the colored pair, below the red Load Component control. Do not click the left square. Stop after that single click."
+      - web.expect: {
+          "selector": "#target1",
+          "index": 0,
+          "css": "background-color",
+          "equals": "rgb(255, 192, 203)",
+        }
+      - aiAct: "Click the center of the BLUE square on the RIGHT of the horizontal pair exactly once, to turn its LEFT pink neighbor green. The blue square is the right-hand half of the colored pair, below the red Load Component control. Do not click the left square. Stop after that single click."
+      - web.expect: {
+          "selector": "#target1",
+          "index": 0,
+          "css": "background-color",
+          "equals": "rgb(0, 128, 0)",
+        }
+      - aiWaitFor: "A green square and a blue square are visible."
+
+  - name: basic-element-image-support-tap-event
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-image-support-tap-event"
+      - aiAct: "Click the large image above the small red square exactly once."
+      - web.expect: {
+          "selector": "#result",
+          "attribute": "class",
+          "equals": "success",
+        }
+      - aiWaitFor: "A green square is visible below the image."

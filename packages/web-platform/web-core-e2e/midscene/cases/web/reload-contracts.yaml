@@ -1,0 +1,101 @@
+cases:
+  - name: basic-reload-page-only-one
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-reload"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before original reload page-count contract
+      - javascript: "(() => { document.querySelector('lynx-view').reload(); return true; })()"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - javascript: |
+          (() => {
+            const actual = Array.from(document.querySelector('lynx-view')?.shadowRoot?.children || [])
+              .filter(i => i.getAttribute('part') === 'page').length;
+            if (actual !== 1) throw new Error('Expected one page after reload, got ' + actual);
+            return true;
+          })()
+      - recordToReport: Original single-page reload contract passed
+  - name: basic-globalProps-reload
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-globalProps"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before original global-props reload contract
+      - web.expect: {
+          selector: "#target",
+          attribute: style,
+          contains: pink,
+          immediate: true,
+        }
+      - javascript: "(() => { document.querySelector('lynx-view')?.updateGlobalProps({ backgroundColor: 'green' }); return true; })()"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - javascript: "(() => { document.querySelector('lynx-view')?.reload(); return true; })()"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - web.expect: {
+          selector: "#target",
+          attribute: style,
+          contains: green,
+          immediate: true,
+        }
+      - recordToReport: Original global-props API payload, reload and inline styles passed
+  - name: basic-vw-vh-unit
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-vw-vh-unit"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before original viewport-unit reload contracts
+      - javascript: |
+          (() => {
+            const nodes = document.querySelectorAll('lynx-view');
+            if (nodes.length !== 1) throw new Error('Expected exactly one Lynx view');
+            const node = nodes[0];
+            node.style.setProperty('--vh-unit', '10px');
+            node.style.setProperty('--vw-unit', '10px');
+            node.transformVW = true;
+            node.transformVH = true;
+            node.reload();
+            return true;
+          })()
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - web.expect: { selector: "#target", css: width, equals: "500px" }
+      - web.expect: { selector: "#target", css: height, equals: "500px" }
+      - javascript: |
+          (() => {
+            const nodes = document.querySelectorAll('lynx-view');
+            if (nodes.length !== 1) throw new Error('Expected exactly one Lynx view');
+            const node = nodes[0];
+            node.transformVW = false;
+            node.transformVH = false;
+            node.reload();
+            return true;
+          })()
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - web.expect: {
+          selector: "#target",
+          css: width,
+          equals: "25px",
+          not: true,
+        }
+      - web.expect: {
+          selector: "#target",
+          css: height,
+          equals: "50px",
+          not: true,
+        }
+      - javascript: |
+          (() => {
+            const nodes = document.querySelectorAll('lynx-view');
+            if (nodes.length !== 1) throw new Error('Expected exactly one Lynx view');
+            const node = nodes[0];
+            node.transformVW = true;
+            node.transformVH = true;
+            node.style.height = '500px';
+            node.style.width = '500px';
+            node.style.minHeight = '500px';
+            node.style.minWidth = '500px';
+            node.style.setProperty('--vh-unit', '1cqh');
+            node.style.setProperty('--vw-unit', '1cqw');
+            node.reload();
+            return true;
+          })()
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - web.expect: { selector: "#target", css: width, equals: "250px" }
+      - web.expect: { selector: "#target", css: height, equals: "250px" }
+      - recordToReport: Original viewport switches and container units passed all six CSS assertions

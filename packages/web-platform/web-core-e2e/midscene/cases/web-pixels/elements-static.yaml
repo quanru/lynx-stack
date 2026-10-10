@@ -1,0 +1,308 @@
+# Exact original web-elements static PNG contracts; disabled cases excluded.
+afterEach:
+  - recordToReport: Original web-elements static pixel contract result
+cases:
+  - name: web-elements/layout/percentage-cyclic
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/layout/percentage-cyclic.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: layout/percentage-cyclic/index,
+        }
+  - name: web-elements/layout/percentage-cyclic-sibling
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/layout/percentage-cyclic-sibling.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: layout/percentage-cyclic-sibling/index,
+        }
+  - name: web-elements/layout/flex-lynx-computed-direction
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/layout/flex-lynx-computed-direction.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: layout/flex-lynx-computed-direction/index,
+        }
+  - name: web-elements/layout/flex-lynx-computed-grow
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/layout/flex-lynx-computed-grow.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: layout/flex-lynx-computed-grow/index,
+        }
+  - name: web-elements/layout/flex-lynx-computed-shrink
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/layout/flex-lynx-computed-shrink.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: layout/flex-lynx-computed-shrink/index,
+        }
+  - name: web-elements/x-text/view-in-text
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-text/view-in-text.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: { suite: web-elements, baseline: x-text/view-in-text/index }
+  - name: web-elements/x-text/nested-view-in-text
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-text/nested-view-in-text.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-text/nested-view-in-text/index,
+        }
+  - name: web-elements/x-text/inline-text
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-text/inline-text.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: { suite: web-elements, baseline: x-text/inline-text/index }
+  - name: web-elements/x-text/inline-text-with-lynx-wrapper
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-text/inline-text-with-lynx-wrapper.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-text/inline-text-with-lynx-wrapper/index,
+        }
+  - name: web-elements/x-text/text-in-text
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-text/text-in-text.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: { suite: web-elements, baseline: x-text/text-in-text/index }
+  - name: web-elements/x-text/text-in-text-fault-torrent
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-text/text-in-text-fault-torrent.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-text/text-in-text-fault-torrent/index,
+        }
+  - name: web-elements/x-text/text-baseline-alignment
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-text/text-baseline-alignment.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-text/text-baseline-alignment/index,
+        }
+  - name: web-elements/x-text/inline-image
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-text/inline-image.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: { suite: web-elements, baseline: x-text/inline-image/index }
+  - name: web-elements/x-text/text-maxline-truncation-in-view
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-text/text-maxline-truncation-in-view.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-text/text-maxline-truncation-in-view/index,
+        }
+  - name: web-elements/x-text/inline-image-with-lynx-wrapper
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-text/inline-image-with-lynx-wrapper.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-text/inline-image-with-lynx-wrapper/index,
+        }
+  - name: web-elements/x-text/inline-image-padding-and-margin
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-text/inline-image-padding-and-margin.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-text/inline-image-padding-and-margin/index,
+        }
+  - name: web-elements/x-text/text-maxlength
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-text/text-maxlength.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-text/text-maxlength/maxlength,
+        }
+  - name: web-elements/x-text/text-maxlength-with-tail-color-convert-false
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-text/text-maxlength-with-tail-color-convert-false.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-text/text-maxlength-with-tail-color-convert-false/first-red-second-green,
+        }
+  - name: web-elements/x-text/text-maxline-just-fit-do-not-show-custom-truncation
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-text/text-maxline-just-fit-do-not-show-custom-truncation.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-text/text-maxline-just-fit-do-not-show-custom-truncation/index,
+        }
+  - name: web-elements/x-text/inline-truncation-with-inline-image
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-text/inline-truncation-with-inline-image.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-text/inline-truncation-with-inline-image/index,
+        }
+  - name: web-elements/scroll-view/scroll-view-size-in-flex-column
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/scroll-view/scroll-view-size-in-flex-column.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: scroll-view/scroll-view-size-in-flex-column/index,
+        }
+  - name: web-elements/scroll-view/scroll-view-size-in-flex-row
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/scroll-view/scroll-view-size-in-flex-row.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: scroll-view/scroll-view-size-in-flex-row/index,
+        }
+  - name: web-elements/scroll-view/scroll-top
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/scroll-view/scroll-top.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: scroll-view/scroll-top/index,
+        }
+  - name: web-elements/scroll-view/scroll-left
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/scroll-view/scroll-left.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: scroll-view/scroll-left/index,
+        }
+  - name: web-elements/scroll-view/scroll-view-overwrite-direction
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/scroll-view/scroll-view-overwrite-direction.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: scroll-view/scroll-view-overwrite-direction/index,
+        }
+  - name: web-elements/scroll-view/scroll-view-linear-gravity
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/scroll-view/scroll-view-linear-gravity.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: scroll-view/scroll-view-linear-gravity/index,
+        }
+  - name: web-elements/scroll-view/scroll-to-index
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/scroll-view/scroll-to-index.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: scroll-view/scroll-to-index/index,
+        }
+  - name: web-elements/scroll-view/scroll-view-absolute-kid
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/scroll-view/scroll-view-absolute-kid.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: scroll-view/scroll-view-absolute-kid/should-show-pink-rect,
+        }
+  - name: web-elements/x-foldview-ng/size-header-height-enough
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-foldview-ng/size-header-height-enough.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-foldview-ng/size-header-height-enough/index,
+        }
+  - name: web-elements/x-foldview-ng/size-toolbar-slot-defines-parent-size
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-foldview-ng/size-toolbar-slot-defines-parent-size.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-foldview-ng/size-toolbar-slot-defines-parent-size/index,
+        }
+  - name: web-elements/x-foldview-ng/size-toolbar-slot-share-flex-parent
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-foldview-ng/size-toolbar-slot-share-flex-parent.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-foldview-ng/size-toolbar-slot-share-flex-parent/index,
+        }
+  - name: web-elements/x-foldview-ng/size-toolbar-could-from-children
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-foldview-ng/size-toolbar-could-from-children.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-foldview-ng/size-toolbar-could-from-children/index,
+        }
+  - name: web-elements/x-foldview-ng/size-header-could-from-children
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-foldview-ng/size-header-could-from-children.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-foldview-ng/size-header-could-from-children/index,
+        }
+  - name: web-elements/x-foldview-ng/basic
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-foldview-ng/basic.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: { suite: web-elements, baseline: x-foldview-ng/basic/index }
+  - name: web-elements/x-foldview-ng/basic-with-lynx-wrapper
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-foldview-ng/basic-with-lynx-wrapper.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-foldview-ng/basic-with-lynx-wrapper/index,
+        }
+  - name: web-elements/x-viewpager-ng/viewpager-size-cyclic-percentage-size
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-viewpager-ng/viewpager-size-cyclic-percentage-size.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-viewpager-ng/viewpager-size-cyclic-percentage-size/basic,
+        }
+  - name: web-elements/x-viewpager-ng/select-index
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-viewpager-ng/select-index.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-viewpager-ng/select-index/initial-sandybrown,
+        }
+  - name: web-elements/x-refresh-view/basic
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-refresh-view/basic.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-refresh-view/basic/initial,
+        }
+  - name: web-elements/x-swiper/x-swiper-initial-current
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-swiper/x-swiper-initial-current.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-swiper/x-swiper-initial-current/initial,
+        }

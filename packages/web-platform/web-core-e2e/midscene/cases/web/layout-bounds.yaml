@@ -1,0 +1,44 @@
+# Capture after the assertion, even on failure, without waiting into a pass.
+afterEach:
+  - recordToReport: Original immediate layout assertion result
+cases:
+  - name: basic-linear-margin-not-collapse
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-margin-not-collapse"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.expect: {
+          selector: "#container",
+          bounds: height,
+          equals: 360,
+          immediate: true,
+        }
+  - name: basic-linear-weight-sum-is-float
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-weight-sum-is-float"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.expect: {
+          selector: "#weight0",
+          bounds: width,
+          equals: 100,
+          immediate: true,
+        }
+  - name: basic-linear-weight-calced-less-than-size
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-weight-calced-less-than-size"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.expect: {
+          selector: "#weight0",
+          bounds: width,
+          equals: 100,
+          immediate: true,
+        }
+  - name: basic-linear-weight-calced-large-than-size
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-weight-calced-large-than-size"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.expect: {
+          selector: "#weight0",
+          bounds: width,
+          equals: 100,
+          immediate: true,
+        }

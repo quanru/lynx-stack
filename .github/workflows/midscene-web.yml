@@ -1,0 +1,440 @@
+name: Midscene AI E2E (web-core shell)
+
+# AI-driven E2E on lynx-stack's web-core-e2e dev shell.
+# Overlays Midscene vision on top of Playwright: the ReactLynx page renders
+# inside a <lynx-view> open shadow root and worker. Midscene drives visible
+# interactions; precise resource and event checks remain separate assertions.
+#
+# Required repository secrets:
+#   MIDSCENE_MODEL_API_KEY / NAME / BASE_URL / FAMILY
+# Optional:
+#   MIDSCENE_MODEL_REASONING_ENABLED
+# Optional repository variables:
+#   MIDSCENE_PAGES_BRANCH  e.g. "main" — publish HTML report to GitHub Pages
+#                          (defaults to the repository default branch).
+#                          Same-repository pull
+#                          requests also publish review evidence.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: &ai-e2e-paths
+      - ".github/workflows/midscene-web.yml"
+      - ".github/workflows/workflow-pages.yml"
+      - ".github/scripts/compose-pages-site*"
+      - ".github/workflows/workflow-website.yml"
+      - ".github/workflows/deploy-main.yml"
+      - ".github/scripts/preflight-model.sh"
+      - ".github/scripts/vision-preflight*"
+      - "packages/web-platform/web-core-e2e/midscene/**"
+      - "packages/web-platform/web-core-e2e/{rsbuild.config.ts,package.json,shell-project/**,tests/reactlynx/**}"
+      - "packages/web-platform/web-core/**"
+      - "packages/web-platform/web-elements/**"
+  pull_request:
+    branches: [main]
+    paths: *ai-e2e-paths
+  schedule:
+    - cron: "17 3 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: midscene-web-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection
+
+jobs:
+  renderer-parity:
+    name: Check cross-repository report renderer parity
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: bash packages/web-platform/web-core-e2e/midscene/scripts/check-renderer-parity.sh
+      - run: node --test .github/scripts/compose-pages-site.test.mjs
+
+  fork-contract-check:
+    name: Midscene contract check (external fork)
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: "24"
+      - name: Check types and report contract without model credentials
+        working-directory: packages/web-platform/web-core-e2e/midscene
+        run: |
+          npm ci --no-audit --no-fund
+          npm run typecheck
+          node --test scripts/*.test.mjs
+          node --test ../../../../.github/scripts/vision-preflight.test.mjs
+
+  web-shell-ai-e2e:
+    name: Midscene AI E2E · Web (shard ${{ matrix.shard }}/4)
+    needs: [renderer-parity]
+    if: github.event_name != 'schedule' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        shard: [1, 2, 3, 4]
+    env:
+      MIDSCENE_MODEL_API_KEY: ${{ secrets.MIDSCENE_MODEL_API_KEY }}
+      MIDSCENE_MODEL_NAME: ${{ secrets.MIDSCENE_MODEL_NAME }}
+      MIDSCENE_MODEL_BASE_URL: ${{ secrets.MIDSCENE_MODEL_BASE_URL }}
+      MIDSCENE_MODEL_FAMILY: ${{ secrets.MIDSCENE_MODEL_FAMILY }}
+      MIDSCENE_MODEL_REASONING_ENABLED: ${{ secrets.MIDSCENE_MODEL_REASONING_ENABLED }}
+    # Same image the official Playwright web jobs use: browsers preinstalled
+    # (/ms-playwright) and system libraries ready for all three browsers.
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.1-resolute
+      env:
+        CI: "1"
+        TURBO_TELEMETRY_DISABLED: "1"
+        PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: "24"
+
+      - name: Align container home ownership for Firefox
+        shell: bash
+        # GitHub mounts /github/home with the image's pwuser ownership, while
+        # this root container needs apt/corepack for the source build. Firefox
+        # refuses root launches when that home directory belongs to another UID.
+        # Change only the container mount's directory owner, never HOME or files.
+        run: |
+          set -euo pipefail
+          test "$(id -u)" = "0"
+          test -d /github/home
+          test ! -L /github/home
+          chown -- "$(id -u):$(id -g)" /github/home
+          test "$(stat -c %u /github/home)" = "$(id -u)"
+
+      - name: Enable pnpm via corepack
+        run: |
+          corepack enable
+          corepack prepare pnpm@12.4.0 --activate
+          pnpm --version
+
+      - name: Preflight model endpoint
+        working-directory: packages/web-platform/web-core-e2e/midscene
+        run: bash ../../../../.github/scripts/preflight-model.sh
+
+      - name: Install Rust toolchain (web-core build:wasm)
+        # Container jobs default to `sh` (dash), which has no `source`;
+        # pin bash explicitly.
+        shell: bash
+        run: |
+          set -e
+          apt-get update -qq
+          apt-get install -y -qq build-essential pkg-config curl ca-certificates >/dev/null
+          if ! command -v rustup >/dev/null; then
+            curl --proto '=https' --tlsv1.2 --retry 10 -fsSL https://sh.rustup.rs \
+              | sh -s -- --default-toolchain none -y
+          fi
+          . "$HOME/.cargo/env"
+          # rust-toolchain.toml pins channel 1.97.1; install its wasm targets.
+          rustup toolchain install 1.97.1 --profile minimal
+          rustup target add --toolchain 1.97.1 wasm32-unknown-unknown wasm32-wasip1
+          # Make cargo/rustc available to every later step (turbo build:wasm).
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+          rustc --version
+
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build web-core-e2e dependency closure
+        # Includes web-core (Rust -> wasm), rspeedy and the ReactLynx plugin
+        # chain; the package's own build:csr emits dist/*.web.bundle.
+        run: |
+          pnpm turbo build --filter='@lynx-js/web-core-e2e...'
+
+      - name: Validate original server-rendering HTML snapshots
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-core-e2e
+        # Deterministic non-UI contracts retain their original runner and snapshots.
+        # CI forbids creating missing snapshots; never pass an update flag.
+        run: pnpm exec rstest --config rstest.config.ts
+
+      # Original Playwright runners own their server lifecycle in CI. Run them
+      # before the persistent Midscene servers, never weaken reuse guards.
+      - name: Validate original worker and runtime API contracts
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-core-e2e
+        run: pnpm exec playwright test tests/web-core.test.ts --project chromium --project firefox --project webkit --workers=2 --reporter line
+
+      - name: Validate original layout and style performance budgets
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-elements
+        env:
+          PORT: "3081"
+        run: pnpm exec playwright test tests/performance.test.ts --project chromium --workers=2 --reporter line
+
+      - name: Validate original SVG selection and iframe API contracts
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-elements
+        env:
+          PORT: "3081"
+        run: pnpm exec playwright test tests/x-svg-inline.spec.ts tests/x-text-selection.spec.ts tests/x-webview.spec.ts --project chromium --project firefox --project webkit --workers=2 --reporter line
+
+      - name: Validate original Markdown rendering and API contracts
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-elements
+        env:
+          PORT: "3081"
+        # The excluded user-click flow is translated in markdown-events.yaml.
+        run: pnpm exec playwright test tests/x-markdown.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep-invert 'should fire bindlink and bindimageTap events' --reporter line
+
+      - name: Validate original pointer event coalescing contract
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-elements
+        env:
+          PORT: "3081"
+        # Synthetic pointer-event delivery is the API under test, not a user gesture.
+        run: pnpm exec playwright test tests/scroll-view-mouse-drag.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'coalesces pointer moves and flushes the latest position on pointerup' --reporter line
+
+      - name: Validate original Rust and TypeScript template consistency
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-elements
+        env:
+          PORT: "3081"
+        # No browser interaction exists in this source test; execute it once.
+        run: pnpm exec playwright test tests/template.spec.ts --project chromium --workers=2 --reporter line
+
+      - name: Start web-core-e2e dev shell
+        working-directory: packages/web-platform/web-core-e2e
+        run: |
+          nohup pnpm run serve > /tmp/web-shell.log 2>&1 &
+          for _ in $(seq 1 60); do
+            if curl -fsS 'http://localhost:3080/?casename=basic-bindtap' >/dev/null; then
+              echo "dev shell is ready"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error:: dev shell did not become ready" >&2
+          cat /tmp/web-shell.log >&2 || true
+          exit 1
+
+      - name: Start independent web-elements fixture server
+        working-directory: packages/web-platform/web-elements
+        run: |
+          PORT=3081 nohup pnpm run serve > /tmp/web-elements.log 2>&1 &
+          for _ in $(seq 1 60); do
+            if curl -fsS 'http://localhost:3081/tests/fixtures/x-view/dataset-attr-false-value.html' >/dev/null; then
+              echo "web-elements fixture server is ready"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error:: web-elements fixture server did not become ready" >&2
+          cat /tmp/web-elements.log >&2 || true
+          exit 1
+
+      - name: Install Midscene test dependencies
+        working-directory: packages/web-platform/web-core-e2e/midscene
+        run: npm ci --no-audit --no-fund
+
+      - name: Validate case collection and exact assertion contracts
+        working-directory: packages/web-platform/web-core-e2e/midscene
+        run: |
+          npm run typecheck
+          node --test scripts/*.test.mjs
+
+      - name: Validate original SSR loader and visual target geometry
+        working-directory: packages/web-platform/web-core-e2e/midscene
+        run: |
+          node scripts/check-ssr-client.mjs
+          node scripts/check-swiper-target.mjs
+
+      - name: Run Web Midscene cases
+        id: run-cases
+        working-directory: packages/web-platform/web-core-e2e/midscene
+        run: |
+          echo "open files limit before: soft=$(ulimit -Sn), hard=$(ulimit -Hn)"
+          ulimit -Sn "$(ulimit -Hn)"
+          echo "open files limit after: soft=$(ulimit -Sn), hard=$(ulimit -Hn)"
+          node scripts/check-fixture-style.mjs
+          node scripts/run-shard.mjs ${{ matrix.shard }} 4
+
+      - name: Upload retained original runner diagnostics
+        if: always() && matrix.shard == 1
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: midscene-original-runner-diagnostics-${{ github.run_attempt }}
+          path: |
+            packages/web-platform/web-core-e2e/test-results
+            packages/web-platform/web-elements/test-results
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Stage Web report for this attempt
+        if: always()
+        env:
+          SHARD_INDEX: ${{ matrix.shard }}
+          PRODUCER_RESULT: ${{ steps.run-cases.outcome == 'success' && 'success' || 'failure' }}
+        run: |
+          target="$RUNNER_TEMP/midscene-upload/attempt-$GITHUB_RUN_ATTEMPT"
+          mkdir -p "$target"
+          printf '%s\n' "$GITHUB_RUN_ATTEMPT" > "$target/attempt.txt"
+          report=packages/web-platform/web-core-e2e/midscene/midscene_run
+          if [ -d "$report" ]; then
+            cp -R "$report"/. "$target"/
+          fi
+          node -e 'require("fs").writeFileSync(process.argv[1], JSON.stringify({sha: process.env.GITHUB_SHA, index: Number(process.env.SHARD_INDEX), count: 4, attempt: Number(process.env.GITHUB_RUN_ATTEMPT), result: process.env.PRODUCER_RESULT}))' "$target/result.json"
+
+      - name: Upload Web report
+        id: upload-report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: midscene-ai-e2e-web-shard-${{ matrix.shard }}-4-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/midscene-upload
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Add Web results to the job Summary
+        if: always()
+        env:
+          PRODUCER_RESULT: ${{ steps.run-cases.outcome == 'success' && steps.upload-report.outcome == 'success' && 'success' || 'failure' }}
+        run: |
+          node packages/web-platform/web-core-e2e/midscene/scripts/render-ci-summary.mjs \
+            --title "Lynx Web × Midscene · shard ${{ matrix.shard }}/4" \
+            --run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+            --links-published false \
+            --entry "Web=packages/web-platform/web-core-e2e/midscene/midscene_run" \
+            --result "Web=$PRODUCER_RESULT" \
+            --artifact "Web=midscene-ai-e2e-web-shard-${{ matrix.shard }}-4-$GITHUB_RUN_ATTEMPT" \
+            --site-prefix "runs/$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
+            --site-dir "$RUNNER_TEMP/midscene-job-summary" \
+            --job-summary-only true \
+            --output "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload dev shell log
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: midscene-ai-e2e-log-web-shell-shard-${{ matrix.shard }}-${{ github.run_attempt }}
+          path: |
+            /tmp/web-shell.log
+            /tmp/web-elements.log
+          if-no-files-found: ignore
+          retention-days: 14
+
+  pages-report:
+    name: Publish report and evidence summary
+    outputs:
+      ready: ${{ steps.upload-publication.outcome == 'success' }}
+    needs: [web-shell-ai-e2e]
+    concurrency:
+      group: midscene-report-generation-${{ github.run_id }}
+      cancel-in-progress: false
+    if: >-
+      always() &&
+      !cancelled() &&
+      needs.web-shell-ai-e2e.result != 'skipped' &&
+      github.event_name != 'schedule' &&
+      ((github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository) ||
+      (github.event_name != 'pull_request' &&
+      github.ref_name == (vars.MIDSCENE_PAGES_BRANCH || github.event.repository.default_branch)))
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      pages: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: packages/web-platform/web-core-e2e/midscene/package-lock.json
+
+      - name: Install Midscene report dependencies
+        working-directory: packages/web-platform/web-core-e2e/midscene
+        run: npm ci --no-audit --no-fund
+
+      - name: Download report
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: midscene-ai-e2e-web-shard-*
+          path: ${{ runner.temp }}/midscene-artifacts
+          merge-multiple: false
+
+      - id: pages
+        continue-on-error: true
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+        with:
+          enablement: false
+
+      - name: Explain unavailable Pages
+        if: steps.pages.outcome != 'success'
+        run: |
+          message="GitHub Pages is unavailable. Select Settings > Pages > Build and deployment > Source > GitHub Actions."
+          echo "::warning::$message"
+          echo "$message Results and reports remain available in the test job Summary and Actions artifacts." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Test the evidence renderer
+        if: steps.pages.outcome == 'success'
+        run: |
+          node --test packages/web-platform/web-core-e2e/midscene/scripts/*.test.mjs
+          node --test .github/scripts/vision-preflight.test.mjs
+
+      - name: Build native Midscene report and linked screenshot summary
+        if: steps.pages.outcome == 'success'
+        env:
+          PAGES_URL: ${{ steps.pages.outputs.base_url }}/midscene
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          MIDSCENE_SHARD_COUNT: "4"
+        run: |
+          node packages/web-platform/web-core-e2e/midscene/scripts/publish-shards.mjs
+
+      - name: Upload report publication bundle
+        id: upload-publication
+        if: steps.pages.outcome == 'success'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: midscene-publication-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/midscene-publication
+          if-no-files-found: error
+
+      - name: Explain report publication failure
+        if: failure()
+        run: |
+          echo '❌ Report publication preparation failed. Raw HTML reports remain in the run artifacts. Check the job log, Pages configuration, and report dependencies.' >> "$GITHUB_STEP_SUMMARY"
+
+  publish-pages:
+    needs: pages-report
+    if: always() && !cancelled() && needs.pages-report.outputs.ready == 'true'
+    uses: ./.github/workflows/workflow-pages.yml
+    permissions:
+      actions: read
+      contents: write
+      pages: write
+      id-token: write
+    with:
+      component: midscene
+      artifact: midscene-publication-${{ github.run_attempt }}

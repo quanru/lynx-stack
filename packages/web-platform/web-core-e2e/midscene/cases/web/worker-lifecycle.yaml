@@ -1,0 +1,21 @@
+cases:
+  - name: api-shared-context-worker-count
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-setSharedData&casename2=api-getSharedData"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before original shared-context worker upper bound
+      - web.expect: { workerCountAtMost: 3 }
+      - recordToReport: Original immediate shared-context worker upper bound passed
+  - name: api-shared-context-worker-count-release
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-setSharedData&casename2=api-getSharedData"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before original shared-context release contracts
+      - web.expect: { workerCountAtMost: 3 }
+      - javascript: "document.body.querySelector('lynx-view')?.remove()"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.expect: { workerCountAtMost: 2 }
+      - javascript: "document.body.querySelector('lynx-view')?.remove()"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.expect: { workerCountAtMost: 1 }
+      - recordToReport: Original two removals and all three immediate worker upper bounds passed

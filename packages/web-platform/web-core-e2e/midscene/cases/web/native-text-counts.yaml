@@ -1,0 +1,21 @@
+cases:
+  - name: basic-element-text-set-native-props-text
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-text-set-native-props-text"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - recordToReport: Before checking original setNativeProps aggregate text counts
+      - web.expect: {
+          matchingTexts: ["the count is:1", "the count is:2"],
+          count: 1,
+          immediate: true,
+        }
+      - recordToReport: Original setNativeProps combined text-match count passed
+  - name: basic-element-text-set-native-props-text-do-not-change-inline-text
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-text-set-native-props-text-do-not-change-inline-text"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - recordToReport: Before checking original inline-text preservation counts
+      - web.expect: { matchingText: hello, count: 1, immediate: true }
+      - web.expect: { matchingText: "--", count: 1, immediate: true }
+      - web.expect: { matchingText: world, count: 1, immediate: true }
+      - recordToReport: Original setNativeProps inline-text preservation counts passed

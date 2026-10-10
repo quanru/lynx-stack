@@ -1,0 +1,219 @@
+# Original ReactLynx assertions are retained. Captures are diagnostic evidence,
+# not substitutes for exact checks or invented visual rendering requirements.
+cases:
+  - name: basic-event-dataset
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-event-dataset"
+      - aiWaitFor: A vertical pink block appears near the upper-left, below a small blank white area.
+      - aiAct: Click once in the small blank white area immediately above the pink block, near the upper-left of the page. Stop after one click; the two pink observer regions should turn green.
+      - web.expect: { selector: "#val-a", attribute: style, contains: green }
+      - web.expect: { selector: "#obj-a", attribute: style, contains: green }
+
+  - name: basic-event-bubble-dataset
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-event-bubble-dataset"
+      - aiWaitFor: A vertical pink block appears near the upper-left, below a small blank white area.
+      - aiAct: Click once in the small blank white area immediately above the pink block, near the upper-left of the page. Stop after one click; the two pink observer regions should turn green.
+      - web.expect: { selector: "#val-a", attribute: style, contains: green }
+      - web.expect: { selector: "#obj-a", attribute: style, contains: green }
+
+  - name: basic-image
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-image"
+      - recordToReport: Before checking the original image element dimensions
+      - web.expect: { selector: "#target", css: height, equals: 100px }
+      - web.expect: { selector: "#target", css: width, equals: 100px }
+      - recordToReport: Image element after exact size checks; successful image loading is not an original requirement
+
+  - name: basic-scroll-view
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-scroll-view"
+      - aiWaitFor: A pink square is visible near the upper-left.
+      - web.expect: { selector: "#target", css: height, equals: 100px }
+      - web.expect: { selector: "#target", css: width, equals: 100px }
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(255, 192, 203)",
+        }
+
+  - name: api-inject-style-rules
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-inject-style-rules"
+      - aiWaitFor: A green square is visible near the upper-left.
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+
+  - name: basic-at-rule-animation
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-at-rule-animation"
+      - aiWaitFor: The square near the upper-left has become green.
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+
+  - name: basic-at-rule-animation-from-to
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-at-rule-animation-from-to"
+      - aiWaitFor: The square near the upper-left has become green.
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+
+  - name: api-exposure-no-fake-disappear
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-exposure-no-fake-disappear"
+      - aiWaitFor: A tall green region is visible near the upper-left.
+      - web.expect: {
+          selector: "#control",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+
+  - name: api-invoke-success
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-invoke-success"
+      - aiWaitFor: A bordered text input is above a large pink square, with a tiny blue trigger between them at the left edge.
+      - web.expect: {
+          selector: "#result",
+          css: background-color,
+          equals: "rgb(255, 192, 203)",
+        }
+      - aiAct: Click the tiny BLUE square at the LEFT edge immediately below the input and above the large pink region exactly once. Stop after that single click; the large result region should become green.
+      - web.expect: {
+          selector: "#result",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+
+  - name: api-invoke-fail
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-invoke-fail"
+      - aiWaitFor: A bordered text input is above a large pink square, with a tiny blue trigger between them at the left edge.
+      - web.expect: {
+          selector: "#result",
+          css: background-color,
+          equals: "rgb(255, 192, 203)",
+        }
+      - aiAct: Click the tiny BLUE square at the LEFT edge immediately below the input and above the large pink region exactly once. Stop after that single click; the large result region should become green.
+      - web.expect: {
+          selector: "#result",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+
+  - name: basic-lazy-component-css-selector-false-inline-remove-css-remove-inline
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-lazy-component-css-selector-false-inline-remove-css-remove-inline"
+      - aiWaitFor: A green square is visible near the upper-left.
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+      - aiAct: Click the green square once to advance its style state to red. Stop after one click.
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(255, 0, 0)",
+        }
+      - aiAct: Click the red square exactly once to advance its style state. It must remain red after this click; do not click again to seek a color change.
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(255, 0, 0)",
+        }
+      - aiAct: Click the red square exactly once to advance its style state to yellow. Stop after one click.
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(255, 255, 0)",
+        }
+      - aiAct: Click the yellow square exactly once to remove its background. Stop after one click.
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgba(0, 0, 0, 0)",
+        }
+      - recordToReport: Final state after class and inline backgrounds are removed
+
+  - name: config-css-selector-false-inline-remove-css-remove-inline
+    steps:
+      - gotoUrl: "${shellUrl}?casename=config-css-selector-false-inline-remove-css-remove-inline"
+      - aiWaitFor: A green square is visible near the upper-left.
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+      - aiAct: Click the green square once to advance its style state to red. Stop after one click.
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(255, 0, 0)",
+        }
+      - aiAct: Click the red square exactly once to advance its style state. It must remain red after this click; do not click again to seek a color change.
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(255, 0, 0)",
+        }
+      - aiAct: Click the red square exactly once to advance its style state to yellow. Stop after one click.
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(255, 255, 0)",
+        }
+      - aiAct: Click the yellow square exactly once to remove its background. Stop after one click.
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgba(0, 0, 0, 0)",
+        }
+      - recordToReport: Final state after class and inline backgrounds are removed
+
+  - name: basic-element-x-textarea-input-filter
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-textarea-input-filter"
+      - aiWaitFor: A bordered text area containing bindinput is visible near the upper-left.
+      - aiAct: 'Focus the text area, press Enter, then replace all its contents by entering the literal string "foobar!@#)" exactly once. Enter every character including punctuation. The application intentionally filters punctuation; completion means sending that input, not retaining the unfiltered text. Stop after that single entry; do not retry or correct the filtered result.'
+      - web.expect: { selector: ".result", text: foobar }
+
+  - name: basic-flex-nested-linear-setting
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-flex-nested-linear-setting"
+      - recordToReport: Before inspecting the original nested flex and linear computed styles
+      - web.expect: {
+          selector: "#parent",
+          css: justify-content,
+          equals: space-between,
+        }
+      - web.expect: { selector: "#parent", css: flex-direction, equals: column }
+      - web.expect: { selector: "#parent", css: flex-wrap, equals: wrap }
+      - web.expect: {
+          selector: "#child",
+          css: justify-content,
+          equals: space-between,
+        }
+      - recordToReport: Nested layout after exact computed-style checks
+
+  - name: basic-lynx-reload
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-lynx-reload"
+      - aiWaitFor: A tall continuous pink block is visible near the upper-left.
+      - aiAct: Click once in the UPPER half of the tall pink block to change its color to green. Stop after that single click.
+      - web.expect: { selector: "#target", attribute: style, contains: green }
+      - aiAct: Click once in the LOWER half of the tall green block to reload the page. Stop after that single click; the block should return to pink.
+      - web.expect: { selector: "#target", attribute: style, contains: pink }

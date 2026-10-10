@@ -1,0 +1,11 @@
+cases:
+  - name: api-bindtap-lynx-view-relative
+    steps:
+      - web.prepareLynxView: { style: offset }
+      - gotoUrl: "${shellUrl}?casename=api-bindtap-lynx-view-relative"
+      - aiAct: Click once at the center of the BLUE square above the pink square in the offset Lynx view. Stop after that single click.
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }

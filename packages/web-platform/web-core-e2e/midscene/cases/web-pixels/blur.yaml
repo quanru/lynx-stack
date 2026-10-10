@@ -1,0 +1,18 @@
+# Original tests explicitly skip non-Chromium browsers; this project is Chromium only.
+afterEach:
+  - recordToReport: Original Chromium blur baseline result
+cases:
+  - name: basic-element-x-blur-view-blur-radius
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-blur-view-blur-radius"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          baseline: x-blur-view/basic-element-x-blur-view-blur-radius/index,
+        }
+  - name: basic-element-x-blur-view-default
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-blur-view-default"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          baseline: x-blur-view/basic-element-x-blur-view-default/index,
+        }

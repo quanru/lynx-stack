@@ -1,0 +1,31 @@
+cases:
+  - name: api-report-error
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-report-error"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 200))"
+      - recordToReport: Before triggering the original reportError contract
+      - aiAct: Click the red square at the top left once.
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - web.expect: { selector: "lynx-view", css: display, equals: none }
+      - web.expect: {
+          consoleError: {
+            type: error,
+            line: 2,
+            col: 0,
+            message: "Error: foo",
+            stack: { nonemptyString: true },
+          },
+        }
+      - recordToReport: Original reportError source-map coordinates, message, stack and hidden view passed
+  - name: api-shared-context
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-setSharedData&casename2=api-getSharedData"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before the original second-view shared-data interaction
+      - aiAct: Click the orange square in the second view once. Do not click the green square in the first view.
+      - web.expect: {
+          selector: "#lynxview2 #target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+      - recordToReport: Original second-view shared-data CSS result passed

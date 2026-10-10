@@ -14,7 +14,7 @@ remain in scope as deterministic contracts, not visual AI tests.
 Run `node scripts/inventory-upstream.mjs` to refresh this source inventory.
 These are source declarations, including named skipped tests, not runtime case
 counts. Loops, browser projects, SSR variants, and conditional skips change the
-runtime denominator. Do not subtract the 244 YAML cases from these totals:
+runtime denominator. Do not subtract the 264 YAML cases from these totals:
 the pilot cases are not one-to-one replacements, and upstream names can repeat.
 
 | Suite/file                                      | Source declarations | Migration status                                                                                                                                                 |
@@ -46,7 +46,7 @@ Latest fully successful head `e171662` passed 176/176 on first attempts in run
 38016292683, including report generation and Pages. Downloaded publication has
 176 linked screenshots and all 181 unique public URLs returned HTTP 200.
 Head `0fae870` collects 190 in pending run 38018429636. Fifty further local cases
-bring collection to 244; no hosted acceptance is inferred for either batch.
+bring collection to 264; no hosted acceptance is inferred for either batch.
 The historical checkpoints below retain their original execution evidence.
 
 The latest fully successful batch is 173/173 in run 37954151485, including report
@@ -129,8 +129,19 @@ Three weighted-layout cases and one explicit font-load case bring local
 collection to 244, including 52 original pixel contracts. The weighted cases
 retain both immediate width assertions after the screenshot; the font case
 retains exact load arguments, font readiness and the original 100 ms wait.
-Source/AST and callback differential checks pass, with all 87 model-free checks
-and typechecking passing. Original Linux baseline execution remains pending.
+Source/AST and callback differential checks pass. Twenty further text, image,
+SVG and input pixel cases bring collection to 264 with 72 original baselines.
+Strict AST checks allow only the unchanged goto/wait/screenshot statements and
+verify every baseline path; disabled bindlayout and selection/action cases are
+not silently included. All 88 model-free checks, typechecking and synthetic
+public-matcher differential pass. Original Linux baseline execution is pending.
+
+The pushed 190-case run 38018429636 completed successfully, including Pages.
+Downloaded raw reports show 190/190 passed in 191 attempts, with only
+basic-lazy-component-when-need-with-itself retried. The publication has 190
+linked screenshots and all 195 unique public image/report URLs return HTTP 200.
+The subsequent 74 additions and immediate-dimension/renderer corrections still
+await hosted execution at a new head.
 The five pilot cases
 are not one-to-one source migrations.
 

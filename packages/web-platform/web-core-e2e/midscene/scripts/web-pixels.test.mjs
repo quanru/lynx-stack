@@ -34,6 +34,68 @@ function find(node) {
 }
 find(ast);
 
+test('twenty element pixel translations retain every original statement and unchanged baseline', () => {
+  const document = YAML.parse(
+    readFileSync(
+      new URL('../cases/web-pixels/elements.yaml', import.meta.url),
+      'utf8',
+    ),
+  );
+  assert.equal(document.cases.length, 20);
+  assert.deepEqual(document.afterEach, [{
+    recordToReport: 'Original text, image, SVG and input pixel contract result',
+  }]);
+  for (const item of document.cases) {
+    const body = originals.get(item.name);
+    assert.ok(body, 'Must be an enabled literal source test');
+    const steps = [{ gotoUrl: '${shellUrl}?casename=' + item.name }, {
+      javascript: 'document.fonts.ready.then(() => true)',
+    }];
+    assert.equal(body.statements[0].getText(ast), 'await goto(page, title);');
+    let cursor = 1;
+    const next = body.statements[cursor].expression.expression;
+    if (next.expression.getText(ast) === 'wait') {
+      assert.equal(next.arguments.length, 1);
+      assert.ok(ts.isNumericLiteral(next.arguments[0]));
+      steps.push({
+        javascript: 'new Promise(resolve => setTimeout(() => resolve(true), '
+          + next.arguments[0].text + '))',
+      });
+      cursor++;
+    }
+    assert.equal(
+      body.statements.length,
+      cursor + 1,
+      'No skipped/action/numeric assertion may be dropped',
+    );
+    const call = body.statements[cursor].expression.expression;
+    assert.equal(call.expression.getText(ast), 'diffScreenShot');
+    assert.equal(call.arguments[0].getText(ast), 'page');
+    assert.ok(
+      call.arguments.length === 3 || call.arguments.length === 4,
+      'Custom matcher options require explicit support',
+    );
+    const parts = [...call.arguments].slice(1).map(arg => {
+      if (ts.isStringLiteral(arg)) return arg.text;
+      assert.equal(arg.getText(ast), 'title');
+      return item.name;
+    });
+    if (parts.length === 2) parts.push('index');
+    const baseline = parts.join('/');
+    assert.ok(
+      existsSync(
+        new URL(
+          '../../tests/reactlynx.spec.ts-snapshots/' + baseline
+            + '-chromium-linux.png',
+          import.meta.url,
+        ),
+      ),
+    );
+    steps.push({ 'web.pixels': { baseline } });
+    assert.deepEqual(item.steps, steps);
+  }
+});
+
 test('weighted pixels retain both ordered immediate dimensions; extra font retains exact font load and readiness', async () => {
   const document = YAML.parse(
     readFileSync(

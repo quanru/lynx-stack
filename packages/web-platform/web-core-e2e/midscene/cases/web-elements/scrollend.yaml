@@ -1,0 +1,75 @@
+afterEach:
+  - recordToReport: Original scrollend event payload evidence, including failures
+cases:
+  - name: web-elements/scroll-view/event-scrollend
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/scroll-view/event-scrollend.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: |-
+
+          (async () => {
+            const title = "scroll-view/event-scrollend";
+            const page = {
+              evaluate: async fn => fn(),
+              locator: selector => ({
+                evaluateHandle: async fn => {
+                  const deadline = Date.now() + 30000;
+                  const handle = await new Promise((resolve, reject) => {
+                    const check = () => {
+                      const matches = document.querySelectorAll(selector);
+                      if (matches.length > 1) return reject(new Error('Original scrollend locator strictness violation'));
+                      if (matches.length === 1) {
+                        try { return resolve(fn(matches[0])); } catch (error) { return reject(error); }
+                      }
+                      if (Date.now() >= deadline) return reject(new Error('Original scrollend locator attachment timed out'));
+                      requestAnimationFrame(check);
+                    };
+                    check();
+                  });
+                  return { jsonValue: async () => JSON.parse(JSON.stringify(handle)) };
+                },
+              }),
+            };
+            const gotoWebComponentPage = async (actualPage, fixture) => {
+              if (actualPage !== page || fixture !== title) throw new Error('Original scrollend fixture changed');
+            };
+            const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+            const expect = (actual, message) => ({
+              toBe: expected => {
+                if (!Object.is(actual, expected)) throw new Error(message + ': actual ' + String(actual));
+              },
+              not: { toEqual: expected => {
+                if (expected !== undefined) throw new Error('Unsupported original scrollend assertion');
+                if (actual === undefined) throw new Error(message);
+              } },
+            });
+            await ((async ({ page, browserName, context }, { title, }) => {
+              await gotoWebComponentPage(page, title);
+              const events = await page
+                  .locator('scroll-view')
+                  .evaluateHandle((target) => {
+                  const events = [];
+                  target.addEventListener('lynxscrollend', (e) => {
+                      events.push({ ...e, detail: e.detail });
+                  });
+                  return events;
+              });
+              await page.evaluate(() => {
+                  document.querySelector('scroll-view').scrollTop = 200;
+              });
+              await wait(300);
+              const scrollEvents = await events.jsonValue();
+              expect(scrollEvents.length, 'should only have one scroll end event').toBe(1);
+              expect(scrollEvents[0].detail, 'should have detail value').not.toEqual(undefined);
+              for (const detailProperty of [
+                  'scrollTop',
+                  'scrollLeft',
+                  'scrollHeight',
+                  'scrollWidth',
+                  'isDragging',
+              ]) {
+                  expect(scrollEvents[0].detail[detailProperty], "should have detail.".concat(detailProperty, "")).not.toEqual(undefined);
+              }
+          }))({ page }, { title });
+            return true;
+          })()

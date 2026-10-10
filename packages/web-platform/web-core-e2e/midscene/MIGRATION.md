@@ -42,7 +42,10 @@ case total.
 
 ## Execution and acceptance
 
-The next local collection reaches 446 cases, including 237 pixel cases.
+The next local collection reaches 447 cases, including 237 pixel cases.
+One additional complete scrollend callback retains the programmatic 200-pixel
+offset, 300 ms wait, one event read, exact event count and all five payload
+field checks. Missing fields or extra events fail without later polling.
 Six complete scroll-method callbacks preserve scrollTo index/offset arguments,
 block/inline alignment, nested scroll isolation and eleven unchanged PNGs.
 These are original programmatic API tests, not selector-driven substitutes

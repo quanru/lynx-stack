@@ -42,7 +42,11 @@ case total.
 
 ## Execution and acceptance
 
-The next local collection reaches 447 cases, including 237 pixel cases.
+The next local collection reaches 451 cases, including 241 pixel cases.
+Four guarded static callbacks retain their complete source, unchanged Linux
+PNGs and original browser skip matrix. The two unconditional percentage-cyclic
+skips remain excluded on every browser. These four translations cover only
+enabled Chromium variants; other browser variants are not claimed accepted.
 Run 38037300565's first shard was blocked before UI cases: Firefox refused
 root execution because /github/home belonged to pwuser. The next workflow
 changes only that mounted directory's owner to the actual container UID,

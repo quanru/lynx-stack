@@ -42,6 +42,15 @@ case total.
 
 ## Execution and acceptance
 
+Local collection is now 281 with 94 model-free checks. Two additional FoldView
+flows retain both ordered pixel baselines and immediate overflow scrollTop 200
+after exactly 100 ms. Only the ordinary visible orange-button click becomes
+`aiAct`; the original overflow passes locally. AI/device/PNG acceptance remains
+pending. No selector-driven UI action is introduced. The dynamic text-style
+test's original updateStyle target is 10×10 and transparent; it remains in the
+original runner, not silently replaced with guessed coordinates or a weaker
+visual assertion. Originally disabled tests remain disabled.
+
 Local collection is now 279 with 92 model-free checks passing. The three
 additions after pushed `e97e17a` retain the two explicitly Chromium-only blur
 PNG contracts and the cssSelector-disabled reload API. Both unchanged original

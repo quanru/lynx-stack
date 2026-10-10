@@ -3,7 +3,7 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 279 cases: the
+while Midscene drives user interactions. The suite contains 281 cases: the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
 ReactLynx migrations, plus 15 continuation cases with original deterministic
 assertion values, 26 original web-elements CSS/attribute contracts and two
@@ -88,6 +88,12 @@ the original cssSelector-disabled reload contract. Original and translated
 reload executions pass first attempts locally, preserving both exact CSS
 assertions and the 100/1000 ms waits. All 92 model-free checks pass; these three
 additions await hosted execution and are not in the pushed 276-case head.
+Two further local FoldView translations retain before/after PNGs around one
+ordinary `aiAct` click and the exact immediate `scrollTop === 200` overflow
+assertion after the original 100 ms wait. The original overflow execution passes
+locally; translated AI execution and Linux PNG acceptance await CI. All 94
+model-free checks pass. The dynamic text-style fixture's 10×10 transparent
+button has no visible target and is not counted as an equivalent AI migration.
 The animation translations retain original event-sequence match counts and CSS
 checks, with ordinary clicks through `aiAct`. No local model credentials are
 configured; local checks do not make AI calls.
@@ -98,7 +104,7 @@ The external-bundle case and its unchanged original Chromium test both passed
 locally on the first attempt. `web.expect` with `matchingText`/`count` uses the
 same public `page.getByText` locator and checks the complete count, without
 selecting the first match or requiring visibility. Duplicate matches fail the
-original count-one contract. All 92 model-free checks and typechecking pass.
+original count-one contract. All 94 model-free checks and typechecking pass.
 Two further original tests pass locally: reportError and shared context. Their
 YAML translations replace only the ordinary clicks with `aiAct`, retaining
 the original 200/500 ms error observation windows, hidden LynxView CSS,

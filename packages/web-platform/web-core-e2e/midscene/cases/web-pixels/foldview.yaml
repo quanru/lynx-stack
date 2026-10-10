@@ -1,0 +1,16 @@
+afterEach:
+  - recordToReport: Original FoldView before/after pixel contract result
+cases:
+  - name: basic-element-x-foldview-ng-method-setFoldExpanded
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-foldview-ng-method-setFoldExpanded"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          baseline: x-foldview-ng/basic-element-x-foldview-ng-method-setFoldExpanded/initial,
+        }
+      - aiAct:
+          prompt: Click the visible orange rectangular item immediately below the large pink header once. Do not drag or scroll, and do not click the pink header, blue toolbar, or lower red item. Stop after that single click.
+          options: { deepLocate: true, cacheable: false }
+      - web.pixels: {
+          baseline: x-foldview-ng/basic-element-x-foldview-ng-method-setFoldExpanded/should-be-scrolled-by-method,
+        }

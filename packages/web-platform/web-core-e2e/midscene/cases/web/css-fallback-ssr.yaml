@@ -1,20 +1,22 @@
 afterEach:
-  - recordToReport: Original CSS fallback client contract result
+  - recordToReport: Original CSS fallback SSR contract result
 cases:
-  - name: basic-css-var-fallback-background-color
+  - name: ssr/basic-css-var-fallback-background-color
     steps:
-      - gotoUrl: ${shellUrl}?casename=basic-css-var-fallback-background-color
+      - gotoUrl: ${shellUrl}ssr?casename=basic-css-var-fallback-background-color
       - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 300))
       - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
       - web.expect:
           selector: "#target"
           css: background-color
           equals: rgb(0, 128, 0)
           timeoutMs: 5000
-  - name: basic-css-var-nested-fallback-background-color
+  - name: ssr/basic-css-var-nested-fallback-background-color
     steps:
-      - gotoUrl: ${shellUrl}?casename=basic-css-var-nested-fallback-background-color
+      - gotoUrl: ${shellUrl}ssr?casename=basic-css-var-nested-fallback-background-color
       - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 300))
       - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
       - web.expect:
           selector: "#target"

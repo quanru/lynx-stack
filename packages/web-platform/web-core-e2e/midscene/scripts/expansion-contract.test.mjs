@@ -12,7 +12,6 @@ for (
     ['continuation', 15],
     ['contracts', 8, 'web-elements'],
     ['attributes', 18, 'web-elements'],
-    ['css-fallback', 2, 'web', 'reactlynx-css-var-fallback.spec.ts'],
     ['frame-sizing', 2],
     ['text-count', 4],
     ['middleware', 1, 'web', 'middleware.spec.ts'],

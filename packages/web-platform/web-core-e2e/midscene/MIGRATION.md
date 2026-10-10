@@ -42,7 +42,16 @@ case total.
 
 ## Execution and acceptance
 
-Current local collection is 405 with 111 model-free checks, including 202 pixel
+Current local collection is 407 with 112 model-free checks and typechecking
+passing, including 202 pixel cases. Two CSS fallback SSR branches retain
+complete original helpers/callbacks, font readiness, 300 ms SSR and 100 ms
+common waits, five-second CSS timeouts and afterEach evidence. Existing client
+translations now restore their omitted 100 ms wait and shorter original timeout.
+Both unchanged originals and translations pass locally on first attempts for
+all four client/SSR cases. The additions/corrections remain local while the
+pushed 405-case run 38028258657 executes; no new hosted acceptance is inferred.
+
+The preceding local collection was 405 with 111 model-free checks, including 202 pixel
 cases. Two component-event API contracts retain the complete original enable/
 disable and listener reference counts, immediate reads and exact event payloads.
 Both original and translated cases pass locally on first attempts. Full original

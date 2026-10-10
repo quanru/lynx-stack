@@ -42,7 +42,7 @@ case total.
 
 ## Execution and acceptance
 
-The newest local UI collection is 418 with 123 model-free checks. The original
+The newest local UI collection is 418 with 124 model-free checks. The original
 Markdown link/image event case now uses two ordinary visual `aiAct` clicks,
 retaining both original event waits, two single-read serialized payloads and
 all five exact/substring field checks. Complete callback replay generates the
@@ -57,6 +57,14 @@ and recovery helpers. The translated click flow is explicitly excluded from
 that retained runner; no scripted click is substituted for its `aiAct` steps.
 The next batch adds 55 retained deterministic cases (7 performance, 15
 SVG/selection/iframe, 33 Markdown), separate from the YAML denominator.
+
+Run 38031009467 shard 1 fails before API execution because the persistent
+Midscene server already occupies port 3080; original Playwright CI config
+intentionally forbids reuse. All original Playwright runners now execute before
+the persistent fixture servers start. No original configuration or reuse guard
+is relaxed. Replaying the new order locally with `CI=1` passes 34 API tests
+(one original skip) and all 55 elements tests; hosted lifecycle recovery remains
+pending. Original 17 server HTML snapshots already pass in that hosted run.
 
 The next local batch additionally retains all seven original Chromium CDP
 performance contracts in shard 1. All seven pass locally with the original

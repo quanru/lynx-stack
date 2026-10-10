@@ -185,3 +185,36 @@ test('retained Markdown API runner excludes the migrated user-click flow', () =>
     'pnpm exec playwright test tests/x-markdown.spec.ts --project chromium --grep-invert \'should fire bindlink and bindimageTap events\' --reporter line',
   );
 });
+
+test('original Playwright runners own servers before persistent Midscene fixtures start', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const steps =
+    Object.values(workflow.jobs).find(job =>
+      job.steps?.some(step =>
+        step.name === 'Validate original worker and runtime API contracts'
+      )
+    ).steps;
+  const start = steps.findIndex(step =>
+    step.name === 'Start web-core-e2e dev shell'
+  );
+  assert.ok(start >= 0);
+  for (
+    const step of steps.filter(step =>
+      step.name?.startsWith('Validate original')
+      && step.run?.includes('playwright test')
+    )
+  ) {
+    assert.ok(
+      steps.indexOf(step) < start,
+      `${step.name} must run before persistent servers occupy original ports`,
+    );
+  }
+});

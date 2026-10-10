@@ -161,6 +161,35 @@ jobs:
         # CI forbids creating missing snapshots; never pass an update flag.
         run: pnpm exec rstest --config rstest.config.ts
 
+      # Original Playwright runners own their server lifecycle in CI. Run them
+      # before the persistent Midscene servers, never weaken reuse guards.
+      - name: Validate original worker and runtime API contracts
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-core-e2e
+        run: pnpm exec playwright test tests/web-core.test.ts --project chromium --reporter line
+
+      - name: Validate original layout and style performance budgets
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-elements
+        env:
+          PORT: "3081"
+        run: pnpm exec playwright test tests/performance.test.ts --project chromium --reporter line
+
+      - name: Validate original SVG selection and iframe API contracts
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-elements
+        env:
+          PORT: "3081"
+        run: pnpm exec playwright test tests/x-svg-inline.spec.ts tests/x-text-selection.spec.ts tests/x-webview.spec.ts --project chromium --reporter line
+
+      - name: Validate original Markdown rendering and API contracts
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-elements
+        env:
+          PORT: "3081"
+        # The excluded user-click flow is translated in markdown-events.yaml.
+        run: pnpm exec playwright test tests/x-markdown.spec.ts --project chromium --grep-invert 'should fire bindlink and bindimageTap events' --reporter line
+
       - name: Start web-core-e2e dev shell
         working-directory: packages/web-platform/web-core-e2e
         run: |
@@ -194,36 +223,6 @@ jobs:
       - name: Install Midscene test dependencies
         working-directory: packages/web-platform/web-core-e2e/midscene
         run: npm ci --no-audit --no-fund
-
-      - name: Validate original worker and runtime API contracts
-        if: matrix.shard == 1
-        working-directory: packages/web-platform/web-core-e2e
-        # Keep workers, public runtime APIs, exact assertions and original skips.
-        run: pnpm exec playwright test tests/web-core.test.ts --project chromium --reporter line
-
-      - name: Validate original layout and style performance budgets
-        if: matrix.shard == 1
-        working-directory: packages/web-platform/web-elements
-        env:
-          PORT: "3081"
-        # Preserve the original CDP metrics, serial execution and numeric limits.
-        run: pnpm exec playwright test tests/performance.test.ts --project chromium --reporter line
-
-      - name: Validate original SVG selection and iframe API contracts
-        if: matrix.shard == 1
-        working-directory: packages/web-platform/web-elements
-        env:
-          PORT: "3081"
-        # These are DOM/API/geometry contracts, not scripted user UI actions.
-        run: pnpm exec playwright test tests/x-svg-inline.spec.ts tests/x-text-selection.spec.ts tests/x-webview.spec.ts --project chromium --reporter line
-
-      - name: Validate original Markdown rendering and API contracts
-        if: matrix.shard == 1
-        working-directory: packages/web-platform/web-elements
-        env:
-          PORT: "3081"
-        # The excluded user-click flow is translated in markdown-events.yaml.
-        run: pnpm exec playwright test tests/x-markdown.spec.ts --project chromium --grep-invert 'should fire bindlink and bindimageTap events' --reporter line
 
       - name: Validate case collection and exact assertion contracts
         working-directory: packages/web-platform/web-core-e2e/midscene

@@ -42,6 +42,13 @@ case total.
 
 ## Execution and acceptance
 
+Local collection is now 279 with 92 model-free checks passing. The three
+additions after pushed `e97e17a` retain the two explicitly Chromium-only blur
+PNG contracts and the cssSelector-disabled reload API. Both unchanged original
+and translated reload executions pass on first local attempts with the same
+two CSS assertions and waits. The two Linux PNGs are not run on macOS; browser
+skips and original baseline bytes are preserved. No hosted acceptance is inferred.
+
 Run 38021387390 passed all four test shards at the 264-case head, including the
 first Linux baseline execution batch. Publication nevertheless failed: the
 pixel adapter's model-free test resolved baselines from the report job's root

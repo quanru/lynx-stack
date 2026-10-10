@@ -312,6 +312,49 @@ test('weighted pixels retain both ordered immediate dimensions; extra font retai
   }
 });
 
+test('blur pixels preserve original Chromium-only guard, all statements and baseline bytes', () => {
+  const cases = YAML.parse(
+    readFileSync(
+      new URL('../cases/web-pixels/blur.yaml', import.meta.url),
+      'utf8',
+    ),
+  ).cases;
+  assert.equal(cases.length, 2);
+  for (const item of cases) {
+    const body = originals.get(item.name);
+    assert.equal(body.statements.length, 3);
+    const guard = body.statements[0].expression;
+    assert.equal(guard.expression.getText(ast), 'test.skip');
+    assert.equal(
+      guard.arguments[0].getText(ast),
+      'browserName !== \'chromium\'',
+    );
+    assert.equal(body.statements[1].getText(ast), 'await goto(page, title);');
+    assert.equal(
+      body.statements[2].getText(ast),
+      'await diffScreenShot(page, elementName, title);',
+    );
+    assert.deepEqual(item.steps, [
+      { gotoUrl: '${shellUrl}?casename=' + item.name },
+      { javascript: 'document.fonts.ready.then(() => true)' },
+      { 'web.pixels': { baseline: 'x-blur-view/' + item.name + '/index' } },
+    ]);
+    assert.ok(
+      existsSync(
+        new URL(
+          '../../tests/reactlynx.spec.ts-snapshots/x-blur-view/' + item.name
+            + '/index-chromium-linux.png',
+          import.meta.url,
+        ),
+      ),
+    );
+  }
+  assert.match(
+    readFileSync(new URL('../midscene.config.ts', import.meta.url), 'utf8'),
+    /chromium\.launch/,
+  );
+});
+
 test('forty layout pixel cases retain every original statement and never enable skipped tests', () => {
   const cases = YAML.parse(
     readFileSync(

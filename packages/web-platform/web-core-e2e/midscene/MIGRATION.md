@@ -42,7 +42,14 @@ case total.
 
 ## Execution and acceptance
 
-Current local collection is 325 with 100 model-free checks. The next 39
+Current local collection is 379 with 102 model-free checks, including 185 pixel
+cases. The latest 54 describe-scoped web-elements static callbacks are replayed
+in full with their unchanged original title helper. Fixture names, eight
+placeholder PNG aliases, input/textarea simpleTitle snapshots and all original
+waits remain exact. All source fixtures and Linux PNGs exist. This batch still
+requires hosted execution; it is not counted as accepted coverage.
+
+The preceding local collection was 325 with 100 model-free checks. Its 39
 web-elements static pixel cases preserve every original goto, font-readiness
 wait, fixed wait and PNG, while disabled source cases remain excluded. Both
 source packages import the same Chromium/Pixel 5 profile. The existing pixel

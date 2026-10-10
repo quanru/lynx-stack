@@ -3,7 +3,7 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 325 cases: the
+while Midscene drives user interactions. The suite contains 379 cases: the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
 ReactLynx migrations, plus 15 continuation cases with original deterministic
 assertion values, 26 original web-elements CSS/attribute contracts and two
@@ -112,6 +112,13 @@ and explicit `suite: web-elements` PNG namespace. There is no missing-baseline
 fallback, cross-suite tolerance inheritance or source skip activation. All 100
 model-free checks pass; 325 cases collect, including 131 pixel cases. These new
 Linux baseline executions remain pending and are not counted as hosted accepted.
+The next 54 describe-scoped web-elements static pixel contracts bring local
+collection to 379 cases, including 185 pixel cases. Model-free replay executes
+the unchanged original `getTitle` helper and complete callbacks, checking every
+navigation, font/fixed wait and screenshot. Eight placeholder fixtures retain
+their original non-placeholder PNG aliases; input/textarea `simpleTitle` paths
+are also preserved. All original fixtures and Linux PNGs exist. All 102
+model-free checks and typechecking pass; hosted execution of this batch is pending.
 The animation translations retain original event-sequence match counts and CSS
 checks, with ordinary clicks through `aiAct`. No local model credentials are
 configured; local checks do not make AI calls.
@@ -122,7 +129,7 @@ The external-bundle case and its unchanged original Chromium test both passed
 locally on the first attempt. `web.expect` with `matchingText`/`count` uses the
 same public `page.getByText` locator and checks the complete count, without
 selecting the first match or requiring visibility. Duplicate matches fail the
-original count-one contract. All 100 model-free checks and typechecking pass.
+original count-one contract. All 102 model-free checks and typechecking pass.
 Two further original tests pass locally: reportError and shared context. Their
 YAML translations replace only the ordinary clicks with `aiAct`, retaining
 the original 200/500 ms error observation windows, hidden LynxView CSS,

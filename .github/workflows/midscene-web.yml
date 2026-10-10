@@ -190,6 +190,22 @@ jobs:
         # The excluded user-click flow is translated in markdown-events.yaml.
         run: pnpm exec playwright test tests/x-markdown.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep-invert 'should fire bindlink and bindimageTap events' --reporter line
 
+      - name: Validate original pointer event coalescing contract
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-elements
+        env:
+          PORT: "3081"
+        # Synthetic pointer-event delivery is the API under test, not a user gesture.
+        run: pnpm exec playwright test tests/scroll-view-mouse-drag.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'coalesces pointer moves and flushes the latest position on pointerup' --reporter line
+
+      - name: Validate original Rust and TypeScript template consistency
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-elements
+        env:
+          PORT: "3081"
+        # No browser interaction exists in this source test; execute it once.
+        run: pnpm exec playwright test tests/template.spec.ts --project chromium --workers=2 --reporter line
+
       - name: Start web-core-e2e dev shell
         working-directory: packages/web-platform/web-core-e2e
         run: |

@@ -44,8 +44,16 @@ case total.
 
 The next local batch expands retained worker/runtime, SVG/selection/iframe and
 Markdown API runners to the original Chromium, Firefox and WebKit projects.
-Performance remains Chromium-only because its source uses CDP metrics. Every
-retained browser command explicitly uses two workers; run local browser suites
+Performance remains Chromium-only because its source uses CDP metrics.
+The batch also retains the original synthetic pointer-coalescing callback in
+all three browser projects and the Rust/TypeScript template consistency test
+once. Pointer delivery, before/after-pointerup call counts, microtask behavior
+and exact 60-pixel offset remain unchanged. This synthetic protocol check is
+not replaced by an AI drag. The other 11 actual mouse-drag cases and three wheel
+cases remain pending migration; they are not claimed covered by this filter.
+These two retained contracts add no AI UI cases and await hosted acceptance.
+
+Every retained browser command explicitly uses two workers; run local browser suites
 one at a time. Original profiles, retries, timeouts, skips, fixture ownership
 and assertions remain unchanged. Browser variants are retained deterministic
 coverage, not additional YAML or screenshot-backed AI cases. Local Firefox

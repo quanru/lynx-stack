@@ -234,7 +234,7 @@ test('retained browser variants bound workers without replacing original profile
       step.name?.startsWith('Validate original')
       && step.run?.includes('playwright test')
     );
-  assert.equal(runners.length, 4);
+  assert.equal(runners.length, 6);
   for (const step of runners) {
     assert.ok(
       step.run.includes('--workers=2'),
@@ -252,6 +252,7 @@ test('retained browser variants bound workers without replacing original profile
     assert.deepEqual(
       projects,
       step.name.includes('performance')
+        || step.name.includes('template consistency')
         ? ['chromium']
         : ['chromium', 'firefox', 'webkit'],
     );
@@ -281,6 +282,67 @@ test('retained browser variants bound workers without replacing original profile
       'test.skip(browserName !== \'chromium\', \'selection automation is flaky\')',
     ),
   );
+});
+
+test('pointer coalescing and template consistency keep exact non-visual source contracts', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const steps = Object.values(workflow.jobs).flatMap(job => job.steps ?? []);
+  const pointer = steps.find(step =>
+    step.name === 'Validate original pointer event coalescing contract'
+  );
+  const template = steps.find(step =>
+    step.name === 'Validate original Rust and TypeScript template consistency'
+  );
+  for (const step of [pointer, template]) {
+    assert.equal(step.if, 'matrix.shard == 1');
+    assert.equal(
+      step['working-directory'],
+      'packages/web-platform/web-elements',
+    );
+    assert.equal(step.env.PORT, '3081');
+  }
+  assert.equal(
+    pointer.run,
+    'pnpm exec playwright test tests/scroll-view-mouse-drag.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep \'coalesces pointer moves and flushes the latest position on pointerup\' --reporter line',
+  );
+  assert.equal(
+    template.run,
+    'pnpm exec playwright test tests/template.spec.ts --project chromium --workers=2 --reporter line',
+  );
+  const source = readFileSync(
+    new URL(
+      '../../../web-elements/tests/scroll-view-mouse-drag.spec.ts',
+      import.meta.url,
+    ),
+    'utf8',
+  );
+  for (
+    const field of [
+      'callsAfterMicrotask: 1',
+      'callsAfterPointerUp: 1',
+      'callsBeforePointerUp: 0',
+      'scrollTop: 60',
+      'dispatchPointer(\'pointerup\', 40, 0)',
+    ]
+  ) assert.ok(source.includes(field));
+  const templates = readFileSync(
+    new URL('../../../web-elements/tests/template.spec.ts', import.meta.url),
+    'utf8',
+  );
+  assert.ok(templates.includes('test(\'sync between rust and ts\''));
+  assert.ok(templates.includes('../src/template.rs'));
+  assert.ok(
+    templates.includes('expect(templates.templateXSvg()).toBe(svgRsMatch[1])'),
+  );
+  assert.ok(templates.includes('templateXImage'));
 });
 
 test('retained original failure diagnostics are archived separately without inflating AI case reports', () => {

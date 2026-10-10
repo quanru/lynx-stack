@@ -42,6 +42,13 @@ case total.
 
 ## Execution and acceptance
 
+Local collection is now 283 with 95 model-free checks. Two more original pixel
+flows retain updateGlobalProps' exact blue payload and ordered snapshots, and
+the frame height/weight removals plus exact viewport style. Original callback
+replay verifies every mutation, query, wait and snapshot in sequence. These
+Linux PNG contracts await hosted execution. Animated snapshots remain pending
+click-relative timing; AI latency must not extend the original sampling window.
+
 Local collection is now 281 with 94 model-free checks. Two additional FoldView
 flows retain both ordered pixel baselines and immediate overflow scrollTop 200
 after exactly 100 ms. Only the ordinary visible orange-button click becomes

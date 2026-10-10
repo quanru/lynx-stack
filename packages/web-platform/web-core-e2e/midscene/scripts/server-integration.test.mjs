@@ -42,3 +42,39 @@ test('the original server HTML snapshot runner executes once without snapshot up
   assert.equal(source.match(/^test\('/gm)?.length, 17);
   assert.ok(source.includes('expect(formatted).toMatchSnapshot()'));
 });
+
+test('the original worker/runtime API suite retains its runner and disabled case', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const matching = Object.values(workflow.jobs).flatMap(job => job.steps ?? [])
+    .filter(step =>
+      step.name === 'Validate original worker and runtime API contracts'
+    );
+  assert.equal(matching.length, 1);
+  assert.equal(matching[0].if, 'matrix.shard == 1');
+  assert.equal(
+    matching[0]['working-directory'],
+    'packages/web-platform/web-core-e2e',
+  );
+  assert.equal(
+    matching[0].run,
+    'pnpm exec playwright test tests/web-core.test.ts --project chromium --reporter line',
+  );
+  const source = readFileSync(
+    new URL('../../tests/web-core.test.ts', import.meta.url),
+    'utf8',
+  );
+  assert.ok(
+    source.includes(
+      'test.skip(); // https://github.com/microsoft/playwright/issues/34774',
+    ),
+  );
+  assert.ok(source.includes('getBackgroundThreadWorker'));
+});

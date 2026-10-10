@@ -195,6 +195,12 @@ jobs:
         working-directory: packages/web-platform/web-core-e2e/midscene
         run: npm ci --no-audit --no-fund
 
+      - name: Validate original worker and runtime API contracts
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-core-e2e
+        # Keep workers, public runtime APIs, exact assertions and original skips.
+        run: pnpm exec playwright test tests/web-core.test.ts --project chromium --reporter line
+
       - name: Validate case collection and exact assertion contracts
         working-directory: packages/web-platform/web-core-e2e/midscene
         run: |

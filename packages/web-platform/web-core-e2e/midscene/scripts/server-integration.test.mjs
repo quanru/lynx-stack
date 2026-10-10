@@ -78,3 +78,39 @@ test('the original worker/runtime API suite retains its runner and disabled case
   );
   assert.ok(source.includes('getBackgroundThreadWorker'));
 });
+
+test('performance integration retains original CDP budgets rather than visual substitutes', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const matching = Object.values(workflow.jobs).flatMap(job => job.steps ?? [])
+    .filter(step =>
+      step.name === 'Validate original layout and style performance budgets'
+    );
+  assert.equal(matching.length, 1);
+  assert.equal(matching[0].if, 'matrix.shard == 1');
+  assert.equal(
+    matching[0]['working-directory'],
+    'packages/web-platform/web-elements',
+  );
+  assert.equal(matching[0].env.PORT, '3081');
+  assert.equal(
+    matching[0].run,
+    'pnpm exec playwright test tests/performance.test.ts --project chromium --reporter line',
+  );
+  const source = readFileSync(
+    new URL('../../../web-elements/tests/performance.test.ts', import.meta.url),
+    'utf8',
+  );
+  assert.ok(source.includes('cdpSession.send(\'Performance.getMetrics\')'));
+  assert.ok(source.includes('mode: \'serial\', retries: 5'));
+  for (const limit of [3, 4, 100]) {
+    assert.ok(source.includes(`toBeLessThanOrEqual(${limit})`));
+  }
+});

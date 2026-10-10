@@ -42,6 +42,13 @@ case total.
 
 ## Execution and acceptance
 
+The next local batch additionally retains all seven original Chromium CDP
+performance contracts in shard 1. All seven pass locally with the original
+serial execution, retries and layout/style limits (3, 4 and 100). No AI action
+latency, screenshot comparison or larger threshold replaces those metrics.
+This integration remains local while run 38031009467 executes; it is separate
+from the 417 UI cases. The local model-free check count is now 119.
+
 Current local collection is 417 with 118 model-free checks. Three hydrated SSR
 CSS inheritance cases replay the complete original callbacks, waits, attributes
 and CSS assertions, with one visual Update action each. Their original SSR

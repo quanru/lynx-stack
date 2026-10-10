@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import { readFileSync, existsSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { runInNewContext } from 'node:vm';
 import ts from 'typescript';
@@ -482,6 +484,40 @@ test('pixel backend retains original launch args and pinned matcher defaults, re
     () => assertPixelEnvironment('linux', '1.61.2'),
     /pinned Playwright/,
   );
+});
+
+test('pixel baseline resolution is independent of caller cwd, including the report publication job', () => {
+  const adapter = new URL('../web-pixels.ts', import.meta.url).href;
+  const baseline = new URL(
+    '../../tests/reactlynx.spec.ts-snapshots/text/nest-text/index-chromium-linux.png',
+    import.meta.url,
+  ).href;
+  for (
+    const cwd of [
+      fileURLToPath(new URL('../../../../../', import.meta.url)),
+      '/tmp',
+    ]
+  ) {
+    const output = execFileSync(process.execPath, [
+      '--experimental-strip-types',
+      '--input-type=module',
+      '--eval',
+      `
+      import assert from 'node:assert/strict';
+      import { readFileSync } from 'node:fs';
+      import { expectWebPixels } from ${JSON.stringify(adapter)};
+      const expected = readFileSync(new URL(${JSON.stringify(baseline)}));
+      let calls = 0;
+      await expectWebPixels({ _expectScreenshot: async ({expected: actual}) => {
+        calls++; assert.deepEqual(actual, expected); return {};
+      }}, 'text/nest-text/index', 'cwd-regression');
+      assert.equal(calls, 1);
+      await assert.rejects(expectWebPixels({}, 'never-present/no-baseline/index', 'cwd-regression'), /ENOENT/);
+      process.stdout.write('passed');
+    `,
+    ], { cwd, encoding: 'utf8' });
+    assert.equal(output, 'passed');
+  }
 });
 
 test('pixel adapter passes original PNG bytes to the backend and never creates missing baselines', async () => {

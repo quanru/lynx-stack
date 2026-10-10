@@ -1,7 +1,14 @@
 // Model-free differential against the unchanged public Playwright matcher.
 // Synthetic baselines and all matcher writes live only in an owned temp folder.
 // This is backend conformance, not acceptance of Linux repository baselines.
-import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
+import {
+  mkdtemp,
+  mkdir,
+  writeFile,
+  rm,
+  copyFile,
+  symlink,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { createRequire } from 'node:module';
@@ -17,7 +24,18 @@ try {
     join(directory, 'package.json'),
     JSON.stringify({ type: 'module' }),
   );
-  const adapter = fileURLToPath(new URL('../web-pixels.ts', import.meta.url));
+  // Exercise an unchanged copy with the same module-relative baseline layout.
+  // Synthetic files must never be written beside the repository's real PNGs.
+  const adapter = join(cwd, 'web-pixels.ts');
+  await copyFile(
+    fileURLToPath(new URL('../web-pixels.ts', import.meta.url)),
+    adapter,
+  );
+  await symlink(
+    fileURLToPath(new URL('../node_modules', import.meta.url)),
+    join(cwd, 'node_modules'),
+    'dir',
+  );
   await writeFile(
     join(directory, 'playwright.config.mjs'),
     `export default {

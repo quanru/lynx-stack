@@ -74,8 +74,15 @@ URLs returned HTTP 200. Pushed `0fae870` passed all 190 cases in
 including reports and Pages. Downloaded raw reports show 191 attempts, with only
 `basic-lazy-component-when-need-with-itself` retried once. All 190 rows have
 screenshots and all 195 unique public report/image URLs return HTTP 200.
-Pushed `4a94776` collects 264 in pending run 38021387390. Twelve further
-component pixel cases bring local collection to 276; they are not pushed yet.
+Pushed `4a94776` passed all four 264-case test shards in run 38021387390, but
+report publication failed before Pages: a model-free pixel-adapter check was
+started at the repository root and its cwd-relative baseline lookup was wrong.
+The adapter now resolves unchanged PNGs relative to its own module. Root and
+unrelated-cwd regressions pass, as does the synthetic public-matcher differential
+using an unchanged adapter copy in an isolated temporary fixture tree.
+Twelve further component pixel cases bring collection to 276. The full
+90-check model-free suite also passes from the repository root. Hosted
+publication acceptance still belongs to the earlier successful 190-case run.
 The animation translations retain original event-sequence match counts and CSS
 checks, with ordinary clicks through `aiAct`. No local model credentials are
 configured; local checks do not make AI calls.
@@ -86,7 +93,7 @@ The external-bundle case and its unchanged original Chromium test both passed
 locally on the first attempt. `web.expect` with `matchingText`/`count` uses the
 same public `page.getByText` locator and checks the complete count, without
 selecting the first match or requiring visibility. Duplicate matches fail the
-original count-one contract. All 89 model-free checks and typechecking pass.
+original count-one contract. All 90 model-free checks and typechecking pass.
 Two further original tests pass locally: reportError and shared context. Their
 YAML translations replace only the ordinary clicks with `aiAct`, retaining
 the original 200/500 ms error observation windows, hidden LynxView CSS,

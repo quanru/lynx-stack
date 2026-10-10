@@ -42,6 +42,16 @@ case total.
 
 ## Execution and acceptance
 
+Run 38021387390 passed all four test shards at the 264-case head, including the
+first Linux baseline execution batch. Publication nevertheless failed: the
+pixel adapter's model-free test resolved baselines from the report job's root
+cwd rather than from the module. Module-relative baseline resolution fixes that
+path bug without changing PNGs or comparison options. All 90 model-free checks
+pass from the repository root and the unchanged public-matcher differential
+passes in an isolated synthetic fixture tree. Local collection is now 276;
+the extra twelve component pixel cases await hosted execution. This run has no
+successful Pages deployment and is not a fully accepted integration checkpoint.
+
 Latest fully successful head `e171662` passed 176/176 on first attempts in run
 38016292683, including report generation and Pages. Downloaded publication has
 176 linked screenshots and all 181 unique public URLs returned HTTP 200.

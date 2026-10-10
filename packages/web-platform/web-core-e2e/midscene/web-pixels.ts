@@ -79,9 +79,9 @@ export async function expectWebPixels(
     || !/^[a-zA-Z0-9_-]+$/.test(runId)
   ) throw new Error('Invalid pixel baseline or run identity.');
   const expected = await readFile(
-    resolve(
-      '../tests/reactlynx.spec.ts-snapshots',
-      baseline + '-chromium-linux.png',
+    new URL(
+      `../tests/reactlynx.spec.ts-snapshots/${baseline}-chromium-linux.png`,
+      import.meta.url,
     ),
   );
   const backend = (page as Page & {

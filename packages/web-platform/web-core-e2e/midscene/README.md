@@ -3,7 +3,7 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 381 cases: the
+while Midscene drives user interactions. The suite contains 387 cases: the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
 ReactLynx migrations, plus 15 continuation cases with original deterministic
 assertion values, 26 original web-elements CSS/attribute contracts and two
@@ -124,6 +124,12 @@ mutation and method-selectTab click with both original PNGs. Only the ordinary
 click becomes one `aiAct`; source callback replay verifies all ordered actions,
 mutations, waits and screenshots. Local collection is 381, with 187 pixel cases.
 These two additions are not yet pushed while the 379-case CI runs.
+Six further local swiper/list flows preserve all original clicks, fixed waits,
+Chromium conditions, screenshot paths and identical helper defaults. Every
+ordinary click becomes one aiAct, including all four sequential current-index
+clicks. Original callback replay covers every ordered step and all Linux PNGs
+exist. Local collection is 387, including 193 pixel cases, with 103 model-free
+checks passing. These six flows also await hosted validation.
 
 Do not run the original pixel suite on macOS: its matcher writes missing Darwin
 snapshots even without an update flag. A diagnostic run demonstrated that

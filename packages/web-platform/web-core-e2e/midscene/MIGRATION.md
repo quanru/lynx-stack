@@ -42,7 +42,13 @@ case total.
 
 ## Execution and acceptance
 
-Current local collection is 381 with 102 model-free checks, including 187 pixel
+Current local collection is 387 with 103 model-free checks, including 193 pixel
+cases. Six further swiper/list flows preserve full source callbacks, original
+fixed waits and PNGs, exact click counts and Chromium conditions. Ordinary
+clicks use aiAct; no scripted DOM clicks or relaxed pixel defaults are added.
+All eight additions after pushed 379 remain local while its CI runs.
+
+The preceding local collection was 381 with 102 model-free checks, including 187 pixel
 cases. Two local viewpager flows retain the original attribute mutation or
 single method-selectTab click and ordered before/after PNGs. Source callback
 replay checks the full sequence. Only the visible click becomes aiAct. These

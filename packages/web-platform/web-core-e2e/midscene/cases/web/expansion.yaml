@@ -1157,34 +1157,6 @@ cases:
         }
       - aiWaitFor: "A green square and a blue square are visible."
 
-  - name: basic-linear-margin-not-collapse
-    steps:
-      - gotoUrl: "${shellUrl}?casename=basic-linear-margin-not-collapse"
-      - aiWaitFor: "Colored layout blocks are visible."
-      - web.expect: {
-          "selector": "#container",
-          "bounds": "height",
-          "equals": 360,
-        }
-
-  - name: basic-linear-weight-sum-is-float
-    steps:
-      - gotoUrl: "${shellUrl}?casename=basic-linear-weight-sum-is-float"
-      - aiWaitFor: "Colored layout blocks are visible."
-      - web.expect: { "selector": "#weight0", "bounds": "width", "equals": 100 }
-
-  - name: basic-linear-weight-calced-less-than-size
-    steps:
-      - gotoUrl: "${shellUrl}?casename=basic-linear-weight-calced-less-than-size"
-      - aiWaitFor: "Colored layout blocks are visible."
-      - web.expect: { "selector": "#weight0", "bounds": "width", "equals": 100 }
-
-  - name: basic-linear-weight-calced-large-than-size
-    steps:
-      - gotoUrl: "${shellUrl}?casename=basic-linear-weight-calced-large-than-size"
-      - aiWaitFor: "Colored layout blocks are visible."
-      - web.expect: { "selector": "#weight0", "bounds": "width", "equals": 100 }
-
   - name: basic-element-image-support-tap-event
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-element-image-support-tap-event"

@@ -14,7 +14,7 @@ remain in scope as deterministic contracts, not visual AI tests.
 Run `node scripts/inventory-upstream.mjs` to refresh this source inventory.
 These are source declarations, including named skipped tests, not runtime case
 counts. Loops, browser projects, SSR variants, and conditional skips change the
-runtime denominator. Do not subtract the 200 YAML cases from these totals:
+runtime denominator. Do not subtract the 240 YAML cases from these totals:
 the pilot cases are not one-to-one replacements, and upstream names can repeat.
 
 | Suite/file                                      | Source declarations | Migration status                                                                                                                                                 |
@@ -45,8 +45,8 @@ case total.
 Latest fully successful head `e171662` passed 176/176 on first attempts in run
 38016292683, including report generation and Pages. Downloaded publication has
 176 linked screenshots and all 181 unique public URLs returned HTTP 200.
-Head `0fae870` collects 190 in pending run 38018429636. Ten further local cases
-bring collection to 200; no hosted acceptance is inferred for either batch.
+Head `0fae870` collects 190 in pending run 38018429636. Fifty further local cases
+bring collection to 240; no hosted acceptance is inferred for either batch.
 The historical checkpoints below retain their original execution evidence.
 
 The latest fully successful batch is 173/173 in run 37954151485, including report
@@ -106,6 +106,20 @@ It does not execute the Linux repository baselines on macOS. Missing baselines
 fail closed without creation/update; no masks, tolerance changes or AI visual
 substitution are introduced. Shards and publication include the independent
 pixel project with disjoint includes and exact source-partition identities.
+Forty further static Linear/Flex cases bring local collection to 240. Strict
+source checks require exactly the original goto/screenshot statements, snapshot
+names and checked-in files; no disabled test or additional assertion is omitted.
+All 48 pixel translations retain the original goto helper's font readiness
+before its case-specific waits. Linux execution remains pending.
+
+Four earlier dimension translations had AI readiness and eventual bounding-box
+polling, unlike their original single reads. `layout-bounds.yaml` restores
+immediate numeric reads after the original font readiness; a regression proves
+wrong-first/correct-later values formerly passed and now fail. Originals and
+corrected YAML pass first attempts locally. A deliberately wrong browser
+expectation fails all three attempts while its afterEach screenshot survives
+in a linked local Summary. Collection stays 240; all 85 model-free checks pass.
+These corrections are not yet present in the pushed 190-case CI head.
 The five pilot cases
 are not one-to-one source migrations.
 

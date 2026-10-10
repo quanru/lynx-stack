@@ -33,6 +33,44 @@ function find(node) {
 }
 find(ast);
 
+test('forty layout pixel cases retain every original statement and never enable skipped tests', () => {
+  const cases = YAML.parse(
+    readFileSync(
+      new URL('../cases/web-pixels/layouts.yaml', import.meta.url),
+      'utf8',
+    ),
+  ).cases;
+  assert.equal(cases.length, 40);
+  for (const item of cases) {
+    const body = originals.get(item.name);
+    assert.ok(body, 'Must be an enabled literal test declaration');
+    assert.deepEqual(body.statements.map(s => s.getText(ast)), [
+      'await goto(page, title);',
+      'await diffScreenShot(page, title, \'index\');',
+    ]);
+    assert.deepEqual(item.steps, [
+      { gotoUrl: '${shellUrl}?casename=' + item.name },
+      { javascript: 'document.fonts.ready.then(() => true)' },
+      { recordToReport: 'Before the original layout pixel contract' },
+      { 'web.pixels': { baseline: item.name + '/index/index' } },
+      { recordToReport: 'Original layout baseline passed' },
+    ]);
+    assert.ok(
+      existsSync(
+        new URL(
+          '../../tests/reactlynx.spec.ts-snapshots/' + item.name
+            + '/index/index-chromium-linux.png',
+          import.meta.url,
+        ),
+      ),
+    );
+  }
+  assert.equal(
+    cases.some(c => c.name === 'linear-item-use-order-affect-z-layout'),
+    false,
+  );
+});
+
 test('pixel translations preserve original snapshot paths and waits without replacing assertions or updating baselines', () => {
   const cases = YAML.parse(
     readFileSync(
@@ -67,10 +105,18 @@ test('pixel translations preserve original snapshot paths and waits without repl
     }
     inspect(body);
     assert.equal(item.steps[0].gotoUrl, '${shellUrl}?casename=' + item.name);
+    assert.equal(
+      item.steps[1].javascript,
+      'document.fonts.ready.then(() => true)',
+    );
+    assert.match(
+      source,
+      /await page\.evaluate\(\(\) => document\.fonts\.ready\)/,
+    );
     assert.deepEqual(
-      item.steps.filter(s => s.javascript).map(s =>
-        Number(/, (\d+)\)\)$/.exec(s.javascript)[1])
-      ),
+      item.steps.filter(s =>
+        s.javascript && s.javascript !== 'document.fonts.ready.then(() => true)'
+      ).map(s => Number(/, (\d+)\)\)$/.exec(s.javascript)[1])),
       waits,
     );
     assert.deepEqual(
@@ -81,6 +127,7 @@ test('pixel translations preserve original snapshot paths and waits without repl
     );
     assert.deepEqual(item.steps.map(s => Object.keys(s)[0]), [
       'gotoUrl',
+      'javascript',
       'javascript',
       'recordToReport',
       'web.pixels',

@@ -2,6 +2,7 @@ cases:
   - name: basic-css-asset-in-css
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-css-asset-in-css"
+      - javascript: "document.fonts.ready.then(() => true)"
       - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
       - recordToReport: Before the original CSS image asset pixel contract
       - web.pixels: { baseline: basic-css-asset-in-css/show-lynx-logo/index }
@@ -9,6 +10,7 @@ cases:
   - name: basic-css-compound-selector
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-css-compound-selector"
+      - javascript: "document.fonts.ready.then(() => true)"
       - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
       - recordToReport: Before the original compound selector pixel contract
       - web.pixels: {
@@ -18,6 +20,7 @@ cases:
   - name: basic-element-text-nest-text
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-element-text-nest-text"
+      - javascript: "document.fonts.ready.then(() => true)"
       - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
       - recordToReport: Before the original nested text pixel contract
       - web.pixels: { baseline: text/nest-text/index }
@@ -25,6 +28,7 @@ cases:
   - name: basic-element-text-baseline
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-element-text-baseline"
+      - javascript: "document.fonts.ready.then(() => true)"
       - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
       - recordToReport: Before the original text baseline pixel contract
       - web.pixels: { baseline: text/baseline/index }
@@ -32,6 +36,7 @@ cases:
   - name: basic-element-text-nest-image
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-element-text-nest-image"
+      - javascript: "document.fonts.ready.then(() => true)"
       - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
       - recordToReport: Before the original nested image pixel contract
       - web.pixels: { baseline: text/nest-image/index }
@@ -39,6 +44,7 @@ cases:
   - name: basic-element-text-nest-view
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-element-text-nest-view"
+      - javascript: "document.fonts.ready.then(() => true)"
       - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
       - recordToReport: Before the original nested view pixel contract
       - web.pixels: { baseline: text/nest-view/index }
@@ -46,6 +52,7 @@ cases:
   - name: basic-element-text-text-with-linear-gradient
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-element-text-text-with-linear-gradient"
+      - javascript: "document.fonts.ready.then(() => true)"
       - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
       - recordToReport: Before the original gradient text pixel contract
       - web.pixels: { baseline: text/linear-gradient/gradient-text }
@@ -53,6 +60,7 @@ cases:
   - name: basic-element-text-with-new-line
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-element-text-with-new-line"
+      - javascript: "document.fonts.ready.then(() => true)"
       - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
       - recordToReport: Before the original raw text newline pixel contract
       - web.pixels: { baseline: text/raw-text-new-line/index }

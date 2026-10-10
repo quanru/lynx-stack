@@ -32,6 +32,12 @@ export function originalPixelProfile() {
   const version =
     createRequire(import.meta.url)('playwright/package.json').version;
   assertPixelEnvironment(process.platform, version);
+  return originalChromiumProfile();
+}
+
+// Non-pixel original suites share this browser profile without claiming
+// cross-platform PNG parity. Pixel callers still pass the Linux/version gate.
+export function originalChromiumProfile() {
   return {
     launch: {
       headless: true,

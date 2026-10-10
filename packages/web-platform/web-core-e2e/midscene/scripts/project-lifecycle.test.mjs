@@ -5,6 +5,7 @@ import vm from 'node:vm';
 import test from 'node:test';
 import ts from 'typescript';
 import { prepareLynxViewStyle } from '../fixture-style.ts';
+import { originalChromiumProfile } from '../web-pixels.ts';
 import {
   createConsoleEvidence,
   captureConsoleMessage,
@@ -14,6 +15,7 @@ import {
 test('projects keep independent registries and release only their own case resources', async () => {
   const events = [];
   let browserId = 0;
+  const contextOptions = [];
   class Agent {
     constructor(page) {
       this.page = page;
@@ -35,6 +37,7 @@ test('projects keep independent registries and release only their own case resou
     './expectation.js': { expectWebValue: () => {} },
     './fixture-style.js': { prepareLynxViewStyle },
     './web-pixels.js': {
+      originalChromiumProfile,
       originalPixelProfile: () => {
         throw new Error('Unexpected pixel project setup');
       },
@@ -53,7 +56,8 @@ test('projects keep independent registries and release only their own case resou
             async close() {
               events.push(['browser', id]);
             },
-            async newContext() {
+            async newContext(options) {
+              contextOptions.push(options);
               const context = {
                 async close() {
                   events.push(['context', id]);
@@ -96,7 +100,12 @@ test('projects keep independent registries and release only their own case resou
       process,
     },
   );
-  const [shell, elements] = module.exports.default.projects;
+  const shell = module.exports.default.projects.find(project =>
+    project.name === 'web-shell'
+  );
+  const elements = module.exports.default.projects.find(project =>
+    project.name === 'web-elements'
+  );
   const teardowns = [];
   const setup = project =>
     project.setup.setup({ onTeardown: fn => teardowns.push(fn) });
@@ -122,4 +131,17 @@ test('projects keep independent registries and release only their own case resou
   assert.deepEqual(events.slice(2), [['agent', 2], ['context', 2]]);
   await Promise.all(teardowns.map(fn => fn()));
   assert.deepEqual(events.slice(4), [['browser', 1], ['browser', 2]]);
+  const ssr = module.exports.default.projects.find(project =>
+    project.name === 'web-ssr-no-js'
+  );
+  const ssrContext = await setup(ssr);
+  await ssrContext.getPage('ssr-no-js-context');
+  assert.equal(contextOptions.at(-1).javaScriptEnabled, false);
+  assert.deepEqual(
+    contextOptions.at(-1).viewport,
+    originalChromiumProfile().context.viewport,
+  );
+  assert.equal(contextOptions[0].javaScriptEnabled, undefined);
+  await ssrContext.agentRegistry.releaseAgent('ssr-no-js-context');
+  await teardowns.at(-1)();
 });

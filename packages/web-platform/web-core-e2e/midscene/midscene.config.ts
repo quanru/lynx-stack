@@ -12,6 +12,7 @@ import type {
 import { chromium, type Browser, type Page } from 'playwright';
 import {
   originalPixelProfile,
+  originalChromiumProfile,
   expectWebPixels,
   type PixelSuite,
 } from './web-pixels.js';
@@ -58,11 +59,15 @@ interface WebProjectContext {
 // handles visual semantics such as color and spatial relationships. The browser
 // is shared by the project; every case run owns and closes its context, page,
 // and agent.
-function createWebSetup(pixels = false) {
+function createWebSetup(pixels = false, javaScriptEnabled = true) {
   return defineProjectSetup<WebProjectContext>({
     name: 'web',
     async setup({ onTeardown }) {
-      const profile = pixels ? originalPixelProfile() : undefined;
+      const profile = pixels
+        ? originalPixelProfile()
+        : !javaScriptEnabled
+        ? originalChromiumProfile()
+        : undefined;
       const browser: Browser = await chromium.launch(
         profile?.launch ?? { headless: true },
       );
@@ -79,8 +84,11 @@ function createWebSetup(pixels = false) {
         let page = pages.get(runId);
         if (!page) {
           const context = await browser.newContext(
-            profile?.context ?? {
-              viewport: { width: 393, height: 851 },
+            {
+              ...(profile?.context ?? {
+                viewport: { width: 393, height: 851 },
+              }),
+              ...(!javaScriptEnabled ? { javaScriptEnabled: false } : {}),
             },
           );
           page = await context.newPage();
@@ -242,6 +250,7 @@ function createWebProject(
   include: string,
   variables: Record<string, string>,
   pixels = false,
+  javaScriptEnabled = true,
 ) {
   // Each project owns its registry: one project's teardown must never release
   // another project's agent, even when the runner executes both projects.
@@ -251,7 +260,9 @@ function createWebProject(
     setup: defineProjectSetup<WebProjectContext>({
       name: 'web',
       async setup(args) {
-        const context = await createWebSetup(pixels).setup(args);
+        const context = await createWebSetup(pixels, javaScriptEnabled).setup(
+          args,
+        );
         registrySlot.current = context.agentRegistry;
         return context;
       },
@@ -288,6 +299,14 @@ function createWebProject(
 export default defineTestProject<WebProjectContext>({
   projects: [
     createWebProject(
+      'web-ssr-no-js',
+      process.env.MIDSCENE_SSR_CASE_FILES
+        ?? 'cases/web-ssr-no-js/**/*.{yaml,yml}',
+      { shellUrl: process.env.WEB_SHELL_URL ?? 'http://localhost:3080/' },
+      false,
+      false,
+    ),
+    createWebProject(
       'web-shell',
       process.env.MIDSCENE_CASE_FILES ?? 'cases/web/**/*.{yaml,yml}',
       { shellUrl: process.env.WEB_SHELL_URL ?? 'http://localhost:3080/' },
@@ -310,8 +329,8 @@ export default defineTestProject<WebProjectContext>({
     ),
   ],
   test: {
-    // Midscene 1.13.1 applies this limit to projects, not cases. Keep this
-    // projects serial; case concurrency requires separately scoped shards.
+    // Keep projects serial; case concurrency uses separately scoped shards.
+    // SDK 1.13.1 forwards testTimeout as the per-step default, not a case limit.
     maxConcurrency: 1,
     testTimeout: 180_000,
   },

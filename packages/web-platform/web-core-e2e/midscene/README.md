@@ -3,7 +3,7 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 399 cases: the
+while Midscene drives user interactions. The suite contains 403 cases: the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
 ReactLynx migrations, plus 15 continuation cases with original deterministic
 assertion values, 26 original web-elements CSS/attribute contracts and two
@@ -145,6 +145,15 @@ not merely a value other than true; missing elements fail. All CSS/attribute
 polls retain the original five-second timeout. Full original callback/loop
 replay and negative attribute checks pass. Collection is 399 / 108 model-free
 checks; these three AI translations await hosted execution too.
+The isolated `web-ssr-no-js` project adds all four expanded cases from
+`ssr-no-js.spec.ts`, with JavaScript genuinely disabled and the unchanged
+Chromium/Pixel 5 profile. Both originals and translations pass locally on
+first attempts, without model calls. Full source declaration/loop replay and
+browser-context checks preserve the absence of client-side waits/actions.
+The fourth project is included in all shard partitions, manifests and report
+publication identities. Collection is 403 / 109 model-free checks; 24 cases
+after pushed 379 remain local pending hosted execution. Original Linux pixel
+environment guards are unchanged; non-pixel SSR does not claim PNG parity.
 
 Do not run the original pixel suite on macOS: its matcher writes missing Darwin
 snapshots even without an update flag. A diagnostic run demonstrated that

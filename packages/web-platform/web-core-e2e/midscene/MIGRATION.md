@@ -14,7 +14,7 @@ remain in scope as deterministic contracts, not visual AI tests.
 Run `node scripts/inventory-upstream.mjs` to refresh this source inventory.
 These are source declarations, including named skipped tests, not runtime case
 counts. Loops, browser projects, SSR variants, and conditional skips change the
-runtime denominator. Do not subtract the 276 YAML cases from these totals:
+runtime denominator. Do not subtract YAML case totals from these declarations:
 the pilot cases are not one-to-one replacements, and upstream names can repeat.
 
 | Suite/file                                      | Source declarations | Migration status                                                                                                                                                 |
@@ -22,7 +22,7 @@ the pilot cases are not one-to-one replacements, and upstream names can repeat.
 | web-core-e2e/reactlynx.spec.ts                  |                 342 | ReactLynx migrations included in successful 173-case run 37954151485; three further reload cases pass locally; pilot overlap and pixel contracts remain separate |
 | web-core-e2e/web-core.test.ts                   |                  35 | Pending exact API/callback contract integration                                                                                                                  |
 | web-core-e2e/reactlynx-css-var-fallback.spec.ts |                   2 | Both Chromium client cases passed locally and in hosted run 37940214877; SSR and other browsers pending                                                          |
-| web-core-e2e/ssr-no-js.spec.ts                  |                   2 | Pending; loops expand runtime coverage                                                                                                                           |
+| web-core-e2e/ssr-no-js.spec.ts                  |                   2 | Four expanded original Chromium cases and translations pass locally, first attempts; isolated JavaScript-disabled project, hosted execution pending              |
 | web-core-e2e/middleware.spec.ts                 |                   1 | Original Chromium client case passed locally; translation passed in hosted run 37948938294; SSR/other browsers separate                                          |
 | web-core-e2e/server-tests/server-e2e.test.ts    |                  17 | Pending deterministic server HTML snapshot integration                                                                                                           |
 | web-elements/web-elements.spec.ts               |                 296 | 25 exact CSS/attribute cases passed locally on the first attempt and in hosted run 37928102242; other cases pending                                              |
@@ -42,7 +42,15 @@ case total.
 
 ## Execution and acceptance
 
-Current local collection is 399 with 108 model-free checks, including 202 pixel
+Current local collection is 403 with 109 model-free checks, including 202 pixel
+cases. Four expanded SSR-no-JavaScript cases run in their own genuinely
+JavaScript-disabled Chromium/Pixel 5 contexts. Both original and translated
+cases pass locally on first attempts without model calls. Source replay,
+context isolation and the complete four-shard partition/report identity checks
+include this fourth project. All 24 additions after pushed 379 remain local;
+hosted execution is pending, and Linux PNG acceptance is not inferred here.
+
+The preceding local collection was 399 with 108 model-free checks, including 202 pixel
 cases. Three templated CSS inheritance branches preserve complete original
 callback and loop semantics, all five-second CSS/attribute assertions and one
 ordinary Update click through aiAct. Attribute absence requires actual null

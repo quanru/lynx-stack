@@ -37,6 +37,7 @@ export async function loadDocuments(root) {
       'cases/web/**/*.{yaml,yml}',
       'cases/web-elements/**/*.{yaml,yml}',
       'cases/web-pixels/**/*.{yaml,yml}',
+      'cases/web-ssr-no-js/**/*.{yaml,yml}',
     ],
   }).sort();
   return Promise.all(
@@ -78,6 +79,7 @@ export async function materializeShard(root, documents, index, count) {
       if (path.startsWith('cases/web/')) return 'web-shell';
       if (path.startsWith('cases/web-elements/')) return 'web-elements';
       if (path.startsWith('cases/web-pixels/')) return 'web-pixels';
+      if (path.startsWith('cases/web-ssr-no-js/')) return 'web-ssr-no-js';
       throw new Error(`Unknown case project: ${path}`);
     })),
   ];
@@ -90,19 +92,26 @@ export async function materializeShard(root, documents, index, count) {
     shellInclude: `${prefix}/cases/web/**/*.{yaml,yml}`,
     elementsInclude: `${prefix}/cases/web-elements/**/*.{yaml,yml}`,
     pixelInclude: `${prefix}/cases/web-pixels/**/*.{yaml,yml}`,
+    ssrInclude: `${prefix}/cases/web-ssr-no-js/**/*.{yaml,yml}`,
   };
 }
 
 async function main() {
   const root = resolve(fileURLToPath(new URL('../', import.meta.url)));
   const [index, count] = process.argv.slice(2).map(Number);
-  const { shellInclude, elementsInclude, pixelInclude, projects, names } =
-    await materializeShard(
-      root,
-      await loadDocuments(root),
-      index,
-      count,
-    );
+  const {
+    shellInclude,
+    elementsInclude,
+    pixelInclude,
+    ssrInclude,
+    projects,
+    names,
+  } = await materializeShard(
+    root,
+    await loadDocuments(root),
+    index,
+    count,
+  );
   console.log(`Shard ${index}/${count}: ${names.length} cases`);
   const manifest = { index, count, names, sha: process.env.GITHUB_SHA ?? null };
   await mkdir(resolve(root, 'midscene_run'), { recursive: true });
@@ -121,6 +130,7 @@ async function main() {
       MIDSCENE_CASE_FILES: shellInclude,
       MIDSCENE_ELEMENTS_CASE_FILES: elementsInclude,
       MIDSCENE_PIXEL_CASE_FILES: pixelInclude,
+      MIDSCENE_SSR_CASE_FILES: ssrInclude,
     },
   });
   for (const signal of ['SIGINT', 'SIGTERM']) {

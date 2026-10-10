@@ -14,7 +14,7 @@ remain in scope as deterministic contracts, not visual AI tests.
 Run `node scripts/inventory-upstream.mjs` to refresh this source inventory.
 These are source declarations, including named skipped tests, not runtime case
 counts. Loops, browser projects, SSR variants, and conditional skips change the
-runtime denominator. Do not subtract the 240 YAML cases from these totals:
+runtime denominator. Do not subtract the 244 YAML cases from these totals:
 the pilot cases are not one-to-one replacements, and upstream names can repeat.
 
 | Suite/file                                      | Source declarations | Migration status                                                                                                                                                 |
@@ -46,7 +46,7 @@ Latest fully successful head `e171662` passed 176/176 on first attempts in run
 38016292683, including report generation and Pages. Downloaded publication has
 176 linked screenshots and all 181 unique public URLs returned HTTP 200.
 Head `0fae870` collects 190 in pending run 38018429636. Fifty further local cases
-bring collection to 240; no hosted acceptance is inferred for either batch.
+bring collection to 244; no hosted acceptance is inferred for either batch.
 The historical checkpoints below retain their original execution evidence.
 
 The latest fully successful batch is 173/173 in run 37954151485, including report
@@ -125,6 +125,12 @@ same final attempt, without changing the failed-step link or borrowing images
 after intervening actions. Both copies and regression tests are synchronized;
 all 86 Web model-free checks pass. Native must publish the canonical renderer
 before the next Web push so the cross-repository parity gate remains meaningful.
+Three weighted-layout cases and one explicit font-load case bring local
+collection to 244, including 52 original pixel contracts. The weighted cases
+retain both immediate width assertions after the screenshot; the font case
+retains exact load arguments, font readiness and the original 100 ms wait.
+Source/AST and callback differential checks pass, with all 87 model-free checks
+and typechecking passing. Original Linux baseline execution remains pending.
 The five pilot cases
 are not one-to-one source migrations.
 

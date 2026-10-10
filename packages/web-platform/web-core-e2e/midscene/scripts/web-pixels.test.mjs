@@ -3,6 +3,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { resolve, dirname } from 'node:path';
 import test from 'node:test';
+import { runInNewContext } from 'node:vm';
 import ts from 'typescript';
 import YAML from 'yaml';
 import {
@@ -32,6 +33,125 @@ function find(node) {
   ts.forEachChild(node, find);
 }
 find(ast);
+
+test('weighted pixels retain both ordered immediate dimensions; extra font retains exact font load and readiness', async () => {
+  const document = YAML.parse(
+    readFileSync(
+      new URL('../cases/web-pixels/weights-and-fonts.yaml', import.meta.url),
+      'utf8',
+    ),
+  );
+  assert.equal(document.cases.length, 4);
+  assert.deepEqual(document.afterEach, [{
+    recordToReport: 'Original pixel and numeric/font contract result',
+  }]);
+  for (const item of document.cases) {
+    const body = originals.get(item.name), steps = item.steps;
+    assert.equal(steps[0].gotoUrl, '${shellUrl}?casename=' + item.name);
+    assert.equal(steps[1].javascript, 'document.fonts.ready.then(() => true)');
+    const pixels = steps.find(s => s['web.pixels'])['web.pixels'].baseline;
+    assert.ok(
+      existsSync(
+        new URL(
+          '../../tests/reactlynx.spec.ts-snapshots/' + pixels
+            + '-chromium-linux.png',
+          import.meta.url,
+        ),
+      ),
+    );
+    if (item.name.startsWith('basic-linear-')) {
+      assert.equal(body.statements.length, 6);
+      assert.equal(body.statements[0].getText(ast), 'await goto(page, title);');
+      assert.equal(
+        body.statements[1].getText(ast),
+        'await diffScreenShot(page, title, \'index\');',
+      );
+      assert.equal(pixels, item.name + '/index/index');
+      for (
+        const [offset, translated] of [[2, steps[3]['web.expect']], [
+          4,
+          steps[4]['web.expect'],
+        ]]
+      ) {
+        const declaration =
+          body.statements[offset].declarationList.declarations[0];
+        const bounding = declaration.initializer.expression;
+        assert.equal(bounding.expression.name.text, 'boundingBox');
+        const locator = bounding.expression.expression;
+        assert.equal(locator.expression.getText(ast), 'page.locator');
+        assert.equal(locator.arguments[0].text, translated.selector);
+        const assertion = body.statements[offset + 1].expression;
+        assert.equal(assertion.expression.name.text, 'toEqual');
+        const value = assertion.expression.expression.arguments[0];
+        assert.equal(
+          value.expression.expression.getText(ast),
+          declaration.name.getText(ast),
+        );
+        assert.equal(value.name.text, translated.bounds);
+        assert.equal(
+          Number(assertion.arguments[0].getText(ast)),
+          translated.equals,
+        );
+        assert.equal(translated.immediate, true);
+      }
+      assert.deepEqual(steps.map(s => Object.keys(s)[0]), [
+        'gotoUrl',
+        'javascript',
+        'web.pixels',
+        'web.expect',
+        'web.expect',
+      ]);
+    } else {
+      assert.equal(body.statements.length, 4);
+      const evaluate = body.statements[1].expression.expression;
+      assert.equal(evaluate.expression.getText(ast), 'page.evaluate');
+      const callback = evaluate.arguments[0].getText(ast);
+      async function calls(script) {
+        const log = [];
+        await runInNewContext(script, {
+          document: {
+            fonts: {
+              async load(...args) {
+                log.push(['load', ...args]);
+              },
+              get ready() {
+                log.push(['ready']);
+                return Promise.resolve();
+              },
+            },
+          },
+        });
+        return log;
+      }
+      assert.deepEqual(
+        await calls(steps[2].javascript),
+        await calls('(' + callback + ')()'),
+      );
+      assert.deepEqual(await calls(steps[2].javascript), [[
+        'load',
+        '18px "Press Start 2P E2E"',
+        'EXTRA FONT 0123',
+      ], ['ready']]);
+      assert.equal(body.statements[2].getText(ast), 'await wait(100);');
+      assert.equal(
+        body.statements[3].getText(ast),
+        'await diffScreenShot(page, \'text\', \'extra-font-family\');',
+      );
+      assert.equal(
+        steps[3].javascript,
+        'new Promise(resolve => setTimeout(() => resolve(true), 100))',
+      );
+      assert.equal(pixels, 'text/extra-font-family/index');
+      assert.deepEqual(steps.map(s => Object.keys(s)[0]), [
+        'gotoUrl',
+        'javascript',
+        'javascript',
+        'javascript',
+        'web.pixels',
+      ]);
+    }
+  }
+});
 
 test('forty layout pixel cases retain every original statement and never enable skipped tests', () => {
   const cases = YAML.parse(

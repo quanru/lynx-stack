@@ -42,7 +42,8 @@ case total.
 
 ## Execution and acceptance
 
-The next local collection reaches 435 cases, including 226 pixel cases.
+The next local collection reaches 438 cases, including 229 pixel cases, with
+129 passing model-free checks and typechecking.
 Seventeen more static web-elements callbacks replay the complete original
 source, including font readiness and fixed waits. Their snapshot directory and
 subcase both use the full test title; nested PNG paths are retained exactly,
@@ -51,6 +52,14 @@ zero pixel tolerance and the original full-page/animation settings remain.
 Callbacks with extra guards, user actions, assertions or screenshot overrides
 are excluded. These additions introduce no new node or AI assertion and await
 hosted Linux execution; no original pixel suite runs locally on macOS.
+
+Three additional text callbacks preserve source-defined 100-by-100 or
+300-by-100 crops at (0,0). Complete callback replay records the actual source
+options and verifies they match the backend's exact PNG-bound rectangles.
+YAML cannot set a crop; other baselines and suites cannot inherit it. Returned
+options cannot mutate future comparisons. Original nested PNG paths, zero
+tolerance, font readiness and 100 ms waits remain unchanged. Hosted acceptance
+is still pending for all 20 additions after the pushed 418-case head.
 
 The next local batch expands retained worker/runtime, SVG/selection/iframe and
 Markdown API runners to the original Chromium, Firefox and WebKit projects.

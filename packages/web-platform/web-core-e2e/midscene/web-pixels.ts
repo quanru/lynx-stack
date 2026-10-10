@@ -80,6 +80,24 @@ const indicatorClips = new Set([
     'x-swiper/x-swiper-indicator-active-color/' + label
   ),
 ]);
+const textClips = new Map([
+  ['x-text/text-maxline-1-instrict-size/x-text/text-maxline-1-instrict-size', {
+    x: 0,
+    y: 0,
+    width: 100,
+    height: 100,
+  }],
+  ['x-text/view-flex-in-text/x-text/view-flex-in-text', {
+    x: 0,
+    y: 0,
+    width: 300,
+    height: 100,
+  }],
+  [
+    'x-text/text-clipped-display-important/x-text/text-clipped-display-important',
+    { x: 0, y: 0, width: 300, height: 100 },
+  ],
+]);
 // This one original test explicitly overrides the helper's zero-ratio default.
 // Keep it bound to the exact source PNG; YAML cannot relax arbitrary baselines.
 export function originalPixelOptions(
@@ -90,6 +108,9 @@ export function originalPixelOptions(
     ...pixelOptions,
     ...(suite === 'web-elements' && indicatorClips.has(baseline)
       ? { clip: { x: 50, width: 100, y: 170, height: 30 } }
+      : {}),
+    ...(suite === 'web-elements' && textClips.has(baseline)
+      ? { clip: { ...textClips.get(baseline)! } }
       : {}),
     maxDiffPixelRatio: suite === 'web-core'
         && baseline === 'x-textarea/placeholder-font-size/font-size/index'

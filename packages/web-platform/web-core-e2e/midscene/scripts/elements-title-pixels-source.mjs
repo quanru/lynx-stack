@@ -5,7 +5,10 @@ import ts from 'typescript';
 
 // These source callbacks use the whole test title as both snapshot directory
 // and subcase path. Retain both rather than flattening the nested PNG alias.
-export async function originalTitlePixels() {
+export async function originalTitlePixels(
+  clipped = false,
+  onScreenshotOptions = () => {},
+) {
   const ast = ts.createSourceFile(
     'elements.ts',
     readFileSync(
@@ -41,7 +44,7 @@ export async function originalTitlePixels() {
         )
         && calls.some(call =>
           call.expression.getText(ast) === 'diffScreenShot'
-          && call.arguments.length === 3
+          && call.arguments.length === (clipped ? 4 : 3)
           && call.arguments[2].getText(ast) === 'title'
         )
       ) {
@@ -85,7 +88,22 @@ export async function originalTitlePixels() {
           assert.equal(actualPage, page);
           assert.equal(directory, title);
           assert.equal(subcase, title);
-          assert.deepEqual(options, []);
+          if (clipped) {
+            assert.equal(options.length, 1);
+            assert.deepEqual(Object.keys(options[0]), ['clip']);
+            const { clip } = options[0];
+            assert.deepEqual(Object.keys(clip).sort(), [
+              'height',
+              'width',
+              'x',
+              'y',
+            ]);
+            assert.ok(Object.values(clip).every(Number.isFinite));
+            onScreenshotOptions(
+              directory + '/' + subcase,
+              JSON.parse(JSON.stringify(options[0])),
+            );
+          } else assert.deepEqual(options, []);
           snapshots++;
           steps.push({
             'web.pixels': {

@@ -14,7 +14,7 @@ remain in scope as deterministic contracts, not visual AI tests.
 Run `node scripts/inventory-upstream.mjs` to refresh this source inventory.
 These are source declarations, including named skipped tests, not runtime case
 counts. Loops, browser projects, SSR variants, and conditional skips change the
-runtime denominator. Do not subtract the 190 YAML cases from these totals:
+runtime denominator. Do not subtract the 192 YAML cases from these totals:
 the pilot cases are not one-to-one replacements, and upstream names can repeat.
 
 | Suite/file                                      | Source declarations | Migration status                                                                                                                                                 |
@@ -41,6 +41,13 @@ reported 341 counted ordinary `test()` calls only. Neither count is an executed
 case total.
 
 ## Execution and acceptance
+
+Latest fully successful head `e171662` passed 176/176 on first attempts in run
+38016292683, including report generation and Pages. Downloaded publication has
+176 linked screenshots and all 181 unique public URLs returned HTTP 200.
+Head `0fae870` collects 190 in pending run 38018429636. Two further local cases
+bring collection to 192; no hosted acceptance is inferred for either batch.
+The historical checkpoints below retain their original execution evidence.
 
 The latest fully successful batch is 173/173 in run 37954151485, including report
 generation and Pages. It has 173 linked screenshots and all 178 unique published
@@ -81,7 +88,12 @@ match the new predicates across 180 valid/malformed event inputs. Pending
 extraction cannot extend the observation window, nor can different events
 contribute fields to one conjunction. Collection is now 190 with 77 local
 model-free checks passing; these 14 additions after the pushed 176-case head
-are not yet hosted-verified. The five pilot cases
+are not yet hosted-verified. Two further runtime-interaction cases bring local
+collection to 192 with 79 model-free checks: reportError and shared context.
+Both original tests pass locally. Their AI translations preserve original
+waits and exact error/display/second-view CSS contracts but await hosted AI.
+The reportError predicate matches its unchanged callback across 90 inputs.
+The five pilot cases
 are not one-to-one source migrations.
 
 1. Four independent CI shards partition YAML cases by stable file/case order.

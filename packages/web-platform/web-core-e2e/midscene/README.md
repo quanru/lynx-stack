@@ -3,7 +3,7 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 190 cases: the
+while Midscene drives user interactions. The suite contains 192 cases: the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
 ReactLynx migrations, plus 15 continuation cases with original deterministic
 assertion values, 26 original web-elements CSS/attribute contracts and two
@@ -18,7 +18,8 @@ contracts, two setNativeProps text-count contracts, three rpx/ppx dimension
 contracts, three updateData/processData API contracts and three reload/viewport
 unit contracts, three exact console callback/global contracts, two worker
 lifecycle contracts, one performance timing-key contract, two main-thread
-click/console contracts, one global-event API contract and five error-payload contracts.
+click/console contracts, one global-event API contract, five error-payload contracts,
+and two reportError/shared-context interaction contracts.
 The 147-case four-shard run passed in
 [run 37940214877](https://github.com/quanru/lynx-stack/actions/runs/37940214877),
 including report generation and Pages publication. Downloaded publication
@@ -64,8 +65,11 @@ text-count cases, one scroll-view CSS case, three rpx/ppx cases and three
 updateData/processData cases. All 173 passed, with 174 attempts; only
 `basic-event-child-trigger` retried once. Report generation and Pages succeeded,
 with 173 linked screenshots and all 178 unique public report/image URLs HTTP 200.
-The next three reload/viewport cases pass both original and translated local
-execution on their first attempts, but require their own hosted validation.
+The next three reload/viewport cases passed hosted run 38016292683 at `e171662`:
+176/176 first attempts, all four shards, report generation and Pages. The
+downloaded publication has 176 linked screenshots and all 181 unique public
+URLs returned HTTP 200. Pushed `0fae870` collects 190 cases in pending run
+38018429636; the next two local interaction cases bring collection to 192.
 The animation translations retain original event-sequence match counts and CSS
 checks, with ordinary clicks through `aiAct`. No local model credentials are
 configured; local checks do not make AI calls.
@@ -76,7 +80,13 @@ The external-bundle case and its unchanged original Chromium test both passed
 locally on the first attempt. `web.expect` with `matchingText`/`count` uses the
 same public `page.getByText` locator and checks the complete count, without
 selecting the first match or requiring visibility. Duplicate matches fail the
-original count-one contract. All 77 model-free checks and typechecking pass.
+original count-one contract. All 79 model-free checks and typechecking pass.
+Two further original tests pass locally: reportError and shared context. Their
+YAML translations replace only the ordinary clicks with `aiAct`, retaining
+the original 200/500 ms error observation windows, hidden LynxView CSS,
+source-map line/column, exact error message/nonempty stack, and second-view
+green CSS result. The error predicate matches the unchanged original callback
+across 90 valid/malformed inputs. These two AI translations await hosted execution.
 The unchanged middleware original also passes locally. Its migration retains
 the separate `/middleware` URL, two ordinary `aiAct` clicks, and immediate
 inline-style substring reads; it does not extend the original Chromium-only,

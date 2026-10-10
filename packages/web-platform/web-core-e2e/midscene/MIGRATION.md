@@ -119,7 +119,12 @@ wrong-first/correct-later values formerly passed and now fail. Originals and
 corrected YAML pass first attempts locally. A deliberately wrong browser
 expectation fails all three attempts while its afterEach screenshot survives
 in a linked local Summary. Collection stays 240; all 85 model-free checks pass.
-These corrections are not yet present in the pushed 190-case CI head.
+These corrections are not yet present in the pushed 190-case CI head. The
+shared renderer additionally accepts a direct first afterEach capture from the
+same final attempt, without changing the failed-step link or borrowing images
+after intervening actions. Both copies and regression tests are synchronized;
+all 86 Web model-free checks pass. Native must publish the canonical renderer
+before the next Web push so the cross-repository parity gate remains meaningful.
 The five pilot cases
 are not one-to-one source migrations.
 

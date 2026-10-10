@@ -81,7 +81,7 @@ The external-bundle case and its unchanged original Chromium test both passed
 locally on the first attempt. `web.expect` with `matchingText`/`count` uses the
 same public `page.getByText` locator and checks the complete count, without
 selecting the first match or requiring visibility. Duplicate matches fail the
-original count-one contract. All 85 model-free checks and typechecking pass.
+original count-one contract. All 86 model-free checks and typechecking pass.
 Two further original tests pass locally: reportError and shared context. Their
 YAML translations replace only the ordinary clicks with `aiAct`, retaining
 the original 200/500 ms error observation windows, hidden LynxView CSS,
@@ -126,6 +126,11 @@ Screenshots run in `afterEach`, after the observation, including on failure.
 A deliberate 361-versus-360 browser failure rejects all three attempts and
 still produces a linked final-attempt screenshot in the local Summary replay.
 This correction changes no case count and awaits hosted validation.
+Both vendored renderers now accept a first, successful afterEach capture only
+when it directly follows the final failed case step. Earlier screenshots retain
+priority; intervening actions or older attempts cannot supply the preview.
+The screenshot still links to the failed assertion. Real failed-report replay
+and synthetic cross-attempt/continuation guards cover this evidence boundary.
 The unchanged middleware original also passes locally. Its migration retains
 the separate `/middleware` URL, two ordinary `aiAct` clicks, and immediate
 inline-style substring reads; it does not extend the original Chromium-only,

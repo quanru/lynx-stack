@@ -5,7 +5,7 @@ import ts from 'typescript';
 
 // Replay original programmatic scroll-offset API tests, not user gestures.
 // Reject every unhandled statement, guard, action, assertion and override.
-export async function originalScrollPixels() {
+export async function originalScrollPixels(methods = false) {
   const ast = ts.createSourceFile(
     'elements.ts',
     readFileSync(
@@ -19,6 +19,35 @@ export async function originalScrollPixels() {
     true,
   );
   const callbacks = [];
+  function methodCall(call) {
+    const kind = call.expression.getText(ast).replace(/\s/g, '');
+    if (
+      !/^page\.locator\(.+\)\.evaluate$/.test(kind)
+      || call.arguments.length !== 1 || !ts.isArrowFunction(call.arguments[0])
+    ) return false;
+    const fn = call.arguments[0];
+    if (fn.parameters.length !== 1) return false;
+    const body = fn.body;
+    if (
+      !ts.isCallExpression(body)
+      || !ts.isPropertyAccessExpression(body.expression)
+      || body.expression.expression.getText(ast)
+        !== fn.parameters[0].name.getText(ast)
+      || !['scrollTo', 'scrollIntoView'].includes(body.expression.name.text)
+      || body.arguments.length !== 1
+    ) return false;
+    function literal(node) {
+      return ts.isNumericLiteral(node) || ts.isStringLiteral(node)
+        || node.kind === ts.SyntaxKind.TrueKeyword
+        || node.kind === ts.SyntaxKind.FalseKeyword
+        || ts.isObjectLiteralExpression(node)
+          && node.properties.every(property =>
+            ts.isPropertyAssignment(property) && ts.isIdentifier(property.name)
+            && literal(property.initializer)
+          );
+    }
+    return literal(body.arguments[0]);
+  }
   function assignmentCall(call) {
     const kind = call.expression.getText(ast).replace(/\s/g, '');
     if (
@@ -67,10 +96,12 @@ export async function originalScrollPixels() {
           : undefined
       );
       if (
-        calls.some(call => call && assignmentCall(call))
+        calls.some(call =>
+          call && (methods ? methodCall(call) : assignmentCall(call))
+        )
         && calls.every(call =>
           call
-          && (assignmentCall(call)
+          && (assignmentCall(call) || methods && methodCall(call)
             || ['gotoWebComponentPage', 'wait'].includes(
               call.expression.getText(ast),
             )

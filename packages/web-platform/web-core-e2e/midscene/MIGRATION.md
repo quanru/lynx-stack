@@ -42,7 +42,11 @@ case total.
 
 ## Execution and acceptance
 
-The next local collection reaches 440 cases, including 231 pixel cases.
+The next local collection reaches 446 cases, including 237 pixel cases.
+Six complete scroll-method callbacks preserve scrollTo index/offset arguments,
+block/inline alignment, nested scroll isolation and eleven unchanged PNGs.
+These are original programmatic API tests, not selector-driven substitutes
+for user gestures. Their new Linux hosted execution remains pending.
 Seventeen more static web-elements callbacks replay the complete original
 source, including font readiness and fixed waits. Their snapshot directory and
 subcase both use the full test title; nested PNG paths are retained exactly,

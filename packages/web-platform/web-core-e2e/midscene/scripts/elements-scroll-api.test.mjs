@@ -6,6 +6,96 @@ import YAML from 'yaml';
 import { originalScrollPixels } from './elements-scroll-pixels-source.mjs';
 import { originalPixelOptions } from '../web-pixels.ts';
 
+test('six complete scroll method callbacks retain their API arguments and eleven exact PNG checkpoints', async () => {
+  const cases = await originalScrollPixels(true);
+  assert.deepEqual(cases.map(item => item.name), [
+    'web-elements/scroll-view/scroll-to',
+    'web-elements/scroll-view/scroll-into-view-basic',
+    'web-elements/scroll-view/scroll-into-view-basic-x',
+    'web-elements/scroll-view/scroll-into-view-text',
+    'web-elements/scroll-view/scroll-into-view-text-x',
+    'web-elements/scroll-view/scroll-into-view-nested-scroll-view',
+  ]);
+  const translated = YAML.parse(
+    readFileSync(
+      new URL(
+        '../cases/web-pixels/elements-scroll-methods.yaml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  assert.deepEqual(translated.cases, cases);
+  assert.equal(translated.afterEach.length, 1);
+  const calls = [];
+  const context = {
+    setTimeout,
+    document: {
+      fonts: { ready: Promise.resolve() },
+      querySelectorAll: selector => [{
+        scrollTo: options =>
+          calls.push([
+            selector,
+            'scrollTo',
+            JSON.parse(JSON.stringify(options)),
+          ]),
+        scrollIntoView: options =>
+          calls.push([
+            selector,
+            'scrollIntoView',
+            JSON.parse(JSON.stringify(options)),
+          ]),
+        set scrollTop(value) {
+          calls.push([selector, 'scrollTop', value]);
+        },
+      }],
+    },
+  };
+  const expected = [
+    ['scroll-view', 'scrollTo', { index: 2 }],
+    ['scroll-view', 'scrollTo', { index: 0 }],
+    ['scroll-view', 'scrollTo', { offset: 50 }],
+    ['scroll-view', 'scrollTo', { offset: 50, index: 2 }],
+  ];
+  for (const tag of ['x-view:nth-child(3)', 'x-text']) {
+    for (const axis of ['block', 'inline']) {
+      for (const position of ['start', 'center', 'end']) {
+        expected.push([`#${position} > ${tag}`, 'scrollIntoView', {
+          scrollIntoViewOptions: { [axis]: position },
+        }]);
+      }
+    }
+  }
+  expected.push(['#target > x-view:nth-child(3)', 'scrollIntoView', {
+    scrollIntoViewOptions: { inline: 'start' },
+  }], ['#outer', 'scrollTop', 200]);
+  let pixels = 0;
+  for (const item of cases) {
+    for (const step of item.steps) {
+      if (step.javascript) await vm.runInNewContext(step.javascript, context);
+      if (step['web.pixels']) {
+        pixels++;
+        const { baseline } = step['web.pixels'];
+        assert.ok(
+          existsSync(
+            new URL(
+              '../../../web-elements/tests/web-elements.spec.ts-snapshots/'
+                + baseline + '-chromium-linux.png',
+              import.meta.url,
+            ),
+          ),
+        );
+        assert.equal(
+          originalPixelOptions(baseline, 'web-elements').maxDiffPixelRatio,
+          0,
+        );
+      }
+    }
+  }
+  assert.equal(pixels, 11);
+  assert.deepEqual(calls, expected);
+});
+
 test('two programmatic scroll API callbacks preserve whole originals and all five original PNGs', async () => {
   const original = await originalScrollPixels();
   assert.equal(original.length, 2);

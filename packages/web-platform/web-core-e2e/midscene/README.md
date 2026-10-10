@@ -3,7 +3,7 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 264 cases: the
+while Midscene drives user interactions. The suite contains 276 cases: the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
 ReactLynx migrations, plus 15 continuation cases with original deterministic
 assertion values, 26 original web-elements CSS/attribute contracts and two
@@ -19,7 +19,7 @@ contracts, three updateData/processData API contracts and three reload/viewport
 unit contracts, three exact console callback/global contracts, two worker
 lifecycle contracts, one performance timing-key contract, two main-thread
 click/console contracts, one global-event API contract, five error-payload contracts,
-two reportError/shared-context interaction contracts, and 72 original
+two reportError/shared-context interaction contracts, and 84 original
 Linux Chromium pixel-baseline contracts in an isolated project.
 The 147-case four-shard run passed in
 [run 37940214877](https://github.com/quanru/lynx-stack/actions/runs/37940214877),
@@ -74,7 +74,8 @@ URLs returned HTTP 200. Pushed `0fae870` passed all 190 cases in
 including reports and Pages. Downloaded raw reports show 191 attempts, with only
 `basic-lazy-component-when-need-with-itself` retried once. All 190 rows have
 screenshots and all 195 unique public report/image URLs return HTTP 200.
-The next local interaction/pixel cases bring collection to 264.
+Pushed `4a94776` collects 264 in pending run 38021387390. Twelve further
+component pixel cases bring local collection to 276; they are not pushed yet.
 The animation translations retain original event-sequence match counts and CSS
 checks, with ordinary clicks through `aiAct`. No local model credentials are
 configured; local checks do not make AI calls.
@@ -85,7 +86,7 @@ The external-bundle case and its unchanged original Chromium test both passed
 locally on the first attempt. `web.expect` with `matchingText`/`count` uses the
 same public `page.getByText` locator and checks the complete count, without
 selecting the first match or requiring visibility. Duplicate matches fail the
-original count-one contract. All 88 model-free checks and typechecking pass.
+original count-one contract. All 89 model-free checks and typechecking pass.
 Two further original tests pass locally: reportError and shared context. Their
 YAML translations replace only the ordinary clicks with `aiAct`, retaining
 the original 200/500 ms error observation windows, hidden LynxView CSS,
@@ -98,7 +99,7 @@ across 90 valid/malformed inputs. These two AI translations await hosted executi
 The `web-pixels` project uses the original Pixel 5 context and all 13 Chromium
 launch flags, including software rendering and font settings. It is restricted
 to Linux and pinned Playwright 1.61.1; existing web-shell/web-elements contexts
-are unchanged. Its 72 cases retain original font readiness, waits and snapshot paths.
+are unchanged. Its 84 cases retain original font readiness, waits and snapshot paths.
 Three weighted-layout cases also retain both ordered, immediate width reads;
 the extra-font case retains the exact font-load arguments and readiness wait.
 Missing baselines fail without creating or updating them.
@@ -120,7 +121,7 @@ npm test -- --project web-pixels  # Linux only; requires the built shell server
 The first command compares the adapter with the unchanged public matcher on
 synthetic same/changed images in a temporary directory. Both agree on pass and
 failure, and failure evidence is checked. This local backend conformance is
-not execution or acceptance of the 72 Linux repository baselines; those
+not execution or acceptance of the 84 Linux repository baselines; those
 require hosted CI. Other browsers and SSR pixel variants remain pending.
 
 Four earlier layout dimension migrations are corrected in `layout-bounds.yaml`:

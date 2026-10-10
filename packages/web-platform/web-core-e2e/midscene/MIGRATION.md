@@ -14,7 +14,7 @@ remain in scope as deterministic contracts, not visual AI tests.
 Run `node scripts/inventory-upstream.mjs` to refresh this source inventory.
 These are source declarations, including named skipped tests, not runtime case
 counts. Loops, browser projects, SSR variants, and conditional skips change the
-runtime denominator. Do not subtract the 264 YAML cases from these totals:
+runtime denominator. Do not subtract the 276 YAML cases from these totals:
 the pilot cases are not one-to-one replacements, and upstream names can repeat.
 
 | Suite/file                                      | Source declarations | Migration status                                                                                                                                                 |
@@ -141,7 +141,13 @@ Downloaded raw reports show 190/190 passed in 191 attempts, with only
 basic-lazy-component-when-need-with-itself retried. The publication has 190
 linked screenshots and all 195 unique public image/report URLs return HTTP 200.
 The subsequent 74 additions and immediate-dimension/renderer corrections still
-await hosted execution at a new head.
+await hosted execution at pushed `4a94776`, run 38021387390.
+Twelve further component pixels bring local collection to 276 (84 pixel cases)
+with 89 model-free checks and typechecking passing. They retain scoped original
+snapshot names and exact waits. Explicit screenshot options are source-checked
+to equal existing defaults (`fullPage: true`, `animations: 'allow'`); no custom
+threshold, ratio or viewport behavior is silently discarded. This batch is
+not pushed and has no hosted acceptance yet.
 The five pilot cases
 are not one-to-one source migrations.
 

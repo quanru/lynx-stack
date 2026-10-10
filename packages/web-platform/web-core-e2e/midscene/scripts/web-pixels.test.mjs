@@ -34,6 +34,101 @@ function find(node) {
 }
 find(ast);
 
+test('twelve component pixels retain scoped baseline names, original waits and only identical matcher options', () => {
+  const document = YAML.parse(
+    readFileSync(
+      new URL('../cases/web-pixels/components.yaml', import.meta.url),
+      'utf8',
+    ),
+  );
+  assert.equal(document.cases.length, 12);
+  assert.deepEqual(document.afterEach, [{
+    recordToReport: 'Original component pixel contract result',
+  }]);
+  for (const item of document.cases) {
+    const body = originals.get(item.name);
+    assert.ok(body);
+    const steps = [{ gotoUrl: '${shellUrl}?casename=' + item.name }, {
+      javascript: 'document.fonts.ready.then(() => true)',
+    }];
+    assert.equal(body.statements[0].getText(ast), 'await goto(page, title);');
+    let cursor = 1;
+    const next = body.statements[cursor].expression.expression;
+    if (next.expression.getText(ast) === 'wait') {
+      assert.equal(next.arguments.length, 1);
+      assert.ok(ts.isNumericLiteral(next.arguments[0]));
+      steps.push({
+        javascript: 'new Promise(resolve => setTimeout(() => resolve(true), '
+          + next.arguments[0].text + '))',
+      });
+      cursor++;
+    }
+    assert.equal(
+      body.statements.length,
+      cursor + 1,
+      'No action/skip/assertion may be dropped',
+    );
+    const call = body.statements[cursor].expression.expression;
+    assert.equal(call.expression.getText(ast), 'diffScreenShot');
+    assert.equal(call.arguments[0].getText(ast), 'page');
+    assert.ok(call.arguments.length >= 3 && call.arguments.length <= 5);
+    function scopedLiteral(arg) {
+      if (ts.isStringLiteral(arg)) return arg.text;
+      if (arg.getText(ast) === 'title') return item.name;
+      assert.ok(['elementName', 'module'].includes(arg.getText(ast)));
+      for (let scope = call.parent; scope; scope = scope.parent) {
+        if (!ts.isBlock(scope)) continue;
+        for (const statement of scope.statements) {
+          if (!ts.isVariableStatement(statement)) continue;
+          for (const declaration of statement.declarationList.declarations) {
+            if (declaration.name.getText(ast) === arg.getText(ast)) {
+              assert.ok(ts.isStringLiteral(declaration.initializer));
+              return declaration.initializer.text;
+            }
+          }
+        }
+      }
+      assert.fail('Missing original scoped snapshot name');
+    }
+    const parts = [
+      scopedLiteral(call.arguments[1]),
+      scopedLiteral(call.arguments[2]),
+    ];
+    const label = call.arguments[3];
+    parts.push(
+      !label || label.getText(ast) === 'undefined'
+        ? 'index'
+        : scopedLiteral(label),
+    );
+    if (call.arguments[4]) {
+      assert.ok(ts.isObjectLiteralExpression(call.arguments[4]));
+      for (const property of call.arguments[4].properties) {
+        assert.ok(ts.isPropertyAssignment(property));
+        const key = property.name.getText(ast);
+        assert.ok(key === 'fullPage' || key === 'animations');
+        assert.equal(
+          property.initializer.getText(ast),
+          key === 'fullPage' ? 'true' : '\'allow\'',
+        );
+        assert.equal(pixelOptions[key], key === 'fullPage' ? true : 'allow');
+      }
+    }
+    const baseline = parts.join('/');
+    assert.ok(
+      existsSync(
+        new URL(
+          '../../tests/reactlynx.spec.ts-snapshots/' + baseline
+            + '-chromium-linux.png',
+          import.meta.url,
+        ),
+      ),
+      baseline,
+    );
+    steps.push({ 'web.pixels': { baseline } });
+    assert.deepEqual(item.steps, steps);
+  }
+});
+
 test('twenty element pixel translations retain every original statement and unchanged baseline', () => {
   const document = YAML.parse(
     readFileSync(

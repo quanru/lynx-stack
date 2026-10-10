@@ -42,7 +42,15 @@ case total.
 
 ## Execution and acceptance
 
-Current local collection is 396 with 105 model-free checks, including 202 pixel
+Current local collection is 399 with 108 model-free checks, including 202 pixel
+cases. Three templated CSS inheritance branches preserve complete original
+callback and loop semantics, all five-second CSS/attribute assertions and one
+ordinary Update click through aiAct. Attribute absence requires actual null
+on an existing element. Original Chromium tests passed locally, first attempts;
+the AI translations await hosted execution. All 20 additions after pushed
+379 remain local while its CI runs.
+
+The preceding local collection was 396 with 105 model-free checks, including 202 pixel
 cases. Nine additional web-elements public API flows preserve attribute
 mutations and addText/setValue/sendDelEvent argument order, all original PNGs,
 fixed waits and the shared x-input/method fixture used by textarea originals.

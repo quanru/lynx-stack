@@ -14,7 +14,7 @@ export interface ExpectInput {
   property?: 'tagName' | 'scrollTop';
   shadowCssHostRule?: true;
   bounds?: 'width' | 'height';
-  equals?: string | number;
+  equals?: string | number | null;
   greaterThan?: number;
   immediate?: boolean;
   contains?: string;
@@ -188,10 +188,13 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
       'web.expect requires one valid text, value, attribute, CSS, or bounds assertion and a positive timeout.',
     );
   }
-  const expected = text ?? textContains ?? value ?? equals ?? contains;
+  const expected = attribute !== undefined && equals === null
+    ? null
+    : text ?? textContains ?? value ?? equals ?? contains;
   if (
     bounds === undefined && property !== 'scrollTop'
     && typeof expected !== 'string'
+    && !(attribute !== undefined && equals === null)
   ) {
     throw new Error('web.expect requires a string expected value.');
   }

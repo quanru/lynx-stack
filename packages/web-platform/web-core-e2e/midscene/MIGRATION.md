@@ -42,13 +42,21 @@ case total.
 
 ## Execution and acceptance
 
-The newest local UI collection is 418 with 122 model-free checks. The original
+The newest local UI collection is 418 with 123 model-free checks. The original
 Markdown link/image event case now uses two ordinary visual `aiAct` clicks,
 retaining both original event waits, two single-read serialized payloads and
 all five exact/substring field checks. Complete callback replay generates the
 workflow; malformed URL, content and content ID samples are rejected without
 trimming or broader matching. The unchanged original case passes locally.
 The new AI translation remains unexecuted pending the next hosted batch.
+
+The remaining 33 original Markdown rendering/API cases pass locally on their
+first attempts and are retained in shard 1. This includes original sanitization,
+style, selection, inline-view and typewriter assertions with unchanged timing
+and recovery helpers. The translated click flow is explicitly excluded from
+that retained runner; no scripted click is substituted for its `aiAct` steps.
+The next batch adds 55 retained deterministic cases (7 performance, 15
+SVG/selection/iframe, 33 Markdown), separate from the YAML denominator.
 
 The next local batch additionally retains all seven original Chromium CDP
 performance contracts in shard 1. All seven pass locally with the original

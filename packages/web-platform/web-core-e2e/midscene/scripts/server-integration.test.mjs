@@ -158,3 +158,30 @@ test('SVG selection and iframe integration preserves original deterministic runn
     );
   }
 });
+
+test('retained Markdown API runner excludes the migrated user-click flow', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const matching = Object.values(workflow.jobs).flatMap(job => job.steps ?? [])
+    .filter(step =>
+      step.name === 'Validate original Markdown rendering and API contracts'
+    );
+  assert.equal(matching.length, 1);
+  assert.equal(matching[0].if, 'matrix.shard == 1');
+  assert.equal(
+    matching[0]['working-directory'],
+    'packages/web-platform/web-elements',
+  );
+  assert.equal(matching[0].env.PORT, '3081');
+  assert.equal(
+    matching[0].run,
+    'pnpm exec playwright test tests/x-markdown.spec.ts --project chromium --grep-invert \'should fire bindlink and bindimageTap events\' --reporter line',
+  );
+});

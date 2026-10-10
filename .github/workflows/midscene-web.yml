@@ -217,6 +217,14 @@ jobs:
         # These are DOM/API/geometry contracts, not scripted user UI actions.
         run: pnpm exec playwright test tests/x-svg-inline.spec.ts tests/x-text-selection.spec.ts tests/x-webview.spec.ts --project chromium --reporter line
 
+      - name: Validate original Markdown rendering and API contracts
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-elements
+        env:
+          PORT: "3081"
+        # The excluded user-click flow is translated in markdown-events.yaml.
+        run: pnpm exec playwright test tests/x-markdown.spec.ts --project chromium --grep-invert 'should fire bindlink and bindimageTap events' --reporter line
+
       - name: Validate case collection and exact assertion contracts
         working-directory: packages/web-platform/web-core-e2e/midscene
         run: |

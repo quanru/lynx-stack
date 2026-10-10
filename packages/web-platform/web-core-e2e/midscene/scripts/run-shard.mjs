@@ -36,6 +36,7 @@ export async function loadDocuments(root) {
     include: [
       'cases/web/**/*.{yaml,yml}',
       'cases/web-elements/**/*.{yaml,yml}',
+      'cases/web-pixels/**/*.{yaml,yml}',
     ],
   }).sort();
   return Promise.all(
@@ -76,6 +77,7 @@ export async function materializeShard(root, documents, index, count) {
     ...new Set(selected.map(({ path }) => {
       if (path.startsWith('cases/web/')) return 'web-shell';
       if (path.startsWith('cases/web-elements/')) return 'web-elements';
+      if (path.startsWith('cases/web-pixels/')) return 'web-pixels';
       throw new Error(`Unknown case project: ${path}`);
     })),
   ];
@@ -87,13 +89,14 @@ export async function materializeShard(root, documents, index, count) {
     projects,
     shellInclude: `${prefix}/cases/web/**/*.{yaml,yml}`,
     elementsInclude: `${prefix}/cases/web-elements/**/*.{yaml,yml}`,
+    pixelInclude: `${prefix}/cases/web-pixels/**/*.{yaml,yml}`,
   };
 }
 
 async function main() {
   const root = resolve(fileURLToPath(new URL('../', import.meta.url)));
   const [index, count] = process.argv.slice(2).map(Number);
-  const { shellInclude, elementsInclude, projects, names } =
+  const { shellInclude, elementsInclude, pixelInclude, projects, names } =
     await materializeShard(
       root,
       await loadDocuments(root),
@@ -117,6 +120,7 @@ async function main() {
       ...process.env,
       MIDSCENE_CASE_FILES: shellInclude,
       MIDSCENE_ELEMENTS_CASE_FILES: elementsInclude,
+      MIDSCENE_PIXEL_CASE_FILES: pixelInclude,
     },
   });
   for (const signal of ['SIGINT', 'SIGTERM']) {

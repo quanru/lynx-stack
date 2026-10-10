@@ -1,0 +1,59 @@
+cases:
+  - name: basic-css-asset-in-css
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-css-asset-in-css"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - recordToReport: Before the original CSS image asset pixel contract
+      - web.pixels: { baseline: basic-css-asset-in-css/show-lynx-logo/index }
+      - recordToReport: Original CSS image asset baseline passed
+  - name: basic-css-compound-selector
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-css-compound-selector"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - recordToReport: Before the original compound selector pixel contract
+      - web.pixels: {
+          baseline: basic-css-compound-selector/compound-selector/index,
+        }
+      - recordToReport: Original compound selector baseline passed
+  - name: basic-element-text-nest-text
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-text-nest-text"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before the original nested text pixel contract
+      - web.pixels: { baseline: text/nest-text/index }
+      - recordToReport: Original nested text baseline passed
+  - name: basic-element-text-baseline
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-text-baseline"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before the original text baseline pixel contract
+      - web.pixels: { baseline: text/baseline/index }
+      - recordToReport: Original text alignment baseline passed
+  - name: basic-element-text-nest-image
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-text-nest-image"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - recordToReport: Before the original nested image pixel contract
+      - web.pixels: { baseline: text/nest-image/index }
+      - recordToReport: Original nested image baseline passed
+  - name: basic-element-text-nest-view
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-text-nest-view"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before the original nested view pixel contract
+      - web.pixels: { baseline: text/nest-view/index }
+      - recordToReport: Original nested view baseline passed
+  - name: basic-element-text-text-with-linear-gradient
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-text-text-with-linear-gradient"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before the original gradient text pixel contract
+      - web.pixels: { baseline: text/linear-gradient/gradient-text }
+      - recordToReport: Original gradient text baseline passed
+  - name: basic-element-text-with-new-line
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-text-with-new-line"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before the original raw text newline pixel contract
+      - web.pixels: { baseline: text/raw-text-new-line/index }
+      - recordToReport: Original raw text newline baseline passed

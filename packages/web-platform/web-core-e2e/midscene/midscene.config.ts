@@ -10,6 +10,7 @@ import type {
   MidsceneUIAgent,
 } from '@midscene/test/midscene';
 import { chromium, type Browser, type Page } from 'playwright';
+import { originalPixelProfile, expectWebPixels } from './web-pixels.js';
 import {
   expectWebCount,
   expectWebValue,
@@ -40,6 +41,7 @@ interface AgentRegistry {
 }
 
 interface WebProjectContext {
+  originalPixels: boolean;
   agentRegistry: AgentRegistry;
   // Return the Playwright Page for a case run to web.expect.
   getPage(runId: string): Promise<Page>;
@@ -52,80 +54,110 @@ interface WebProjectContext {
 // handles visual semantics such as color and spatial relationships. The browser
 // is shared by the project; every case run owns and closes its context, page,
 // and agent.
-const webSetup = defineProjectSetup<WebProjectContext>({
-  name: 'web',
-  async setup({ onTeardown }) {
-    const browser: Browser = await chromium.launch({ headless: true });
-    onTeardown(() => browser.close());
+function createWebSetup(pixels = false) {
+  return defineProjectSetup<WebProjectContext>({
+    name: 'web',
+    async setup({ onTeardown }) {
+      const profile = pixels ? originalPixelProfile() : undefined;
+      const browser: Browser = await chromium.launch(
+        profile?.launch ?? { headless: true },
+      );
+      onTeardown(() => browser.close());
 
-    const pages = new Map<string, Page>();
-    const agents = new Map<string, PlaywrightAgent>();
-    const consoleEvidence = new Map<
-      string,
-      ReturnType<typeof createConsoleEvidence>
-    >();
+      const pages = new Map<string, Page>();
+      const agents = new Map<string, PlaywrightAgent>();
+      const consoleEvidence = new Map<
+        string,
+        ReturnType<typeof createConsoleEvidence>
+      >();
 
-    const getPage = async (runId: string) => {
-      let page = pages.get(runId);
-      if (!page) {
-        const context = await browser.newContext({
-          viewport: { width: 393, height: 851 },
-        });
-        page = await context.newPage();
-        const evidence = createConsoleEvidence();
-        page.on('console', message => {
-          void captureConsoleMessage(message, evidence);
-        });
-        consoleEvidence.set(runId, evidence);
-        pages.set(runId, page);
-      }
-      return page;
-    };
-
-    const registry: AgentRegistry = {
-      async getAgent(runId) {
-        let agent = agents.get(runId);
-        if (!agent) {
-          const page = await getPage(runId);
-          agent = new PlaywrightAgent(page, {
-            reportFileName: `web-${runId}.html`,
-            aiContexts: {
-              aiAct:
-                'Follow the coordinate format requested by the active action protocol. When it requests normalized 0–1000 coordinates, convert screenshot pixel positions using x / screenshot width * 1000 and y / screenshot height * 1000 before emitting locate.point. Do not label raw screenshot pixels as normalized coordinates. The center of the full screenshot is [500, 500] in that normalized format, regardless of its pixel dimensions. Check that the converted point lies inside the described target, using its left/right and upper/lower relationships.',
+      const getPage = async (runId: string) => {
+        let page = pages.get(runId);
+        if (!page) {
+          const context = await browser.newContext(
+            profile?.context ?? {
+              viewport: { width: 393, height: 851 },
             },
+          );
+          page = await context.newPage();
+          const evidence = createConsoleEvidence();
+          page.on('console', message => {
+            void captureConsoleMessage(message, evidence);
           });
-          agents.set(runId, agent);
+          consoleEvidence.set(runId, evidence);
+          pages.set(runId, page);
         }
-        return agent;
-      },
-      async releaseAgent(runId) {
-        const agent = agents.get(runId);
-        const page = pages.get(runId);
-        agents.delete(runId);
-        pages.delete(runId);
-        consoleEvidence.delete(runId);
-        if (agent) await agent.destroy();
-        if (page) await page.context().close();
-        // Return a report path only after an AI task caused core to write the
-        // agent HTML. DOM-only cases create an agent lazily for gotoUrl but do
-        // not emit a report on destroy; returning a missing path fails the runner.
-        const report = reportPath(runId);
-        return agent && existsSync(report) ? { reportPath: report } : undefined;
-      },
-    };
-    return {
-      agentRegistry: registry,
-      getPage,
-      getConsoleEvidence(runId) {
-        const evidence = consoleEvidence.get(runId);
-        if (!evidence) {
-          throw new Error('Console evidence requires a live case page.');
-        }
-        return evidence;
-      },
-    };
+        return page;
+      };
+
+      const registry: AgentRegistry = {
+        async getAgent(runId) {
+          let agent = agents.get(runId);
+          if (!agent) {
+            const page = await getPage(runId);
+            agent = new PlaywrightAgent(page, {
+              reportFileName: `web-${runId}.html`,
+              aiContexts: {
+                aiAct:
+                  'Follow the coordinate format requested by the active action protocol. When it requests normalized 0–1000 coordinates, convert screenshot pixel positions using x / screenshot width * 1000 and y / screenshot height * 1000 before emitting locate.point. Do not label raw screenshot pixels as normalized coordinates. The center of the full screenshot is [500, 500] in that normalized format, regardless of its pixel dimensions. Check that the converted point lies inside the described target, using its left/right and upper/lower relationships.',
+              },
+            });
+            agents.set(runId, agent);
+          }
+          return agent;
+        },
+        async releaseAgent(runId) {
+          const agent = agents.get(runId);
+          const page = pages.get(runId);
+          agents.delete(runId);
+          pages.delete(runId);
+          consoleEvidence.delete(runId);
+          if (agent) await agent.destroy();
+          if (page) await page.context().close();
+          // Return a report path only after an AI task caused core to write the
+          // agent HTML. DOM-only cases create an agent lazily for gotoUrl but do
+          // not emit a report on destroy; returning a missing path fails the runner.
+          const report = reportPath(runId);
+          return agent && existsSync(report)
+            ? { reportPath: report }
+            : undefined;
+        },
+      };
+      return {
+        originalPixels: pixels,
+        agentRegistry: registry,
+        getPage,
+        getConsoleEvidence(runId) {
+          const evidence = consoleEvidence.get(runId);
+          if (!evidence) {
+            throw new Error('Console evidence requires a live case page.');
+          }
+          return evidence;
+        },
+      };
+    },
+  });
+}
+
+const webPixelsNode = defineNode<{ baseline: string }, void, WebProjectContext>(
+  {
+    name: 'web.pixels',
+    description:
+      'Compare unchanged Linux Chromium baselines through the original pinned Playwright screenshot backend.',
+    async execute(execution) {
+      if (execution.scope !== 'case' || !execution.context.originalPixels) {
+        throw new Error(
+          'web.pixels requires a case in the original-profile web-pixels project.',
+        );
+      }
+      await expectWebPixels(
+        await execution.context.getPage(execution.case.runId),
+        execution.input.baseline,
+        execution.case.runId,
+      );
+    },
   },
-});
+);
 
 const webExpectNode = defineNode<
   ExpectInput & RuntimeExpectInput,
@@ -200,6 +232,7 @@ function createWebProject(
   name: string,
   include: string,
   variables: Record<string, string>,
+  pixels = false,
 ) {
   // Each project owns its registry: one project's teardown must never release
   // another project's agent, even when the runner executes both projects.
@@ -209,7 +242,7 @@ function createWebProject(
     setup: defineProjectSetup<WebProjectContext>({
       name: 'web',
       async setup(args) {
-        const context = await webSetup.setup(args);
+        const context = await createWebSetup(pixels).setup(args);
         registrySlot.current = context.agentRegistry;
         return context;
       },
@@ -232,6 +265,7 @@ function createWebProject(
       }),
       webExpectNode,
       webFixtureStyleNode,
+      ...(pixels ? [webPixelsNode] : []),
     ],
     files: { include: [include] },
     variables,
@@ -254,6 +288,13 @@ export default defineTestProject<WebProjectContext>({
       process.env.MIDSCENE_ELEMENTS_CASE_FILES
         ?? 'cases/web-elements/**/*.{yaml,yml}',
       { elementsUrl: process.env.WEB_ELEMENTS_URL ?? 'http://localhost:3081/' },
+    ),
+    createWebProject(
+      'web-pixels',
+      process.env.MIDSCENE_PIXEL_CASE_FILES
+        ?? 'cases/web-pixels/**/*.{yaml,yml}',
+      { shellUrl: process.env.WEB_SHELL_URL ?? 'http://localhost:3080/' },
+      true,
     ),
   ],
   test: {

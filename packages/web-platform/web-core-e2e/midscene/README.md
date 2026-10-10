@@ -3,7 +3,7 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 192 cases: the
+while Midscene drives user interactions. The suite contains 200 cases: the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
 ReactLynx migrations, plus 15 continuation cases with original deterministic
 assertion values, 26 original web-elements CSS/attribute contracts and two
@@ -19,7 +19,8 @@ contracts, three updateData/processData API contracts and three reload/viewport
 unit contracts, three exact console callback/global contracts, two worker
 lifecycle contracts, one performance timing-key contract, two main-thread
 click/console contracts, one global-event API contract, five error-payload contracts,
-and two reportError/shared-context interaction contracts.
+two reportError/shared-context interaction contracts, and eight original
+Linux Chromium pixel-baseline contracts in an isolated project.
 The 147-case four-shard run passed in
 [run 37940214877](https://github.com/quanru/lynx-stack/actions/runs/37940214877),
 including report generation and Pages publication. Downloaded publication
@@ -69,7 +70,7 @@ The next three reload/viewport cases passed hosted run 38016292683 at `e171662`:
 176/176 first attempts, all four shards, report generation and Pages. The
 downloaded publication has 176 linked screenshots and all 181 unique public
 URLs returned HTTP 200. Pushed `0fae870` collects 190 cases in pending run
-38018429636; the next two local interaction cases bring collection to 192.
+38018429636; the next local interaction/pixel cases bring collection to 200.
 The animation translations retain original event-sequence match counts and CSS
 checks, with ordinary clicks through `aiAct`. No local model credentials are
 configured; local checks do not make AI calls.
@@ -80,13 +81,41 @@ The external-bundle case and its unchanged original Chromium test both passed
 locally on the first attempt. `web.expect` with `matchingText`/`count` uses the
 same public `page.getByText` locator and checks the complete count, without
 selecting the first match or requiring visibility. Duplicate matches fail the
-original count-one contract. All 79 model-free checks and typechecking pass.
+original count-one contract. All 82 model-free checks and typechecking pass.
 Two further original tests pass locally: reportError and shared context. Their
 YAML translations replace only the ordinary clicks with `aiAct`, retaining
 the original 200/500 ms error observation windows, hidden LynxView CSS,
 source-map line/column, exact error message/nonempty stack, and second-view
 green CSS result. The error predicate matches the unchanged original callback
 across 90 valid/malformed inputs. These two AI translations await hosted execution.
+
+## Original Web pixel contracts
+
+The `web-pixels` project uses the original Pixel 5 context and all 13 Chromium
+launch flags, including software rendering and font settings. It is restricted
+to Linux and pinned Playwright 1.61.1; existing web-shell/web-elements contexts
+are unchanged. Its eight static cases retain original waits and snapshot paths.
+Missing baselines fail without creating or updating them.
+
+`web.pixels` calls the same pinned `_expectScreenshot` backend as Playwright's
+public matcher: full-page CSS-scale screenshots, animations allowed, caret
+hidden, zero differing-pixel ratio and original default perceptual threshold,
+stable-frame polling and five-second assertion timeout. The private API is
+version-guarded and source-contract tested. Failure PNGs (expected, actual,
+previous and diff where available) stay under `midscene_run/web-pixels` and
+are uploaded with that attempt; ordinary report screenshots remain linked in
+Summary. No RGB approximation, AI similarity, masks or baseline update is used.
+
+```bash
+node scripts/check-pixel-backend.mjs
+npm test -- --project web-pixels  # Linux only; requires the built shell server
+```
+
+The first command compares the adapter with the unchanged public matcher on
+synthetic same/changed images in a temporary directory. Both agree on pass and
+failure, and failure evidence is checked. This local backend conformance is
+not execution or acceptance of the eight Linux repository baselines; those
+require hosted CI. Other browsers and SSR pixel variants remain pending.
 The unchanged middleware original also passes locally. Its migration retains
 the separate `/middleware` URL, two ordinary `aiAct` clicks, and immediate
 inline-style substring reads; it does not extend the original Chromium-only,

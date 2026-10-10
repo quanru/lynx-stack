@@ -73,7 +73,9 @@ test('generated JSON-in-YAML shards collect through the real SDK with unchanged 
   const collect = absolutePath => {
     const project = projects.find(item =>
       item.name
-        === (absolutePath.includes('/cases/web-elements/')
+        === (absolutePath.includes('/cases/web-pixels/')
+          ? 'web-pixels'
+          : absolutePath.includes('/cases/web-elements/')
           ? 'web-elements'
           : 'web-shell')
     );
@@ -102,6 +104,7 @@ test('generated JSON-in-YAML shards collect through the real SDK with unchanged 
       projects: selectedProjects,
       shellInclude,
       elementsInclude,
+      pixelInclude,
     } = await materializeShard(
       directory,
       documents,
@@ -116,12 +119,22 @@ test('generated JSON-in-YAML shards collect through the real SDK with unchanged 
     const elementsFiles = discoverTestFiles(directory, {
       include: [elementsInclude],
     });
-    assert.equal(shellFiles.length + elementsFiles.length, discovered.length);
+    const pixelFiles = discoverTestFiles(directory, {
+      include: [pixelInclude],
+    });
     assert.equal(
-      new Set([...shellFiles, ...elementsFiles]).size,
+      shellFiles.length + elementsFiles.length + pixelFiles.length,
+      discovered.length,
+    );
+    assert.equal(
+      new Set([...shellFiles, ...elementsFiles, ...pixelFiles]).size,
       discovered.length,
     );
     assert.equal(selectedProjects.includes('web-shell'), shellFiles.length > 0);
+    assert.equal(
+      selectedProjects.includes('web-pixels'),
+      pixelFiles.length > 0,
+    );
     assert.equal(
       selectedProjects.includes('web-elements'),
       elementsFiles.length > 0,

@@ -14,7 +14,7 @@ remain in scope as deterministic contracts, not visual AI tests.
 Run `node scripts/inventory-upstream.mjs` to refresh this source inventory.
 These are source declarations, including named skipped tests, not runtime case
 counts. Loops, browser projects, SSR variants, and conditional skips change the
-runtime denominator. Do not subtract the 192 YAML cases from these totals:
+runtime denominator. Do not subtract the 200 YAML cases from these totals:
 the pilot cases are not one-to-one replacements, and upstream names can repeat.
 
 | Suite/file                                      | Source declarations | Migration status                                                                                                                                                 |
@@ -45,8 +45,8 @@ case total.
 Latest fully successful head `e171662` passed 176/176 on first attempts in run
 38016292683, including report generation and Pages. Downloaded publication has
 176 linked screenshots and all 181 unique public URLs returned HTTP 200.
-Head `0fae870` collects 190 in pending run 38018429636. Two further local cases
-bring collection to 192; no hosted acceptance is inferred for either batch.
+Head `0fae870` collects 190 in pending run 38018429636. Ten further local cases
+bring collection to 200; no hosted acceptance is inferred for either batch.
 The historical checkpoints below retain their original execution evidence.
 
 The latest fully successful batch is 173/173 in run 37954151485, including report
@@ -93,6 +93,19 @@ collection to 192 with 79 model-free checks: reportError and shared context.
 Both original tests pass locally. Their AI translations preserve original
 waits and exact error/display/second-view CSS contracts but await hosted AI.
 The reportError predicate matches its unchanged callback across 90 inputs.
+Eight static Web pixel contracts bring local collection to 200 with 82
+model-free checks and typechecking passing. Their original waits, snapshot
+paths and unchanged Linux baselines are source-checked; runtime acceptance is
+pending. An isolated web-pixels project retains the original Pixel 5 device,
+all 13 Chromium flags and software rendering environment. It reuses the pinned
+Playwright matcher backend with original zero mismatch ratio/default perceptual
+threshold, full-page/allow-animation options, CSS scale, hidden caret and
+five-second stable-frame timeout. A real synthetic browser differential agrees
+with the unchanged public matcher on pass/failure and verifies failure artifacts.
+It does not execute the Linux repository baselines on macOS. Missing baselines
+fail closed without creation/update; no masks, tolerance changes or AI visual
+substitution are introduced. Shards and publication include the independent
+pixel project with disjoint includes and exact source-partition identities.
 The five pilot cases
 are not one-to-one source migrations.
 

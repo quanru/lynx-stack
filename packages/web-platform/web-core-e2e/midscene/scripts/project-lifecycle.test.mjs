@@ -34,6 +34,12 @@ test('projects keep independent registries and release only their own case resou
     },
     './expectation.js': { expectWebValue: () => {} },
     './fixture-style.js': { prepareLynxViewStyle },
+    './web-pixels.js': {
+      originalPixelProfile: () => {
+        throw new Error('Unexpected pixel project setup');
+      },
+      expectWebPixels: () => {},
+    },
     './runtime-contract.js': {
       createConsoleEvidence,
       captureConsoleMessage,

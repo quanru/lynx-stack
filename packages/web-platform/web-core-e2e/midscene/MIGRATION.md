@@ -42,6 +42,16 @@ case total.
 
 ## Execution and acceptance
 
+Current local collection is 325 with 100 model-free checks. The next 39
+web-elements static pixel cases preserve every original goto, font-readiness
+wait, fixed wait and PNG, while disabled source cases remain excluded. Both
+source packages import the same Chromium/Pixel 5 profile. The existing pixel
+project uses independent fixture URLs and explicit baseline suites; a missing
+web-elements PNG cannot fall back to web-core or inherit its textarea exception.
+The full four-shard partition and real SDK collection checks include this batch.
+There are 131 pixel cases in total; all new Linux baseline execution remains
+pending, separately from fully accepted hosted coverage.
+
 Current local collection is 286 with 97 model-free checks. Three further static
 pixels preserve textarea color, placeholder font size and default-display path
 normalization. The one original placeholder test explicitly sets mismatch ratio

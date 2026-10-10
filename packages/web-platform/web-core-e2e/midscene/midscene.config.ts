@@ -10,7 +10,11 @@ import type {
   MidsceneUIAgent,
 } from '@midscene/test/midscene';
 import { chromium, type Browser, type Page } from 'playwright';
-import { originalPixelProfile, expectWebPixels } from './web-pixels.js';
+import {
+  originalPixelProfile,
+  expectWebPixels,
+  type PixelSuite,
+} from './web-pixels.js';
 import {
   expectWebCount,
   expectWebValue,
@@ -139,7 +143,11 @@ function createWebSetup(pixels = false) {
   });
 }
 
-const webPixelsNode = defineNode<{ baseline: string }, void, WebProjectContext>(
+const webPixelsNode = defineNode<
+  { baseline: string; suite?: PixelSuite },
+  void,
+  WebProjectContext
+>(
   {
     name: 'web.pixels',
     description:
@@ -154,6 +162,7 @@ const webPixelsNode = defineNode<{ baseline: string }, void, WebProjectContext>(
         await execution.context.getPage(execution.case.runId),
         execution.input.baseline,
         execution.case.runId,
+        execution.input.suite,
       );
     },
   },
@@ -293,7 +302,10 @@ export default defineTestProject<WebProjectContext>({
       'web-pixels',
       process.env.MIDSCENE_PIXEL_CASE_FILES
         ?? 'cases/web-pixels/**/*.{yaml,yml}',
-      { shellUrl: process.env.WEB_SHELL_URL ?? 'http://localhost:3080/' },
+      {
+        shellUrl: process.env.WEB_SHELL_URL ?? 'http://localhost:3080/',
+        elementsUrl: process.env.WEB_ELEMENTS_URL ?? 'http://localhost:3081/',
+      },
       true,
     ),
   ],

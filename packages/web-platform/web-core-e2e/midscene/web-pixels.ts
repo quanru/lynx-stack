@@ -58,18 +58,22 @@ export const pixelOptions = {
   isNot: false,
 } as const;
 
+export type PixelSuite = 'web-core' | 'web-elements';
 type OriginalPixelOptions = Omit<typeof pixelOptions, 'maxDiffPixelRatio'> & {
   maxDiffPixelRatio: number;
 };
 // This one original test explicitly overrides the helper's zero-ratio default.
 // Keep it bound to the exact source PNG; YAML cannot relax arbitrary baselines.
-export function originalPixelOptions(baseline: string): OriginalPixelOptions {
+export function originalPixelOptions(
+  baseline: string,
+  suite: PixelSuite = 'web-core',
+): OriginalPixelOptions {
   return {
     ...pixelOptions,
-    maxDiffPixelRatio:
-      baseline === 'x-textarea/placeholder-font-size/font-size/index'
-        ? 0.02
-        : 0,
+    maxDiffPixelRatio: suite === 'web-core'
+        && baseline === 'x-textarea/placeholder-font-size/font-size/index'
+      ? 0.02
+      : 0,
   };
 }
 
@@ -88,14 +92,20 @@ export async function expectWebPixels(
   page: Page,
   baseline: string,
   runId: string,
+  suite: PixelSuite = 'web-core',
 ) {
   if (
     !/^[a-zA-Z0-9_-]+(?:\/[a-zA-Z0-9_-]+)+$/.test(baseline)
     || !/^[a-zA-Z0-9_-]+$/.test(runId)
+    || !['web-core', 'web-elements'].includes(suite)
   ) throw new Error('Invalid pixel baseline or run identity.');
   const expected = await readFile(
     new URL(
-      `../tests/reactlynx.spec.ts-snapshots/${baseline}-chromium-linux.png`,
+      `${
+        suite === 'web-elements'
+          ? '../../web-elements/tests/web-elements.spec.ts-snapshots'
+          : '../tests/reactlynx.spec.ts-snapshots'
+      }/${baseline}-chromium-linux.png`,
       import.meta.url,
     ),
   );
@@ -108,7 +118,7 @@ export async function expectWebPixels(
     throw new Error('Pinned Playwright screenshot backend is unavailable.');
   }
   const result = await backend.call(page, {
-    ...originalPixelOptions(baseline),
+    ...originalPixelOptions(baseline, suite),
     expected,
   });
   if (!result || typeof result !== 'object') {

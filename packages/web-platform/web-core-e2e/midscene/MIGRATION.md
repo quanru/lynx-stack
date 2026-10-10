@@ -42,8 +42,7 @@ case total.
 
 ## Execution and acceptance
 
-The next local collection reaches 438 cases, including 229 pixel cases, with
-129 passing model-free checks and typechecking.
+The next local collection reaches 440 cases, including 231 pixel cases.
 Seventeen more static web-elements callbacks replay the complete original
 source, including font readiness and fixed waits. Their snapshot directory and
 subcase both use the full test title; nested PNG paths are retained exactly,
@@ -60,6 +59,14 @@ YAML cannot set a crop; other baselines and suites cannot inherit it. Returned
 options cannot mutate future comparisons. Original nested PNG paths, zero
 tolerance, font readiness and 100 ms waits remain unchanged. Hosted acceptance
 is still pending for all 20 additions after the pushed 418-case head.
+
+Two original programmatic scroll-offset API cases retain their full callbacks
+and five Linux PNGs, including exact 300/99/101 offsets and ordered event/pixel
+observations. These source API assignments are not replaced by AI gestures;
+there is no original user gesture in either callback. Locator evaluation keeps
+single-target strictness and the original 30-second attachment window. Missing
+or duplicate targets cannot pass. No new custom node or tolerance is added.
+All 22 additions after the pushed 418-case head require hosted Linux acceptance.
 
 The next local batch expands retained worker/runtime, SVG/selection/iframe and
 Markdown API runners to the original Chromium, Firefox and WebKit projects.

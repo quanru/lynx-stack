@@ -42,7 +42,7 @@ case total.
 
 ## Execution and acceptance
 
-The newest local UI collection is 418 with 124 model-free checks. The original
+The newest local UI collection is 418 with 125 model-free checks. The original
 Markdown link/image event case now uses two ordinary visual `aiAct` clicks,
 retaining both original event waits, two single-read serialized payloads and
 all five exact/substring field checks. Complete callback replay generates the
@@ -65,6 +65,9 @@ the persistent fixture servers start. No original configuration or reuse guard
 is relaxed. Replaying the new order locally with `CI=1` passes 34 API tests
 (one original skip) and all 55 elements tests; hosted lifecycle recovery remains
 pending. Original 17 server HTML snapshots already pass in that hosted run.
+Original Playwright failure outputs are uploaded as a separate diagnostic
+artifact, even if a retained runner fails before AI execution. They are not
+merged into AI case counts or presented as AI screenshots.
 
 The next local batch additionally retains all seven original Chromium CDP
 performance contracts in shard 1. All seven pass locally with the original

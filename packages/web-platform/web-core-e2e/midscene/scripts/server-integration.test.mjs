@@ -218,3 +218,30 @@ test('original Playwright runners own servers before persistent Midscene fixture
     );
   }
 });
+
+test('retained original failure diagnostics are archived separately without inflating AI case reports', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const steps = Object.values(workflow.jobs).flatMap(job => job.steps ?? []);
+  const step = steps.find(item =>
+    item.name === 'Upload retained original runner diagnostics'
+  );
+  assert.equal(step.if, 'always() && matrix.shard == 1');
+  assert.equal(
+    step.with.name,
+    'midscene-original-runner-diagnostics-${{ github.run_attempt }}',
+  );
+  assert.deepEqual(step.with.path.trim().split('\n'), [
+    'packages/web-platform/web-core-e2e/test-results',
+    'packages/web-platform/web-elements/test-results',
+  ]);
+  assert.equal(step.with['if-no-files-found'], 'ignore');
+  assert.ok(!step.with.name.startsWith('midscene-ai-e2e-web-shard-'));
+});

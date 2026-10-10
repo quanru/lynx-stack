@@ -42,7 +42,17 @@ case total.
 
 ## Execution and acceptance
 
-Current local collection is 407 with 112 model-free checks and typechecking
+Current local collection is 414 with 114 model-free checks and typechecking
+passing, including 209 pixel cases. Seven further elements swiper callbacks
+retain all current/indicator API mutations, autoplay waits, Chromium guards and
+original PNGs. Eight clipped indicator baselines preserve exactly the original
+100-by-30 rectangle at (50,170); other labels/suites cannot inherit clipping,
+nor can YAML choose it. Complete original callback replay checks every option
+and ordered step. Real synthetic browser comparison against the unchanged
+public matcher agrees on pass, outside-clip pass and inside-clip failure,
+without repository baseline writes. Linux/autoplay hosted acceptance is pending.
+
+The preceding local collection was 407 with 112 model-free checks and typechecking
 passing, including 202 pixel cases. Two CSS fallback SSR branches retain
 complete original helpers/callbacks, font readiness, 300 ms SSR and 100 ms
 common waits, five-second CSS timeouts and afterEach evidence. Existing client

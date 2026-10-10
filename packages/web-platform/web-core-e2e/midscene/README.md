@@ -3,7 +3,7 @@
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 407 cases: the
+while Midscene drives user interactions. The suite contains 414 cases: the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
 ReactLynx migrations, plus 15 continuation cases with original deterministic
 assertion values, 26 original web-elements CSS/attribute contracts and two
@@ -178,6 +178,17 @@ translation omitted its fixed wait and used the longer adapter default; these
 two existing cases now retain the original timing rather than replacing it with
 pre-assertion report work. afterEach captures retain failure evidence. These
 two additions and timing corrections remain local while the 405-case CI runs.
+
+Seven further web-elements swiper cases preserve public current/indicator
+attribute mutations, three autoplay flows, original fixed waits, Chromium-only
+guards and all PNGs. Eight indicator PNGs retain the original exact clip
+`{x:50,y:170,width:100,height:30}`, bound to those source baselines rather than
+accepting arbitrary YAML crop overrides. A real synthetic browser differential
+confirms both the unchanged public matcher and adapter accept outside-clip
+changes and reject inside-clip changes, with unchanged baseline bytes. Synthetic
+files live only in an owned temporary tree. Collection is 414, including 209
+pixel cases, with 114 model-free checks and typechecking passing; new Linux
+baseline/autoplay acceptance remains pending. No AI latency extends sampling.
 
 Do not run the original pixel suite on macOS: its matcher writes missing Darwin
 snapshots even without an update flag. A diagnostic run demonstrated that

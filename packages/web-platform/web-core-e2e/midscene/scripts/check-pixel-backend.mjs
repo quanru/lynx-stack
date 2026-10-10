@@ -18,8 +18,8 @@ import { spawnSync } from 'node:child_process';
 const require = createRequire(import.meta.url);
 const directory = await mkdtemp(join(tmpdir(), 'lynx-pixel-backend-'));
 try {
-  const cwd = join(directory, 'midscene');
-  await mkdir(cwd);
+  const cwd = join(directory, 'web-core-e2e', 'midscene');
+  await mkdir(cwd, { recursive: true });
   await writeFile(
     join(directory, 'package.json'),
     JSON.stringify({ type: 'module' }),
@@ -52,7 +52,9 @@ try {
       JSON.stringify(require.resolve('playwright/test'))
     };
     const { test, expect } = playwrightTest;
-    import { expectWebPixels, pixelOptions } from ${JSON.stringify(adapter)};
+    import { expectWebPixels, pixelOptions, originalPixelOptions } from ${
+      JSON.stringify(adapter)
+    };
     import { mkdir, writeFile, readFile } from 'node:fs/promises';
     import assert from 'node:assert/strict';
     import { resolve } from 'node:path';
@@ -81,6 +83,36 @@ try {
       assert.ok((await readFile(resolve(evidence, 'actual.png'))).length);
       assert.ok((await readFile(resolve(evidence, 'diff.png'))).length);
       assert.deepEqual(await readFile(baselinePath), image, 'Do not modify the baseline');
+    });
+    test('unchanged public matcher and adapter preserve the original indicator clip', async ({ page }) => {
+      process.chdir(${JSON.stringify(cwd)});
+      await page.setViewportSize({ width: 240, height: 240 });
+      await page.setContent('<style>html,body{margin:0;width:240px;height:240px;background:red}</style>');
+      const baseline = 'x-swiper/x-swiper-indicator-basic/initial';
+      const options = originalPixelOptions(baseline, 'web-elements');
+      const image = await page.screenshot({ fullPage: true, animations: 'allow', caret: 'hide', scale: 'css', clip: options.clip });
+      const baselinePath = resolve('../../web-elements/tests/web-elements.spec.ts-snapshots/' + baseline + '-chromium-linux.png');
+      await mkdir(resolve(baselinePath, '..'), { recursive: true });
+      await writeFile(baselinePath, image);
+      await writeFile(${
+      JSON.stringify(join(directory, 'snapshots/clipped.png'))
+    }, image);
+      await expect(page).toHaveScreenshot('clipped.png', options);
+      await expectWebPixels(page, baseline, 'clip-pass', 'web-elements');
+      await page.evaluate(() => {
+        const outside = document.createElement('div');
+        outside.style.cssText = 'position:absolute;left:0;top:0;width:20px;height:20px;background:blue';
+        document.body.append(outside);
+      });
+      await expect(page).toHaveScreenshot('clipped.png', options);
+      await expectWebPixels(page, baseline, 'outside-clip-pass', 'web-elements');
+      await page.evaluate(() => document.body.style.background = 'blue');
+      let originalError;
+      try { await expect(page).toHaveScreenshot('clipped.png', options); }
+      catch (error) { originalError = error; }
+      assert.ok(originalError, 'Original clipped matcher rejects changes inside the clip');
+      await assert.rejects(expectWebPixels(page, baseline, 'clip-fail', 'web-elements'), /Original Web pixel contract failed/);
+      assert.deepEqual(await readFile(baselinePath), image, 'Do not modify the clipped baseline');
     });
   `,
   );

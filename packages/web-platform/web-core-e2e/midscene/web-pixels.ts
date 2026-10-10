@@ -67,7 +67,19 @@ export const pixelOptions = {
 export type PixelSuite = 'web-core' | 'web-elements';
 type OriginalPixelOptions = Omit<typeof pixelOptions, 'maxDiffPixelRatio'> & {
   maxDiffPixelRatio: number;
+  clip?: { x: number; y: number; width: number; height: number };
 };
+const indicatorClips = new Set([
+  ...['initial', 'num-1-in-view', 'num-2-in-view', 'num-0-in-view'].map(label =>
+    'x-swiper/x-swiper-indicator-basic/' + label
+  ),
+  ...['inactivate-green', 'inactivate-blue'].map(label =>
+    'x-swiper/x-swiper-indicator-color/' + label
+  ),
+  ...['activate-green', 'activate-blue'].map(label =>
+    'x-swiper/x-swiper-indicator-active-color/' + label
+  ),
+]);
 // This one original test explicitly overrides the helper's zero-ratio default.
 // Keep it bound to the exact source PNG; YAML cannot relax arbitrary baselines.
 export function originalPixelOptions(
@@ -76,6 +88,9 @@ export function originalPixelOptions(
 ): OriginalPixelOptions {
   return {
     ...pixelOptions,
+    ...(suite === 'web-elements' && indicatorClips.has(baseline)
+      ? { clip: { x: 50, width: 100, y: 170, height: 30 } }
+      : {}),
     maxDiffPixelRatio: suite === 'web-core'
         && baseline === 'x-textarea/placeholder-font-size/font-size/index'
       ? 0.02

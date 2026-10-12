@@ -46,6 +46,36 @@ case total.
 
 ## Execution and acceptance
 
+Head `2cb3274` run 38310091079 passes all four shards, report assembly and
+Pages: 456/456 cases, 454 on their first attempt and two after a complete
+retry. The actual GitHub Summary has 456 loaded, clickable screenshots in its
+closed passed-case appendix. All 461 unique public image/report URLs return
+HTTP 200, and the downloaded publication archive passes its CRC check.
+The complete original
+gesture step passes 42 enabled cases in 18.9 seconds, with exactly three
+original WebKit skips and no reported retries. The newly retained 14 source
+declarations are deterministic contracts, not extra AI cases.
+
+One animation-event attempt retries after an actual duplicate physical click:
+report agent `c1aeacdf-0da9-4e66-bafe-810418f2cdf4` in artifact `11775674054`
+records taps at [67, 291] and [100, 290] on the same lower transition control.
+The screenshots show transparent to blue to transparent. The planner's
+second action explicitly attempts to correct the first click's centering.
+The original CSS assertion correctly fails, and the full second attempt passes.
+The follow-up removes the centering requirement, uses public deepThink
+planning and independent visual location, and stops after one successful
+input. Its four aiAct nodes and all eight ordered source assertions remain;
+no coordinates are used as action inputs. Model-free checks are 144/144;
+new-head model-backed acceptance is pending.
+
+The other retry is api-frame-data-update, report agent
+`502caaa2-23f9-4503-b31d-101077a1b3e9`, artifact `11777910578`.
+The planner incorrectly treats a 393 × 851 image as 400 × 371 and repeats
+four taps at [29, 305] below the visible update text. Its one aiAct now uses
+deepThink with independent visual refinement, while preserving both exact
+original before/after assertions. The fixture and all coordinates remain
+unmodified; the recorded point is failure evidence only.
+
 Head `8569812` passes 456/456 UI cases in run 38298900360, including report
 assembly and Pages. All four swiper mode cases pass their first attempts;
 input bindinput and Markdown link events each retry once. The actual Summary
@@ -57,7 +87,8 @@ without replacing their precise input protocol with visual approximation.
 The already-retained pointer-coalescing test stays included. Original
 Chromium, Firefox and WebKit profiles schedule 45 cases, of which the three
 WebKit wheel cases retain their source skips. Thus 42 enabled cases are
-scheduled, 39 newly included; hosted acceptance remains pending. This is
+scheduled, 39 newly included; hosted acceptance is recorded at `2cb3274`
+above. This is
 deterministic coverage, not 14 new AI migrations. The 456-case AI denominator
 does not change. No source test, fixture, assertion, wait or browser profile
 is modified.

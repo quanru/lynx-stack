@@ -32,6 +32,18 @@ Use `aiAct` for visible user interactions instead of custom selector-based
 action nodes. Preserve assertions required by the original upstream case;
 do not replace exact event-payload or pixel comparisons with AI judgment.
 Use aiWaitFor for readiness, without adding redundant validation contracts.
+For one-click toggles, stop after the successful input even when its label
+remains visible. Do not ask the planner to correct an already successful click
+to the exact text center: a second click reverses the source state. Inspect
+actual action counts and before/after screenshots when a deterministic
+assertion fails. Use public deepThink planning with independent visual location
+for the animation-event toggles; keep all original ordered assertions and
+the four source interactions. A prompt-contract unit test is not model-backed
+proof that the agent emits exactly one physical click.
+The frame-data update action also uses independent deepThink grounding.
+Compare the actual screenshot dimensions and physical tap with the model's
+claimed dimensions before diagnosing a missed text action as a product defect.
+Never add saved coordinates or repeat input to compensate for a wrong conversion.
 When migrating a new case, map every original assertion target, repeated-selector
 index, value, comparison, and interaction sequence. Keep exact CSS and bounding-box
 checks deterministic; do not round measurements or replace pixel contracts with

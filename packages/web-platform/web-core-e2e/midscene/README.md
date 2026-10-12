@@ -2,6 +2,36 @@
 
 ## Current CI checkpoint (2026-10-13)
 
+The follow-up corrects the animation-event toggle actions without changing
+product code, fixtures or assertions. In head `2cb3274` run
+[38310091079](https://github.com/quanru/lynx-stack/actions/runs/38310091079),
+all four shards, report assembly and Pages pass: 456/456 cases, with 454
+first-attempt passes and two complete retries. The actual GitHub Summary has
+456 loaded, clickable screenshots in the closed passed-case appendix. All
+461 unique public image/report URLs return HTTP 200, and the publication
+archive passes its CRC check.
+One api-animation-event attempt clicks the lower transition
+control twice: the first click turns its box blue, but the planner tries to
+improve the click's centering and the second click reverses the state. The
+unchanged exact CSS assertion catches this; the complete retry passes.
+The four ordinary aiAct nodes now use deepThink with independent refinement,
+retain their visible labels/neighbors, and explicitly finish after one click
+without correcting its position. All four ordered original interactions and
+eight exact CSS/event checks remain. All 144 model-free checks and typechecking
+pass; model-backed acceptance of this follow-up remains pending.
+
+The other retry, api-frame-data-update, uses a 393 × 851 screenshot but its
+planner incorrectly reasons from 400 × 371 and sends four taps at [29, 305],
+below the visible update text. Its single aiAct now uses independent deepThink
+location, without coordinates or result-based repeat clicks. Both original
+exact before/after text assertions remain unchanged.
+
+At `2cb3274`, the complete original mouse-drag and wheel step passes 42 cases
+in 18.9 seconds, with the three original WebKit skips and no reported retries.
+This is retained deterministic coverage, not an increase to the 456 AI cases.
+
+### Previous complete checkpoint
+
 Head `8569812` passed all 456 UI cases in
 [run 38298900360](https://github.com/quanru/lynx-stack/actions/runs/38298900360),
 including all four shards, report assembly and Pages. All four swiper mode
@@ -19,8 +49,8 @@ other 11 drag flows and three wheel flows are newly included. Across the
 original three browser projects this schedules 45 cases, including three
 original WebKit wheel skips: 42 enabled cases, 39 newly included. These are
 retained deterministic contracts, not extra AI UI cases or evidence that
-`aiAct` can reproduce the input protocol. Hosted acceptance of this runner
-expansion is pending. The AI collection remains 456.
+`aiAct` can reproduce the input protocol. This runner expansion is accepted
+in the `2cb3274` checkpoint above. The AI collection remains 456.
 
 ### Earlier checkpoint
 

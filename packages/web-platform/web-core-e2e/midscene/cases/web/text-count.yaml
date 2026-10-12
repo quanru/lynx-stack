@@ -36,8 +36,8 @@ cases:
       - javascript: "document.fonts.ready.then(() => true)"
       - recordToReport: Before checking original transition and animation event sequences
       - aiAct:
-          prompt: Click the CENTER of the visible words "toggle transition 1" directly below test box1 in the UPPER view animator test section once. Stay inside the words, not at their left edge. Do not click the animation line below. Stop after that single click.
-          options: { deepLocate: true, cacheable: false }
+          prompt: Click the visible words "toggle transition 1" directly below test box1 in the UPPER view animator test section once. Do not click the animation line below. Stop after that single click. This control toggles state, so a second click would reverse the action. Do not click again to adjust the click position; the words remaining visible do not mean the click failed.
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
       - web.expect: {
           selector: "#blue0",
           css: background-color,
@@ -45,8 +45,8 @@ cases:
         }
       - web.expect: { matchingText: "transitionstart transitionend", count: 1 }
       - aiAct:
-          prompt: Click the CENTER of the visible words "toggle animation 1" in the UPPER view animator test section once. This is the line directly BELOW "toggle transition 1" and ABOVE the text animator test heading. Stay inside the words, not at their left edge. Do not click the transition line above. Stop after that single click.
-          options: { deepLocate: true, cacheable: false }
+          prompt: Click the visible words "toggle animation 1" in the UPPER view animator test section once. This is the line directly BELOW "toggle transition 1" and ABOVE the text animator test heading. Do not click the transition line above. Stop after that single click. This control toggles state, so a second click would reverse the action. Do not click again to adjust the click position; the words remaining visible do not mean the click failed.
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
       - web.expect: {
           selector: "#blue0",
           css: background-color,
@@ -57,8 +57,8 @@ cases:
           count: 1,
         }
       - aiAct:
-          prompt: Click the CENTER of the visible words "toggle transition 2" directly below test box2 in the LOWER text animator test section once. It is ABOVE "toggle animation 2" and the event log lines. Stay inside the words, not at their left edge or in blank space below the event logs. Stop after that single click.
-          options: { deepLocate: true, cacheable: false }
+          prompt: Click the visible words "toggle transition 2" directly below test box2 in the LOWER text animator test section once. It is ABOVE "toggle animation 2" and the event log lines. Stop after that single click. This control toggles state, so a second click would reverse the action. Do not click again to adjust the click position; the words remaining visible do not mean the click failed.
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
       - web.expect: {
           selector: "#blue1",
           css: background-color,
@@ -69,8 +69,8 @@ cases:
           count: 1,
         }
       - aiAct:
-          prompt: Click the CENTER of the visible words "toggle animation 2" in the LOWER text animator test section once. It is directly BELOW "toggle transition 2" and ABOVE the event log lines. Stay inside the words, not at their left edge or in blank space below the event logs. Stop after that single click.
-          options: { deepLocate: true, cacheable: false }
+          prompt: Click the visible words "toggle animation 2" in the LOWER text animator test section once. It is directly BELOW "toggle transition 2" and ABOVE the event log lines. Stop after that single click. This control toggles state, so a second click would reverse the action. Do not click again to adjust the click position; the words remaining visible do not mean the click failed.
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
       - web.expect: {
           selector: "#blue1",
           css: background-color,

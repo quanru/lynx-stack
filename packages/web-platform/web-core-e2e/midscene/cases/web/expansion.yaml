@@ -331,7 +331,9 @@ cases:
       - gotoUrl: "${shellUrl}?casename=api-frame-data-update"
       - aiWaitFor: "The text data:before is visible."
       - web.expect: { "selector": "#frame-data", "text": "data:before" }
-      - aiAct: "Click directly on the center of the letters in the standalone word update exactly once. It is the fourth line of text, below global:, separated by a blank gap. Target the letters, not the blank area underneath, to change data:before to data:after. Stop after that single click."
+      - aiAct:
+          prompt: 'Click the visible standalone word "update" once, below the "global:" line and its blank gap. Stop after that single click; do not repeat it or click the blank area below the word.'
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
       - web.expect: { "selector": "#frame-data", "text": "data:after" }
       - aiWaitFor: "The text data:after is visible."
 

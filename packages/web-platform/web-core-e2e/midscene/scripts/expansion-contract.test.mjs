@@ -141,6 +141,7 @@ for (
       if (item.name === 'api-animation-event') {
         for (const action of item.steps.filter(step => step.aiAct)) {
           assert.deepEqual(action.aiAct.options, {
+            effort: 'deepThink',
             deepLocate: true,
             cacheable: false,
           });
@@ -159,19 +160,47 @@ for (
         ) {
           assert.ok(
             actions[index].includes(
-              'CENTER of the visible words "' + label + '"',
+              'Click the visible words "' + label + '"',
             ),
           );
           assert.match(
             actions[index],
-            /Stay inside the words, not at their left edge/,
+            /a second click would reverse the action/,
           );
+          assert.match(
+            actions[index],
+            /Do not click again to adjust the click position/,
+          );
+          assert.match(
+            actions[index],
+            /remaining visible do not mean the click failed/,
+          );
+          assert.doesNotMatch(actions[index], /CENTER|normalized|left edge/);
           assert.match(actions[index], /Stop after that single click/);
           assert.doesNotMatch(
             actions[index],
             /\b\d+\s*(?:px|pixels)\b|#[\w-]+/,
           );
         }
+      }
+      if (item.name === 'api-frame-data-update') {
+        const actions = item.steps.filter(step => step.aiAct);
+        assert.equal(actions.length, 1);
+        assert.deepEqual(actions[0].aiAct.options, {
+          effort: 'deepThink',
+          deepLocate: true,
+          cacheable: false,
+        });
+        assert.match(actions[0].aiAct.prompt, /standalone word "update"/);
+        assert.match(actions[0].aiAct.prompt, /below the "global:" line/);
+        assert.match(
+          actions[0].aiAct.prompt,
+          /Stop after that single click; do not repeat it/,
+        );
+        assert.doesNotMatch(
+          actions[0].aiAct.prompt,
+          /center|normalized|\b\d+\s*(?:px|pixels)\b|#[\w-]+/i,
+        );
       }
       if (file === 'remaining-inputs') {
         assert.match(body, /locator\('input'\)\.press\('Enter'\)/);

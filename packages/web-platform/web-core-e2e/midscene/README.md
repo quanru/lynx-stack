@@ -1,9 +1,28 @@
 # Midscene E2E for web-core and web-elements
 
+## Current CI checkpoint (2026-10-13)
+
+The collection contains 456 UI cases, including 242 original pixel contracts.
+At head `07525fb`, [run 38284511943](https://github.com/quanru/lynx-stack/actions/runs/38284511943)
+passed 454/456 cases; the two final failures are provider
+`RateLimitExceeded.EndpointRPMExceeded` errors, not failed business assertions.
+Both first shards passed 114/114 without a case retry. Report assembly and
+Pages succeeded. The downloaded Summary has 456 linked screenshots: two failed
+rows first and 454 passed rows in the collapsed appendix, all pointing to this
+run. The preceding accepted head `f7f91f9` passed all 456 cases in 38045507566.
+
+The follow-up keeps four source partitions but runs one credentialed shard at
+a time. Public SDK provider retries are capped at two, 30 seconds apart, inside
+the unchanged step deadlines. Case retries, original assertions and browser
+worker limits are unchanged. This reduces provider pressure when native CI
+shares the endpoint; unrelated consumers still need adequate provider quota or
+separate endpoints. All 143 local model-free checks pass; hosted validation of
+this follow-up is pending. Older batch checkpoints below are historical.
+
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of
 `<lynx-view>` and a worker. Playwright handles the exact event-result check,
-while Midscene drives user interactions. The suite contains 418 cases: the
+while Midscene drives user interactions. The earlier 418-case checkpoint included the
 original five-case pilot, ten event migrations, and 85 additional one-to-one
 ReactLynx migrations, plus 15 continuation cases with original deterministic
 assertion values, 26 original web-elements CSS/attribute contracts and two

@@ -89,7 +89,8 @@ jobs:
     timeout-minutes: 60
     strategy:
       fail-fast: false
-      max-parallel: 2
+      # Keep provider pressure bounded when native CI shares the endpoint.
+      max-parallel: 1
       matrix:
         shard: [1, 2, 3, 4]
     env:
@@ -98,6 +99,9 @@ jobs:
       MIDSCENE_MODEL_BASE_URL: ${{ secrets.MIDSCENE_MODEL_BASE_URL }}
       MIDSCENE_MODEL_FAMILY: ${{ secrets.MIDSCENE_MODEL_FAMILY }}
       MIDSCENE_MODEL_REASONING_ENABLED: ${{ secrets.MIDSCENE_MODEL_REASONING_ENABLED }}
+      # Provider retries do not change case retries or assertion deadlines.
+      MIDSCENE_MODEL_RETRY_COUNT: "2"
+      MIDSCENE_MODEL_RETRY_INTERVAL: "30000"
     # Same image the official Playwright web jobs use: browsers preinstalled
     # (/ms-playwright) and system libraries ready for all three browsers.
     container:

@@ -11,6 +11,10 @@ remain in scope as deterministic contracts, not visual AI tests.
 
 ## Inventory
 
+The status notes in this original inventory describe earlier batches; they are
+not current-head acceptance. See the current CI checkpoint in README.md and
+the execution evidence below.
+
 Run `node scripts/inventory-upstream.mjs` to refresh this source inventory.
 These are source declarations, including named skipped tests, not runtime case
 counts. Loops, browser projects, SSR variants, and conditional skips change the
@@ -42,7 +46,14 @@ case total.
 
 ## Execution and acceptance
 
-The next local collection reaches 456 cases, including 242 pixel cases.
+The current collection reaches 456 cases, including 242 pixel cases. Head
+`07525fb` passes 454/456 in run 38284511943; two final cases fail model endpoint
+RPM limits. Report/Pages publication succeeds with all 456 linked previews.
+The follow-up uses one active model-backed shard and two public SDK provider
+retries, 30 seconds apart, bounded by the original step deadline. No test or
+assertion retries are expanded. All 143 local model-free checks pass; the new
+configuration still requires hosted acceptance. Head `f7f91f9`'s earlier
+456/456 acceptance in 38045507566 remains separate from this current result.
 
 Four further complete layout callbacks preserve one-read overflow, inline
 toolbar style polling with its original default budget, and both layoutchange
@@ -444,7 +455,7 @@ The five pilot cases
 are not one-to-one source migrations.
 
 1. Four independent CI shards partition YAML cases by stable file/case order.
-   At most two shards run concurrently; cases within a shard remain serial.
+   One model-backed shard runs at a time; cases within a shard remain serial.
    The real SDK collection test proves generated documents retain case
    definitions, registered nodes, variables, and lifecycle metadata.
 2. Publication selects the latest attempt separately for each shard. A failed

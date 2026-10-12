@@ -52,3 +52,9 @@ recordToReport captures instead of inventing visual assertions. Extract their
 recorder screenshot references as well as UI-context screenshots. When an exact
 assertion has no agent trace, retain the failed-step HTML link and use the
 nearest preceding capture from the same attempt for its preview.
+
+When any platform produces no report, replace the archived site index with an
+explicit incomplete-current-run page and links only to available current-run
+reports. Never retain an older success redirect or invent a merged report,
+screenshot, or pass for a platform that did not execute. Keep this behavior and
+its regression tests synchronized with the native renderer before pushing Web.

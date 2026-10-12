@@ -47,13 +47,21 @@ case total.
 ## Execution and acceptance
 
 The current collection reaches 456 cases, including 242 pixel cases. Head
-`07525fb` passes 454/456 in run 38284511943; two final cases fail model endpoint
-RPM limits. Report/Pages publication succeeds with all 456 linked previews.
-The follow-up uses one active model-backed shard and two public SDK provider
-retries, 30 seconds apart, bounded by the original step deadline. No test or
-assertion retries are expanded. All 143 local model-free checks pass; the new
-configuration still requires hosted acceptance. Head `f7f91f9`'s earlier
-456/456 acceptance in 38045507566 remains separate from this current result.
+`f1edebe` passes 456/456 in run 38290334711, including all four shards, report
+assembly and Pages. Both previous endpoint-RPM failures pass on their first
+attempts. One active model-backed shard and two public SDK provider retries,
+30 seconds apart, stay bounded by the original step deadline. No test or
+assertion retries are expanded.
+
+Only the flat-coverflow mode case retries once. The failed attempt's visual
+trace proves that its one click changes the red panel to yellow, but the
+planner still searches for the disappeared red panel. That attempt never
+reaches its final PNG assertion; the complete retry passes. The follow-up
+defines completion after the single click in all four mode prompts, without
+changing `aiAct`, original waits, before/after PNGs, tolerances or fixtures.
+All 144 local model-free checks and typechecking pass. This prompt correction
+requires its own hosted acceptance; the accepted f1edebe result is not proof
+of the follow-up head.
 
 Four further complete layout callbacks preserve one-read overflow, inline
 toolbar style polling with its original default budget, and both layoutchange

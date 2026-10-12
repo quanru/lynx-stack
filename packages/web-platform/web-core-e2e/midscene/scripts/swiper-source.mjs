@@ -4,7 +4,7 @@ import { runInNewContext } from 'node:vm';
 import ts from 'typescript';
 
 export const redPanelClick =
-  'Click once in the center of the red panel with a black border at the top of the page. Do not swipe or perform another action.';
+  'Click once in the center of the initially red panel with a black border at the top of the page. Finish after this single click. The click replaces the red panel with another colored panel; do not look for or click the red panel again afterward. Do not swipe or perform another action.';
 export const rightPanelClick =
   'Click once in the center of the RIGHT-HAND colored panel with a black border at the top of the page, to the RIGHT of the green panel. The two panels are side by side, not stacked. Do not click the left panel, swipe, or perform another action.';
 export const listClick =

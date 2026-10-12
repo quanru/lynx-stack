@@ -3,21 +3,25 @@
 ## Current CI checkpoint (2026-10-13)
 
 The collection contains 456 UI cases, including 242 original pixel contracts.
-At head `07525fb`, [run 38284511943](https://github.com/quanru/lynx-stack/actions/runs/38284511943)
-passed 454/456 cases; the two final failures are provider
-`RateLimitExceeded.EndpointRPMExceeded` errors, not failed business assertions.
-Both first shards passed 114/114 without a case retry. Report assembly and
-Pages succeeded. The downloaded Summary has 456 linked screenshots: two failed
-rows first and 454 passed rows in the collapsed appendix, all pointing to this
-run. The preceding accepted head `f7f91f9` passed all 456 cases in 38045507566.
-
-The follow-up keeps four source partitions but runs one credentialed shard at
+At head `f1edebe`, [run 38290334711](https://github.com/quanru/lynx-stack/actions/runs/38290334711)
+passed 456/456 cases, all four shards, report assembly and Pages. The two cases
+that failed with endpoint RPM limits in the preceding 454/456 run both passed
+on their first attempts. Four source partitions run one credentialed shard at
 a time. Public SDK provider retries are capped at two, 30 seconds apart, inside
 the unchanged step deadlines. Case retries, original assertions and browser
-worker limits are unchanged. This reduces provider pressure when native CI
-shares the endpoint; unrelated consumers still need adequate provider quota or
-separate endpoints. All 143 local model-free checks pass; hosted validation of
-this follow-up is pending. Older batch checkpoints below are historical.
+worker limits are unchanged. Unrelated consumers still need adequate provider
+quota or separate endpoints.
+
+Only `basic-element-x-swiper-mode-flat-coverflow` needed a case retry. Its
+first trace contains one successful physical click: the initially red panel
+changes to yellow, then the planner incorrectly fails because red is absent.
+The final pixel assertion did not run on that attempt; the complete retry
+passed both original PNG assertions. The follow-up clarifies that each of the
+four mode actions finishes after its single click, even when that click
+replaces the initial target. It retains `aiAct`, original waits and both exact
+pixel assertions. All 144 local model-free checks and typechecking pass;
+hosted acceptance of this prompt correction is still pending. Older batch
+checkpoints below are historical.
 
 This directory adds a visual-semantic layer to the package's existing
 Playwright E2E suite. ReactLynx renders inside the open shadow root of

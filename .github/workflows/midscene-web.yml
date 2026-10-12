@@ -208,13 +208,14 @@ jobs:
         # The excluded user-click flow is translated in markdown-events.yaml.
         run: pnpm exec playwright test tests/x-markdown.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep-invert 'should fire bindlink and bindimageTap events' --reporter line
 
-      - name: Validate original pointer event coalescing contract
+      - name: Validate original mouse drag and wheel contracts
         if: matrix.shard == 1
         working-directory: packages/web-platform/web-elements
         env:
           PORT: "3081"
-        # Synthetic pointer-event delivery is the API under test, not a user gesture.
-        run: pnpm exec playwright test tests/scroll-view-mouse-drag.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'coalesces pointer moves and flushes the latest position on pointerup' --reporter line
+        # Exact mouse trajectories, pointer delivery and wheel deltas are inputs
+        # under test. Keep the complete source suites and original browser skips.
+        run: pnpm exec playwright test tests/scroll-view-mouse-drag.spec.ts tests/x-foldview-ng-wheel.spec.ts --project chromium --project firefox --project webkit --workers=2 --reporter line
 
       - name: Validate original Rust and TypeScript template consistency
         if: matrix.shard == 1

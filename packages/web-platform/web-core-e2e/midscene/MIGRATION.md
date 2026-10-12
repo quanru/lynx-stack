@@ -46,6 +46,24 @@ case total.
 
 ## Execution and acceptance
 
+Head `8569812` passes 456/456 UI cases in run 38298900360, including report
+assembly and Pages. All four swiper mode cases pass their first attempts;
+input bindinput and Markdown link events each retry once. The actual Summary
+has 456 linked previews and all 461 public report/image URLs return HTTP 200.
+
+The next runner expansion retains both complete mouse-drag and wheel source
+suites. It adds the remaining 11 drag and three wheel declarations to CI
+without replacing their precise input protocol with visual approximation.
+The already-retained pointer-coalescing test stays included. Original
+Chromium, Firefox and WebKit profiles schedule 45 cases, of which the three
+WebKit wheel cases retain their source skips. Thus 42 enabled cases are
+scheduled, 39 newly included; hosted acceptance remains pending. This is
+deterministic coverage, not 14 new AI migrations. The 456-case AI denominator
+does not change. No source test, fixture, assertion, wait or browser profile
+is modified.
+
+### Earlier checkpoints
+
 The current collection reaches 456 cases, including 242 pixel cases. Head
 `f1edebe` passes 456/456 in run 38290334711, including all four shards, report
 assembly and Pages. Both previous endpoint-RPM failures pass on their first

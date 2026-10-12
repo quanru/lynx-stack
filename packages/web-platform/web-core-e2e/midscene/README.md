@@ -2,6 +2,28 @@
 
 ## Current CI checkpoint (2026-10-13)
 
+Head `8569812` passed all 456 UI cases in
+[run 38298900360](https://github.com/quanru/lynx-stack/actions/runs/38298900360),
+including all four shards, report assembly and Pages. All four swiper mode
+cases passed on their first attempts. Two unrelated cases needed one retry:
+input bindinput initially saw a blank page, and Markdown link grounding hit
+adjacent text on its first attempt. The GitHub Summary contains 456 linked
+previews in the collapsed passed-case appendix; all 461 unique public image
+and report URLs returned HTTP 200.
+
+The follow-up includes both complete original mouse-drag and wheel suites in
+the retained runner. Their exact trajectories, button transitions, wheel
+deltas, immediate assertions and waits remain unchanged. The 12 drag-suite
+declarations include the already-retained pointer-coalescing contract; the
+other 11 drag flows and three wheel flows are newly included. Across the
+original three browser projects this schedules 45 cases, including three
+original WebKit wheel skips: 42 enabled cases, 39 newly included. These are
+retained deterministic contracts, not extra AI UI cases or evidence that
+`aiAct` can reproduce the input protocol. Hosted acceptance of this runner
+expansion is pending. The AI collection remains 456.
+
+### Earlier checkpoint
+
 The collection contains 456 UI cases, including 242 original pixel contracts.
 At head `f1edebe`, [run 38290334711](https://github.com/quanru/lynx-stack/actions/runs/38290334711)
 passed 456/456 cases, all four shards, report assembly and Pages. The two cases

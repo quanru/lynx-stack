@@ -318,7 +318,7 @@ test('retained browser variants bound workers without replacing original profile
   );
 });
 
-test('pointer coalescing and template consistency keep exact non-visual source contracts', () => {
+test('mouse drag, wheel and template runners keep complete source contracts', () => {
   const workflow = YAML.parse(
     readFileSync(
       new URL(
@@ -330,7 +330,7 @@ test('pointer coalescing and template consistency keep exact non-visual source c
   );
   const steps = Object.values(workflow.jobs).flatMap(job => job.steps ?? []);
   const pointer = steps.find(step =>
-    step.name === 'Validate original pointer event coalescing contract'
+    step.name === 'Validate original mouse drag and wheel contracts'
   );
   const template = steps.find(step =>
     step.name === 'Validate original Rust and TypeScript template consistency'
@@ -345,7 +345,7 @@ test('pointer coalescing and template consistency keep exact non-visual source c
   }
   assert.equal(
     pointer.run,
-    'pnpm exec playwright test tests/scroll-view-mouse-drag.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep \'coalesces pointer moves and flushes the latest position on pointerup\' --reporter line',
+    'pnpm exec playwright test tests/scroll-view-mouse-drag.spec.ts tests/x-foldview-ng-wheel.spec.ts --project chromium --project firefox --project webkit --workers=2 --reporter line',
   );
   assert.equal(
     template.run,
@@ -367,6 +367,36 @@ test('pointer coalescing and template consistency keep exact non-visual source c
       'dispatchPointer(\'pointerup\', 40, 0)',
     ]
   ) assert.ok(source.includes(field));
+  assert.equal(source.match(/^\s*test\('/gm)?.length, 12);
+  for (
+    const contract of [
+      'await page.mouse.down({ button: \'left\' })',
+      'await page.mouse.move(start.x + delta.x, start.y + delta.y, { steps: 5 })',
+      'await page.mouse.move(start.x, start.y - 80, { steps: 5 })',
+      'await page.mouse.move(start.x, start.y - 10, { steps: 5 })',
+      'await page.mouse.up({ button: \'left\' })',
+      'expect((await scrollOffset(inner)).top).toBe(80)',
+      'expect((await scrollOffset(inner)).top).toBe(startScrollTop + 10)',
+    ]
+  ) assert.ok(source.includes(contract), contract);
+  const wheel = readFileSync(
+    new URL(
+      '../../../web-elements/tests/x-foldview-ng-wheel.spec.ts',
+      import.meta.url,
+    ),
+    'utf8',
+  );
+  assert.equal(wheel.match(/^\s*test\('/gm)?.length, 3);
+  assert.equal(
+    wheel.match(
+      /test\.skip\(browserName === 'webkit', 'mouse wheel unsupported on webkit'\)/g,
+    )?.length,
+    3,
+  );
+  assert.equal(wheel.match(/await page\.mouse\.wheel\(0, 120\)/g)?.length, 1);
+  assert.equal(wheel.match(/await page\.mouse\.wheel\(0, 200\)/g)?.length, 2);
+  assert.equal(wheel.match(/await wait\(200\)/g)?.length, 3);
+  assert.equal(wheel.match(/await wait\(100\)/g)?.length, 2);
   const templates = readFileSync(
     new URL('../../../web-elements/tests/template.spec.ts', import.meta.url),
     'utf8',

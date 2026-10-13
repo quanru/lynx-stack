@@ -44,12 +44,20 @@ The frame-data update action also uses independent deepThink grounding.
 Compare the actual screenshot dimensions and physical tap with the model's
 claimed dimensions before diagnosing a missed text action as a product defect.
 Never add saved coordinates or repeat input to compensate for a wrong conversion.
-The repeated blue-cell lazy-component cases also require deepThink with
-independent deepLocate grounding. A planner can describe the right cell yet
-normalize against the colored block's height instead of the full screenshot,
-then confidently report a click on empty space as successful. Keep both ordered
-inputs and all six source CSS checks; inspect physical input timestamps and
-actual before/after images. Do not replace those checks with planner success text.
+Keep the two repeated blue-cell lazy-component cases in their original CSR
+Playwright runner, with all three original browser profiles, both ordered inputs,
+the 500/100/100 ms waits and all six source CSS checks. Do not count them as AI
+replacements or change their fixtures. Independent grounding is insufficient for contiguous same-color
+targets: the locator can return the whole column's center on an invisible
+boundary, and a one-pixel difference can change which component receives input.
+Preserve failed-attempt evidence and do not accept a correct retry as proof of
+stable source-equivalent input. Keep original deterministic input contracts
+unless a separately approved fixture change makes the targets distinguishable.
+For requestAnimationFrame/cancelAnimationFrame text controls, use independent
+visual grounding rather than inline coordinate arithmetic. Retain the original
+1000/100/100 ms waits and ordered loop/stop text counts. Derive the contract from
+the source callback and expectHasText helper, not a duplicate expected YAML.
+Matching those waits does not establish click-relative timing equivalence.
 Do not count a visual pilot as a complete source mapping. Bindtap and reload
 contracts retain the original ordered inline-style reads with immediate checks
 and original waits. The public LynxView reload API must not become a browser
@@ -82,7 +90,7 @@ When migrating a new case, map every original assertion target, repeated-selecto
 index, value, comparison, and interaction sequence. Keep exact CSS and bounding-box
 checks deterministic; do not round measurements or replace pixel contracts with
 AI judgment. Create visual report evidence before exact assertions can fail.
-Keep the 85-case expansion contract test aligned with the original source tests,
+Keep the expansion contract test aligned with the original source tests,
 not only with a second copy of the migrated YAML's expected values.
 Midscene 1.13.1 `test.maxConcurrency` limits projects, not cases. A single
 project remains serial regardless of this setting. Do not claim case-level

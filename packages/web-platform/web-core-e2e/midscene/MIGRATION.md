@@ -46,7 +46,8 @@ case total.
 
 ## Execution and acceptance
 
-The current local collection contains 465 YAML cases. Eight additions comprise
+The current local collection contains 463 YAML cases after two indistinguishable
+lazy-component inputs return to their original runner. Eight additions comprise
 seven source mappings and one supplementary animation case: five textarea flows
 plus animation (13 original PNG checkpoints and seven aiAct clicks), the
 scrollable toggle (27 original CSS assertions and one aiAct click), and the
@@ -66,7 +67,7 @@ The three original pointer declarations `basic-mts-bindtouchstart`,
 all three original browser profiles. Their CDP touch trajectory, mouse phases,
 wheel delta and browser guards remain intact. Each mode lists nine executions;
 across both modes eight are enabled and ten retain original browser skips.
-These are retained protocol contracts, not extra AI cases. All eleven retained
+These are retained protocol contracts, not extra AI cases. All twelve retained
 browser invocations own distinct diagnostic output directories. At the preceding
 `efe14ba` checkpoint local checks pass: 156 model-free tests, typechecking, actionlint and both browser-free
 nine-case list checks. The full workspace build passes all 74 tasks using the
@@ -96,9 +97,26 @@ planner substitutes a 200 px colored-block height for the actual 851 px image
 height, sending its first physical click below the blue block. The original
 pink CSS assertion rejects that attempt; a correctly located retry passes.
 Actual before/after images and input coordinates establish this cause. Both
-multi and multi-import now use the existing independent deepThink/deepLocate
-strategy. Prompts, two inputs, all six ordered CSS checks, fixtures and retry
-limits are unchanged. This scoped follow-up requires a new full hosted run.
+multi and multi-import then use independent deepThink/deepLocate at `a454199`,
+but hosted run `38380879616` still fails (464/465 pass). Independent location
+lands on the invisible boundary between contiguous blue cells at y=100.5;
+the successful multi retry at y=99 is not proof of reliable source input.
+All 470 published preview/report URLs return HTTP 200 despite that test failure.
+
+The approved follow-up removes only these two AI replacements and retains
+both original tests in CSR on Chromium, Firefox and WebKit. Six executions
+preserve twelve indexed clicks, 36 ordered CSS checks, the source's
+500/100/100 ms waits, original SSR exclusion, browser profiles and retry limits.
+Fixture and product files are unchanged. The selected original runner has its
+own uploaded output directory. Source-execution and workflow-selection tests
+guard both retention and absence from AI totals.
+
+The same run's requestAnimationFrame miss uses inline planner coordinates
+without an independent Locate call. Its two existing aiAct prompts now use
+deepThink/deepLocate and disable action caching. Source-derived validation
+preserves the 1000/100/100 ms waits and exact loop/stop counts. These waits alone
+do not establish click-relative timing equivalence. The combined correction
+requires a new full hosted run; local checks are not hosted acceptance.
 
 The accepted runner expansion includes six original keyboard declarations:
 `basic-global-bindkeydown`, `basic-global-bindkeyup`, the key/code/shift

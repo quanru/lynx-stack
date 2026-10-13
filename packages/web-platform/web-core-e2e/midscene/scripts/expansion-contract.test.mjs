@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 for (
   const [file, count, suite = 'web', sourceFile = 'reactlynx.spec.ts'] of [
-    ['expansion', 81],
+    ['expansion', 79],
     ['continuation', 15],
     ['contracts', 8, 'web-elements'],
     ['attributes', 18, 'web-elements'],
@@ -91,8 +91,6 @@ for (
       const lazyToggleCases = [
         'basic-lazy-component',
         'basic-lazy-component-relative-path',
-        'basic-lazy-component-multi',
-        'basic-lazy-component-multi-import',
         'basic-lazy-component-when-needed',
       ];
       if (lazyToggleCases.includes(item.name)) {
@@ -106,28 +104,8 @@ for (
           assert.match(prompt, /Stop after (?:that single|one) click/);
           assert.doesNotMatch(prompt, /\b\d+\s*(?:px|pixels)\b|#[\w-]+/);
         }
-        if (item.name.includes('multi')) {
-          for (const action of item.steps.filter(step => step.aiAct)) {
-            assert.deepEqual(
-              action.aiAct.options,
-              {
-                effort: 'deepThink',
-                deepLocate: true,
-                cacheable: false,
-              },
-              'Ground each repeated blue-cell input independently of planner coordinates',
-            );
-          }
-          assert.match(toggles[0], /upper half/);
-          assert.match(toggles[1], /lower half/);
-          const finalWait = item.steps.at(-1).aiWaitFor.prompt;
-          assert.match(finalWait, /continuous pink column on the left/);
-          assert.match(finalWait, /upper and lower halves/);
-          assert.doesNotMatch(finalWait, /two pink squares/i);
-        } else {
-          assert.match(toggles[0], /LEFT green neighbor pink/);
-          assert.match(toggles[1], /LEFT pink neighbor green/);
-        }
+        assert.match(toggles[0], /LEFT green neighbor pink/);
+        assert.match(toggles[1], /LEFT pink neighbor green/);
       }
       const originalName = item.name.replace(
         /^(?:web-elements|middleware)\//,
@@ -577,7 +555,18 @@ for (
           .includes(file)
       ) {
         const javascriptSteps = item.steps.filter(step => step.javascript);
-        assert.equal(javascriptSteps.length, 1);
+        const sourceWaits = item.name === 'api-requestAnimationFrame'
+          ? [...body.matchAll(/await wait\((\d+)\);/g)].map(match =>
+            Number(match[1])
+          )
+          : [];
+        assert.equal(javascriptSteps.length, 1 + sourceWaits.length);
+        assert.deepEqual(
+          javascriptSteps.slice(1).map(step => step.javascript.script),
+          sourceWaits.map(duration =>
+            `new Promise(resolve => setTimeout(() => resolve(true), ${duration}))`
+          ),
+        );
         assert.equal(
           javascriptSteps[0].javascript.script,
           'document.fonts.ready.then(() => true)',

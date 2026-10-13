@@ -2,8 +2,9 @@
 
 ## Current migration batch (2026-10-13)
 
-This batch adds eight YAML cases, bringing the collection to 465: seven source
-mappings and one supplementary animation case. Five textarea flows and that
+This batch adds eight YAML cases and returns two ambiguous visual cases to
+their original Playwright runner, bringing the AI collection to 463. The eight
+additions are seven source mappings and one supplementary animation case. Five textarea flows and that
 animation case retain 13 original PNG checkpoints, including each source-defined
 pixel tolerance, and use aiAct for their seven clicks. The scrollable case
 preserves all 27 exact CSS checks around one aiAct click. The list-size case
@@ -22,7 +23,7 @@ the AI case supplies additional end-state evidence only.
 Three original touch, mouse and wheel contracts also run unchanged in CSR and
 SSR across the original browser profiles: 18 collected executions, eight enabled
 and ten original browser skips. These validate event phases and input parameters,
-so they remain deterministic runner coverage, not additional AI cases. All eleven
+so they remain deterministic runner coverage, not additional AI cases. All twelve
 retained browser invocations have distinct diagnostic output directories.
 
 At the preceding `efe14ba` checkpoint, all 156 model-free checks, typechecking
@@ -67,12 +68,29 @@ check correctly fails. Retry input `(147,54)` hits the intended upper cell and
 the full sequence passes. Both attempts' agent JSON and before/after images
 are inspected. This is not a product defect or a false-positive assertion.
 
-The follow-up uses public `effort: deepThink`, `deepLocate: true` and disabled
-action caching for both repeated-blue-cell cases, including multi-import.
-Their prompts, two clicks and six ordered exact CSS checks remain unchanged.
-No saved point, selector action, new wait, relaxed assertion or fixture change
-is added. The model-free source-contract check guards this strategy; the new
-head still requires full hosted verification and physical-input inspection.
+Candidate `a454199` independently grounds both repeated-blue-cell cases but
+still fails full hosted run `38380879616`: 464/465 pass, including two retries.
+The locator targets the center of the continuous blue column at y=100.5,
+crossing the invisible boundary into the lower component. A successful retry
+at y=99 does not establish reliable input. Exact CSS checks correctly reject
+the wrong half; all 470 published image/report URLs remain accessible.
+
+The approved follow-up retains `basic-lazy-component-multi` and
+`basic-lazy-component-multi-import` unchanged in the original CSR runner across
+Chromium, Firefox and WebKit: six executions, twelve source clicks and 36 CSS
+checks. Original indexed inputs, 500/100/100 ms waits, SSR guard, profiles and
+retry limits are preserved, with separate uploaded diagnostics. Their two AI
+YAML replacements are removed, not the underlying coverage. Source-execution
+and workflow-selection tests guard this boundary; fixtures and product code
+are unchanged. No new selector-based Midscene node is introduced.
+
+The same failed run exposes an inline coordinate-conversion miss on the
+requestAnimationFrame text control. Its two existing aiAct prompts now use
+independent deepThink/deepLocate grounding with action caching disabled. The
+source's 1000/100/100 ms waits and exact loop/stop counts are preserved and
+checked against the original callback and text-count helper. Matching those
+waits does not prove click-relative timing equivalence. Both changes require
+a new full hosted run before acceptance.
 
 ## Accepted 457-case checkpoint
 

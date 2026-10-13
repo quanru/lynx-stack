@@ -133,6 +133,24 @@ test('immediate attributes retain a single raw read without waiting into a pass'
   }
 });
 
+test('immediate CSS retains one exact raw read without waiting or retrying into a pass', async () => {
+  const input = {
+    selector: '#target',
+    css: 'height',
+    equals: '100px',
+    immediate: true,
+  };
+  for (const actual of ['100px', '99px', ' 100px ', 100, null]) {
+    const locator = locatorFor([actual, '100px']);
+    locator.waitFor = async () => {
+      throw new Error('must not add an explicit attachment wait');
+    };
+    if (actual === '100px') await expectWebValue(locator, input);
+    else await assert.rejects(expectWebValue(locator, input), /timed out/);
+    assert.deepEqual(locator.calls, [['css', 'height']]);
+  }
+});
+
 test('tagName uses the original JavaScript property, not an attribute or case-folded string', async () => {
   const locator = {
     waitFor: async ({ state }) => assert.equal(state, 'attached'),
@@ -192,7 +210,10 @@ test('malformed assertions fail closed', async () => {
       { bounds: 'width', greaterThan: '0' },
       { bounds: 'width', greaterThan: 0, equals: 100 },
       { css: 'width', equals: '100px', greaterThan: 0 },
+      { css: 'width', equals: '100px', immediate: 'true' },
+      { css: 'width', equals: '100px', text: '100px', immediate: true },
       { text: 'x', immediate: true },
+      { value: 'x', immediate: true },
       { text: 'x', not: true },
       { text: 'x', index: -1 },
       { text: 'x', index: 0.5 },

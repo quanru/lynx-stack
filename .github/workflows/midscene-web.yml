@@ -27,9 +27,8 @@ on:
       - ".github/workflows/deploy-main.yml"
       - ".github/scripts/preflight-model.sh"
       - ".github/scripts/vision-preflight*"
-      - "packages/web-platform/web-core-e2e/midscene/**"
-      - "packages/web-platform/web-core-e2e/{rsbuild.config.ts,package.json,shell-project/**,tests/reactlynx/**}"
-      - "packages/web-platform/web-core-e2e/tests/reactlynx.spec.ts"
+      # Original contracts, browser profiles and PNG baselines are inputs too.
+      - "packages/web-platform/web-core-e2e/**"
       - "packages/web-platform/playwright-fixtures/**"
       - "packages/web-platform/web-core/**"
       - "packages/web-platform/web-elements/**"

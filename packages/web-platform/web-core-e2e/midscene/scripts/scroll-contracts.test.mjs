@@ -4,6 +4,7 @@ import test from 'node:test';
 import { runInNewContext } from 'node:vm';
 import ts from 'typescript';
 import YAML from 'yaml';
+import { expectWebValue } from '../expectation.ts';
 
 const original = ts.createSourceFile(
   'original.ts',
@@ -31,6 +32,43 @@ const normalize = text =>
   ts.transpileModule(text, {
     compilerOptions: { target: ts.ScriptTarget.ES2022 },
   }).outputText.replace(/[\s();]/g, '');
+
+test('migrated list YAML executes through the real immediate CSS assertion adapter', async () => {
+  const inputs = document.cases[1].steps.flatMap(step =>
+    step['web.expect'] ? [step['web.expect']] : []
+  );
+  assert.deepEqual(inputs.map(input => input.equals), ['100px', '200px']);
+  for (const input of inputs) {
+    for (const matches of [true, false]) {
+      let reads = 0;
+      const element = {};
+      const locator = {
+        waitFor: async () => {
+          throw new Error('must not add a wait before the original raw read');
+        },
+        evaluate: async (fn, property) =>
+          runInNewContext(`(${fn})(element, property)`, {
+            element,
+            property,
+            getComputedStyle: target => {
+              assert.equal(target, element);
+              return {
+                getPropertyValue: name => {
+                  assert.equal(name, 'height');
+                  reads++;
+                  // A second read would hide an initial mismatch.
+                  return matches || reads > 1 ? input.equals : '99px';
+                },
+              };
+            },
+          }),
+      };
+      if (matches) await expectWebValue(locator, input);
+      else await assert.rejects(expectWebValue(locator, input), /got "99px"/);
+      assert.equal(reads, 1);
+    }
+  }
+});
 
 test('scrollability retains all twenty-seven ordered CSS checks and the single toggle', async () => {
   assert.equal(document.cases.length, 2);

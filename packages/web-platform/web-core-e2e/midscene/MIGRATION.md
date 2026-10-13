@@ -61,9 +61,20 @@ wheel delta and browser guards remain intact. Each mode lists nine executions;
 across both modes eight are enabled and ten retain original browser skips.
 These are retained protocol contracts, not extra AI cases. All ten retained
 browser invocations own distinct diagnostic output directories. Local checks
-pass: 153 model-free tests, typechecking, actionlint and both browser-free
-nine-case list checks. The full local workspace build is blocked by unavailable
-Cargo; hosted build, model and pixel acceptance for this batch are pending.
+pass: 156 model-free tests, typechecking, actionlint and both browser-free
+nine-case list checks. The full workspace build passes all 74 tasks using the
+existing task-local Rust toolchain with concurrency two, without global setup
+changes or local browser/device execution.
+
+The first candidate `1118e0c` in run `38349980110` fails its estimated-list
+case because the adapter rejects immediate CSS parameters before reading the
+page. The follow-up corrects that validation boundary, not the original
+100/200 px values, single-read behavior or 500 ms wait. Two regression tests
+reproduce the pre-fix failure, then execute the actual YAML assertion inputs
+through the fixed adapter and reject a wrong first value without polling into
+a pass. The corrected head still requires full hosted acceptance. Both CI
+triggers now cover all web-core-e2e tests/configuration/baselines and shared
+Playwright fixtures, with a trigger-coverage regression test.
 
 The accepted runner expansion includes six original keyboard declarations:
 `basic-global-bindkeydown`, `basic-global-bindkeyup`, the key/code/shift

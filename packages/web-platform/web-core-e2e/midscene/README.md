@@ -16,11 +16,25 @@ and ten original browser skips. These validate event phases and input parameters
 so they remain deterministic runner coverage, not additional AI cases. All ten
 retained browser invocations have distinct diagnostic output directories.
 
-All 153 model-free checks, typechecking, actionlint and both nine-case original
-runner list checks pass locally without launching browsers. The local full
-workspace build cannot complete because Cargo is unavailable. Hosted builds,
-model actions and pixel acceptance for this batch are still pending. No product
-source, original test, fixture, baseline, browser profile or retry limit changes.
+All 156 model-free checks, typechecking and actionlint pass, as do both
+nine-case original runner list checks without launching browsers locally. The
+full workspace build passes all 74 tasks using the existing task-local Rust
+toolchain and concurrency two. No global toolchain configuration changes.
+
+The first hosted run at `1118e0c`,
+[38349980110](https://github.com/quanru/lynx-stack/actions/runs/38349980110),
+exposes an adapter validation omission: `immediate: true` is rejected for CSS
+before either list-height read executes. The follow-up accepts this existing
+single-read execution mode. Two new regression tests reproduce the rejection
+before the fix and execute the real YAML inputs through the adapter afterward;
+a wrong first value still fails without waiting, polling, trimming or coercion.
+Both heights and the original 500 ms wait remain unchanged. This batch requires
+a successful complete run at the corrected head before acceptance.
+
+Push and PR path filters now cover all web-core-e2e original tests, browser
+profiles and PNG baselines, plus the shared Playwright fixtures. A regression
+test guards both triggers. No product source, original test, fixture, baseline,
+browser profile or retry limit changes.
 
 ## Accepted 457-case checkpoint
 

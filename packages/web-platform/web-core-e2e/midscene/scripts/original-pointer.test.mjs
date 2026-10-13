@@ -84,16 +84,20 @@ test('three pointer contracts run unchanged in CSR and SSR with all original bro
         < steps.findIndex(item => item.name === 'Start web-core-e2e dev shell'),
     );
   }
-  assert.ok(
-    workflow.on.push.paths.includes(
-      'packages/web-platform/web-core-e2e/tests/reactlynx.spec.ts',
-    ),
-  );
-  assert.ok(
-    workflow.on.push.paths.includes(
+});
+
+test('both CI triggers cover original tests, browser profiles, fixtures and PNG baselines', () => {
+  assert.deepEqual(workflow.on.pull_request.paths, workflow.on.push.paths);
+  for (
+    const path of [
+      'packages/web-platform/web-core-e2e/**',
       'packages/web-platform/playwright-fixtures/**',
-    ),
-  );
+      'packages/web-platform/web-core/**',
+      'packages/web-platform/web-elements/**',
+    ]
+  ) {
+    assert.ok(workflow.on.push.paths.includes(path), path);
+  }
 });
 
 test('source touch, mouse and wheel inputs retain their distinct protocols and browser exclusions', () => {

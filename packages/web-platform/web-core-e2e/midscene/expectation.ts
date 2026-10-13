@@ -158,7 +158,7 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
         || (css === undefined && attribute === undefined)))
     || (input.immediate !== undefined
       && (typeof input.immediate !== 'boolean'
-        || (bounds === undefined && attribute === undefined
+        || (bounds === undefined && attribute === undefined && css === undefined
           && property !== 'scrollTop')))
     || (greaterThan !== undefined && bounds === undefined
       && property !== 'scrollTop')

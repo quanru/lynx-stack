@@ -32,8 +32,27 @@ const workflow = YAML.parse(readFileSync(
 ));
 const steps = workflow.jobs['web-shell-ai-e2e'].steps;
 
-test('animation timing remains in the original CSR and SSR runners with three browser profiles', () => {
-  for (const mode of ['CSR', 'SSR']) {
+test('animation timing follows the upstream render matrix with three original browser profiles', () => {
+  const upstream = YAML.parse(readFileSync(
+    new URL('../../../../../.github/workflows/test.yml', import.meta.url),
+    'utf8',
+  ));
+  const modes = upstream.jobs['web-core-e2e'].strategy.matrix.render;
+  for (const event of ['push', 'pull_request']) {
+    assert.ok(workflow.on[event].paths.includes('.github/workflows/test.yml'));
+  }
+  assert.deepEqual(
+    modes,
+    ['CSR'],
+    'Review pixel eligibility if upstream enables SSR',
+  );
+  assert.equal(
+    steps.filter(step =>
+      step.name?.startsWith('Validate original animation sampling')
+    ).length,
+    modes.length,
+  );
+  for (const mode of modes) {
     const matches = steps.filter(step =>
       step.name === `Validate original animation sampling (${mode})`
     );

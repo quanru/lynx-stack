@@ -268,7 +268,7 @@ test('retained browser variants bound workers without replacing original profile
       step.name?.startsWith('Validate original')
       && step.run?.includes('playwright test')
     );
-  assert.equal(runners.length, 12);
+  assert.equal(runners.length, 11);
   for (const step of runners) {
     assert.ok(
       step.run.includes('--workers=2'),

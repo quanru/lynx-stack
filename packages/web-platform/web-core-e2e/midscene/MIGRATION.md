@@ -54,8 +54,8 @@ estimated list size (one public scroll API call and two immediate height reads).
 Original font readiness, waits, assertion values and per-PNG tolerances remain
 unchanged. Source-AST/differential tests verify ordered statements, not elapsed
 time from physical input. `api-animate` remains in the original runner in CSR
-and SSR with all three browser profiles (six executions and twelve ordered
-PNG checkpoints). Its AI trace at `1118e0c` reaches the final screenshot about
+with all three browser profiles (three executions and six ordered PNG
+checkpoints), following the enabled upstream render matrix. Its AI trace at `1118e0c` reaches the final screenshot about
 11.6 seconds after input, not after just the original 2-second wait: aiAct has
 post-input planning. The AI case is supplementary end-state coverage, not a
 timing-equivalent replacement. Original inputs, waits and matcher are unmodified.
@@ -66,7 +66,7 @@ The three original pointer declarations `basic-mts-bindtouchstart`,
 all three original browser profiles. Their CDP touch trajectory, mouse phases,
 wheel delta and browser guards remain intact. Each mode lists nine executions;
 across both modes eight are enabled and ten retain original browser skips.
-These are retained protocol contracts, not extra AI cases. All twelve retained
+These are retained protocol contracts, not extra AI cases. All eleven retained
 browser invocations own distinct diagnostic output directories. At the preceding
 `efe14ba` checkpoint local checks pass: 156 model-free tests, typechecking, actionlint and both browser-free
 nine-case list checks. The full workspace build passes all 74 tasks using the
@@ -82,7 +82,12 @@ through the fixed adapter and reject a wrong first value without polling into
 a pass. The corrected `efe14ba` head passes all four shards, report assembly
 and Pages in run `38358042762`; that run does not establish animation timing
 equivalence. The original-animation integration requires a new complete hosted
-run. Both CI
+run. Candidate `efd5787` passes all three original CSR animation executions in
+`38368894994`. Its extra SSR step fails before input because that shell omits
+the CSR margin reset: the original square shifts by 8 px, accounting for 9472
+different scale-one pixels. Upstream enables CSR only. The follow-up preserves
+that matrix and guards it with a regression test; SSR pixel support remains
+pending without changing source, baselines or tolerance. Both CI
 triggers now cover all web-core-e2e tests/configuration/baselines and shared
 Playwright fixtures, with a trigger-coverage regression test.
 

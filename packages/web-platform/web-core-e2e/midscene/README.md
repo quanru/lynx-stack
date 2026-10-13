@@ -13,15 +13,16 @@ No new custom action node is introduced. Ordered YAML waits do not establish
 click-relative timing equivalence: the `api-animate` trace at `1118e0c` samples
 about 11.6 seconds after physical input, versus the original 2-second wait
 followed by its screenshot matcher. AI post-input planning adds that delay.
-The original animation runner is therefore retained in CSR and SSR with all
-three browser profiles (six executions, twelve ordered PNG checkpoints).
+The original animation runner is therefore retained in CSR with all three
+browser profiles (three executions, six ordered PNG checkpoints), matching the
+upstream workflow's enabled render matrix.
 Its click, waits, font readiness, baseline images and matcher stay unchanged;
 the AI case supplies additional end-state evidence only.
 
 Three original touch, mouse and wheel contracts also run unchanged in CSR and
 SSR across the original browser profiles: 18 collected executions, eight enabled
 and ten original browser skips. These validate event phases and input parameters,
-so they remain deterministic runner coverage, not additional AI cases. All twelve
+so they remain deterministic runner coverage, not additional AI cases. All eleven
 retained browser invocations have distinct diagnostic output directories.
 
 At the preceding `efe14ba` checkpoint, all 156 model-free checks, typechecking
@@ -42,6 +43,15 @@ Both heights and the original 500 ms wait remain unchanged. The corrected head
 [run 38358042762](https://github.com/quanru/lynx-stack/actions/runs/38358042762).
 That success does not establish animation timing equivalence. The follow-up
 original-animation integration requires its own complete hosted acceptance.
+
+Candidate `efd5787` in run `38368894994` passes all three original CSR animation
+executions on first attempts. Its additional SSR step fails every initial PNG:
+the SSR shell omits the CSR margin reset, shifting the green square by 8 px
+(9472 different pixels at scale one). The upstream render matrix enables CSR
+only. The follow-up aligns animation execution with that matrix; a regression
+test now checks the source workflow as well as the source test. SSR pixel parity
+remains pending, not skipped as an already-supported contract. No source shell,
+baseline, tolerance or original assertion is changed.
 
 Push and PR path filters now cover all web-core-e2e original tests, browser
 profiles and PNG baselines, plus the shared Playwright fixtures. A regression

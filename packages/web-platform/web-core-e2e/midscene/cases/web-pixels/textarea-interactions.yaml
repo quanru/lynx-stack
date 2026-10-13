@@ -61,7 +61,7 @@ cases:
       - web.pixels: {
           baseline: x-textarea/placeholder-style/update-value/index,
         }
-  # Supplementary end-state coverage. The original CSR/SSR runner preserves
+  # Supplementary end-state coverage. The original CSR runner preserves
   # click-relative sampling; aiAct post-input planning can delay this snapshot.
   - name: api-animate
     steps:

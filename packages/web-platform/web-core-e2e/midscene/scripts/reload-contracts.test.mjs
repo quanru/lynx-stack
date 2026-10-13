@@ -18,13 +18,16 @@ const cases = YAML.parse(
     'utf8',
   ),
 ).cases;
+const bindtap = YAML.parse(
+  readFileSync(new URL('../cases/web/shell.yaml', import.meta.url), 'utf8'),
+).cases.find(item => item.name === 'basic-bindtap');
 const normalize = text =>
   ts.transpileModule(text, {
     compilerOptions: { target: ts.ScriptTarget.ES2022 },
   })
     .outputText.replace(/,\s*}/g, '}').replace(/[\s();]/g, '');
 
-test('reload contracts retain original ordered API bodies, waits, raw count and six viewport assertions', () => {
+test('reload and bindtap retain original ordered actions, API bodies, waits and exact assertions', () => {
   const originals = new Map();
   function find(node) {
     if (
@@ -34,8 +37,9 @@ test('reload contracts retain original ordered API bodies, waits, raw count and 
     ts.forEachChild(node, find);
   }
   find(original);
-  assert.equal(cases.length, 3);
-  for (const item of cases) {
+  assert.equal(cases.length, 4);
+  assert.ok(bindtap, 'The complete original bindtap contract must be mapped');
+  for (const item of [...cases, bindtap]) {
     const expected = [];
     function visit(node) {
       if (ts.isCallExpression(node)) {
@@ -49,6 +53,10 @@ test('reload contracts retain original ordered API bodies, waits, raw count and 
           ]);
         } else if (name === 'wait') {
           expected.push(['wait', Number(node.arguments[0].getText(original))]);
+        } else if (name.endsWith('.click')) {
+          assert.equal(name, 'target.click');
+          assert.equal(node.arguments.length, 0);
+          expected.push(['click', '#target']);
         } else if (name.endsWith('.toHaveCSS')) {
           expected.push([
             'css',
@@ -94,7 +102,16 @@ test('reload contracts retain original ordered API bodies, waits, raw count and 
       if (step.gotoUrl) {
         actual.push(['goto', step.gotoUrl.split('?casename=')[1]]);
       } else if (step.recordToReport) continue;
-      else if (step['web.expect']) {
+      else if (step.aiAct) {
+        assert.ok(['basic-bindtap', 'basic-reload'].includes(item.name));
+        assert.match(
+          step.aiAct,
+          /Click the (?:pink|green) square at the top-left once/,
+        );
+        assert.match(step.aiAct, /Stop after that single click/);
+        assert.doesNotMatch(step.aiAct, /#[\w-]+|\b\d+\s*(?:px|pixels)\b/);
+        actual.push(['click', '#target']);
+      } else if (step['web.expect']) {
         const input = step['web.expect'];
         assert.equal(input.selector, '#target');
         if (input.css) {

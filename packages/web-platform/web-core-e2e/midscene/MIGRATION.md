@@ -46,6 +46,24 @@ case total.
 
 ## Execution and acceptance
 
+The current batch contains 457 YAML cases: one new `basic-reload` mapping and
+the complete original `basic-bindtap` contract in place of the second visual
+pilot. Reload retains click → immediate green style → public reload API →
+immediate pink style. Bindtap retains both ordered clicks and immediate style
+reads. Original 100 ms waits, targets and values are extracted from the source
+AST and compared with the translated sequence. Ordinary input uses aiAct;
+the public reload API remains an API call, not a browser refresh. No product
+code, fixture, retry limit or original test changes. All 144 model-free checks
+and typechecking pass; current-batch hosted acceptance remains pending.
+
+Head `a72377a` passes 456/456 cases on first attempts in run `38318090275`,
+with renderer parity, report assembly and Pages successful. The actual
+Summary contains 456 loaded linked previews in a default-collapsed appendix;
+all 461 unique public preview/report URLs return HTTP 200, and the publication
+archive passes CRC verification. Each of the four animation actions and the
+frame-data action contains one physical tap on its intended visible target.
+All original CSS/event/data assertions remain unchanged and pass.
+
 Head `2cb3274` run 38310091079 passes all four shards, report assembly and
 Pages: 456/456 cases, 454 on their first attempt and two after a complete
 retry. The actual GitHub Summary has 456 loaded, clickable screenshots in its
@@ -66,7 +84,7 @@ The follow-up removes the centering requirement, uses public deepThink
 planning and independent visual location, and stops after one successful
 input. Its four aiAct nodes and all eight ordered source assertions remain;
 no coordinates are used as action inputs. Model-free checks are 144/144;
-new-head model-backed acceptance is pending.
+model-backed acceptance is recorded at `a72377a` above.
 
 The other retry is api-frame-data-update, report agent
 `502caaa2-23f9-4503-b31d-101077a1b3e9`, artifact `11777910578`.

@@ -1,30 +1,34 @@
 # Midscene E2E for web-core and web-elements
 
-## Current CI checkpoint (2026-10-13)
+## Current migration batch (2026-10-13)
 
-The follow-up corrects the animation-event toggle actions without changing
-product code, fixtures or assertions. In head `2cb3274` run
-[38310091079](https://github.com/quanru/lynx-stack/actions/runs/38310091079),
-all four shards, report assembly and Pages pass: 456/456 cases, with 454
-first-attempt passes and two complete retries. The actual GitHub Summary has
-456 loaded, clickable screenshots in the closed passed-case appendix. All
-461 unique public image/report URLs return HTTP 200, and the publication
-archive passes its CRC check.
-One api-animation-event attempt clicks the lower transition
-control twice: the first click turns its box blue, but the planner tries to
-improve the click's centering and the second click reverses the state. The
-unchanged exact CSS assertion catches this; the complete retry passes.
-The four ordinary aiAct nodes now use deepThink with independent refinement,
-retain their visible labels/neighbors, and explicitly finish after one click
-without correcting its position. All four ordered original interactions and
-eight exact CSS/event checks remain. All 144 model-free checks and typechecking
-pass; model-backed acceptance of this follow-up remains pending.
+The collection now contains 457 cases. `basic-reload` adds the original click,
+immediate green inline-style check, public LynxView reload call and immediate
+pink check. It is distinct from the existing single-page-count reload case.
+The second bindtap pilot now maps the complete `basic-bindtap` source case,
+with two aiAct clicks and both original ordered, one-shot style assertions.
+The first pilot remains a supplementary visual smoke test. Original 100 ms
+waits remain in their original positions; no product code, fixture, API,
+assertion value or retry limit changes. A source-AST differential checks the
+entire ordered sequence, including API bodies and waits. All 144 model-free
+checks and typechecking pass; hosted acceptance of this batch is pending.
 
-The other retry, api-frame-data-update, uses a 393 × 851 screenshot but its
-planner incorrectly reasons from 400 × 371 and sends four taps at [29, 305],
-below the visible update text. Its single aiAct now uses independent deepThink
-location, without coordinates or result-based repeat clicks. Both original
-exact before/after text assertions remain unchanged.
+## Accepted grounding checkpoint
+
+Head `a72377a` passes **456/456 cases on first attempts** in
+[38318090275](https://github.com/quanru/lynx-stack/actions/runs/38318090275),
+including renderer parity, all four shards, report assembly and Pages. The
+actual Summary has 456 loaded, clickable images in the default-collapsed
+passed-case appendix. All 461 unique public preview/report URLs return HTTP
+200; the publication archive passes CRC verification.
+
+Each animation aiAct and the frame-data update produces exactly one physical
+tap, with its actual pre-tap screenshot confirming the intended target. All
+original CSS/event/data assertions pass. Public deepThink planning with
+independent visual location removes the duplicate toggle and incorrect
+dimension grounding observed at `2cb3274`; no selector actions, saved
+coordinates, assertion changes or fixture changes are added. This successful
+run is not a general zero-flake guarantee.
 
 At `2cb3274`, the complete original mouse-drag and wheel step passes 42 cases
 in 18.9 seconds, with the three original WebKit skips and no reported retries.

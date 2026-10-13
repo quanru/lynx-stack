@@ -1,4 +1,28 @@
 cases:
+  - name: basic-reload
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-reload"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before original clicked-state reload contract
+      - aiAct: Click the pink square at the top-left once. Stop after that single click; do not repeat it to adjust the click position.
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.expect: {
+          selector: "#target",
+          attribute: style,
+          contains: green,
+          immediate: true,
+        }
+      # The public reload API is under test; a browser refresh is not equivalent.
+      - javascript: "(() => { document.querySelector('lynx-view').reload(); return true; })()"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: After the original public reload API
+      - web.expect: {
+          selector: "#target",
+          attribute: style,
+          contains: pink,
+          immediate: true,
+        }
+      - recordToReport: Original clicked-state reload contract passed
   - name: basic-reload-page-only-one
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-reload"

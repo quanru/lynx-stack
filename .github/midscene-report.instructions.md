@@ -44,6 +44,10 @@ The frame-data update action also uses independent deepThink grounding.
 Compare the actual screenshot dimensions and physical tap with the model's
 claimed dimensions before diagnosing a missed text action as a product defect.
 Never add saved coordinates or repeat input to compensate for a wrong conversion.
+Do not count a visual pilot as a complete source mapping. Bindtap and reload
+contracts retain the original ordered inline-style reads with immediate checks
+and original waits. The public LynxView reload API must not become a browser
+refresh, and the reload page-count case does not replace the clicked-state case.
 When migrating a new case, map every original assertion target, repeated-selector
 index, value, comparison, and interaction sequence. Keep exact CSS and bounding-box
 checks deterministic; do not round measurements or replace pixel contracts with

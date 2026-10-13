@@ -1,0 +1,74 @@
+afterEach:
+  - recordToReport: Original textarea and animation pixel contract result
+cases:
+  - name: basic-element-x-textarea-disabled
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-textarea-disabled"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: { baseline: x-textarea/disabled/default/index }
+      - aiAct:
+          prompt: Click the large sky-blue rectangular panel above the three bordered text areas once. Do not click or type inside a text area. Stop after that single click, even if the blue panel remains unchanged.
+          options: { deepThink: true, deepLocate: true, cacheable: false }
+      - web.pixels: { baseline: x-textarea/disabled/true/index }
+      - aiAct:
+          prompt: Click the same large sky-blue rectangular panel above the three bordered text areas once. Do not click or type inside a text area. Stop after that single click, even if the blue panel remains unchanged.
+          options: { deepThink: true, deepLocate: true, cacheable: false }
+      - web.pixels: { baseline: x-textarea/disabled/false/index }
+  - name: basic-element-x-textarea-maxlines
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-textarea-maxlines"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: { baseline: x-textarea/maxlines/init-value/index }
+      - aiAct:
+          prompt: Click the sky-blue horizontal bar directly above the bordered multiline text area once. Do not click or type inside the text area. Stop after that single click.
+          options: { deepThink: true, deepLocate: true, cacheable: false }
+      - web.pixels: { baseline: x-textarea/maxlines/update-value/index }
+  - name: basic-element-x-textarea-min-height-max-height
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-textarea-min-height-max-height"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          baseline: x-textarea/min-height-max-height/min-height/index,
+        }
+      - aiAct:
+          prompt: Click the sky-blue horizontal bar directly above the bordered multiline text area once. Do not click or type inside the text area. Stop after that single click.
+          options: { deepThink: true, deepLocate: true, cacheable: false }
+      - web.pixels: {
+          baseline: x-textarea/min-height-max-height/max-height/index,
+        }
+  - name: basic-element-x-textarea-placeholder
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-textarea-placeholder"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: { baseline: x-textarea/placeholder/init-value/index }
+      - aiAct:
+          prompt: Click the large sky-blue rectangular panel above the two bordered text areas once. Do not click or type inside a text area. Stop after that single click, even if the blue panel remains unchanged.
+          options: { deepThink: true, deepLocate: true, cacheable: false }
+      - web.pixels: { baseline: x-textarea/placeholder/update-value/index }
+  - name: basic-element-x-textarea-placeholder-style
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-textarea-placeholder-style"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: { baseline: x-textarea/placeholder-style/init-value/index }
+      - aiAct:
+          prompt: Click the large sky-blue rectangular panel above the two bordered text areas once. Do not click or type inside a text area. Stop after that single click, even if the blue panel remains unchanged.
+          options: { deepThink: true, deepLocate: true, cacheable: false }
+      - web.pixels: {
+          baseline: x-textarea/placeholder-style/update-value/index,
+        }
+  - name: api-animate
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-animate"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - web.pixels: { baseline: api-animate/initial/index }
+      - aiAct:
+          prompt: Click the large green square at the top-left once. Stop after that single click; do not click it again when it moves.
+          options: { deepThink: true, deepLocate: true, cacheable: false }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 2000))"
+      - web.pixels: { baseline: api-animate/animate/index }

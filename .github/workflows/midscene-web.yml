@@ -29,6 +29,8 @@ on:
       - ".github/scripts/vision-preflight*"
       - "packages/web-platform/web-core-e2e/midscene/**"
       - "packages/web-platform/web-core-e2e/{rsbuild.config.ts,package.json,shell-project/**,tests/reactlynx/**}"
+      - "packages/web-platform/web-core-e2e/tests/reactlynx.spec.ts"
+      - "packages/web-platform/playwright-fixtures/**"
       - "packages/web-platform/web-core/**"
       - "packages/web-platform/web-elements/**"
   pull_request:
@@ -201,6 +203,30 @@ jobs:
         env:
           ENABLE_SSR: "1"
         run: pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'basic-(global-bindkeydown(-key|-code|-shift)?|global-bindkeyup|bindkeydown-out-of-view-noop)$' --output midscene-original-results/keyboard-ssr --reporter line
+
+      - name: Validate original pointer event contracts (CSR)
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-core-e2e
+        env:
+          ENABLE_SSR: ""
+        # Touch payloads, separate mouse phases and wheel deltas are the inputs
+        # under test. Preserve their original runner and browser exclusions.
+        run: |
+          echo "open files limit before: soft=$(ulimit -Sn), hard=$(ulimit -Hn)"
+          ulimit -Sn "$(ulimit -Hn)"
+          echo "open files limit after: soft=$(ulimit -Sn), hard=$(ulimit -Hn)"
+          pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'basic-(mts-bindtouchstart|bindmouse|bindwheel-view)$' --output midscene-original-results/pointer-csr --reporter line
+
+      - name: Validate original pointer event contracts (SSR)
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-core-e2e
+        env:
+          ENABLE_SSR: "1"
+        run: |
+          echo "open files limit before: soft=$(ulimit -Sn), hard=$(ulimit -Hn)"
+          ulimit -Sn "$(ulimit -Hn)"
+          echo "open files limit after: soft=$(ulimit -Sn), hard=$(ulimit -Hn)"
+          pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'basic-(mts-bindtouchstart|bindmouse|bindwheel-view)$' --output midscene-original-results/pointer-ssr --reporter line
 
       - name: Validate original layout and style performance budgets
         if: matrix.shard == 1

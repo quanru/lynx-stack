@@ -106,7 +106,7 @@ test('textarea/default-display pixels preserve all source statements, paths, wai
   }
 });
 
-test('pixel backend applies 2% only to the one exact source PNG and accepts normalized two-part paths', async () => {
+test('pixel backend scopes the original placeholder font exception and accepts normalized two-part paths', async () => {
   const special = 'x-textarea/placeholder-font-size/font-size/index';
   for (
     const [baseline, ratio] of [[special, 0.02], [

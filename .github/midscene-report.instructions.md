@@ -53,6 +53,11 @@ separation, modifier payloads or an intentionally unfocused page are under test.
 Do not focus a target or replace separated key phases with one AI keypress.
 Run the six keyboard contracts in both CSR and SSR using the original three
 browser profiles and bounded workers; do not count them as additional AI cases.
+Likewise retain exact CDP touch trajectories, mouse down/up phases and wheel
+deltas in the original pointer runner, including its CSR/SSR modes and original
+browser guards. Ordinary textarea and scrollable-toggle clicks use aiAct.
+Pixel tolerances belong to exact source PNG paths: preserve original exceptions
+without applying them to neighboring snapshots or the web-elements suite.
 Give every retained Playwright invocation a distinct output directory. The
 runner clears its configured output before execution, so a later suite must
 not erase an earlier suite's failure traces before the final artifact upload.

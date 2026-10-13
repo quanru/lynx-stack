@@ -1,0 +1,107 @@
+afterEach:
+  - recordToReport: Original scrollability and list measurement contract result
+cases:
+  - name: basic-element-scroll-view-scrollable
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-scroll-view-scrollable"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before the original scrollability assertions
+      - web.expect: { selector: "#scrollX", css: flex-direction, equals: row }
+      - web.expect: { selector: "#scrollX", css: overflow-x, equals: scroll }
+      - web.expect: { selector: "#scrollX", css: overflow-y, equals: hidden }
+      - web.expect: { selector: "#scrollXY", css: flex-direction, equals: row }
+      - web.expect: { selector: "#scrollXY", css: overflow-x, equals: scroll }
+      - web.expect: { selector: "#scrollXY", css: overflow-y, equals: hidden }
+      - web.expect: {
+          selector: "#scrollXYFalse",
+          css: flex-direction,
+          equals: row,
+        }
+      - web.expect: {
+          selector: "#scrollXYFalse",
+          css: overflow-x,
+          equals: scroll,
+        }
+      - web.expect: {
+          selector: "#scrollXYFalse",
+          css: overflow-y,
+          equals: hidden,
+        }
+      - web.expect: {
+          selector: "#scrollYFalse",
+          css: flex-direction,
+          equals: column,
+        }
+      - web.expect: {
+          selector: "#scrollYFalse",
+          css: overflow-x,
+          equals: hidden,
+        }
+      - web.expect: {
+          selector: "#scrollYFalse",
+          css: overflow-y,
+          equals: scroll,
+        }
+      - web.expect: {
+          selector: "#scrollY",
+          css: flex-direction,
+          equals: column,
+        }
+      - web.expect: { selector: "#scrollY", css: overflow-x, equals: hidden }
+      - web.expect: { selector: "#scrollY", css: overflow-y, equals: scroll }
+      - web.expect: {
+          selector: "#scrollXFalseY",
+          css: flex-direction,
+          equals: column,
+        }
+      - web.expect: {
+          selector: "#scrollXFalseY",
+          css: overflow-x,
+          equals: hidden,
+        }
+      - web.expect: {
+          selector: "#scrollXFalseY",
+          css: overflow-y,
+          equals: scroll,
+        }
+      - aiAct:
+          prompt: Click the small outlined button labeled scrof above the red image area once. Do not scroll the page or click the image. Stop after that single click when the label changes.
+          options: { deepThink: true, deepLocate: true, cacheable: false }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 50))"
+      - web.expect: { selector: "#scrollX", css: flex-direction, equals: row }
+      - web.expect: { selector: "#scrollX", css: overflow-x, equals: hidden }
+      - web.expect: { selector: "#scrollX", css: overflow-y, equals: hidden }
+      - web.expect: {
+          selector: "#scrollY",
+          css: flex-direction,
+          equals: column,
+        }
+      - web.expect: { selector: "#scrollY", css: overflow-x, equals: hidden }
+      - web.expect: { selector: "#scrollY", css: overflow-y, equals: hidden }
+      - web.expect: { selector: "#scrollXY", css: flex-direction, equals: row }
+      - web.expect: { selector: "#scrollXY", css: overflow-x, equals: hidden }
+      - web.expect: { selector: "#scrollXY", css: overflow-y, equals: hidden }
+  - name: basic-element-list-estimated-main-axis-size-px
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-list-estimated-main-axis-size-px"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.expect: {
+          selector: "#target",
+          css: height,
+          equals: "100px",
+          immediate: true,
+        }
+      # The original programmatic scrollTo arguments are the API under test.
+      - javascript: |
+          (() => {
+            document.querySelector('lynx-view').shadowRoot.querySelector('x-list')?.shadowRoot?.querySelector('#content')?.scrollTo(0, 5000);
+            return true;
+          })()
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - web.expect: {
+          selector: "#target",
+          css: height,
+          equals: "200px",
+          immediate: true,
+        }

@@ -98,8 +98,21 @@ const textClips = new Map([
     { x: 0, y: 0, width: 300, height: 100 },
   ],
 ]);
-// This one original test explicitly overrides the helper's zero-ratio default.
-// Keep it bound to the exact source PNG; YAML cannot relax arbitrary baselines.
+// Only these original checkpoints override the helper's zero-ratio default.
+// Bind each exception to its source PNG; YAML cannot relax arbitrary baselines.
+const textareaRatioExceptions = new Set([
+  'x-textarea/placeholder-font-size/font-size/index',
+  'x-textarea/disabled/default/index',
+  'x-textarea/disabled/false/index',
+  'x-textarea/maxlines/init-value/index',
+  'x-textarea/maxlines/update-value/index',
+  'x-textarea/min-height-max-height/min-height/index',
+  'x-textarea/min-height-max-height/max-height/index',
+  'x-textarea/placeholder/init-value/index',
+  'x-textarea/placeholder/update-value/index',
+  'x-textarea/placeholder-style/init-value/index',
+  'x-textarea/placeholder-style/update-value/index',
+]);
 export function originalPixelOptions(
   baseline: string,
   suite: PixelSuite = 'web-core',
@@ -113,7 +126,7 @@ export function originalPixelOptions(
       ? { clip: { ...textClips.get(baseline)! } }
       : {}),
     maxDiffPixelRatio: suite === 'web-core'
-        && baseline === 'x-textarea/placeholder-font-size/font-size/index'
+        && textareaRatioExceptions.has(baseline)
       ? 0.02
       : 0,
   };

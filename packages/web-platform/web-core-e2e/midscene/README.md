@@ -2,23 +2,42 @@
 
 ## Current migration batch (2026-10-13)
 
-The next local batch retains six original keyboard event contracts in CSR and
-SSR across Chromium, Firefox and WebKit: 36 collected executions, checked with
-the original runner's `--list` without starting browsers. The source key-down /
-pink check / key-up / green check remains separated. The out-of-view no-op
-case never focuses or clicks a target; key/code/modifier checks remain exact.
-These are deterministic input-protocol contracts, not additional AI cases.
-All eight retained browser invocations now use distinct diagnostic output
-directories, so a later runner cannot delete an earlier failure's evidence.
-All 147 model-free checks and typechecking pass; remote execution is pending.
-No product source, original test, fixture, browser profile or retry limit changes.
+This batch adds eight YAML cases, bringing the collection to 465. Six textarea
+flows preserve all 13 original PNG checkpoints, including each source-defined
+pixel tolerance, and use aiAct for their seven clicks. The scrollable case
+preserves all 27 exact CSS checks around one aiAct click. The list-size case
+retains its public scroll API call and both immediate height reads. Source-AST
+and differential tests compare complete ordered sequences, waits and values.
+No new custom action node is introduced.
 
-Head `9555097` remains in [run 38325680485](https://github.com/quanru/lynx-stack/actions/runs/38325680485).
-Its first shard passes 115/115 on first attempts, including `basic-reload`;
-the remaining shards and publication are still pending. The next local batch
-does not supersede this useful run.
+Three original touch, mouse and wheel contracts also run unchanged in CSR and
+SSR across the original browser profiles: 18 collected executions, eight enabled
+and ten original browser skips. These validate event phases and input parameters,
+so they remain deterministic runner coverage, not additional AI cases. All ten
+retained browser invocations have distinct diagnostic output directories.
 
-The collection now contains 457 cases. `basic-reload` adds the original click,
+All 153 model-free checks, typechecking, actionlint and both nine-case original
+runner list checks pass locally without launching browsers. The local full
+workspace build cannot complete because Cargo is unavailable. Hosted builds,
+model actions and pixel acceptance for this batch are still pending. No product
+source, original test, fixture, baseline, browser profile or retry limit changes.
+
+## Accepted 457-case checkpoint
+
+Head `fb5afa6` passes **457/457 cases on first attempts** in
+[run 38332893199](https://github.com/quanru/lynx-stack/actions/runs/38332893199),
+including all four shards, renderer parity, report assembly and Pages. The
+actual Summary contains 457 loaded, clickable previews in its default-collapsed
+passed-case appendix. All 462 unique public preview/report URLs return HTTP
+200, and the publication archive passes CRC verification.
+
+The six original keyboard contracts execute in CSR and SSR across Chromium,
+Firefox and WebKit: 35 of 36 pass first attempt; one WebKit CSR execution passes
+after its original configured retry. Its first-attempt failure context and retry
+trace remain in the diagnostic artifact. Original separated key phases,
+modifier payloads and the deliberately unfocused no-op case are unchanged.
+
+`basic-reload` adds the original click,
 immediate green inline-style check, public LynxView reload call and immediate
 pink check. It is distinct from the existing single-page-count reload case.
 The second bindtap pilot now maps the complete `basic-bindtap` source case,
@@ -26,8 +45,8 @@ with two aiAct clicks and both original ordered, one-shot style assertions.
 The first pilot remains a supplementary visual smoke test. Original 100 ms
 waits remain in their original positions; no product code, fixture, API,
 assertion value or retry limit changes. A source-AST differential checks the
-entire ordered sequence, including API bodies and waits. All 144 model-free
-checks and typechecking pass; hosted acceptance of this batch is pending.
+entire ordered sequence, including API bodies and waits. Both migrations are
+accepted in the 457-case checkpoint above.
 
 ## Accepted grounding checkpoint
 

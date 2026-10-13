@@ -46,28 +46,51 @@ case total.
 
 ## Execution and acceptance
 
-The next local runner expansion includes six original keyboard declarations:
+The current local collection contains 465 YAML cases. Eight additions map six
+textarea flows (13 original PNG checkpoints and seven aiAct clicks), the
+scrollable toggle (27 original CSS assertions and one aiAct click), and the
+estimated list size (one public scroll API call and two immediate height reads).
+Original font readiness, waits, assertion values and per-PNG tolerances remain
+unchanged. Source-AST/differential tests verify each complete ordered contract.
+No selector-driven action node, fixture change or baseline update is added.
+
+The three original pointer declarations `basic-mts-bindtouchstart`,
+`basic-bindmouse` and `basic-bindwheel-view` run unchanged in CSR and SSR with
+all three original browser profiles. Their CDP touch trajectory, mouse phases,
+wheel delta and browser guards remain intact. Each mode lists nine executions;
+across both modes eight are enabled and ten retain original browser skips.
+These are retained protocol contracts, not extra AI cases. All ten retained
+browser invocations own distinct diagnostic output directories. Local checks
+pass: 153 model-free tests, typechecking, actionlint and both browser-free
+nine-case list checks. The full local workspace build is blocked by unavailable
+Cargo; hosted build, model and pixel acceptance for this batch are pending.
+
+The accepted runner expansion includes six original keyboard declarations:
 `basic-global-bindkeydown`, `basic-global-bindkeyup`, the key/code/shift
 variants, and `basic-bindkeydown-out-of-view-noop`. The original test file
 executes unchanged in CSR and SSR across all three browser projects (36
 collected executions). A source-AST selection check rejects missing or extra
 cases; the original separated key phases and intentionally unfocused no-op
-remain intact. Each of the eight retained browser invocations owns a distinct
+remain intact. Each of the eight browser invocations at this checkpoint owns a distinct
 uploaded output directory, preventing Playwright's startup cleanup from
 discarding an earlier invocation's failure artifacts. The 457-case AI collection
-is unchanged. All 147 model-free checks, typechecking and both 18-case list
-checks pass locally; hosted acceptance is pending. No browser is launched for
-these local list checks, and CI keeps two workers.
+is unchanged. Head `fb5afa6` passes all 457 YAML cases on first attempts in
+run `38332893199`, including all four shards, renderer parity, report assembly
+and Pages. The 36 original keyboard executions pass: 35 first attempt, one
+WebKit CSR retry, with first-failure context and retry trace preserved. The
+actual Summary contains 457 loaded linked images in its default-collapsed
+passed-case appendix; all 462 unique preview/report URLs return HTTP 200.
+The publication and original diagnostic archives pass CRC verification.
 
-The current batch contains 457 YAML cases: one new `basic-reload` mapping and
+That accepted batch contains 457 YAML cases: one new `basic-reload` mapping and
 the complete original `basic-bindtap` contract in place of the second visual
 pilot. Reload retains click → immediate green style → public reload API →
 immediate pink style. Bindtap retains both ordered clicks and immediate style
 reads. Original 100 ms waits, targets and values are extracted from the source
 AST and compared with the translated sequence. Ordinary input uses aiAct;
 the public reload API remains an API call, not a browser refresh. No product
-code, fixture, retry limit or original test changes. All 144 model-free checks
-and typechecking pass; current-batch hosted acceptance remains pending.
+code, fixture, retry limit or original test changes. Both are accepted at
+the `fb5afa6` checkpoint above.
 
 Head `a72377a` passes 456/456 cases on first attempts in run `38318090275`,
 with renderer parity, report assembly and Pages successful. The actual

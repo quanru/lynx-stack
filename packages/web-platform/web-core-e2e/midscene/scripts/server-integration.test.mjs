@@ -99,7 +99,7 @@ test('the original worker/runtime API suite retains its runner and disabled case
   );
   assert.equal(
     matching[0].run,
-    'pnpm exec playwright test tests/web-core.test.ts --project chromium --project firefox --project webkit --workers=2 --reporter line',
+    'pnpm exec playwright test tests/web-core.test.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/runtime --reporter line',
   );
   const source = readFileSync(
     new URL('../../tests/web-core.test.ts', import.meta.url),
@@ -136,7 +136,7 @@ test('performance integration retains original CDP budgets rather than visual su
   assert.equal(matching[0].env.PORT, '3081');
   assert.equal(
     matching[0].run,
-    'pnpm exec playwright test tests/performance.test.ts --project chromium --workers=2 --reporter line',
+    'pnpm exec playwright test tests/performance.test.ts --project chromium --workers=2 --output midscene-original-results/performance --reporter line',
   );
   const source = readFileSync(
     new URL('../../../web-elements/tests/performance.test.ts', import.meta.url),
@@ -172,7 +172,7 @@ test('SVG selection and iframe integration preserves original deterministic runn
   assert.equal(matching[0].env.PORT, '3081');
   assert.equal(
     matching[0].run,
-    'pnpm exec playwright test tests/x-svg-inline.spec.ts tests/x-text-selection.spec.ts tests/x-webview.spec.ts --project chromium --project firefox --project webkit --workers=2 --reporter line',
+    'pnpm exec playwright test tests/x-svg-inline.spec.ts tests/x-text-selection.spec.ts tests/x-webview.spec.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/svg-selection-webview --reporter line',
   );
   for (
     const file of [
@@ -216,7 +216,7 @@ test('retained Markdown API runner excludes the migrated user-click flow', () =>
   assert.equal(matching[0].env.PORT, '3081');
   assert.equal(
     matching[0].run,
-    'pnpm exec playwright test tests/x-markdown.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep-invert \'should fire bindlink and bindimageTap events\' --reporter line',
+    'pnpm exec playwright test tests/x-markdown.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep-invert \'should fire bindlink and bindimageTap events\' --output midscene-original-results/markdown --reporter line',
   );
 });
 
@@ -268,7 +268,7 @@ test('retained browser variants bound workers without replacing original profile
       step.name?.startsWith('Validate original')
       && step.run?.includes('playwright test')
     );
-  assert.equal(runners.length, 6);
+  assert.equal(runners.length, 8);
   for (const step of runners) {
     assert.ok(
       step.run.includes('--workers=2'),
@@ -345,11 +345,11 @@ test('mouse drag, wheel and template runners keep complete source contracts', ()
   }
   assert.equal(
     pointer.run,
-    'pnpm exec playwright test tests/scroll-view-mouse-drag.spec.ts tests/x-foldview-ng-wheel.spec.ts --project chromium --project firefox --project webkit --workers=2 --reporter line',
+    'pnpm exec playwright test tests/scroll-view-mouse-drag.spec.ts tests/x-foldview-ng-wheel.spec.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/drag-wheel --reporter line',
   );
   assert.equal(
     template.run,
-    'pnpm exec playwright test tests/template.spec.ts --project chromium --workers=2 --reporter line',
+    'pnpm exec playwright test tests/template.spec.ts --project chromium --workers=2 --output midscene-original-results/template --reporter line',
   );
   const source = readFileSync(
     new URL(
@@ -431,6 +431,8 @@ test('retained original failure diagnostics are archived separately without infl
   assert.deepEqual(step.with.path.trim().split('\n'), [
     'packages/web-platform/web-core-e2e/test-results',
     'packages/web-platform/web-elements/test-results',
+    'packages/web-platform/web-core-e2e/midscene-original-results',
+    'packages/web-platform/web-elements/midscene-original-results',
   ]);
   assert.equal(step.with['if-no-files-found'], 'ignore');
   assert.ok(!step.with.name.startsWith('midscene-ai-e2e-web-shard-'));

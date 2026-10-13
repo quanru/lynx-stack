@@ -46,6 +46,19 @@ case total.
 
 ## Execution and acceptance
 
+The next local runner expansion includes six original keyboard declarations:
+`basic-global-bindkeydown`, `basic-global-bindkeyup`, the key/code/shift
+variants, and `basic-bindkeydown-out-of-view-noop`. The original test file
+executes unchanged in CSR and SSR across all three browser projects (36
+collected executions). A source-AST selection check rejects missing or extra
+cases; the original separated key phases and intentionally unfocused no-op
+remain intact. Each of the eight retained browser invocations owns a distinct
+uploaded output directory, preventing Playwright's startup cleanup from
+discarding an earlier invocation's failure artifacts. The 457-case AI collection
+is unchanged. All 147 model-free checks, typechecking and both 18-case list
+checks pass locally; hosted acceptance is pending. No browser is launched for
+these local list checks, and CI keeps two workers.
+
 The current batch contains 457 YAML cases: one new `basic-reload` mapping and
 the complete original `basic-bindtap` contract in place of the second visual
 pilot. Reload retains click → immediate green style → public reload API →

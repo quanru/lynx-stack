@@ -2,6 +2,22 @@
 
 ## Current migration batch (2026-10-13)
 
+The next local batch retains six original keyboard event contracts in CSR and
+SSR across Chromium, Firefox and WebKit: 36 collected executions, checked with
+the original runner's `--list` without starting browsers. The source key-down /
+pink check / key-up / green check remains separated. The out-of-view no-op
+case never focuses or clicks a target; key/code/modifier checks remain exact.
+These are deterministic input-protocol contracts, not additional AI cases.
+All eight retained browser invocations now use distinct diagnostic output
+directories, so a later runner cannot delete an earlier failure's evidence.
+All 147 model-free checks and typechecking pass; remote execution is pending.
+No product source, original test, fixture, browser profile or retry limit changes.
+
+Head `9555097` remains in [run 38325680485](https://github.com/quanru/lynx-stack/actions/runs/38325680485).
+Its first shard passes 115/115 on first attempts, including `basic-reload`;
+the remaining shards and publication are still pending. The next local batch
+does not supersede this useful run.
+
 The collection now contains 457 cases. `basic-reload` adds the original click,
 immediate green inline-style check, public LynxView reload call and immediate
 pink check. It is distinct from the existing single-page-count reload case.

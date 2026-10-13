@@ -184,21 +184,37 @@ jobs:
       - name: Validate original worker and runtime API contracts
         if: matrix.shard == 1
         working-directory: packages/web-platform/web-core-e2e
-        run: pnpm exec playwright test tests/web-core.test.ts --project chromium --project firefox --project webkit --workers=2 --reporter line
+        run: pnpm exec playwright test tests/web-core.test.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/runtime --reporter line
+
+      - name: Validate original keyboard event contracts (CSR)
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-core-e2e
+        env:
+          ENABLE_SSR: ""
+        # Key-down/up separation and absence of focus are original inputs.
+        # A combined AI keypress or preparatory click changes these contracts.
+        run: pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'basic-(global-bindkeydown(-key|-code|-shift)?|global-bindkeyup|bindkeydown-out-of-view-noop)$' --output midscene-original-results/keyboard-csr --reporter line
+
+      - name: Validate original keyboard event contracts (SSR)
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-core-e2e
+        env:
+          ENABLE_SSR: "1"
+        run: pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'basic-(global-bindkeydown(-key|-code|-shift)?|global-bindkeyup|bindkeydown-out-of-view-noop)$' --output midscene-original-results/keyboard-ssr --reporter line
 
       - name: Validate original layout and style performance budgets
         if: matrix.shard == 1
         working-directory: packages/web-platform/web-elements
         env:
           PORT: "3081"
-        run: pnpm exec playwright test tests/performance.test.ts --project chromium --workers=2 --reporter line
+        run: pnpm exec playwright test tests/performance.test.ts --project chromium --workers=2 --output midscene-original-results/performance --reporter line
 
       - name: Validate original SVG selection and iframe API contracts
         if: matrix.shard == 1
         working-directory: packages/web-platform/web-elements
         env:
           PORT: "3081"
-        run: pnpm exec playwright test tests/x-svg-inline.spec.ts tests/x-text-selection.spec.ts tests/x-webview.spec.ts --project chromium --project firefox --project webkit --workers=2 --reporter line
+        run: pnpm exec playwright test tests/x-svg-inline.spec.ts tests/x-text-selection.spec.ts tests/x-webview.spec.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/svg-selection-webview --reporter line
 
       - name: Validate original Markdown rendering and API contracts
         if: matrix.shard == 1
@@ -206,7 +222,7 @@ jobs:
         env:
           PORT: "3081"
         # The excluded user-click flow is translated in markdown-events.yaml.
-        run: pnpm exec playwright test tests/x-markdown.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep-invert 'should fire bindlink and bindimageTap events' --reporter line
+        run: pnpm exec playwright test tests/x-markdown.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep-invert 'should fire bindlink and bindimageTap events' --output midscene-original-results/markdown --reporter line
 
       - name: Validate original mouse drag and wheel contracts
         if: matrix.shard == 1
@@ -215,7 +231,7 @@ jobs:
           PORT: "3081"
         # Exact mouse trajectories, pointer delivery and wheel deltas are inputs
         # under test. Keep the complete source suites and original browser skips.
-        run: pnpm exec playwright test tests/scroll-view-mouse-drag.spec.ts tests/x-foldview-ng-wheel.spec.ts --project chromium --project firefox --project webkit --workers=2 --reporter line
+        run: pnpm exec playwright test tests/scroll-view-mouse-drag.spec.ts tests/x-foldview-ng-wheel.spec.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/drag-wheel --reporter line
 
       - name: Validate original Rust and TypeScript template consistency
         if: matrix.shard == 1
@@ -223,7 +239,7 @@ jobs:
         env:
           PORT: "3081"
         # No browser interaction exists in this source test; execute it once.
-        run: pnpm exec playwright test tests/template.spec.ts --project chromium --workers=2 --reporter line
+        run: pnpm exec playwright test tests/template.spec.ts --project chromium --workers=2 --output midscene-original-results/template --reporter line
 
       - name: Start web-core-e2e dev shell
         working-directory: packages/web-platform/web-core-e2e
@@ -289,6 +305,8 @@ jobs:
           path: |
             packages/web-platform/web-core-e2e/test-results
             packages/web-platform/web-elements/test-results
+            packages/web-platform/web-core-e2e/midscene-original-results
+            packages/web-platform/web-elements/midscene-original-results
           if-no-files-found: ignore
           retention-days: 14
 

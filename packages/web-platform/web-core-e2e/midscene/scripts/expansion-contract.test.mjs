@@ -107,6 +107,17 @@ for (
           assert.doesNotMatch(prompt, /\b\d+\s*(?:px|pixels)\b|#[\w-]+/);
         }
         if (item.name.includes('multi')) {
+          for (const action of item.steps.filter(step => step.aiAct)) {
+            assert.deepEqual(
+              action.aiAct.options,
+              {
+                effort: 'deepThink',
+                deepLocate: true,
+                cacheable: false,
+              },
+              'Ground each repeated blue-cell input independently of planner coordinates',
+            );
+          }
           assert.match(toggles[0], /upper half/);
           assert.match(toggles[1], /lower half/);
           const finalWait = item.steps.at(-1).aiWaitFor.prompt;

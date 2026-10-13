@@ -1061,7 +1061,9 @@ cases:
           "css": "background-color",
           "equals": "rgb(0, 128, 0)",
         }
-      - aiAct: "Click once in the center of the upper half of the BLUE column on the RIGHT of the two-column colored block. This is the top-right square, immediately to the right of the upper green square. Turn only the upper-left green square pink; do not click the left column or the lower half. Stop after one click."
+      - aiAct:
+          prompt: "Click once in the center of the upper half of the BLUE column on the RIGHT of the two-column colored block. This is the top-right square, immediately to the right of the upper green square. Turn only the upper-left green square pink; do not click the left column or the lower half. Stop after one click."
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
       - web.expect: {
           "selector": "#target1",
           "index": 0,
@@ -1074,7 +1076,9 @@ cases:
           "css": "background-color",
           "equals": "rgb(0, 128, 0)",
         }
-      - aiAct: "Click once in the center of the lower half of the BLUE column on the RIGHT of the two-column colored block. This is the bottom-right square, immediately to the right of the remaining lower green square. Turn the lower-left green square pink while leaving the upper-left square pink. Stop after one click."
+      - aiAct:
+          prompt: "Click once in the center of the lower half of the BLUE column on the RIGHT of the two-column colored block. This is the bottom-right square, immediately to the right of the remaining lower green square. Turn the lower-left green square pink while leaving the upper-left square pink. Stop after one click."
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
       - web.expect: {
           "selector": "#target1",
           "index": 0,
@@ -1105,7 +1109,9 @@ cases:
           "css": "background-color",
           "equals": "rgb(0, 128, 0)",
         }
-      - aiAct: "Click once in the center of the upper half of the BLUE column on the RIGHT of the two-column colored block. This is the top-right square, immediately to the right of the upper green square. Turn only the upper-left green square pink; do not click the left column or the lower half. Stop after one click."
+      - aiAct:
+          prompt: "Click once in the center of the upper half of the BLUE column on the RIGHT of the two-column colored block. This is the top-right square, immediately to the right of the upper green square. Turn only the upper-left green square pink; do not click the left column or the lower half. Stop after one click."
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
       - web.expect: {
           "selector": "#target1",
           "index": 0,
@@ -1118,7 +1124,9 @@ cases:
           "css": "background-color",
           "equals": "rgb(0, 128, 0)",
         }
-      - aiAct: "Click once in the center of the lower half of the BLUE column on the RIGHT of the two-column colored block. This is the bottom-right square, immediately to the right of the remaining lower green square. Turn the lower-left green square pink while leaving the upper-left square pink. Stop after one click."
+      - aiAct:
+          prompt: "Click once in the center of the lower half of the BLUE column on the RIGHT of the two-column colored block. This is the bottom-right square, immediately to the right of the remaining lower green square. Turn the lower-left green square pink while leaving the upper-left square pink. Stop after one click."
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
       - web.expect: {
           "selector": "#target1",
           "index": 0,

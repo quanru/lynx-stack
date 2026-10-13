@@ -58,6 +58,22 @@ profiles and PNG baselines, plus the shared Playwright fixtures. A regression
 test guards both triggers. No product source, original test, fixture, baseline,
 browser profile or retry limit changes.
 
+The later full run at `6b58e8c` retains all three original CSR animation
+executions, which pass first attempt. Its third shard exposes an existing
+`basic-lazy-component-multi` grounding error: the planner describes `(150,50)`
+in a 393-by-851 screenshot but normalizes using an invented 400-by-200 size.
+The actual input `(147,213)` lands below the blue block; the exact pink CSS
+check correctly fails. Retry input `(147,54)` hits the intended upper cell and
+the full sequence passes. Both attempts' agent JSON and before/after images
+are inspected. This is not a product defect or a false-positive assertion.
+
+The follow-up uses public `effort: deepThink`, `deepLocate: true` and disabled
+action caching for both repeated-blue-cell cases, including multi-import.
+Their prompts, two clicks and six ordered exact CSS checks remain unchanged.
+No saved point, selector action, new wait, relaxed assertion or fixture change
+is added. The model-free source-contract check guards this strategy; the new
+head still requires full hosted verification and physical-input inspection.
+
 ## Accepted 457-case checkpoint
 
 Head `fb5afa6` passes **457/457 cases on first attempts** in

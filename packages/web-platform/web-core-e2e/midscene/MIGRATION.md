@@ -91,6 +91,15 @@ pending without changing source, baselines or tolerance. Both CI
 triggers now cover all web-core-e2e tests/configuration/baselines and shared
 Playwright fixtures, with a trigger-coverage regression test.
 
+The full `6b58e8c` run also exposes an older lazy-multi grounding failure. The
+planner substitutes a 200 px colored-block height for the actual 851 px image
+height, sending its first physical click below the blue block. The original
+pink CSS assertion rejects that attempt; a correctly located retry passes.
+Actual before/after images and input coordinates establish this cause. Both
+multi and multi-import now use the existing independent deepThink/deepLocate
+strategy. Prompts, two inputs, all six ordered CSS checks, fixtures and retry
+limits are unchanged. This scoped follow-up requires a new full hosted run.
+
 The accepted runner expansion includes six original keyboard declarations:
 `basic-global-bindkeydown`, `basic-global-bindkeyup`, the key/code/shift
 variants, and `basic-bindkeydown-out-of-view-noop`. The original test file

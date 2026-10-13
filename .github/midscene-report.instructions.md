@@ -44,6 +44,12 @@ The frame-data update action also uses independent deepThink grounding.
 Compare the actual screenshot dimensions and physical tap with the model's
 claimed dimensions before diagnosing a missed text action as a product defect.
 Never add saved coordinates or repeat input to compensate for a wrong conversion.
+The repeated blue-cell lazy-component cases also require deepThink with
+independent deepLocate grounding. A planner can describe the right cell yet
+normalize against the colored block's height instead of the full screenshot,
+then confidently report a click on empty space as successful. Keep both ordered
+inputs and all six source CSS checks; inspect physical input timestamps and
+actual before/after images. Do not replace those checks with planner success text.
 Do not count a visual pilot as a complete source mapping. Bindtap and reload
 contracts retain the original ordered inline-style reads with immediate checks
 and original waits. The public LynxView reload API must not become a browser

@@ -227,6 +227,22 @@ jobs:
           echo "open files limit after: soft=$(ulimit -Sn), hard=$(ulimit -Hn)"
           pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'basic-(mts-bindtouchstart|bindmouse|bindwheel-view)$' --output midscene-original-results/pointer-ssr --reporter line
 
+      - name: Validate original animation sampling (CSR)
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-core-e2e
+        env:
+          ENABLE_SSR: ""
+        # aiAct completes after its post-input planning, not at the input time.
+        # Keep the original click-relative wait and pixel matcher unchanged.
+        run: pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'api-animate$' --output midscene-original-results/animation-csr --reporter line
+
+      - name: Validate original animation sampling (SSR)
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-core-e2e
+        env:
+          ENABLE_SSR: "1"
+        run: pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'api-animate$' --output midscene-original-results/animation-ssr --reporter line
+
       - name: Validate original layout and style performance budgets
         if: matrix.shard == 1
         working-directory: packages/web-platform/web-elements

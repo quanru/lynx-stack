@@ -39,7 +39,9 @@ const names = [
   'api-animate',
 ];
 
-test('six complete source flows preserve every statement, thirteen PNGs and seven ordered clicks', () => {
+// Ordered YAML statements do not prove click-relative timing: the animation
+// case is supplementary. original-animation.test.mjs guards its source runner.
+test('five textarea flows and supplementary animation retain thirteen PNGs and seven ordered clicks', () => {
   assert.deepEqual(document.cases.map(item => item.name), names);
   assert.equal(document.afterEach.length, 1);
   assert.ok(document.afterEach[0].recordToReport);

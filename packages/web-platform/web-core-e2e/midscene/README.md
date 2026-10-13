@@ -2,21 +2,30 @@
 
 ## Current migration batch (2026-10-13)
 
-This batch adds eight YAML cases, bringing the collection to 465. Six textarea
-flows preserve all 13 original PNG checkpoints, including each source-defined
+This batch adds eight YAML cases, bringing the collection to 465: seven source
+mappings and one supplementary animation case. Five textarea flows and that
+animation case retain 13 original PNG checkpoints, including each source-defined
 pixel tolerance, and use aiAct for their seven clicks. The scrollable case
 preserves all 27 exact CSS checks around one aiAct click. The list-size case
 retains its public scroll API call and both immediate height reads. Source-AST
 and differential tests compare complete ordered sequences, waits and values.
-No new custom action node is introduced.
+No new custom action node is introduced. Ordered YAML waits do not establish
+click-relative timing equivalence: the `api-animate` trace at `1118e0c` samples
+about 11.6 seconds after physical input, versus the original 2-second wait
+followed by its screenshot matcher. AI post-input planning adds that delay.
+The original animation runner is therefore retained in CSR and SSR with all
+three browser profiles (six executions, twelve ordered PNG checkpoints).
+Its click, waits, font readiness, baseline images and matcher stay unchanged;
+the AI case supplies additional end-state evidence only.
 
 Three original touch, mouse and wheel contracts also run unchanged in CSR and
 SSR across the original browser profiles: 18 collected executions, eight enabled
 and ten original browser skips. These validate event phases and input parameters,
-so they remain deterministic runner coverage, not additional AI cases. All ten
+so they remain deterministic runner coverage, not additional AI cases. All twelve
 retained browser invocations have distinct diagnostic output directories.
 
-All 156 model-free checks, typechecking and actionlint pass, as do both
+At the preceding `efe14ba` checkpoint, all 156 model-free checks, typechecking
+and actionlint pass, as do both
 nine-case original runner list checks without launching browsers locally. The
 full workspace build passes all 74 tasks using the existing task-local Rust
 toolchain and concurrency two. No global toolchain configuration changes.
@@ -28,8 +37,11 @@ before either list-height read executes. The follow-up accepts this existing
 single-read execution mode. Two new regression tests reproduce the rejection
 before the fix and execute the real YAML inputs through the adapter afterward;
 a wrong first value still fails without waiting, polling, trimming or coercion.
-Both heights and the original 500 ms wait remain unchanged. This batch requires
-a successful complete run at the corrected head before acceptance.
+Both heights and the original 500 ms wait remain unchanged. The corrected head
+`efe14ba` passes all four shards and report/Pages publication in
+[run 38358042762](https://github.com/quanru/lynx-stack/actions/runs/38358042762).
+That success does not establish animation timing equivalence. The follow-up
+original-animation integration requires its own complete hosted acceptance.
 
 Push and PR path filters now cover all web-core-e2e original tests, browser
 profiles and PNG baselines, plus the shared Playwright fixtures. A regression

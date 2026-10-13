@@ -56,6 +56,13 @@ browser profiles and bounded workers; do not count them as additional AI cases.
 Likewise retain exact CDP touch trajectories, mouse down/up phases and wheel
 deltas in the original pointer runner, including its CSR/SSR modes and original
 browser guards. Ordinary textarea and scrollable-toggle clicks use aiAct.
+An aiAct promise can settle seconds after the physical input because of
+post-action planning. Matching a source wait in YAML therefore does not preserve
+click-relative sampling. Retain `api-animate` in its original CSR/SSR runner
+with all three browser profiles, both original PNGs and unchanged matcher
+options. Its AI case is supplementary end-state evidence, not a replacement
+for the original timing-sensitive contract. Inspect actual action timestamps
+before claiming equivalence; do not compensate with a guessed shorter wait.
 Pixel tolerances belong to exact source PNG paths: preserve original exceptions
 without applying them to neighboring snapshots or the web-elements suite.
 Give every retained Playwright invocation a distinct output directory. The

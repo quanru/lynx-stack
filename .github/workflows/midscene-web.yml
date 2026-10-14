@@ -96,11 +96,6 @@ jobs:
       matrix:
         shard: [1, 2, 3, 4]
     env:
-      MIDSCENE_MODEL_API_KEY: ${{ secrets.MIDSCENE_MODEL_API_KEY }}
-      MIDSCENE_MODEL_NAME: ${{ secrets.MIDSCENE_MODEL_NAME }}
-      MIDSCENE_MODEL_BASE_URL: ${{ secrets.MIDSCENE_MODEL_BASE_URL }}
-      MIDSCENE_MODEL_FAMILY: ${{ secrets.MIDSCENE_MODEL_FAMILY }}
-      MIDSCENE_MODEL_REASONING_ENABLED: ${{ secrets.MIDSCENE_MODEL_REASONING_ENABLED }}
       # Provider retries do not change case retries or assertion deadlines.
       MIDSCENE_MODEL_RETRY_COUNT: "2"
       MIDSCENE_MODEL_RETRY_INTERVAL: "30000"
@@ -143,7 +138,22 @@ jobs:
 
       - name: Preflight model endpoint
         working-directory: packages/web-platform/web-core-e2e/midscene
+        env: &midscene-model-env
+          MIDSCENE_MODEL_API_KEY: ${{ secrets.MIDSCENE_MODEL_API_KEY }}
+          MIDSCENE_MODEL_NAME: ${{ vars.MIDSCENE_MODEL_NAME || secrets.MIDSCENE_MODEL_NAME }}
+          MIDSCENE_MODEL_BASE_URL: ${{ vars.MIDSCENE_MODEL_BASE_URL || secrets.MIDSCENE_MODEL_BASE_URL }}
+          MIDSCENE_MODEL_FAMILY: ${{ vars.MIDSCENE_MODEL_FAMILY || secrets.MIDSCENE_MODEL_FAMILY }}
+          MIDSCENE_MODEL_REASONING_ENABLED: ${{ vars.MIDSCENE_MODEL_REASONING_ENABLED || secrets.MIDSCENE_MODEL_REASONING_ENABLED }}
         run: bash ../../../../.github/scripts/preflight-model.sh
+
+      - name: Install Midscene test dependencies
+        working-directory: packages/web-platform/web-core-e2e/midscene
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify Midscene model compatibility
+        working-directory: packages/web-platform/web-core-e2e/midscene
+        env: *midscene-model-env
+        run: npm run check:model
 
       - name: Install Rust toolchain (web-core build:wasm)
         # Container jobs default to `sh` (dash), which has no `source`;
@@ -324,10 +334,6 @@ jobs:
           cat /tmp/web-elements.log >&2 || true
           exit 1
 
-      - name: Install Midscene test dependencies
-        working-directory: packages/web-platform/web-core-e2e/midscene
-        run: npm ci --no-audit --no-fund
-
       - name: Validate case collection and exact assertion contracts
         working-directory: packages/web-platform/web-core-e2e/midscene
         run: |
@@ -343,6 +349,7 @@ jobs:
       - name: Run Web Midscene cases
         id: run-cases
         working-directory: packages/web-platform/web-core-e2e/midscene
+        env: *midscene-model-env
         run: |
           echo "open files limit before: soft=$(ulimit -Sn), hard=$(ulimit -Hn)"
           ulimit -Sn "$(ulimit -Hn)"

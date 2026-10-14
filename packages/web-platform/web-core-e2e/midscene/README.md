@@ -1,5 +1,26 @@
 # Midscene E2E for web-core and web-elements
 
+## Rome SDK alignment (pending hosted acceptance)
+
+The integration now pins all Midscene packages to `1.15.3`, matching Rome's
+`codex/pr-974-e2e-reference` branch at `d1b3183`. Run `npm run check:model`
+to invoke the official `midscene-test model verify` checks for text, image
+understanding and AI location. A small output filter removes credentials from
+the verifier's failure diagnostics; the SDK still determines success or failure.
+CI runs both the existing image-only gate and official verification before the
+workspace build. Model credentials are injected only into these checks and
+case execution. Non-secret model variables take precedence over same-named
+repository secrets; existing repository-secret configuration remains supported.
+
+Web agents now use the SDK's coordinate protocol without an extra conversion
+prompt. Case-owned registries, serial project execution, four bounded shards,
+exact original assertions, source waits, browser profiles and PNGs remain.
+Agent teardown closes the case browser context even if report finalization fails.
+The clickable screenshot Summary and website-safe shared Pages publisher remain;
+Rome's single-report publisher cannot replace this repository's combined site.
+The existing model-free contract checks are retained. Historical run evidence
+below predates this upgrade and must not be treated as acceptance of this SDK.
+
 ## Current migration batch (2026-10-14)
 
 ### Assertion precision follow-up

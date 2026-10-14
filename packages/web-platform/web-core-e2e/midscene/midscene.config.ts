@@ -109,10 +109,6 @@ function createWebSetup(pixels = false, javaScriptEnabled = true) {
             const page = await getPage(runId);
             agent = new PlaywrightAgent(page, {
               reportFileName: `web-${runId}.html`,
-              aiContexts: {
-                aiAct:
-                  'Follow the coordinate format requested by the active action protocol. When it requests normalized 0–1000 coordinates, convert screenshot pixel positions using x / screenshot width * 1000 and y / screenshot height * 1000 before emitting locate.point. Do not label raw screenshot pixels as normalized coordinates. The center of the full screenshot is [500, 500] in that normalized format, regardless of its pixel dimensions. Check that the converted point lies inside the described target, using its left/right and upper/lower relationships.',
-              },
             });
             agents.set(runId, agent);
           }
@@ -124,8 +120,11 @@ function createWebSetup(pixels = false, javaScriptEnabled = true) {
           agents.delete(runId);
           pages.delete(runId);
           consoleEvidence.delete(runId);
-          if (agent) await agent.destroy();
-          if (page) await page.context().close();
+          try {
+            if (agent) await agent.destroy();
+          } finally {
+            if (page) await page.context().close();
+          }
           // Return a report path only after an AI task caused core to write the
           // agent HTML. DOM-only cases create an agent lazily for gotoUrl but do
           // not emit a report on destroy; returning a missing path fails the runner.
@@ -330,7 +329,7 @@ export default defineTestProject<WebProjectContext>({
   ],
   test: {
     // Keep projects serial; case concurrency uses separately scoped shards.
-    // SDK 1.13.1 forwards testTimeout as the per-step default, not a case limit.
+    // Keep the existing per-step deadline; upgrading the SDK must not relax it.
     maxConcurrency: 1,
     testTimeout: 180_000,
   },

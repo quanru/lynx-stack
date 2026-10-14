@@ -15,13 +15,16 @@ import {
 test('projects keep independent registries and release only their own case resources', async () => {
   const events = [];
   let browserId = 0;
+  let failDestroy = false;
   const contextOptions = [];
   class Agent {
-    constructor(page) {
+    constructor(page, options) {
       this.page = page;
+      assert.equal(options.aiContexts, undefined);
     }
     async destroy() {
       events.push(['agent', this.page.id]);
+      if (failDestroy) throw new Error('Agent report finalization failed');
     }
   }
   const modules = {
@@ -143,5 +146,16 @@ test('projects keep independent registries and release only their own case resou
   );
   assert.equal(contextOptions[0].javaScriptEnabled, undefined);
   await ssrContext.agentRegistry.releaseAgent('ssr-no-js-context');
+  await ssrContext.agentRegistry.getAgent('failed-agent-report');
+  failDestroy = true;
+  await assert.rejects(
+    ssrContext.agentRegistry.releaseAgent('failed-agent-report'),
+    /report finalization failed/,
+  );
+  assert.deepEqual(events.slice(-2), [['agent', 3], ['context', 3]]);
+  assert.throws(
+    () => ssrContext.getConsoleEvidence('failed-agent-report'),
+    /live case page/,
+  );
   await teardowns.at(-1)();
 });

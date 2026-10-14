@@ -1,0 +1,20 @@
+# Use the original pixel profile for both PNGs and the 1000ms preparation wait.
+cases:
+  - name: web-elements/x-list/scroll-to-position
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-list/scroll-to-position.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original list scroll-to-position contract
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-list/scroll-to-position/initial,
+        }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 1000))"
+      - aiAct:
+          prompt: Click the visible text "scrollToPosition" once. Stop after that single click.
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-list/scroll-to-position/scroll-to-position,
+        }
+      - recordToReport: Original list scroll-to-position pixel contracts passed

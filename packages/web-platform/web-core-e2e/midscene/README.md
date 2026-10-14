@@ -2,6 +2,31 @@
 
 ## Current migration batch (2026-10-14)
 
+The next list batch brings the collection to 467 YAML cases. Its ordinary
+`scrollToPosition` click uses independently located aiAct, retaining the initial
+and final original PNGs and 1000ms preparation wait. Four list API contracts
+run unchanged through the original Playwright runner across Chromium, Firefox
+and WebKit (12 executions): visible cells, vertical/horizontal container info
+and auto-scroll orientation. This retains evaluateHandle/jsonValue boundaries,
+separate dimension reads, scrollBy interception and the animation-frame barrier.
+Thirteen retained browser invocations have separate diagnostic directories.
+No additional Midscene action node or fixture change is introduced.
+
+The preceding 466-case run
+[38491581817](https://github.com/quanru/lynx-stack/actions/runs/38491581817)
+passes all shards, reports and Pages: 465 first-attempt passes and one successful
+`api-invoke-success` retry. All three new image contracts pass first attempt.
+The live Summary loads all 466 linked images with a default-closed passed
+appendix; clicking the crossorigin preview opens its exact final recording.
+All 471 unique public image/HTML URLs return HTTP 200 and the publication
+archive passes CRC checks. The invoke miss is an actual edge input: (10,45)
+falls on the 10px trigger's right boundary, while retry (8,44) succeeds.
+Both invoke cases now use independent deepThink/deepLocate with caching disabled
+and restore both original 100ms waits, retaining their exact pink-to-green CSS
+checks. This correction and the list batch require current-head hosted validation.
+
+### Image attribute batch
+
 Three additional `x-image` contracts bring the collection to 466 YAML cases:
 `crossorigin`, `referrerpolicy` and `should not have loading attribute by default`.
 They preserve the source host/shadow-image selectors, font readiness and one
@@ -13,7 +38,7 @@ nodes. The source cases contain no user action, so no artificial aiAct is added.
 Report captures surround the check. Differential tests execute both original
 callbacks and real YAML across correct, wrong, absent and missing-element states.
 This adds three Chromium mappings, not Firefox/WebKit acceptance or proof of
-identical wall-clock sampling. Hosted acceptance of this batch is pending.
+identical wall-clock sampling. All three pass first attempt in run 38491581817.
 
 The preceding head `177f5ee` passes 463/463 cases on first attempts in
 [38425505046](https://github.com/quanru/lynx-stack/actions/runs/38425505046),
@@ -43,8 +68,9 @@ the AI case supplies additional end-state evidence only.
 Three original touch, mouse and wheel contracts also run unchanged in CSR and
 SSR across the original browser profiles: 18 collected executions, eight enabled
 and ten original browser skips. These validate event phases and input parameters,
-so they remain deterministic runner coverage, not additional AI cases. All twelve
-retained browser invocations have distinct diagnostic output directories.
+so they remain deterministic runner coverage, not additional AI cases. At that
+checkpoint all twelve retained browser invocations have distinct output directories;
+the list batch adds a thirteenth.
 
 At the preceding `efe14ba` checkpoint, all 156 model-free checks, typechecking
 and actionlint pass, as do both

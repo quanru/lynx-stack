@@ -86,12 +86,16 @@ cases:
     steps:
       - gotoUrl: "${shellUrl}?casename=api-invoke-success"
       - aiWaitFor: A bordered text input is above a large pink square, with a tiny blue trigger between them at the left edge.
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
       - web.expect: {
           selector: "#result",
           css: background-color,
           equals: "rgb(255, 192, 203)",
         }
-      - aiAct: Click the tiny BLUE square at the LEFT edge immediately below the input and above the large pink region exactly once. Stop after that single click; the large result region should become green.
+      - aiAct:
+          prompt: Click the tiny BLUE square at the LEFT edge immediately below the input and above the large pink region exactly once. Stop after that single click; the large result region should become green.
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
       - web.expect: {
           selector: "#result",
           css: background-color,
@@ -102,12 +106,16 @@ cases:
     steps:
       - gotoUrl: "${shellUrl}?casename=api-invoke-fail"
       - aiWaitFor: A bordered text input is above a large pink square, with a tiny blue trigger between them at the left edge.
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
       - web.expect: {
           selector: "#result",
           css: background-color,
           equals: "rgb(255, 192, 203)",
         }
-      - aiAct: Click the tiny BLUE square at the LEFT edge immediately below the input and above the large pink region exactly once. Stop after that single click; the large result region should become green.
+      - aiAct:
+          prompt: Click the tiny BLUE square at the LEFT edge immediately below the input and above the large pink region exactly once. Stop after that single click; the large result region should become green.
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
       - web.expect: {
           selector: "#result",
           css: background-color,

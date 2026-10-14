@@ -46,13 +46,31 @@ case total.
 
 ## Execution and acceptance
 
-The current local collection contains 466 YAML cases. Three new `x-image`
+The current local collection contains 467 YAML cases. One list scroll-to-position
+case retains both original PNG checkpoints and its 1000ms preparation wait around
+one independently located aiAct click. Four list API cases remain in the original
+three-browser runner (12 executions), preserving handle serialization, distinct
+geometry reads, autoScroll/scrollBy interception and the animation-frame barrier.
+These are additional original-runner contracts, not extra AI case counts.
+Thirteen retained browser invocations have separate uploaded diagnostics.
+
+Head `8a466c8` passes 466/466 in run 38491581817: 465 first-attempt passes,
+one `api-invoke-success` retry, and all three image-attribute additions passing
+first attempt. Reports/Pages publish, all 466 Summary images load, the passed
+appendix is initially closed, the crossorigin preview opens its exact report
+step, and all 471 public image/HTML URLs return HTTP 200. The archive passes CRC.
+Actual input (10,45) is on the tiny blue trigger's right edge; retry (8,44)
+succeeds. Both invoke cases now use independent location and retain the source's
+two 100ms waits and exact CSS sequence. Hosted validation for the list batch
+and this grounding correction is pending.
+
+The preceding local collection contains 466 YAML cases. Three new `x-image`
 attribute contracts preserve the original single-read shadow-tree selectors and
 exact values, including `undefined` versus `null`. They use standard JavaScript
 assertions, not AI judgment, polling or new custom action nodes. Differential
 tests execute original callbacks and YAML against correct, wrong, absent and
 missing host/shadow/image states. These are Chromium mappings; Firefox/WebKit
-acceptance is not implied. Hosted validation for the three additions is pending.
+acceptance is not implied. All three additions pass first attempt in run 38491581817.
 
 The preceding head `177f5ee` passes 463/463 on first attempts in run
 38425505046, including six original lazy-component executions without retries,
@@ -80,8 +98,9 @@ The three original pointer declarations `basic-mts-bindtouchstart`,
 all three original browser profiles. Their CDP touch trajectory, mouse phases,
 wheel delta and browser guards remain intact. Each mode lists nine executions;
 across both modes eight are enabled and ten retain original browser skips.
-These are retained protocol contracts, not extra AI cases. All twelve retained
-browser invocations own distinct diagnostic output directories. At the preceding
+These are retained protocol contracts, not extra AI cases. At that checkpoint
+all twelve retained browser invocations own distinct output directories; the
+list batch adds a thirteenth. At the preceding
 `efe14ba` checkpoint local checks pass: 156 model-free tests, typechecking, actionlint and both browser-free
 nine-case list checks. The full workspace build passes all 74 tasks using the
 existing task-local Rust toolchain with concurrency two, without global setup

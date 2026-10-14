@@ -86,6 +86,15 @@ without applying them to neighboring snapshots or the web-elements suite.
 Give every retained Playwright invocation a distinct output directory. The
 runner clears its configured output before execution, so a later suite must
 not erase an earlier suite's failure traces before the final artifact upload.
+For API contracts, preserve the original page/evaluateHandle/jsonValue
+boundaries and independent reads.
+Keep the list visible-cell, scroll-container and auto-scroll-orientation API
+contracts in their original three-browser runner, including scrollBy interception
+and the requestAnimationFrame barrier. Ordinary scroll-to-position clicks use
+aiAct with both original PNG checkpoints. The tiny invoke trigger needs
+independent visual location: an inline point on its 10px right edge can miss.
+Preserve both source 100ms waits and exact pink-to-green checks; inspect actual
+physical input before treating a successful retry as stable grounding.
 For page.evaluate attribute reads, preserve missing-element behavior,
 the single read and distinguish undefined (missing element) from null (missing
 attribute). Do not use locator waiting or null coalescing to turn a transient

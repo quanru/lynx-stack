@@ -277,6 +277,15 @@ jobs:
         # under test. Keep the complete source suites and original browser skips.
         run: pnpm exec playwright test tests/scroll-view-mouse-drag.spec.ts tests/x-foldview-ng-wheel.spec.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/drag-wheel --reporter line
 
+      - name: Validate original list API and orientation contracts
+        if: matrix.shard == 1
+        working-directory: packages/web-platform/web-elements
+        env:
+          PORT: "3081"
+        # Preserve evaluateHandle/jsonValue boundaries, separate geometry reads
+        # and scrollBy interception around the original animation-frame barrier.
+        run: pnpm exec playwright test tests/web-elements.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'x-list (auto-scroll-follows-orientation|get-visible-cells|get-scroll-container-info(-horizontal)?)$' --output midscene-original-results/list-api --reporter line
+
       - name: Validate original Rust and TypeScript template consistency
         if: matrix.shard == 1
         working-directory: packages/web-platform/web-elements

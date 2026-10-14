@@ -529,6 +529,10 @@ for (
               ? ['web.prepareLynxView']
               : []),
             ...(suite === 'web-elements'
+                || file === 'continuation'
+                  && ['api-invoke-success', 'api-invoke-fail'].includes(
+                    item.name,
+                  )
                 || [
                   'css-fallback',
                   'text-count',

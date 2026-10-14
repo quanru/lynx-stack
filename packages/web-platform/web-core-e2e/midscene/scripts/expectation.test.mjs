@@ -79,13 +79,20 @@ test('exact text and input values do not trim, coerce, or accept substrings', as
   }
 });
 
-test('attributes preserve exact equality versus substring matching', async () => {
+test('attributes preserve exact equality versus substring matching', async t => {
+  let clock = 0;
+  t.mock.method(Date, 'now', () => clock);
+  t.mock.method(globalThis, 'setTimeout', (callback, delay) => {
+    clock += delay;
+    queueMicrotask(callback);
+    return 0;
+  });
   const locator = locatorFor(['none', 'Enter']);
   await expectWebValue(locator, {
     selector: '#observer',
     attribute: 'data-key',
     equals: 'Enter',
-    timeoutMs: 20,
+    timeoutMs: 1000,
   });
   assert.deepEqual(locator.calls[0], ['attribute', 'data-key']);
   await expectWebValue(locatorFor(['background:green;']), {
@@ -212,8 +219,8 @@ test('malformed assertions fail closed', async () => {
       { css: 'width', equals: '100px', greaterThan: 0 },
       { css: 'width', equals: '100px', immediate: 'true' },
       { css: 'width', equals: '100px', text: '100px', immediate: true },
-      { text: 'x', immediate: true },
-      { value: 'x', immediate: true },
+      { text: 'x', immediate: 'true' },
+      { value: 'x', immediate: 'true' },
       { text: 'x', not: true },
       { text: 'x', index: -1 },
       { text: 'x', index: 0.5 },

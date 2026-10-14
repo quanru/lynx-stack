@@ -195,9 +195,18 @@ cases:
   - name: basic-element-x-textarea-input-filter
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-element-x-textarea-input-filter"
-      - aiWaitFor: A bordered text area containing bindinput is visible near the upper-left.
-      - aiAct: 'Focus the text area, press Enter, then replace all its contents by entering the literal string "foobar!@#)" exactly once. Enter every character including punctuation. The application intentionally filters punctuation; completion means sending that input, not retaining the unfiltered text. Stop after that single entry; do not retry or correct the filtered result.'
-      - web.expect: { selector: ".result", text: foobar }
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original filtered textarea text snapshot
+      - aiAct:
+          prompt: Press Enter once in the text area without changing its contents.
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 200))"
+      - aiAct:
+          prompt: Replace all contents of the text area by entering the literal string "foobar!@#)" exactly once. Enter every character including punctuation. The application filters punctuation; stop after sending that input without correcting the filtered result.
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 200))"
+      - web.expect: { selector: ".result", text: foobar, immediate: true }
+      - recordToReport: Original filtered textarea text snapshot passed
 
   - name: basic-flex-nested-linear-setting
     steps:

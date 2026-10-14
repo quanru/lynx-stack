@@ -103,16 +103,32 @@ cases:
   - name: basic-element-x-input-bindfocus
     steps:
       - gotoUrl: ${shellUrl}?casename=basic-element-x-input-bindfocus
-      - aiWaitFor: A bordered password input is visible near the top of the page.
-      - aiAct: Click inside the password input to focus it without changing its contents.
-      - web.expect: { selector: ".result", text: "bindfocus" }
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original input focus text snapshot
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - aiAct:
+          prompt: Click inside the password input to focus it without changing its contents.
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.expect: { selector: ".result", text: "bindfocus", immediate: true }
+      - recordToReport: Original input focus text snapshot passed
 
   - name: basic-element-x-input-bindconfirm
     steps:
       - gotoUrl: ${shellUrl}?casename=basic-element-x-input-bindconfirm
-      - aiWaitFor: An input containing bindconfirm is visible.
-      - aiAct: Focus the input containing bindconfirm and press Enter once without changing its text.
-      - web.expect: { selector: ".result", text: "bindconfirm" }
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original input confirm text snapshot
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - aiAct:
+          prompt: Focus the input containing bindconfirm and press Enter once without changing its text.
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.expect: {
+          selector: ".result",
+          text: "bindconfirm",
+          immediate: true,
+        }
+      - recordToReport: Original input confirm text snapshot passed
 
   - name: basic-element-x-input-bindinput
     steps:

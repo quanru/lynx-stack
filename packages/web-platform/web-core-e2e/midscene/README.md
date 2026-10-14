@@ -2,6 +2,24 @@
 
 ## Current migration batch (2026-10-14)
 
+### Assertion precision follow-up
+
+The 467-case run [38553731891](https://github.com/quanru/lynx-stack/actions/runs/38553731891)
+passes all shards, report assembly and Pages: 466 first-attempt passes and one
+successful `basic-element-x-input-bindfocus` retry. The list-position addition
+and both independently grounded invoke clicks pass on their first attempts.
+The retained list API runner passes all 12 original browser executions.
+
+The follow-up restores seven source callbacks' single `innerText()` reads,
+exact waits and separate Enter/fill phases. It also gives focus and confirm
+actions independent grounding without caching. The shared assertion adapter now
+uses Playwright's original five-second default, with attachment and polling
+sharing one budget; late matching values cannot pass. Explicit source budgets
+and immediate reads remain distinct. Source-replay and fake-clock regressions
+cover these semantics. Collection stays at 467; product code, original tests,
+fixtures, PNGs and retry budgets are unchanged. This follow-up requires its own
+hosted validation; the successful parent run does not validate it.
+
 The next list batch brings the collection to 467 YAML cases. Its ordinary
 `scrollToPosition` click uses independently located aiAct, retaining the initial
 and final original PNGs and 1000ms preparation wait. Four list API contracts

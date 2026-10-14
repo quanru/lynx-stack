@@ -46,6 +46,19 @@ case total.
 
 ## Execution and acceptance
 
+Parent head `40aed92` passes all 467 cases in run 38553731891, with 466
+first-attempt passes and one focus retry; reports and Pages publish successfully.
+The next precision correction changes no case count. Seven source callbacks
+(`basic-lazy-component-fail`, input focus/confirm, ng-bindinput, input and textarea
+filters, and input bindinput) retain single raw text reads, exact waits and
+separate Enter/fill phases. The adapter restores the five-second Playwright
+default and shares it across attachment and polling, rejecting late replies.
+Independent focus grounding addresses the observed initial click below the
+password input. Original source tests, fixtures and retry budgets remain intact.
+Ordered phases do not prove identical wall-clock sampling after physical input:
+aiAct planning remains additional latency. Hosted acceptance of this follow-up
+must be recorded separately from its successful parent.
+
 The current local collection contains 467 YAML cases. One list scroll-to-position
 case retains both original PNG checkpoints and its 1000ms preparation wait around
 one independently located aiAct click. Four list API cases remain in the original

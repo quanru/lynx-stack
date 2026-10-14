@@ -351,8 +351,15 @@ cases:
   - name: basic-lazy-component-fail
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-lazy-component-fail"
-      - aiWaitFor: "The text Loading... is visible."
-      - web.expect: { "selector": "#fallback", "text": "Loading..." }
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original lazy fallback snapshot
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - web.expect: {
+          "selector": "#fallback",
+          "text": "Loading...",
+          immediate: true,
+        }
+      - recordToReport: Original lazy fallback text snapshot passed
 
   - name: basic-lazy-component-effect
     steps:
@@ -1020,16 +1027,38 @@ cases:
   - name: basic-element-x-input-ng-bindinput
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-element-x-input-ng-bindinput"
-      - aiAct: "Focus the input, press Enter, replace all its contents with \"foobar\", and leave the caret at the end."
-      - web.expect: { "selector": ".result", "text": "foobar-6-6" }
-      - aiWaitFor: "The text foobar-6-6 is visible."
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original input event text snapshot
+      - aiAct:
+          prompt: Press Enter once in the input without changing its contents.
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 200))"
+      - aiAct:
+          prompt: Replace all contents of the input with the literal string "foobar" exactly once, leaving the caret at the end. Stop after that entry.
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 200))"
+      - web.expect: {
+          "selector": ".result",
+          "text": "foobar-6-6",
+          immediate: true,
+        }
+      - recordToReport: Original input event text snapshot passed
 
   - name: basic-element-x-input-input-filter
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-element-x-input-input-filter"
-      - aiAct: "Focus the input, press Enter, then replace all its contents by entering the literal string \"foobar!@#)\". Enter every character including punctuation; do not correct the filtered result."
-      - web.expect: { "selector": ".result", "text": "foobar" }
-      - aiWaitFor: "The text foobar is visible."
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original filtered input text snapshot
+      - aiAct:
+          prompt: Press Enter once in the input without changing its contents.
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 200))"
+      - aiAct:
+          prompt: Replace all contents of the input by entering the literal string "foobar!@#)" exactly once. Enter every character including punctuation. The application filters punctuation; stop after sending that input without correcting the filtered result.
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 200))"
+      - web.expect: { "selector": ".result", "text": "foobar", immediate: true }
+      - recordToReport: Original filtered input text snapshot passed
 
   - name: basic-event-target-trigger
     steps:

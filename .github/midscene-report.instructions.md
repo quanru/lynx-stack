@@ -109,6 +109,8 @@ not only with a second copy of the migrated YAML's expected values.
 Midscene 1.13.1 `test.maxConcurrency` limits projects, not cases. A single
 project remains serial regardless of this setting. Do not claim case-level
 parallelism without separate project shards and independently scoped registries.
+Preserve single raw innerText/inputValue reads as immediate assertions, not visibility waits or polling. Match the original Playwright five-second default unless the source explicitly overrides it, and share that budget across attachment and matching. Test late matching replies and separate Enter/fill/wait phases with source replay; AI planning latency is not proof of click-relative timing equivalence.
+
 Verify model vision with an image-only challenge; text-only preflight
 responses and HTTP 200 do not prove the endpoint reads screenshots. Record the
 actual response model version when diagnosing failures, because endpoint IDs

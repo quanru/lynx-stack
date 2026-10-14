@@ -35,7 +35,7 @@ test('input editing uses aiAct without a custom selector-based action node', () 
   assert.match(cases, /- aiAct:.*press Enter.*"foobar".*caret at the end/);
   assert.doesNotMatch(cases, /selector: "input", value:/);
   assert.match(cases, /selector: "\.result", text: "foobar-6-6"/);
-  assert.match(expectation, /locator\.innerText\(\)/);
+  assert.match(expectation, /locator\.innerText\(readOptions\)/);
   assert.match(expectation, /actual === text/);
   assert.doesNotMatch(expectation, /\.trim\(\)/);
 });

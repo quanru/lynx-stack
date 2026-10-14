@@ -195,10 +195,10 @@ for (
         assert.match(body, /locator\('input'\)\.press\('Enter'\)/);
         assert.match(body, /locator\('input'\)\.fill\('foobar'\)/);
         const actions = item.steps.filter(step => step.aiAct);
-        assert.equal(actions.length, 1);
-        assert.match(actions[0].aiAct.prompt, /press Enter/);
+        assert.equal(actions.length, 2);
+        assert.match(actions[0].aiAct.prompt, /Press Enter/);
         assert.match(
-          actions[0].aiAct.prompt,
+          actions[1].aiAct.prompt,
           /literal string "foobar" exactly once/,
         );
       }
@@ -292,16 +292,16 @@ for (
         assert.match(body, /locator\('textarea'\)\.press\('Enter'\)/);
         assert.match(body, /locator\('textarea'\)\.fill\('foobar!@#\)'\)/);
         const actions = item.steps.filter(step => step.aiAct);
-        assert.equal(actions.length, 1);
-        const prompt = actions[0].aiAct.prompt;
-        assert.match(prompt, /press Enter/);
+        assert.equal(actions.length, 2);
+        assert.match(actions[0].aiAct.prompt, /Press Enter/);
+        const prompt = actions[1].aiAct.prompt;
         assert.match(prompt, /literal string "foobar!@#\)" exactly once/);
         assert.match(prompt, /Enter every character including punctuation/);
         assert.match(
           prompt,
-          /completion means sending that input, not retaining the unfiltered text/,
+          /stop after sending that input without correcting the filtered result/,
         );
-        assert.match(prompt, /do not retry or correct the filtered result/);
+        assert.match(prompt, /without correcting the filtered result/);
         const fixture = readFileSync(
           new URL(
             '../../tests/reactlynx/basic-element-x-textarea-input-filter/index.jsx',
@@ -529,8 +529,19 @@ for (
               ? ['web.prepareLynxView']
               : []),
             ...(suite === 'web-elements'
+                || file === 'remaining-inputs'
+                || file === 'expansion'
+                  && [
+                    'basic-lazy-component-fail',
+                    'basic-element-x-input-ng-bindinput',
+                    'basic-element-x-input-input-filter',
+                  ].includes(item.name)
                 || file === 'continuation'
-                  && ['api-invoke-success', 'api-invoke-fail'].includes(
+                  && [
+                    'api-invoke-success',
+                    'api-invoke-fail',
+                    'basic-element-x-textarea-input-filter',
+                  ].includes(
                     item.name,
                   )
                 || [

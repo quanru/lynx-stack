@@ -32,7 +32,7 @@ export async function expectWebCount(
     matchingText,
     matchingTexts,
     count,
-    timeoutMs = 15_000,
+    timeoutMs = 5_000,
     immediate = false,
   } = input;
   const single = typeof matchingText === 'string'
@@ -56,15 +56,17 @@ export async function expectWebCount(
   const deadline = Date.now() + timeoutMs;
   for (;;) {
     const actual = await readCount();
-    if (actual === count) return;
+    if (actual === count && (immediate || Date.now() <= deadline)) return;
     if (immediate || Date.now() >= deadline) {
       throw new Error(
-        `web.expect text ${
-          JSON.stringify(matchingText ?? matchingTexts)
-        } expected count ${count}, got ${actual}`,
+        `web.expect text ${JSON.stringify(matchingText ?? matchingTexts)} ${
+          immediate ? '' : `timed out after ${timeoutMs} ms; `
+        }expected count ${count}, got ${actual}`,
       );
     }
-    await new Promise(resolve => setTimeout(resolve, Math.min(200, timeoutMs)));
+    await new Promise(resolve =>
+      setTimeout(resolve, Math.min(200, Math.max(0, deadline - Date.now())))
+    );
   }
 }
 
@@ -137,7 +139,7 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
     equals,
     greaterThan,
     contains,
-    timeoutMs = 15_000,
+    timeoutMs = 5_000,
   } = input;
   const modes = [
     text !== undefined,
@@ -159,7 +161,8 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
     || (input.immediate !== undefined
       && (typeof input.immediate !== 'boolean'
         || (bounds === undefined && attribute === undefined && css === undefined
-          && property !== 'scrollTop')))
+          && property !== 'scrollTop' && text === undefined
+          && textContains === undefined && value === undefined)))
     || (greaterThan !== undefined && bounds === undefined
       && property !== 'scrollTop')
     || (attribute !== undefined
@@ -198,6 +201,9 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
   ) {
     throw new Error('web.expect requires a string expected value.');
   }
+  // Original Playwright assertions share one five-second default budget for
+  // attachment and matching. Do not start another window after attachment.
+  const deadline = Date.now() + timeoutMs;
   if (!input.immediate) {
     await locator.waitFor({
       state:
@@ -207,26 +213,33 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
       timeout: timeoutMs,
     });
   }
-  const deadline = Date.now() + timeoutMs;
   for (;;) {
+    const readOptions = input.immediate
+      ? undefined
+      : { timeout: Math.max(1, deadline - Date.now()) };
     const actual = await (
       css !== undefined
         ? locator.evaluate(
           (element, property) =>
             getComputedStyle(element).getPropertyValue(property),
           css,
+          readOptions,
         )
         : property !== undefined
         ? property === 'scrollTop'
-          ? locator.evaluate(element => element.scrollTop)
-          : locator.evaluate(element => element.tagName)
+          ? locator.evaluate(
+            element => element.scrollTop,
+            undefined,
+            readOptions,
+          )
+          : locator.evaluate(element => element.tagName, undefined, readOptions)
         : bounds !== undefined
-        ? locator.boundingBox().then((box) => box?.[bounds] ?? null)
+        ? locator.boundingBox(readOptions).then((box) => box?.[bounds] ?? null)
         : attribute !== undefined
-        ? locator.getAttribute(attribute)
+        ? locator.getAttribute(attribute, readOptions)
         : value !== undefined
-        ? locator.inputValue()
-        : locator.innerText()
+        ? locator.inputValue(readOptions)
+        : locator.innerText(readOptions)
     );
     const substring = textContains ?? contains;
     const matches = greaterThan !== undefined
@@ -239,9 +252,9 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
     // Playwright's not.toHaveAttribute passes for an absent attribute on an
     // existing element. Missing CSS/bounding data must still fail closed.
     if (
-      input.not
+      (input.immediate || Date.now() <= deadline) && (input.not
         ? (attribute !== undefined || actual !== null) && !matches
-        : matches
+        : matches)
     ) return;
     if (input.immediate || Date.now() >= deadline) {
       throw new Error(
@@ -258,7 +271,7 @@ export async function expectWebValue(locator: Locator, input: ExpectInput) {
       );
     }
     await new Promise((resolve) =>
-      setTimeout(resolve, Math.min(200, timeoutMs))
+      setTimeout(resolve, Math.min(200, Math.max(0, deadline - Date.now())))
     );
   }
 }

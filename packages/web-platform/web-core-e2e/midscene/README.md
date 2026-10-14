@@ -1,8 +1,28 @@
 # Midscene E2E for web-core and web-elements
 
-## Current migration batch (2026-10-13)
+## Current migration batch (2026-10-14)
 
-This batch adds eight YAML cases and returns two ambiguous visual cases to
+Three additional `x-image` contracts bring the collection to 466 YAML cases:
+`crossorigin`, `referrerpolicy` and `should not have loading attribute by default`.
+They preserve the source host/shadow-image selectors, font readiness and one
+attribute read with exact `anonymous`, `no-referrer` and `null` comparisons.
+Missing hosts, shadow roots or internal images yield `undefined` and fail;
+they must not be coerced into an absent-attribute pass. Standard `javascript`
+steps retain these deterministic checks without locator polling or new custom
+nodes. The source cases contain no user action, so no artificial aiAct is added.
+Report captures surround the check. Differential tests execute both original
+callbacks and real YAML across correct, wrong, absent and missing-element states.
+This adds three Chromium mappings, not Firefox/WebKit acceptance or proof of
+identical wall-clock sampling. Hosted acceptance of this batch is pending.
+
+The preceding head `177f5ee` passes 463/463 cases on first attempts in
+[38425505046](https://github.com/quanru/lynx-stack/actions/runs/38425505046),
+including the six retained original lazy-component executions, report assembly
+and Pages. All 463 Summary images load and all 468 public URLs return HTTP 200.
+
+### Previous textarea/scroll and original-input batch
+
+That batch adds eight YAML cases and returns two ambiguous visual cases to
 their original Playwright runner, bringing the AI collection to 463. The eight
 additions are seven source mappings and one supplementary animation case. Five textarea flows and that
 animation case retain 13 original PNG checkpoints, including each source-defined

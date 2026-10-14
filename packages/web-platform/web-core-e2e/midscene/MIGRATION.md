@@ -46,7 +46,20 @@ case total.
 
 ## Execution and acceptance
 
-The current local collection contains 463 YAML cases after two indistinguishable
+The current local collection contains 466 YAML cases. Three new `x-image`
+attribute contracts preserve the original single-read shadow-tree selectors and
+exact values, including `undefined` versus `null`. They use standard JavaScript
+assertions, not AI judgment, polling or new custom action nodes. Differential
+tests execute original callbacks and YAML against correct, wrong, absent and
+missing host/shadow/image states. These are Chromium mappings; Firefox/WebKit
+acceptance is not implied. Hosted validation for the three additions is pending.
+
+The preceding head `177f5ee` passes 463/463 on first attempts in run
+38425505046, including six original lazy-component executions without retries,
+reports and Pages. Its 463 linked Summary screenshots and 468 public URLs are
+verified. This is the accepted baseline, not acceptance of the new additions.
+
+That preceding collection contains 463 YAML cases after two indistinguishable
 lazy-component inputs return to their original runner. Eight additions comprise
 seven source mappings and one supplementary animation case: five textarea flows
 plus animation (13 original PNG checkpoints and seven aiAct clicks), the

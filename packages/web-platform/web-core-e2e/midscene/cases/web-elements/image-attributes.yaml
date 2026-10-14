@@ -1,0 +1,51 @@
+# Original page.evaluate attribute contracts: one read, no polling or coercion.
+# These are deterministic assertions; the source cases have no user actions.
+cases:
+  - name: web-elements/x-image/crossorigin
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-image/crossorigin.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original internal image crossorigin attribute
+      - javascript: |
+          (() => {
+            const xImage = document.querySelector('#test-crossorigin');
+            const img = xImage?.shadowRoot?.querySelector('#img');
+            const actual = img?.getAttribute('crossorigin');
+            if (actual !== 'anonymous') {
+              throw new Error('Expected internal image crossorigin "anonymous", got ' + JSON.stringify(actual));
+            }
+            return true;
+          })()
+      - recordToReport: Original internal image crossorigin contract passed
+  - name: web-elements/x-image/referrerpolicy
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-image/referrerpolicy.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original internal image referrerpolicy attribute
+      - javascript: |
+          (() => {
+            const xImage = document.querySelector('#test-referrerpolicy');
+            const img = xImage?.shadowRoot?.querySelector('#img');
+            const actual = img?.getAttribute('referrerpolicy');
+            if (actual !== 'no-referrer') {
+              throw new Error('Expected internal image referrerpolicy "no-referrer", got ' + JSON.stringify(actual));
+            }
+            return true;
+          })()
+      - recordToReport: Original internal image referrerpolicy contract passed
+  - name: web-elements/x-image/should not have loading attribute by default
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-image/basic.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original internal image loading attribute
+      - javascript: |
+          (() => {
+            const xImage = document.querySelector('x-image');
+            const img = xImage?.shadowRoot?.querySelector('#img');
+            const actual = img?.getAttribute('loading');
+            if (actual !== null) {
+              throw new Error('Expected internal image loading null, got ' + JSON.stringify(actual));
+            }
+            return true;
+          })()
+      - recordToReport: Original internal image absent loading contract passed

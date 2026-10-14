@@ -86,6 +86,11 @@ without applying them to neighboring snapshots or the web-elements suite.
 Give every retained Playwright invocation a distinct output directory. The
 runner clears its configured output before execution, so a later suite must
 not erase an earlier suite's failure traces before the final artifact upload.
+For page.evaluate attribute reads, preserve missing-element behavior,
+the single read and distinguish undefined (missing element) from null (missing
+attribute). Do not use locator waiting or null coalescing to turn a transient
+missing target into a pass. Standard JavaScript assertions suffice for these
+non-interactive contracts; do not add an artificial AI action or custom node.
 When migrating a new case, map every original assertion target, repeated-selector
 index, value, comparison, and interaction sequence. Keep exact CSS and bounding-box
 checks deterministic; do not round measurements or replace pixel contracts with

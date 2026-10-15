@@ -76,6 +76,18 @@ boundary, and a one-pixel difference can change which component receives input.
 Preserve failed-attempt evidence and do not accept a correct retry as proof of
 stable source-equivalent input. Keep original deterministic input contracts
 unless a separately approved fixture change makes the targets distinguishable.
+Keep `basic-lynx-reload` in that same original three-browser CSR runner as well.
+Its two distinct DOM targets form one same-color column; a pink final state
+alone does not prove the lower reload control received input. Retain both source
+selectors, all three 100ms waits and the two single inline-style reads. Do not
+count the removed visual pilot as an AI replacement. Keep retained-runner
+diagnostics separate from the Midscene YAML totals and preserve its output path.
+Markdown link/image events use deepThink with independent refinement and caching
+disabled. Balanced planning plus deepLocate can still seed refinement from a
+wrong inline point: the real run tapped black `is` instead of the blue `link`.
+Preserve both original clicks, the 30-second event waits, independent payload
+reads and every exact URL/content/contentId comparison. Green case retries are
+not first-attempt input acceptance; retain and inspect all failed attempts.
 For requestAnimationFrame/cancelAnimationFrame text controls, use independent
 visual grounding rather than inline coordinate arithmetic. Retain the original
 1000/100/100 ms waits and ordered loop/stop text counts. Derive the contract from

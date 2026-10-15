@@ -1,5 +1,40 @@
 # Midscene E2E for web-core and web-elements
 
+## Source-safe reload and Markdown follow-up (hosted acceptance pending)
+
+Full [SDK 1.15.3 run 38671616387](https://github.com/quanru/lynx-stack/actions/runs/38671616387)
+at `da9e389` passes all jobs and 467/467 cases, but two cases need retries:
+clicked Lynx reload passes its second attempt, Markdown events its third.
+The five preceding lazy/offset fixes pass first attempt, with exactly 12 physical
+taps and all 16 original CSS assertions. Live Summary loads all 467 images,
+starts with successes collapsed, and a clicked screenshot opens its exact HTML
+step. All 472 public image/report URLs return HTTP 200. Report publication is
+verified separately from first-attempt input acceptance.
+
+The retry evidence is not a network issue. Reload's balanced inline point
+[50,240] maps to physical (20,204), below the 200px column. Its successful retry
+uses (20,170), inside the intended lower control. Both original DOM buttons
+share one continuous color, and clicking the upper target again could also
+return pink without reloading. Retain the unchanged `basic-lynx-reload` callback
+in the existing three-browser CSR original runner alongside the two repeated
+blue-cell cases. This preserves distinct #target/#reload inputs, all three
+100ms waits and both single-read style assertions; it also removes the visual
+pilot's polling/omitted-wait divergence. No fixture change or AI replacement
+claim is made. The group now contains nine original browser executions.
+
+Markdown's first two link inputs are (40.5,10), on black `is`; the final input
+(51,11.5) hits blue `link`. Balanced planning seeds refinement with an incorrect
+inline point. Both Markdown actions now explicitly use deepThink, independent
+refinement and caching disabled. Original event waits, independent reads and
+all five exact payload comparisons remain. No extra taps or relaxed deadlines.
+
+Collection is 466 YAML cases, not 467: one ambiguous-input pilot is removed
+while its complete source contract remains in all three original browsers.
+The retained originals are not extra YAML cases. Product implementation,
+original tests, fixtures, PNGs and retry policy are unchanged. Complete focused
+and full new-head hosted validation is still required; no local browser E2E
+suite is run.
+
 ## Refined color-pair follow-up (hosted acceptance pending)
 
 Full run [38660155180](https://github.com/quanru/lynx-stack/actions/runs/38660155180)

@@ -16,6 +16,13 @@ test('markdown event translation replays the complete original callback with exa
   assert.deepEqual(document.cases, [original]);
   assert.ok(document.afterEach[0].recordToReport);
   assert.equal(original.steps.filter(step => step.aiAct).length, 2);
+  for (const step of original.steps.filter(step => step.aiAct)) {
+    assert.deepEqual(step.aiAct.options, {
+      effort: 'deepThink',
+      deepLocate: true,
+      cacheable: false,
+    });
+  }
   assert.equal(
     original.steps.filter(step => step.javascript?.includes('structuredClone'))
       .length,

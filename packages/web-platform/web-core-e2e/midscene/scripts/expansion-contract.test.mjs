@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 for (
   const [file, count, suite = 'web', sourceFile = 'reactlynx.spec.ts'] of [
     ['expansion', 79],
-    ['continuation', 15],
+    ['continuation', 14],
     ['contracts', 8, 'web-elements'],
     ['attributes', 18, 'web-elements'],
     ['frame-sizing', 2],

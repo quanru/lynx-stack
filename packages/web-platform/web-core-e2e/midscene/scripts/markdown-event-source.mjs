@@ -49,7 +49,11 @@ export async function originalMarkdownEvents() {
                   prompt: child === 'a'
                     ? 'Click once on the visible blue word "link" in the first line of markdown text. Do not click the picture or perform another action.'
                     : 'Click once in the center of the visible Firefox logo picture below the markdown text. Do not click the link or perform another action.',
-                  options: { deepLocate: true, cacheable: false },
+                  options: {
+                    effort: 'deepThink',
+                    deepLocate: true,
+                    cacheable: false,
+                  },
                 },
               });
             },

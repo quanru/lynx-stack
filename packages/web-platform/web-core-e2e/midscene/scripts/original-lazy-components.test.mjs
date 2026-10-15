@@ -10,6 +10,7 @@ import { collectWorkflowDocument } from '@midscene/test';
 import { discoverTestFiles, loadTestProject } from '@midscene/test/config';
 
 const names = [
+  'basic-lynx-reload',
   'basic-lazy-component-multi',
   'basic-lazy-component-multi-import',
 ];
@@ -32,7 +33,7 @@ function visit(node) {
 }
 visit(source);
 
-test('repeated lazy components retain the original CSR runner and all three browser profiles', () => {
+test('ambiguous same-color blocks retain the original CSR runner and all three browser profiles', () => {
   const workflow = YAML.parse(readFileSync(
     new URL(
       '../../../../../.github/workflows/midscene-web.yml',
@@ -49,20 +50,20 @@ test('repeated lazy components retain the original CSR runner and all three brow
   ]);
   const steps = workflow.jobs['web-shell-ai-e2e'].steps;
   const matches = steps.filter(step =>
-    step.name?.startsWith('Validate original repeated lazy-component inputs')
+    step.name?.startsWith('Validate original ambiguous block inputs')
   );
   assert.equal(matches.length, 1);
   const step = matches[0];
   assert.equal(
     step.name,
-    'Validate original repeated lazy-component inputs (CSR)',
+    'Validate original ambiguous block inputs (CSR)',
   );
   assert.equal(step.if, 'matrix.shard == 1');
   assert.equal(step['working-directory'], 'packages/web-platform/web-core-e2e');
   assert.deepEqual(step.env, { ENABLE_SSR: '' });
   assert.equal(
     step.run,
-    'pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep \'basic-lazy-component-multi(-import)?$\' --output midscene-original-results/lazy-components-csr --reporter line',
+    'pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep \'(basic-lazy-component-multi(-import)?|basic-lynx-reload)$\' --output midscene-original-results/lazy-components-csr --reporter line',
   );
   const filter = new RegExp(step.run.match(/--grep '([^']+)'/)[1]);
   assert.deepEqual(
@@ -76,7 +77,7 @@ test('repeated lazy components retain the original CSR runner and all three brow
 });
 
 test('both original lazy inputs preserve their skip, two indexed clicks, three waits and six ordered CSS checks', async () => {
-  for (const name of names) {
+  for (const name of names.filter(name => name !== 'basic-lynx-reload')) {
     const events = [];
     const callback = runInNewContext(
       '(' + ts.transpileModule(originals.get(name).getText(source), {
@@ -130,7 +131,7 @@ test('both original lazy inputs preserve their skip, two indexed clicks, three w
   }
 });
 
-test('indistinguishable repeated blue cells are not counted as AI replacements', async () => {
+test('indistinguishable same-color blocks are not counted as AI replacements', async () => {
   const root = fileURLToPath(new URL('../', import.meta.url));
   const loaded = await loadTestProject(root + '/midscene.config.ts');
   for (const project of loaded.projects) {
@@ -150,4 +151,43 @@ test('indistinguishable repeated blue cells are not counted as AI replacements',
       }
     }
   }
+});
+
+test('original clicked reload preserves both target identities, three waits and single inline-style reads', async () => {
+  const events = [], name = 'basic-lynx-reload';
+  const page = {
+    locator: selector => ({
+      click: async () => events.push(['click', selector]),
+      getAttribute: async attribute => {
+        events.push(['read', selector, attribute]);
+        return { selector, attribute };
+      },
+    }),
+  };
+  const callback = runInNewContext(
+    '(' + ts.transpileModule(originals.get(name).getText(source), {
+      compilerOptions: { target: ts.ScriptTarget.ESNext },
+    }).outputText.trim().replace(/;$/, '') + ')',
+    {
+      goto: async (_page, title) => events.push(['goto', title]),
+      wait: async ms => events.push(['wait', ms]),
+      expect: value => ({
+        toContain: expected =>
+          events.push(['contains', value.selector, value.attribute, expected]),
+      }),
+    },
+  );
+  await callback({ page }, { title: name });
+  assert.deepEqual(events, [
+    ['goto', name],
+    ['wait', 100],
+    ['click', '#target'],
+    ['wait', 100],
+    ['read', '#target', 'style'],
+    ['contains', '#target', 'style', 'green'],
+    ['click', '#reload'],
+    ['wait', 100],
+    ['read', '#target', 'style'],
+    ['contains', '#target', 'style', 'pink'],
+  ]);
 });

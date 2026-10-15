@@ -225,12 +225,3 @@ cases:
           equals: space-between,
         }
       - recordToReport: Nested layout after exact computed-style checks
-
-  - name: basic-lynx-reload
-    steps:
-      - gotoUrl: "${shellUrl}?casename=basic-lynx-reload"
-      - aiWaitFor: A tall continuous pink block is visible near the upper-left.
-      - aiAct: Click once in the UPPER half of the tall pink block to change its color to green. Stop after that single click.
-      - web.expect: { selector: "#target", attribute: style, contains: green }
-      - aiAct: Click once in the LOWER half of the tall green block to reload the page. Stop after that single click; the block should return to pink.
-      - web.expect: { selector: "#target", attribute: style, contains: pink }

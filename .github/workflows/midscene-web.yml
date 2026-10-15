@@ -247,14 +247,14 @@ jobs:
         # Keep the original click-relative wait and pixel matcher unchanged.
         run: pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'api-animate$' --output midscene-original-results/animation-csr --reporter line
 
-      - name: Validate original repeated lazy-component inputs (CSR)
+      - name: Validate original ambiguous block inputs (CSR)
         if: matrix.shard == 1
         working-directory: packages/web-platform/web-core-e2e
         env:
           ENABLE_SSR: ""
-        # The two contiguous blue cells have no visible boundary. Keep the
-        # original indexed inputs and all six CSS checks; do not alter fixtures.
-        run: pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'basic-lazy-component-multi(-import)?$' --output midscene-original-results/lazy-components-csr --reporter line
+        # Same-color cells have no visible boundary. Keep the two indexed lazy
+        # inputs and the distinct target/reload clicks, waits and exact reads.
+        run: pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep '(basic-lazy-component-multi(-import)?|basic-lynx-reload)$' --output midscene-original-results/lazy-components-csr --reporter line
 
       - name: Validate original layout and style performance budgets
         if: matrix.shard == 1

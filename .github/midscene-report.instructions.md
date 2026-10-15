@@ -40,8 +40,13 @@ an Actions variable. Initial Pages enablement still needs a repository admin.
 Use `aiAct` for visible user interactions instead of custom selector-based
 action nodes. Preserve assertions required by the original upstream case;
 do not replace exact event-payload or pixel comparisons with AI judgment.
-For horizontal lazy-component color blocks and the offset bindtap target, use
-deepThink with independent full-frame location and caching disabled. In the
+For horizontal lazy-component color blocks, use deepThink with independent
+location and caching disabled; refine the three ordinary horizontal blue
+toggle targets with deepLocate. Full-frame independent location still misses
+on the real model: immutable hosted screenshot control 38669272626 hits 2/4
+without refinement and 4/4 with it. This is a bounded locator experiment, not
+complete-case acceptance or a statistical reliability claim. Keep the already
+first-pass offset bindtap and reentrant targets on their full-frame path. In the
 1.15.3 hosted run, the same DeepSeek response model emitted screenshot pixels
 as normalized inline points after conversion guidance was removed. Raw [150,50]
 became physical [59,43] on a 393x851 screenshot and hit the green neighbor;

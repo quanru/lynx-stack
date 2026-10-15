@@ -957,25 +957,33 @@ cases:
   - name: basic-lazy-component
     steps:
       - gotoUrl: "${shellUrl}?casename=basic-lazy-component"
-      - aiWaitFor: "A green square is visible."
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 500))
+      - recordToReport: Original source checkpoint before interaction
       - web.expect: {
           "selector": "#target1",
           "css": "background-color",
           "equals": "rgb(0, 128, 0)",
         }
-      - aiAct: "Click the center of the BLUE square on the RIGHT of the horizontal pair exactly once, to turn its LEFT green neighbor pink. The blue square is the right-hand half of the colored pair. Do not click the left square. Stop after that single click."
+      - aiAct:
+          prompt: "Click the center of the BLUE square on the RIGHT of the horizontal pair exactly once, to turn its LEFT green neighbor pink. The blue square is the right-hand half of the colored pair. Do not click the left square. Stop after that single click."
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
       - web.expect: {
           "selector": "#target1",
           "css": "background-color",
           "equals": "rgb(255, 192, 203)",
         }
-      - aiAct: "Click the center of the BLUE square on the RIGHT of the horizontal pair exactly once, to turn its LEFT pink neighbor green. The blue square is the right-hand half of the colored pair. Do not click the left square. Stop after that single click."
+      - aiAct:
+          prompt: "Click the center of the BLUE square on the RIGHT of the horizontal pair exactly once, to turn its LEFT pink neighbor green. The blue square is the right-hand half of the colored pair. Do not click the left square. Stop after that single click."
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
       - web.expect: {
           "selector": "#target1",
           "css": "background-color",
           "equals": "rgb(0, 128, 0)",
         }
-      - aiWaitFor: "A green square is visible."
+      - recordToReport: Original ordered source CSS assertions passed
 
   - name: basic-lazy-component-relative-path
     steps:
@@ -990,7 +998,7 @@ cases:
         }
       - aiAct:
           prompt: "Click the center of the BLUE square on the RIGHT of the horizontal pair exactly once, to turn its LEFT green neighbor pink. The blue square is the right-hand half of the colored pair. Do not click the left square. Stop after that single click."
-          options: { effort: deepThink, deepLocate: false, cacheable: false }
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
       - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
       - web.expect: {
           "selector": "#target1",
@@ -999,7 +1007,7 @@ cases:
         }
       - aiAct:
           prompt: "Click the center of the BLUE square on the RIGHT of the horizontal pair exactly once, to turn its LEFT pink neighbor green. The blue square is the right-hand half of the colored pair. Do not click the left square. Stop after that single click."
-          options: { effort: deepThink, deepLocate: false, cacheable: false }
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
       - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
       - web.expect: {
           "selector": "#target1",
@@ -1100,7 +1108,7 @@ cases:
         }
       - aiAct:
           prompt: "Click the center of the BLUE square on the RIGHT of the horizontal pair exactly once, to turn its LEFT green neighbor pink. The blue square is the right-hand half of the colored pair, below the red Load Component control. Do not click the left square. Stop after that single click."
-          options: { effort: deepThink, deepLocate: false, cacheable: false }
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
       - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
       - web.expect: {
           "selector": "#target1",
@@ -1110,7 +1118,7 @@ cases:
         }
       - aiAct:
           prompt: "Click the center of the BLUE square on the RIGHT of the horizontal pair exactly once, to turn its LEFT pink neighbor green. The blue square is the right-hand half of the colored pair, below the red Load Component control. Do not click the left square. Stop after that single click."
-          options: { effort: deepThink, deepLocate: false, cacheable: false }
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
       - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
       - web.expect: {
           "selector": "#target1",

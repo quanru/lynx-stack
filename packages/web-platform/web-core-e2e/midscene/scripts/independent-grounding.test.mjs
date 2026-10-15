@@ -3,8 +3,10 @@ import { createServer } from 'node:http';
 import { once } from 'node:events';
 import test from 'node:test';
 
-for (const effort of ['balance', 'deepThink']) {
-  test(effort + ' coordinate protocol control on the captured Web viewport', {
+for (const mode of ['balance', 'deepThink', 'refined']) {
+  const effort = mode === 'balance' ? 'balance' : 'deepThink';
+  const deepLocate = mode === 'refined';
+  test(mode + ' coordinate protocol control on the captured Web viewport', {
     timeout: 15000,
   }, async t => {
     // This test must never inherit real planning/insight endpoints or credentials.
@@ -39,7 +41,15 @@ for (const effort of ['balance', 'deepThink']) {
           ...(effort === 'balance' ? { point: [150, 50] } : {}),
         },
       }) + '</action-param-json>',
-      '<｜｜point｜｜>[[500, 500]]<｜｜/point｜｜>',
+      ...(deepLocate
+        ? [
+          '<｜｜ref｜｜>target: test button<｜｜/ref｜｜><｜｜box｜｜>[[254,0,509,118]]<｜｜/box｜｜>'
+          + '<｜｜ref｜｜>reference: neighboring control<｜｜/ref｜｜><｜｜box｜｜>[[0,0,254,118]]<｜｜/box｜｜>',
+        ]
+        : []),
+      deepLocate
+        ? '<｜｜point｜｜>[[380, 150]]<｜｜/point｜｜>'
+        : '<｜｜point｜｜>[[500, 500]]<｜｜/point｜｜>',
     ];
     const server = createServer(async (request, response) => {
       const chunks = [];
@@ -110,7 +120,7 @@ for (const effort of ['balance', 'deepThink']) {
     t.after(() => agent.destroy());
     await agent.aiAct('Tap the test button once.', {
       effort,
-      deepLocate: false,
+      deepLocate,
       cacheable: false,
       abortSignal: controller.signal,
     }).catch(() => {
@@ -125,6 +135,32 @@ for (const effort of ['balance', 'deepThink']) {
       assert.deepEqual(taps, [{ x: 59, y: 43 }]);
       assert.equal(requests.length, 1);
       assert.deepEqual(locate.param.locatedPixelResult.center, [59, 43]);
+      return;
+    }
+    assert.equal(locate.param.locatedPixelResult, undefined);
+    if (deepLocate) {
+      assert.equal(
+        requests.length,
+        3,
+        'Planner, search-area and refined locator are separate requests',
+      );
+      assert.equal(taps.length, 1);
+      assert.ok(
+        taps[0].x > 100 && taps[0].x < 200 && taps[0].y > 0 && taps[0].y < 100,
+      );
+      assert.equal(locate.log.dump.deepLocate, true);
+      const area = locate.log.dump.taskInfo.searchArea;
+      assert.ok(area && area.height < 851 && area.width <= 393);
+      const parts = requests[2].messages.flatMap(m =>
+        Array.isArray(m.content)
+          ? m.content.filter(p => p.type === 'image_url')
+          : []
+      );
+      assert.equal(parts.length, 1);
+      const refined = await sharp(
+        Buffer.from(parts[0].image_url.url.split(',')[1], 'base64'),
+      ).metadata();
+      assert.notDeepEqual([refined.width, refined.height], [393, 851]);
       return;
     }
     assert.deepEqual(taps, [{ x: 197, y: 426 }]);

@@ -25,6 +25,7 @@ function visit(node) {
 visit(source);
 for (
   const [file, name] of [
+    ['expansion', 'basic-lazy-component'],
     ['expansion', 'basic-lazy-component-relative-path'],
     ['expansion', 'basic-lazy-component-when-needed'],
     ['reentrant-lazy', 'basic-lazy-component-when-need-with-itself'],
@@ -33,7 +34,7 @@ for (
 ) {
   test(
     name
-      + ' retains the complete original click, wait and CSS sequence with independent full-frame grounding',
+      + ' retains the complete original click, wait and CSS sequence with independent grounding',
     async () => {
       const item = YAML.parse(
         readFileSync(
@@ -57,7 +58,11 @@ for (
               assert.ok(action);
               assert.deepEqual(action.aiAct.options, {
                 effort: 'deepThink',
-                deepLocate: false,
+                deepLocate: selector === '#target2' && [
+                  'basic-lazy-component',
+                  'basic-lazy-component-relative-path',
+                  'basic-lazy-component-when-needed',
+                ].includes(name),
                 cacheable: false,
               });
               const prompt = action.aiAct.prompt;

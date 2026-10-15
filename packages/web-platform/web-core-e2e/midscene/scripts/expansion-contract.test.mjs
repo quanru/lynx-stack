@@ -530,6 +530,7 @@ for (
               : []),
             ...(suite === 'web-elements'
                 || [
+                  'basic-lazy-component',
                   'basic-lazy-component-relative-path',
                   'basic-lazy-component-when-needed',
                   'basic-lazy-component-when-need-with-itself',

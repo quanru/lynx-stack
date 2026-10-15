@@ -1,5 +1,31 @@
 # Midscene E2E for web-core and web-elements
 
+## Refined color-pair follow-up (hosted acceptance pending)
+
+Full run [38660155180](https://github.com/quanru/lynx-stack/actions/runs/38660155180)
+still finishes 464/467. Offset bindtap and reentrant lazy now pass first attempts,
+but ordinary lazy, relative-path and when-needed fail all three attempts.
+Independent full-frame location does run; it is not sufficient for these scenes.
+For example, the real locator returns [188,31], mapping to [74,26] in the green
+neighbor. Do not count the previous candidate as an accepted fix.
+
+Immutable screenshot control
+[38669272626](https://github.com/quanru/lynx-stack/actions/runs/38669272626)
+compares the same two images, same response model and SDK, with no browser or
+app interaction. Full-frame location hits 2/4 diagnostic target bounds; public
+deepLocate refinement hits 4/4. The two horizontal baseline misses both reproduce
+[75,26]; refined inputs land near [150,50]. This is bounded locator evidence,
+not complete-case acceptance or a statistical reliability claim. The control
+branch is separate from this PR and contains only diagnostic code and synthetic
+CI screenshots; those extra files are not part of the upstream change.
+
+Only the blue toggles in the three ordinary color-pair cases now enable
+deepLocate. The existing first-pass offset and reentrant paths remain unchanged.
+Ordinary lazy also restores its original 500/100/100 ms waits, font readiness
+and ordered CSS sequence. No original input, assertion, fixture, PNG or retry
+policy changes. The five-case source replay and official-SDK refined-coordinate
+control are model-free regressions; fresh complete cases are still required.
+
 ## Independent grounding follow-up (hosted acceptance pending)
 
 The first SDK-alignment run

@@ -1,0 +1,16 @@
+import { spawn } from 'node:child_process';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { loadDocuments, materializeShard } from './run-shard.mjs';
+const root=resolve('.');
+const wanted=new Set(['basic-lazy-component','basic-lazy-component-relative-path','basic-lazy-component-when-needed','basic-lazy-component-when-need-with-itself','api-bindtap-lynx-view-relative']);
+const documents=(await loadDocuments(root)).map(d=>({...d,document:{...d.document,cases:d.document.cases.filter(c=>wanted.has(c.name))}})).filter(d=>d.document.cases.length);
+const shard=await materializeShard(root,documents,1,1);
+if(shard.names.length!==5||new Set(shard.names).size!==5||shard.projects.join(',')!=='web-shell') throw Error('Unexpected focused source selection');
+await mkdir('midscene_run',{recursive:true});
+await writeFile('midscene_run/focus.json',JSON.stringify({diagnosticOnly:true,sha:process.env.GITHUB_SHA,names:shard.names},null,2));
+console.log('Focused source-equivalent diagnostic: '+shard.names.join(', '));
+const child=spawn(process.execPath,[resolve('node_modules/@midscene/test/bin/midscene-test'),'--project','web-shell'],{stdio:'inherit',env:{...process.env,MIDSCENE_CASE_FILES:shard.shellInclude}});
+for(const signal of ['SIGINT','SIGTERM'])process.once(signal,()=>child.kill(signal));
+child.once('error',()=>{process.exitCode=1;});
+child.once('exit',(code,signal)=>{process.exitCode=code??(signal?1:0);});

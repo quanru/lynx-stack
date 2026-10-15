@@ -1,0 +1,137 @@
+name: Focused complete lazy and offset validation
+on:
+  push:
+    branches:
+      - midscene/lazy-case-control-38669272626
+permissions:
+  contents: read
+concurrency:
+  group: focused-lazy-source-contracts
+  cancel-in-progress: false
+env:
+  NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection
+jobs:
+  focused:
+    name: Five complete lazy and offset contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      MIDSCENE_MODEL_RETRY_COUNT: "2"
+      MIDSCENE_MODEL_RETRY_INTERVAL: "30000"
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.1-resolute
+      env:
+        CI: "1"
+        TURBO_TELEMETRY_DISABLED: "1"
+        PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: "24"
+      - name: Align container home ownership for Firefox
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(id -u)" = "0"
+          test -d /github/home
+          test ! -L /github/home
+          chown -- "$(id -u):$(id -g)" /github/home
+          test "$(stat -c %u /github/home)" = "$(id -u)"
+      - name: Enable pnpm via corepack
+        run: |
+          corepack enable
+          corepack prepare pnpm@12.4.0 --activate
+          pnpm --version
+      - name: Preflight model endpoint
+        working-directory: packages/web-platform/web-core-e2e/midscene
+        env: &a1
+          MIDSCENE_MODEL_API_KEY: ${{ secrets.MIDSCENE_MODEL_API_KEY }}
+          MIDSCENE_MODEL_NAME: ${{ vars.MIDSCENE_MODEL_NAME || secrets.MIDSCENE_MODEL_NAME }}
+          MIDSCENE_MODEL_BASE_URL: ${{ vars.MIDSCENE_MODEL_BASE_URL ||
+            secrets.MIDSCENE_MODEL_BASE_URL }}
+          MIDSCENE_MODEL_FAMILY: ${{ vars.MIDSCENE_MODEL_FAMILY || secrets.MIDSCENE_MODEL_FAMILY }}
+          MIDSCENE_MODEL_REASONING_ENABLED: ${{ vars.MIDSCENE_MODEL_REASONING_ENABLED ||
+            secrets.MIDSCENE_MODEL_REASONING_ENABLED }}
+        run: bash ../../../../.github/scripts/preflight-model.sh
+      - name: Install Midscene test dependencies
+        working-directory: packages/web-platform/web-core-e2e/midscene
+        run: npm ci --no-audit --no-fund
+      - name: Verify Midscene model compatibility
+        working-directory: packages/web-platform/web-core-e2e/midscene
+        env: *a1
+        run: npm run check:model
+      - name: Install Rust toolchain (web-core build:wasm)
+        shell: bash
+        run: >
+          set -e
+
+          apt-get update -qq
+
+          apt-get install -y -qq build-essential pkg-config curl ca-certificates
+          >/dev/null
+
+          if ! command -v rustup >/dev/null; then
+            curl --proto '=https' --tlsv1.2 --retry 10 -fsSL https://sh.rustup.rs \
+              | sh -s -- --default-toolchain none -y
+          fi
+
+          . "$HOME/.cargo/env"
+
+          # rust-toolchain.toml pins channel 1.97.1; install its wasm targets.
+
+          rustup toolchain install 1.97.1 --profile minimal
+
+          rustup target add --toolchain 1.97.1 wasm32-unknown-unknown
+          wasm32-wasip1
+
+          # Make cargo/rustc available to every later step (turbo build:wasm).
+
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+
+          rustc --version
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Build web-core-e2e dependency closure
+        run: |
+          pnpm turbo build --filter='@lynx-js/web-core-e2e...'
+      - name: Start web-core-e2e dev shell
+        working-directory: packages/web-platform/web-core-e2e
+        run: >
+          nohup pnpm run serve > /tmp/web-shell.log 2>&1 &
+
+          for _ in $(seq 1 60); do
+            if curl -fsS 'http://localhost:3080/?casename=basic-bindtap' >/dev/null; then
+              echo "dev shell is ready"
+              exit 0
+            fi
+            sleep 5
+          done
+
+          echo "::error:: dev shell did not become ready" >&2
+
+          cat /tmp/web-shell.log >&2 || true
+
+          exit 1
+      - name: Validate case collection and exact assertion contracts
+        working-directory: packages/web-platform/web-core-e2e/midscene
+        run: |
+          npm run typecheck
+          node --test scripts/*.test.mjs
+      - name: Run five complete original contracts
+        id: run-cases
+        working-directory: packages/web-platform/web-core-e2e/midscene
+        env: *a1
+        run: node scripts/run-focused-lazy.mjs
+      - name: Retain focused reports and server diagnostics
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: focused-five-lazy-cases
+          path: |-
+            packages/web-platform/web-core-e2e/midscene/midscene_run/
+            /tmp/web-shell.log
+          retention-days: 14
+          if-no-files-found: error

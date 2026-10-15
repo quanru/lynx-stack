@@ -1,0 +1,15 @@
+import {spawn} from 'node:child_process';
+import {mkdir,writeFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+import {loadDocuments,materializeShard} from './run-shard.mjs';
+const root=resolve('.'),name='web-elements/x-markdown/bindlink-bindimageTap';
+const documents=(await loadDocuments(root)).map(d=>({...d,document:{...d.document,cases:d.document.cases.filter(c=>c.name===name)}})).filter(d=>d.document.cases.length);
+const shard=await materializeShard(root,documents,1,1);
+if(shard.names.length!==1||shard.names[0]!==name||shard.projects.join(',')!=='web-elements')throw Error('Unexpected focused source selection');
+await mkdir('midscene_run',{recursive:true});
+await writeFile('midscene_run/focus.json',JSON.stringify({diagnosticOnly:true,sha:process.env.GITHUB_SHA,names:shard.names},null,2));
+console.log('Focused complete source-equivalent diagnostic: '+name);
+const child=spawn(process.execPath,[resolve('node_modules/@midscene/test/bin/midscene-test'),'--project','web-elements'],{stdio:'inherit',env:{...process.env,MIDSCENE_ELEMENTS_CASE_FILES:shard.elementsInclude}});
+for(const signal of ['SIGINT','SIGTERM'])process.once(signal,()=>child.kill(signal));
+child.once('error',()=>{process.exitCode=1;});
+child.once('exit',(code,signal)=>{process.exitCode=code??(signal?1:0);});

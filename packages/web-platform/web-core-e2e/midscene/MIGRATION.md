@@ -1,5 +1,15 @@
 # Full E2E migration scope
 
+## Current list layout batch
+
+Four previously unimplemented list declarations now have Chromium pixel-profile
+YAML mappings: recyclable-false, waterfall-size-change, waterfall-insert and
+list-type-change. Collection increases from 466 to 470. The source-derived
+regressions compare each full operation trace, including original waits, nine
+PNG checkpoints, the exact CSS assertion and insertion bytes. Original source,
+fixtures, baselines and product code are unchanged. Hosted Linux pixel execution
+and browser expansion are not inferred from these model-free checks.
+
 The scope includes web-core-e2e and web-elements, not only ReactLynx examples.
 Original tests, fixtures, snapshots, browser variants, and SSR variants remain
 unchanged until equivalent verification has run successfully, except for the

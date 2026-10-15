@@ -1,0 +1,81 @@
+# Preserve original list API mutations, waits, fixture aliases and PNG baselines.
+cases:
+  - name: web-elements/x-list/recyclable-false
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-list/recyclable-false.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original non-recyclable list contract
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 1000))"
+      - web.expect: {
+          selector: list-item,
+          index: 0,
+          css: content-visibility,
+          equals: visible,
+        }
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-list/recyclable-false/index,
+        }
+      - recordToReport: Original non-recyclable list contract passed
+  - name: web-elements/x-list/waterfall-size-change
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-list/basic-waterfall.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original waterfall resize contract
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-list/basic-waterfall/index,
+        }
+      - javascript: |-
+          document.querySelector('list-item[item-key="1"]').style.setProperty('height', '100px');
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 1000))"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-list/basic-waterfall/resize,
+        }
+      - recordToReport: Original waterfall resize contract passed
+  - name: web-elements/x-list/waterfall-insert
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-list/basic-waterfall.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original waterfall insertion contract
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-list/basic-waterfall/index,
+        }
+      - javascript: |-
+          document.querySelector('list-item[item-key="1"]').insertAdjacentHTML('afterend', '<list-item class="item" item-key="30" style="--item-index: 30; height: 120px;">\n  <x-view></x-view>\n</list-item>\n');
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 1000))"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-list/basic-waterfall/insert,
+        }
+      - recordToReport: Original waterfall insertion contract passed
+  - name: web-elements/x-list/list-type-change
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-list/basic-waterfall.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original list type transitions
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-list/list-type-change/index,
+        }
+      - javascript: "document.querySelector('x-list')?.setAttribute('list-type', 'single')"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-list/list-type-change/single,
+        }
+      - javascript: "document.querySelector('x-list')?.setAttribute('list-type', 'flow')"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-list/list-type-change/flow,
+        }
+      - javascript: "document.querySelector('x-list')?.setAttribute('list-type', 'waterfall')"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-list/list-type-change/waterfall,
+        }
+      - recordToReport: Original list type transitions passed

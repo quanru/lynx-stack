@@ -1,8 +1,22 @@
 # Midscene E2E for web-core and web-elements
 
+## List layout migration (hosted validation pending)
+
+The collection now contains 470 YAML cases. Four list contracts preserve their
+original programmatic mutations: recyclable-false, waterfall-size-change,
+waterfall-insert and list-type-change. All nine PNG checkpoints, the first-item
+CSS assertion, fixture/baseline aliases, exact insertion payload and individual
+waits remain unchanged. No AI action is invented for a programmatic API test.
+Source replay checks compare the original and YAML operation traces, including
+missing-element behavior. Linux pixel acceptance remains pending for this batch.
+
+Parent single-job run [38695930470](https://github.com/quanru/lynx-stack/actions/runs/38695930470)
+passed 466/466 cases and published reports/Pages. It includes retries; current-run
+screenshot/link acceptance is separate from the successful publication jobs.
+
 ## Single-job Web execution
 
-CI now runs the complete 466-case YAML inventory once in one Web job, with
+CI now runs the complete YAML inventory once in one Web job, with
 `maxConcurrency: 1`. Generated partitions and shard-specific report selection
 are removed. Retained original Playwright suites still run exactly once;
 their browser profiles, assertions and timing are unchanged. The website-safe
@@ -14,7 +28,8 @@ spent 88m46s in its test jobs, including 52m30s in Midscene case execution.
 Removing repeated setup suggests approximately 65–70 minutes before publication;
 this is an estimate, not measured single-job performance. The new job has a
 150-minute limit and a 120-minute test-process limit. Original per-step
-deadlines and retries are not extended. Hosted single-job validation is pending.
+deadlines and retries are not extended. The original 466-case single-job run
+completed successfully; the four new list cases await their own hosted run.
 
 ## Source-safe reload and Markdown follow-up (hosted acceptance pending)
 

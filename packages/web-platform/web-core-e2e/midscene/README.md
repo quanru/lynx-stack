@@ -1,8 +1,17 @@
 # Midscene E2E for web-core and web-elements
 
+## Overlay event migration (hosted validation pending)
+
+The collection now contains 471 YAML cases. The added
+`web-elements/x-overlay-ng/event-layoutchange` contract preserves the original
+programmatic open, 100 ms wait, single payload read, six numeric type checks and
+exact event ID assertion. Source-derived replay covers valid, missing and invalid
+payloads without adding polling or stricter geometry requirements. Original
+fixtures and product code are unchanged. Hosted acceptance is pending.
+
 ## List layout migration (hosted validation pending)
 
-The collection now contains 470 YAML cases. Four list contracts preserve their
+The preceding batch increased the collection to 470 YAML cases. Four list contracts preserve their
 original programmatic mutations: recyclable-false, waterfall-size-change,
 waterfall-insert and list-type-change. All nine PNG checkpoints, the first-item
 CSS assertion, fixture/baseline aliases, exact insertion payload and individual

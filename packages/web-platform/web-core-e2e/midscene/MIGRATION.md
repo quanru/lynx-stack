@@ -1,6 +1,15 @@
 # Full E2E migration scope
 
-## Current list layout batch
+## Current overlay event batch
+
+The `x-overlay-ng/event-layoutchange` source declaration now has a deterministic
+YAML mapping, increasing collection from 470 to 471. The original open mutation,
+100 ms wait and all eight payload assertions remain unchanged. A source-derived
+replay compares operation traces and outcomes for 30 payload variants with and
+without the target element. This does not establish hosted browser acceptance;
+the original test and fixture remain intact.
+
+## Preceding list layout batch
 
 Four previously unimplemented list declarations now have Chromium pixel-profile
 YAML mappings: recyclable-false, waterfall-size-change, waterfall-insert and

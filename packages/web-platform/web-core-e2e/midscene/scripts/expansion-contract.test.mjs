@@ -529,6 +529,12 @@ for (
               ? ['web.prepareLynxView']
               : []),
             ...(suite === 'web-elements'
+                || [
+                  'basic-lazy-component-relative-path',
+                  'basic-lazy-component-when-needed',
+                  'basic-lazy-component-when-need-with-itself',
+                  'api-bindtap-lynx-view-relative',
+                ].includes(item.name)
                 || file === 'remaining-inputs'
                 || file === 'expansion'
                   && [

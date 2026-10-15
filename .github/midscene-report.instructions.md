@@ -40,6 +40,15 @@ an Actions variable. Initial Pages enablement still needs a repository admin.
 Use `aiAct` for visible user interactions instead of custom selector-based
 action nodes. Preserve assertions required by the original upstream case;
 do not replace exact event-payload or pixel comparisons with AI judgment.
+For horizontal lazy-component color blocks and the offset bindtap target, use
+deepThink with independent full-frame location and caching disabled. In the
+1.15.3 hosted run, the same DeepSeek response model emitted screenshot pixels
+as normalized inline points after conversion guidance was removed. Raw [150,50]
+became physical [59,43] on a 393x851 screenshot and hit the green neighbor;
+SDK replay reproduces this conversion. Do not repair it with saved coordinates,
+additional global conversion prompts, duplicate taps or longer retries. Preserve
+all original lazy-component waits and ordered CSS checks through source callback
+replay. A model-free protocol control is not hosted input acceptance.
 Use aiWaitFor for readiness, without adding redundant validation contracts.
 For one-click toggles, stop after the successful input even when its label
 remains visible. Do not ask the planner to correct an already successful click

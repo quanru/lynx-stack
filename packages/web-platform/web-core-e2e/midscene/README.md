@@ -1,5 +1,28 @@
 # Midscene E2E for web-core and web-elements
 
+## Independent grounding follow-up (hosted acceptance pending)
+
+The first SDK-alignment run
+[38588141912](https://github.com/quanru/lynx-stack/actions/runs/38588141912)
+passes 464/467 cases. Three lazy-component cases fail after three attempts;
+offset bindtap passes only its third attempt. Actual raw replies from the same
+`deepseek-v4-1-flash-260910` model explain the misses: the new run emits pixel
+points such as `[150,50]` under the normalized 0–1000 protocol. The SDK converts
+this to `[59,43]` on the captured 393×851 screenshot, inside the green neighbor
+instead of the blue target. The preceding accepted run emits normalized points
+such as `[375,56]`. This establishes the failure mechanism, not a decoder bug or
+an isolated causal attribution to the SDK version alone.
+
+These four cases now use public deepThink with independent full-frame location
+and caching disabled, without additional conversion prompts. Source replay
+preserves every original click, selector/index, ordered CSS assertion and wait:
+relative-path 500/100/100 ms, when-needed 500/300/100/100 ms, and reentrant lazy
+500/300/100/100/100 ms. Standard captures retain report evidence. These waits
+do not establish physical-click-relative sampling equivalence because model
+planning itself adds latency. No product source, original test, fixture, PNG,
+assertion deadline or retry count changes. Fresh complete-case hosted validation
+and actual input/screenshot inspection are required before acceptance.
+
 ## Rome SDK alignment (pending hosted acceptance)
 
 The integration now pins all Midscene packages to `1.15.3`, matching Rome's

@@ -328,7 +328,7 @@ export default defineTestProject<WebProjectContext>({
     ),
   ],
   test: {
-    // Keep projects serial; case concurrency uses separately scoped shards.
+    // Keep all projects serial in the single CI job to bound model pressure.
     // Keep the existing per-step deadline; upgrading the SDK must not relax it.
     maxConcurrency: 1,
     testTimeout: 180_000,

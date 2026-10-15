@@ -53,7 +53,7 @@ test('the original server HTML snapshot runner executes once without snapshot up
     step.name === 'Validate original server-rendering HTML snapshots'
   );
   assert.equal(matching.length, 1);
-  assert.equal(matching[0].if, 'matrix.shard == 1');
+  assert.equal(matching[0].if, undefined);
   assert.equal(
     matching[0]['working-directory'],
     'packages/web-platform/web-core-e2e',
@@ -92,7 +92,7 @@ test('the original worker/runtime API suite retains its runner and disabled case
       step.name === 'Validate original worker and runtime API contracts'
     );
   assert.equal(matching.length, 1);
-  assert.equal(matching[0].if, 'matrix.shard == 1');
+  assert.equal(matching[0].if, undefined);
   assert.equal(
     matching[0]['working-directory'],
     'packages/web-platform/web-core-e2e',
@@ -128,7 +128,7 @@ test('performance integration retains original CDP budgets rather than visual su
       step.name === 'Validate original layout and style performance budgets'
     );
   assert.equal(matching.length, 1);
-  assert.equal(matching[0].if, 'matrix.shard == 1');
+  assert.equal(matching[0].if, undefined);
   assert.equal(
     matching[0]['working-directory'],
     'packages/web-platform/web-elements',
@@ -164,7 +164,7 @@ test('SVG selection and iframe integration preserves original deterministic runn
       step.name === 'Validate original SVG selection and iframe API contracts'
     );
   assert.equal(matching.length, 1);
-  assert.equal(matching[0].if, 'matrix.shard == 1');
+  assert.equal(matching[0].if, undefined);
   assert.equal(
     matching[0]['working-directory'],
     'packages/web-platform/web-elements',
@@ -208,7 +208,7 @@ test('retained Markdown API runner excludes the migrated user-click flow', () =>
       step.name === 'Validate original Markdown rendering and API contracts'
     );
   assert.equal(matching.length, 1);
-  assert.equal(matching[0].if, 'matrix.shard == 1');
+  assert.equal(matching[0].if, undefined);
   assert.equal(
     matching[0]['working-directory'],
     'packages/web-platform/web-elements',
@@ -336,7 +336,7 @@ test('mouse drag, wheel and template runners keep complete source contracts', ()
     step.name === 'Validate original Rust and TypeScript template consistency'
   );
   for (const step of [pointer, template]) {
-    assert.equal(step.if, 'matrix.shard == 1');
+    assert.equal(step.if, undefined);
     assert.equal(
       step['working-directory'],
       'packages/web-platform/web-elements',
@@ -423,7 +423,7 @@ test('retained original failure diagnostics are archived separately without infl
   const step = steps.find(item =>
     item.name === 'Upload retained original runner diagnostics'
   );
-  assert.equal(step.if, 'always() && matrix.shard == 1');
+  assert.equal(step.if, 'always()');
   assert.equal(
     step.with.name,
     'midscene-original-runner-diagnostics-${{ github.run_attempt }}',
@@ -435,5 +435,5 @@ test('retained original failure diagnostics are archived separately without infl
     'packages/web-platform/web-elements/midscene-original-results',
   ]);
   assert.equal(step.with['if-no-files-found'], 'ignore');
-  assert.ok(!step.with.name.startsWith('midscene-ai-e2e-web-shard-'));
+  assert.ok(!step.with.name.startsWith('midscene-ai-e2e-web-'));
 });

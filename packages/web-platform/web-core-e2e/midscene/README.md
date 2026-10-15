@@ -1,5 +1,21 @@
 # Midscene E2E for web-core and web-elements
 
+## Single-job Web execution
+
+CI now runs the complete 466-case YAML inventory once in one Web job, with
+`maxConcurrency: 1`. Generated partitions and shard-specific report selection
+are removed. Retained original Playwright suites still run exactly once;
+their browser profiles, assertions and timing are unchanged. The website-safe
+Pages publisher and screenshot Summary remain in place.
+
+The preceding serial four-shard run
+[38686405001](https://github.com/quanru/lynx-stack/actions/runs/38686405001)
+spent 88m46s in its test jobs, including 52m30s in Midscene case execution.
+Removing repeated setup suggests approximately 65–70 minutes before publication;
+this is an estimate, not measured single-job performance. The new job has a
+150-minute limit and a 120-minute test-process limit. Original per-step
+deadlines and retries are not extended. Hosted single-job validation is pending.
+
 ## Source-safe reload and Markdown follow-up (hosted acceptance pending)
 
 Full [SDK 1.15.3 run 38671616387](https://github.com/quanru/lynx-stack/actions/runs/38671616387)
@@ -97,7 +113,7 @@ case execution. Non-secret model variables take precedence over same-named
 repository secrets; existing repository-secret configuration remains supported.
 
 Web agents now use the SDK's coordinate protocol without an extra conversion
-prompt. Case-owned registries, serial project execution, four bounded shards,
+prompt. Case-owned registries, serial project execution in one complete job,
 exact original assertions, source waits, browser profiles and PNGs remain.
 Agent teardown closes the case browser context even if report finalization fails.
 The clickable screenshot Summary and website-safe shared Pages publisher remain;
@@ -837,8 +853,8 @@ set -a && source .env && set +a
 npm test -- --project web-shell
 npm test -- --project web-elements
 
-# Run the same partition used by CI (one-based index, total shard count).
-node scripts/run-shard.mjs 1 4
+# Run the complete original YAML collection, as CI does.
+npm test
 ```
 
 All 25 web-elements cases passed locally on the first attempt using
@@ -870,12 +886,16 @@ No project source, lockfile or global shell PATH was changed for this build.
 
 ## Case-writing guidelines
 
-Shard artifacts retain their index, total count, commit SHA, case names, and
-producer outcome. Publication selects the latest attempt independently for
-each shard, so a partial rerun keeps successful sibling reports. Missing shards
-remain failures in Summary. Reports are kept in separate directories to avoid
-overwriting runner indexes, then merged into the HTML report; passed cases
-remain in the collapsed appendix with linked screenshots.
+One Web job runs all four projects serially against the original YAML files.
+It installs and builds once, with a 120-minute test-process limit inside a
+150-minute job limit, leaving time for setup and failure artifacts. Original
+per-step deadlines, case retries and retained Playwright contracts are unchanged.
+Report artifacts retain their commit SHA, attempt and producer outcome.
+Publication selects the latest available attempt no newer than the current run,
+checks successful reports against the complete unique source case inventory,
+and never upgrades a failed producer to success from an earlier artifact.
+Missing reports remain failures. The SDK still assembles the HTML report;
+passed cases remain in the collapsed appendix with linked screenshots.
 
 - Use `aiAct` for visible user interactions. Describe the user goal instead of
   decomposing it into `aiTap`, `aiScroll`, or other atomic AI operations.

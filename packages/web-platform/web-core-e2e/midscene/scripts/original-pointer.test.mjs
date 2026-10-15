@@ -45,7 +45,7 @@ test('three pointer contracts run unchanged in CSR and SSR with all original bro
     );
     assert.equal(matches.length, 1);
     const step = matches[0];
-    assert.equal(step.if, 'matrix.shard == 1');
+    assert.equal(step.if, undefined);
     assert.equal(
       step['working-directory'],
       'packages/web-platform/web-core-e2e',

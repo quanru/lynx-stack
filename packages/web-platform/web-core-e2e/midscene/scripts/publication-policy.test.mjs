@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
-test('model-backed shards run one at a time with bounded provider retries', async () => {
+test('one complete model-backed job retains bounded execution and provider retries', async () => {
   const workflow = await readFile(
     new URL(
       '../../../../../.github/workflows/midscene-web.yml',
@@ -11,8 +11,9 @@ test('model-backed shards run one at a time with bounded provider retries', asyn
     'utf8',
   );
   const job = workflow.split('  web-shell-ai-e2e:')[1].split(/\n {2}(?=\S)/)[0];
-  assert.match(job, /fail-fast: false\s+# [^\n]+\s+max-parallel: 1/);
-  assert.match(job, /shard: \[1, 2, 3, 4\]/);
+  assert.doesNotMatch(job, /strategy:|matrix\.|run-shard/);
+  assert.match(job, /timeout-minutes: 150/);
+  assert.match(job, /timeout --signal=TERM --kill-after=10s 120m npm test/);
   assert.match(job, /MIDSCENE_MODEL_RETRY_COUNT: "2"/);
   assert.match(job, /MIDSCENE_MODEL_RETRY_INTERVAL: "30000"/);
 });

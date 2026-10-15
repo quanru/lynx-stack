@@ -3,6 +3,14 @@ applyTo: "packages/web-platform/web-core-e2e/midscene/**"
 ---
 
 Keep all Midscene packages on the same pinned SDK release (currently 1.15.3).
+Run Web in one CI job with all projects serial and the original YAML files.
+Do not restore generated case partitions or per-shard report aggregation.
+Preserve every retained original-runner invocation once per job, and verify
+successful publication against the complete unique source case inventory.
+Keep the test-process deadline below the overall job deadline so failed runs
+can still upload evidence. Never infer success from an older artifact when
+the current producer failed. Upstream Playwright's independent matrix is
+outside this Midscene scheduling change.
 Use the official model verifier through the credential-redacting check:model
 command before expensive CI setup, in addition to the independent image-only
 challenge. Scope model keys to verification and case steps; preserve existing

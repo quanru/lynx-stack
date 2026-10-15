@@ -51,7 +51,7 @@ test('list API contracts retain exactly four original callbacks across three bro
   );
   assert.equal(matches.length, 1);
   const step = matches[0];
-  assert.equal(step.if, 'matrix.shard == 1');
+  assert.equal(step.if, undefined);
   assert.equal(step['working-directory'], 'packages/web-platform/web-elements');
   assert.deepEqual(step.env, { PORT: '3081' });
   assert.ok(

@@ -1,5 +1,17 @@
 # Midscene E2E for web-core and web-elements
 
+## Single-artifact publication correction (hosted validation pending)
+
+Run 38715707855 passed 470/470 cases (467 first attempts), but its successful
+publication jobs produced an incorrect empty Summary. The pinned download action
+flattens a single matching artifact even with `merge-multiple: false`; the
+selector previously expected the artifact-name directory from multi-artifact
+downloads. It now validates manifests and exact case coverage in either layout,
+rejects ambiguous duplicate attempts, and fails publication when a successful
+producer has no report. Do not treat that earlier run's green publication jobs
+as evidence of working screenshot/report links. Hosted publication validation
+of this correction remains pending.
+
 ## Overlay event migration (hosted validation pending)
 
 The collection now contains 471 YAML cases. The added

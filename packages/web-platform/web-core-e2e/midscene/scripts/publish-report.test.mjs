@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdir, mkdtemp, writeFile, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, writeFile, rm, rename } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
@@ -56,12 +56,39 @@ test('single-report publication selects the latest numeric attempt, never a futu
 
 test('missing and failed reports cannot become a stale successful publication', async t => {
   const f = await fixture(t);
-  assert.equal((await f.select()).result, 'failure');
+  await assert.rejects(f.select(), /no report artifact/);
+  assert.equal((await f.select(1, 'failure')).result, 'failure');
   await f.stage(1, 'success');
   // A failed rerun whose artifact upload failed must not inherit a green result.
   assert.equal((await f.select(2, 'failure')).result, 'failure');
   await f.stage(2, 'failure', null);
   assert.equal((await f.select(2)).result, 'failure');
+});
+
+test('single-artifact flattened downloads preserve complete report evidence and identity', async t => {
+  const f = await fixture(t);
+  await f.stage(1, 'success');
+  await rename(
+    join(f.directory, 'midscene-ai-e2e-web-1', 'attempt-1'),
+    join(f.directory, 'attempt-1'),
+  );
+  await rm(join(f.directory, 'midscene-ai-e2e-web-1'), { recursive: true });
+  const result = await f.select(1);
+  assert.equal(result.path, join(f.directory, 'attempt-1'));
+  assert.equal(result.artifact, 'midscene-ai-e2e-web-1');
+  assert.equal(result.result, 'success');
+  await writeFile(
+    join(result.path, 'result.json'),
+    JSON.stringify({ attempt: 1, sha: 'wrong', result: 'success' }),
+  );
+  await assert.rejects(f.select(1), /revision/);
+});
+
+test('flattened and wrapped copies of an attempt are rejected as ambiguous', async t => {
+  const f = await fixture(t);
+  await f.stage(1, 'success');
+  await mkdir(join(f.directory, 'attempt-1'));
+  await assert.rejects(f.select(1), /Ambiguous/);
 });
 
 test('successful reports require exact complete unique source coverage and successful cases', async t => {

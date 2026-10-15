@@ -49,15 +49,37 @@ export async function selectReport(
     throw error;
   });
   const prefix = 'midscene-ai-e2e-web-';
-  const artifact = artifacts.filter(name =>
-    name.startsWith(prefix)
-    && /^[1-9][0-9]*$/.test(name.slice(prefix.length))
-    && Number(name.slice(prefix.length)) <= currentAttempt
-  )
-    .sort((a, b) =>
-      Number(a.slice(prefix.length)) - Number(b.slice(prefix.length))
-    ).at(-1);
-  if (!artifact) {
+  // download-artifact v8 flattens a single match even with merge-multiple:false.
+  // Multiple matches retain their artifact-name directories. Validate either
+  // layout against the producer manifest; never infer success from a directory.
+  const candidates = artifacts.flatMap(name => {
+    const wrapped = name.startsWith(prefix);
+    const suffix = wrapped
+      ? name.slice(prefix.length)
+      : name.startsWith('attempt-')
+      ? name.slice(8)
+      : '';
+    if (!/^[1-9][0-9]*$/.test(suffix)) return [];
+    const attempt = Number(suffix);
+    if (!Number.isSafeInteger(attempt) || attempt > currentAttempt) return [];
+    return [{
+      attempt,
+      artifact: prefix + attempt,
+      path: wrapped
+        ? resolve(directory, name, `attempt-${attempt}`)
+        : resolve(directory, name),
+    }];
+  });
+  if (
+    new Set(candidates.map(item => item.attempt)).size !== candidates.length
+  ) {
+    throw new Error('Ambiguous report layouts for the same attempt.');
+  }
+  const selected = candidates.sort((a, b) => a.attempt - b.attempt).at(-1);
+  if (!selected) {
+    if (producerResult === 'success') {
+      throw new Error('Successful producer has no report artifact.');
+    }
     return {
       label: 'Web',
       path: resolve(directory, 'missing'),
@@ -65,8 +87,7 @@ export async function selectReport(
       artifact: prefix + 'missing',
     };
   }
-  const attempt = Number(artifact.slice(prefix.length));
-  const path = resolve(directory, artifact, `attempt-${attempt}`);
+  const { attempt, artifact, path } = selected;
   const result = JSON.parse(
     await readFile(resolve(path, 'result.json'), 'utf8'),
   );

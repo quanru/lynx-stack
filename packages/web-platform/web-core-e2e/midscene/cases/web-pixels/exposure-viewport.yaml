@@ -1,0 +1,79 @@
+# Preserve original programmatic exposure operations and checkpoint-scoped screenshot options.
+cases:
+  - name: api-exposure-basic
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-exposure-basic"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: { baseline: exposure/api-exposure-basic/0-initial }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - javascript: "document.querySelector('lynx-view').shadowRoot.querySelector('#x').scrollTo({ offset: 600 })"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: { baseline: exposure/api-exposure-basic/1-right-yellow }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - javascript: "document.querySelector('lynx-view').shadowRoot.querySelector('#x').scrollTo({ offset: 0 })"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: { baseline: exposure/api-exposure-basic/2-white-back }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - javascript: "document.querySelector('lynx-view').shadowRoot.querySelector('#y').scrollTo({ offset: 50 })"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: { baseline: exposure/api-exposure-basic/3-red-down }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - javascript: "document.querySelector('lynx-view').shadowRoot.querySelector('#y').scrollTo({ offset: 0 })"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: { baseline: exposure/api-exposure-basic/4-white-down-back }
+      - recordToReport: Original exposure viewport contract passed
+  - name: api-exposure-dynamic-screen-margin
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-exposure-dynamic-screen-margin"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          baseline: exposure/api-exposure-dynamic-screen-margin/0-initial,
+        }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - javascript: "document.querySelector('lynx-view').shadowRoot.querySelector('#y').scrollTop = 200"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          baseline: exposure/api-exposure-dynamic-screen-margin/1-orange-half-do-trigger,
+        }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - javascript: "document.querySelector('lynx-view').shadowRoot.querySelector('#y').scrollTop = 800"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          baseline: exposure/api-exposure-dynamic-screen-margin/2-green-half-not-trigger,
+        }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - javascript: "document.querySelector('lynx-view').shadowRoot.querySelector('#y').scrollTop = 1000"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          baseline: exposure/api-exposure-dynamic-screen-margin/3-green-half-do-trigger,
+        }
+      - recordToReport: Original exposure viewport contract passed
+  - name: api-exposure-dynamic-ui-margin
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-exposure-dynamic-ui-margin"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          baseline: exposure/api-exposure-dynamic-ui-margin/0-initial,
+        }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - javascript: "document.querySelector('lynx-view').shadowRoot.querySelector('#y').scrollTop = 200"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          baseline: exposure/api-exposure-dynamic-ui-margin/1-orange-half-do-trigger,
+        }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - javascript: "document.querySelector('lynx-view').shadowRoot.querySelector('#y').scrollTop = 800"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          baseline: exposure/api-exposure-dynamic-ui-margin/2-green-half-not-trigger,
+        }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - javascript: "document.querySelector('lynx-view').shadowRoot.querySelector('#y').scrollTop = 1000"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          baseline: exposure/api-exposure-dynamic-ui-margin/3-green-half-do-trigger,
+        }
+      - recordToReport: Original exposure viewport contract passed

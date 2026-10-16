@@ -1,6 +1,17 @@
 # Full E2E migration scope
 
-## Current foldview follow-up
+## Current exposure viewport batch
+
+Collection increases from 480 to 483 with api-exposure-basic,
+api-exposure-dynamic-screen-margin and api-exposure-dynamic-ui-margin.
+All thirteen PNG checkpoints, twenty-three 100 ms waits and original programmatic
+scroll operations are unchanged. A suite-scoped exact whitelist permits
+fullPage=false only for the ten original viewport checkpoints, with no public
+YAML option or global relaxation. The original Firefox exclusion applies only
+to basic. Source replay and backend spies pass; hosted Chromium validation is
+pending, and no fixture, source callback or baseline was changed.
+
+## Preceding foldview follow-up
 
 Collection increases from 479 to 480 with x-foldview-ng/item-fixed. Preserve
 the original programmatic scrollBy(0, 200), two 100 ms waits, optional chaining

@@ -65,10 +65,13 @@ export const pixelOptions = {
 } as const;
 
 export type PixelSuite = 'web-core' | 'web-elements';
-type OriginalPixelOptions = Omit<typeof pixelOptions, 'maxDiffPixelRatio'> & {
-  maxDiffPixelRatio: number;
-  clip?: { x: number; y: number; width: number; height: number };
-};
+type OriginalPixelOptions =
+  & Omit<typeof pixelOptions, 'maxDiffPixelRatio' | 'fullPage'>
+  & {
+    maxDiffPixelRatio: number;
+    fullPage: boolean;
+    clip?: { x: number; y: number; width: number; height: number };
+  };
 const indicatorClips = new Set([
   ...['initial', 'num-1-in-view', 'num-2-in-view', 'num-0-in-view'].map(label =>
     'x-swiper/x-swiper-indicator-basic/' + label
@@ -113,12 +116,30 @@ const textareaRatioExceptions = new Set([
   'x-textarea/placeholder-style/init-value/index',
   'x-textarea/placeholder-style/update-value/index',
 ]);
+// Only original exposure checkpoints explicitly using viewport screenshots.
+// Keep this source-bound; YAML cannot override arbitrary screenshot options.
+const viewportOnlyCheckpoints = new Set([
+  'exposure/api-exposure-basic/1-right-yellow',
+  'exposure/api-exposure-basic/2-white-back',
+  'exposure/api-exposure-basic/3-red-down',
+  'exposure/api-exposure-basic/4-white-down-back',
+  ...['api-exposure-dynamic-screen-margin', 'api-exposure-dynamic-ui-margin']
+    .flatMap(name =>
+      [
+        '1-orange-half-do-trigger',
+        '2-green-half-not-trigger',
+        '3-green-half-do-trigger',
+      ]
+        .map(checkpoint => `exposure/${name}/${checkpoint}`)
+    ),
+]);
 export function originalPixelOptions(
   baseline: string,
   suite: PixelSuite = 'web-core',
 ): OriginalPixelOptions {
   return {
     ...pixelOptions,
+    fullPage: !(suite === 'web-core' && viewportOnlyCheckpoints.has(baseline)),
     ...(suite === 'web-elements' && indicatorClips.has(baseline)
       ? { clip: { x: 50, width: 100, y: 170, height: 30 } }
       : {}),

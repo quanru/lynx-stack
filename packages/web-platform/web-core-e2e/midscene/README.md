@@ -1,5 +1,16 @@
 # Midscene E2E for web-core and web-elements
 
+## Exposure viewport batch (hosted validation pending)
+
+Collection is now 483 YAML cases. Three exposure contracts preserve thirteen
+original PNG checkpoints and twenty-three individual 100 ms waits. Only ten
+source-bound web-core checkpoints use fullPage=false; initial images and all
+other checkpoints retain fullPage=true. YAML cannot supply arbitrary screenshot
+options. Differential replay verifies the original API calls, property writes,
+missing-element failures and browser guards; backend spies verify all thirteen
+original PNG byte buffers and complete screenshot options. Hosted Chromium
+acceptance remains pending; Firefox/WebKit and SSR coverage are not inferred.
+
 ## Retained input evidence integration (hosted acceptance pending)
 
 `web-elements/playwright.retained-inputs.config.ts` selects 14 original keyboard

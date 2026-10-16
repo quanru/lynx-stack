@@ -5,7 +5,7 @@ import test from 'node:test';
 import { collectWorkflowDocument } from '@midscene/test';
 import { discoverTestFiles, loadTestProject } from '@midscene/test/config';
 
-test('all 484 cases collect with registered nodes without a browser or model', async () => {
+test('all 487 cases collect with registered nodes without a browser or model', async () => {
   const root = fileURLToPath(new URL('../', import.meta.url));
   const loaded = await loadTestProject(`${root}/midscene.config.ts`);
   const names = [];
@@ -24,6 +24,6 @@ test('all 484 cases collect with registered nodes without a browser or model', a
       names.push(...document.cases.map((item) => item.definition.name));
     }
   }
-  assert.equal(names.length, 484);
-  assert.equal(new Set(names).size, 484);
+  assert.equal(names.length, 487);
+  assert.equal(new Set(names).size, 487);
 });

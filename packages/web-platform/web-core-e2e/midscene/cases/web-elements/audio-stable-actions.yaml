@@ -1,0 +1,28 @@
+# Original stable audio state assertions; WebKit excludes set-volume upstream.
+cases:
+  - name: web-elements/x-audio-tt/method-mute
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-audio-tt/method-mute.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - aiAct: "Click the red button labeled mute exactly once."
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 3000))"
+      - javascript: |-
+          (() => {
+            const muted = document.querySelector('x-audio-tt')?.shadowRoot?.querySelector('audio')?.muted;
+            if (!muted) throw new Error('Original audio muted truthy assertion failed');
+            return true;
+          })()
+      - recordToReport: Original audio mute state contract passed
+  - name: web-elements/x-audio-tt/method-set-volume
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-audio-tt/method-set-volume.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - aiAct: "Click the red button labeled play exactly once."
+      - aiAct: "Click the red button labeled set volume exactly once."
+      - javascript: |-
+          (() => {
+            const volume = document.querySelector('x-audio-tt')?.shadowRoot?.querySelector('audio')?.volume;
+            if (volume !== 0.5) throw new Error('Original audio volume assertion failed');
+            return true;
+          })()
+      - recordToReport: Original audio volume contract passed

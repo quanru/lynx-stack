@@ -1,5 +1,22 @@
 # Full E2E migration scope
 
+## Stable visible action follow-up (hosted validation pending)
+
+The YAML collection increases from 484 to 487 with
+web-elements/x-audio-tt/method-mute,
+web-elements/x-audio-tt/method-set-volume and
+basic-element-list-remove-action. Only the original visible clicks become
+aiAct. All waits and assertions remain, including muted truthiness rather than
+a stronger boolean assertion, strict volume=0.5, and separate list count and
+ordered ID reads at all three phases. Open shadow traversal follows the pinned
+Playwright simple CSS query engine and does not ignore extra matching elements.
+
+Model-free callback replay and fixture visibility checks do not establish
+hosted AI success or cross-browser equivalence. WebKit's original set-volume
+skip and the list's SSR skip remain. Audio stop was deliberately not included:
+its play-to-stop timing equivalence is unresolved. Original source, fixtures and
+pixel baselines are unchanged; retained original-runner counts are unchanged.
+
 ## Existing original runner evidence ledger
 
 These thirteen preexisting Playwright steps collect 380 browser/render items

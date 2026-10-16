@@ -1,5 +1,21 @@
 # Midscene E2E for web-core and web-elements
 
+## Stable visible actions (hosted validation pending)
+
+Collection is now 487 YAML cases. Three additions use aiAct only for the
+original visible clicks: audio mute, audio set-volume and CSR list removal.
+The original 3000 ms mute wait, separate play/set-volume actions, and list
+500/1000/1000 ms waits remain. Audio retains a single truthy muted read or
+strict volume=0.5 read. Each list phase retains separate count and ordered-ID
+reads; the full page's open shadow roots are searched, not only one host.
+
+Source replay compares original navigation helpers, action order, waits,
+assertion reads and negative cases. A pinned Playwright CSS traversal comparison
+covers nested roots and extra matches. Fixture inspection confirms independent
+visible controls, but does not prove model grounding. Hosted AI acceptance is
+pending; the original WebKit volume exclusion and CSR-only list scope remain.
+No fixture, product source, PNG or retained-input selection changes are included.
+
 ## Existing original runner evidence follow-up (hosted acceptance pending)
 
 Five existing invocations now record final-attempt screenshots and HTML/JSON
@@ -14,7 +30,7 @@ steps. Manifests are converted before upload and validated against their runner
 identity; a CSR manifest cannot stand in for SSR. Publication combines this
 evidence with the preceding 28-source/84-item collection through the same
 two-section Summary: 42 unique original sources / 144 execution items, separate
-from 484 YAML cases. Browser-free collection and synthetic tests do not establish
+from 487 YAML cases. Browser-free collection and synthetic tests do not establish
 hosted passes or public report availability.
 
 The preexisting report gap was 120 unique source declarations / 380 collected

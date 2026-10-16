@@ -593,9 +593,11 @@ jobs:
       - name: Add complete case evidence table to Summary
         if: always() && !cancelled() && steps.build-report.outputs.rendered == 'true'
         run: |
-          echo 'Report links below become available after the Pages deployment job succeeds.' >> "$GITHUB_STEP_SUMMARY"
-          echo '' >> "$GITHUB_STEP_SUMMARY"
-          cat "$RUNNER_TEMP/midscene-publication/summary.md" >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo 'Report links below become available after the Pages deployment job succeeds.'
+            echo ''
+            cat "$RUNNER_TEMP/midscene-publication/summary.md"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload report publication bundle
         id: upload-publication

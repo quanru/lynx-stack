@@ -21,11 +21,10 @@ for (const catalog of originalRunnerCatalog) {
       'cli.js',
     ),
     'test',
-    catalog.file,
+    ...(catalog.files ?? [catalog.file]),
     '--config',
     'playwright.original-evidence.config.ts',
-    '--grep',
-    catalog.grep,
+    ...(catalog.grep ? ['--grep', catalog.grep] : []),
     ...catalog.browsers.flatMap(browser => ['--project', browser]),
     '--list',
     '--reporter',
@@ -53,12 +52,25 @@ for (const catalog of originalRunnerCatalog) {
         row.line !== null && row.status === 'not-run'
       ),
     );
+    if (catalog.sources) {
+      const identities = new Map();
+      for (const row of manifest.cases) {
+        const identity = `${row.sourceFile}::${row.sourceId}`;
+        const location = `${row.sourceFile}:${row.line}`;
+        if (identities.has(identity)) {
+          assert.equal(identities.get(identity), location);
+        }
+        identities.set(identity, location);
+      }
+      assert.equal(identities.size, 12);
+      assert.equal(new Set(identities.values()).size, 12);
+    }
     count += manifest.cases.length;
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
 }
-assert.equal(count, 60);
+assert.equal(count, 105);
 console.log(
-  'Collected five existing runners: 14 unique source declarations, 60 browser/render executions; no browsers launched.',
+  'Collected six existing runners: 26 unique source declarations, 105 browser/render executions; no browsers launched.',
 );

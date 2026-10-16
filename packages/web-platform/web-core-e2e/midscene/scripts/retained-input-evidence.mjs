@@ -1,6 +1,9 @@
 import { realpathSync, statSync } from 'node:fs';
 import path from 'node:path';
-import { retainedCatalog } from './original-runner-catalog.mjs';
+import {
+  retainedCatalog,
+  catalogSourceCount,
+} from './original-runner-catalog.mjs';
 
 // Local, verified relative paths only. Publishing owns URL construction later.
 function existingFile(root, value) {
@@ -63,11 +66,21 @@ export function retainedInputEvidence(
     const titles = [...parents, suite.title];
     for (const spec of suite.specs ?? []) {
       const group = titles.at(-1);
-      const source = `${group}/${spec.title}`;
+      const descriptor = catalog.sources?.find(source =>
+        source.file === spec.file && source.title === spec.title
+      );
+      const source = catalog.sources
+        ? descriptor?.key
+        : `${group}/${spec.title}`;
       if (
-        !titles.includes(suiteName)
+        (catalog.sources
+          ? !descriptor
+            || (descriptor.suite
+              ? !titles.includes(descriptor.suite)
+              : titles.length !== 1)
+          : !titles.includes(suiteName))
         || !sourceKeys.includes(source)
-        || spec.file !== sourceFile
+        || spec.file !== (descriptor?.file ?? sourceFile)
         || !Number.isInteger(spec.line) || spec.line < 1
       ) {
         throw new Error('Unexpected retained source declaration');
@@ -112,6 +125,9 @@ export function retainedInputEvidence(
         }
         records.set(key, {
           source,
+          ...(descriptor
+            ? { sourceId: descriptor.sourceId, sourceFile: descriptor.file }
+            : {}),
           browser: item.projectName,
           line: spec.line,
           status: final?.status ?? 'not-run',
@@ -137,6 +153,14 @@ export function retainedInputEvidence(
     browsers.map(browser =>
       records.get(`${source}:${browser}`) ?? {
         source,
+        ...(catalog.sources
+          ? {
+            sourceId: catalog.sources.find(item =>
+              item.key === source
+            ).sourceId,
+            sourceFile: catalog.sources.find(item => item.key === source).file,
+          }
+          : {}),
         browser,
         line: null,
         status: 'not-run',
@@ -153,7 +177,7 @@ export function retainedInputEvidence(
   return {
     schemaVersion: 1,
     kind: 'retained-original-input',
-    sourceDeclarations: sourceKeys.length,
+    sourceDeclarations: catalogSourceCount(catalog),
     runnerId: catalog.id,
     sourceFile,
     expectedExecutions: cases.length,

@@ -7,7 +7,10 @@ import {
   readdirSync,
 } from 'node:fs';
 import path from 'node:path';
-import { retainedCatalog } from './original-runner-catalog.mjs';
+import {
+  retainedCatalog,
+  catalogSourceCount,
+} from './original-runner-catalog.mjs';
 
 function relativePath(value) {
   if (
@@ -91,8 +94,8 @@ export function publishRetainedInputs(
     catalog = retainedCatalog,
   },
 ) {
-  const sourceCount = catalog.keys.length;
-  const expectedCount = sourceCount * catalog.browsers.length;
+  const sourceCount = catalogSourceCount(catalog);
+  const expectedCount = catalog.keys.length * catalog.browsers.length;
   relativePath(sitePrefix);
   if (
     artifact !== null
@@ -136,8 +139,12 @@ export function publishRetainedInputs(
   const seen = new Set();
   const rows = manifest.cases.map(row => {
     const key = `${row.source}:${row.browser}`;
+    const descriptor = catalog.sources?.find(item => item.key === row.source);
     if (
       !catalog.keys.includes(row.source)
+      || (catalog.sources
+        && (!descriptor || row.sourceId !== descriptor.sourceId
+          || row.sourceFile !== descriptor.file))
       || !catalog.browsers.includes(row.browser)
       || seen.has(key) || !Array.isArray(row.screenshots)
       || !['passed', 'failed', 'timedOut', 'skipped', 'interrupted', 'not-run']

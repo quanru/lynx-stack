@@ -24,6 +24,57 @@ const core = {
   file: 'tests/reactlynx.spec.ts',
   browsers: retainedInputBrowsers,
 };
+// One declaration expands to four SVG titles. Stable sourceId identifies the
+// declaration, while key identifies each independently collected execution.
+const componentSources = [
+  ...['x-text', 'inline-truncation'].flatMap(parent =>
+    [false, true].map(wrapped => ({
+      file: 'tests/x-svg-inline.spec.ts',
+      title: `x-svg inline layout in ${parent}, wrapped=${wrapped}`,
+      sourceId: 'svg-inline-layout',
+      suite: null,
+    }))
+  ),
+  ...[
+    'x-svg counts as one character and is restored after truncation changes',
+    'x-svg sizes custom line truncation like x-image',
+  ].map(title => ({
+    file: 'tests/x-svg-inline.spec.ts',
+    title,
+    sourceId: title,
+    suite: null,
+  })),
+  ...[
+    'reports selection offsets and direction for x-text and inline-text',
+    'stops listening after the event is unbound',
+  ].map(title => ({
+    file: 'tests/x-text-selection.spec.ts',
+    title,
+    sourceId: title,
+    suite: 'x-text selectionchange',
+  })),
+  ...[
+    'should render iframe with src',
+    'should update src attribute',
+    'should handle html attribute',
+    'should fire bindload event',
+    'should fire bindmessage event',
+    'should forward iframe postMessage as message event',
+    'should not forward messages from outside its iframe',
+  ].map(title => ({
+    file: 'tests/x-webview.spec.ts',
+    title,
+    sourceId: title,
+    suite: 'x-webview',
+  })),
+].map(source => ({ ...source, key: `${source.file}::${source.title}` }));
+export function catalogSourceCount(catalog) {
+  return new Set(
+    catalog.sources
+      ? catalog.sources.map(source => `${source.file}::${source.sourceId}`)
+      : catalog.keys,
+  ).size;
+}
 export const originalRunnerCatalog = [
   ...['csr', 'ssr'].map(mode => ({
     ...core,
@@ -57,6 +108,22 @@ export const originalRunnerCatalog = [
   },
   {
     package: 'web-elements',
+    id: 'svg-selection-webview',
+    mode: 'component',
+    file:
+      'tests/x-svg-inline.spec.ts tests/x-text-selection.spec.ts tests/x-webview.spec.ts',
+    files: [
+      'tests/x-svg-inline.spec.ts',
+      'tests/x-text-selection.spec.ts',
+      'tests/x-webview.spec.ts',
+    ],
+    sources: componentSources,
+    keys: componentSources.map(source => source.key),
+    browsers: retainedInputBrowsers,
+    stepName: 'Validate original SVG selection and iframe API contracts',
+  },
+  {
+    package: 'web-elements',
     suite: 'web-elements test suite',
     file: 'tests/web-elements.spec.ts',
     browsers: retainedInputBrowsers,
@@ -80,7 +147,11 @@ export function originalRunner(id) {
 }
 export const originalRunnerSourceCount = new Set(
   originalRunnerCatalog.flatMap(item =>
-    item.keys.map(key => `${item.package}/${item.file}::${key}`)
+    item.sources
+      ? item.sources.map(source =>
+        `${item.package}/${source.file}::${source.sourceId}`
+      )
+      : item.keys.map(key => `${item.package}/${item.file}::${key}`)
   ),
 ).size;
 

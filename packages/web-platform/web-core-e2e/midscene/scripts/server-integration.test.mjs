@@ -172,7 +172,7 @@ test('SVG selection and iframe integration preserves original deterministic runn
   assert.equal(matching[0].env.PORT, '3081');
   assert.equal(
     matching[0].run,
-    'pnpm exec playwright test tests/x-svg-inline.spec.ts tests/x-text-selection.spec.ts tests/x-webview.spec.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/svg-selection-webview --reporter line',
+    'pnpm exec playwright test tests/x-svg-inline.spec.ts tests/x-text-selection.spec.ts tests/x-webview.spec.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/svg-selection-webview/results --config playwright.original-evidence.config.ts',
   );
   for (
     const file of [
@@ -292,6 +292,7 @@ test('retained browser variants bound workers without replacing original profile
         'original-animation-csr',
         'original-lazy-components-csr',
         'original-list-api',
+        'original-svg-selection-webview',
       ].includes(step.id)
     ) {
       assert.match(

@@ -260,10 +260,12 @@ jobs:
         run: pnpm exec playwright test tests/performance.test.ts --project chromium --workers=2 --output midscene-original-results/performance --reporter line
 
       - name: Validate original SVG selection and iframe API contracts
+        id: original-svg-selection-webview
         working-directory: packages/web-platform/web-elements
         env:
           PORT: "3081"
-        run: pnpm exec playwright test tests/x-svg-inline.spec.ts tests/x-text-selection.spec.ts tests/x-webview.spec.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/svg-selection-webview --reporter line
+          ORIGINAL_EVIDENCE_RUNNER: svg-selection-webview
+        run: pnpm exec playwright test tests/x-svg-inline.spec.ts tests/x-text-selection.spec.ts tests/x-webview.spec.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/svg-selection-webview/results --config playwright.original-evidence.config.ts
 
       - name: Validate original Markdown rendering and API contracts
         working-directory: packages/web-platform/web-elements
@@ -304,7 +306,7 @@ jobs:
         if: always()
         env:
           ORIGINAL_RUNNER_OUTCOMES: >-
-            {"keyboard-csr":"${{ steps.original-keyboard-csr.outcome }}","keyboard-ssr":"${{ steps.original-keyboard-ssr.outcome }}","animation-csr":"${{ steps.original-animation-csr.outcome }}","lazy-components-csr":"${{ steps.original-lazy-components-csr.outcome }}","list-api":"${{ steps.original-list-api.outcome }}"}
+            {"keyboard-csr":"${{ steps.original-keyboard-csr.outcome }}","keyboard-ssr":"${{ steps.original-keyboard-ssr.outcome }}","animation-csr":"${{ steps.original-animation-csr.outcome }}","lazy-components-csr":"${{ steps.original-lazy-components-csr.outcome }}","list-api":"${{ steps.original-list-api.outcome }}","svg-selection-webview":"${{ steps.original-svg-selection-webview.outcome }}"}
         run: node packages/web-platform/web-core-e2e/midscene/scripts/write-original-runner-evidence.mjs
 
       - name: Validate original keyboard and input contracts with evidence
@@ -412,8 +414,10 @@ jobs:
             source="packages/web-platform/web-core-e2e/midscene-original-results/$runner"
             if [ -d "$source" ]; then cp -R "$source" "$target/original-runners/$runner"; fi
           done
-          source=packages/web-platform/web-elements/midscene-original-results/list-api
-          if [ -d "$source" ]; then cp -R "$source" "$target/original-runners/list-api"; fi
+          for runner in list-api svg-selection-webview; do
+            source="packages/web-platform/web-elements/midscene-original-results/$runner"
+            if [ -d "$source" ]; then cp -R "$source" "$target/original-runners/$runner"; fi
+          done
           node -e 'require("fs").writeFileSync(process.argv[1], JSON.stringify({sha: process.env.GITHUB_SHA, attempt: Number(process.env.GITHUB_RUN_ATTEMPT), result: process.env.PRODUCER_RESULT}))' "$target/result.json"
 
       - name: Upload Web report

@@ -17,6 +17,7 @@ import {
   originalRunnerCatalog,
   originalRunnerSourceCount,
   originalEvidenceConfig,
+  retainedCatalog,
 } from './original-runner-catalog.mjs';
 import { retainedInputEvidence } from './retained-input-evidence.mjs';
 import { writeOriginalRunnerEvidence } from './write-original-runner-evidence.mjs';
@@ -40,14 +41,103 @@ const workflow = YAML.parse(
   ),
 );
 const steps = workflow.jobs['web-shell-ai-e2e'].steps;
-test('five existing commands keep exact sources, grep, profiles and mode; no additional test invocation', () => {
-  assert.equal(originalRunnerSourceCount, 14);
+test('SVG expansion preserves 12 original declarations, 15 titles and exact source identities', () => {
+  const runner = originalRunnerCatalog.find(item =>
+    item.id === 'svg-selection-webview'
+  );
+  const declarations = [];
+  for (const file of runner.files) {
+    const source = ts.createSourceFile(
+      file,
+      readFileSync(
+        new URL(`../../../web-elements/${file}`, import.meta.url),
+        'utf8',
+      ),
+      ts.ScriptTarget.Latest,
+      true,
+    );
+    function visit(node) {
+      if (
+        ts.isCallExpression(node) && node.expression.getText(source) === 'test'
+      ) {
+        const title = node.arguments[0];
+        if (ts.isStringLiteral(title)) {
+          const matches = runner.sources.filter(item =>
+            item.file === file && item.title === title.text
+          );
+          assert.equal(matches.length, 1);
+          assert.equal(matches[0].sourceId, title.text);
+          declarations.push(matches[0].sourceId);
+        } else {
+          assert.equal(
+            title.getText(source),
+            '`x-svg inline layout in ${parent}, wrapped=${wrapped}`',
+          );
+          const loops = [];
+          for (let parent = node.parent; parent; parent = parent.parent) {
+            if (ts.isForOfStatement(parent)) {
+              loops.push(parent.expression.getText(source));
+            }
+          }
+          assert.deepEqual(loops, [
+            '[false, true]',
+            '[\'x-text\', \'inline-truncation\']',
+          ]);
+          const expanded = runner.sources.filter(item =>
+            item.sourceId === 'svg-inline-layout'
+          );
+          assert.equal(expanded.length, 4);
+          assert.deepEqual(
+            expanded.map(item => item.title),
+            ['x-text', 'inline-truncation'].flatMap(parent =>
+              [false, true].map(wrapped =>
+                `x-svg inline layout in ${parent}, wrapped=${wrapped}`
+              )
+            ),
+          );
+          declarations.push('svg-inline-layout');
+        }
+      }
+      ts.forEachChild(node, visit);
+    }
+    visit(source);
+  }
+  assert.equal(declarations.length, 12);
+  assert.equal(runner.keys.length, 15);
+});
+
+test('multi-file manifest rejects forged declaration identity without dropping expanded rows', t => {
+  const { root, outcomes, stage, entry, env } = fixture(t);
+  assert.equal(writeOriginalRunnerEvidence(root, outcomes), 0);
+  stage();
+  const file = path.join(
+    entry.path,
+    'original-runners/svg-selection-webview/evidence.json',
+  );
+  const manifest = JSON.parse(readFileSync(file, 'utf8'));
+  assert.equal(manifest.sourceDeclarations, 12);
+  assert.equal(manifest.cases.length, 45);
+  assert.equal(
+    new Set(manifest.cases.map(row => `${row.sourceFile}::${row.sourceId}`))
+      .size,
+    12,
+  );
+  manifest.cases[0].sourceId = 'another-declaration';
+  writeFileSync(file, JSON.stringify(manifest));
+  assert.throws(
+    () => prepareOriginalRunnerPublication(entry, env),
+    /Invalid or duplicate/,
+  );
+});
+
+test('six existing commands keep exact sources, grep, profiles and mode; no additional test invocation', () => {
+  assert.equal(originalRunnerSourceCount, 26);
   assert.equal(
     originalRunnerCatalog.reduce(
       (sum, row) => sum + row.keys.length * row.browsers.length,
       0,
     ),
-    60,
+    105,
   );
   assert.equal(
     steps.filter(step => step.run?.includes('pnpm exec playwright test'))
@@ -70,12 +160,15 @@ test('five existing commands keep exact sources, grep, profiles and mode; no add
     } else assert.equal(step.env.PORT, '3081');
     assert.equal(
       step.run,
-      `pnpm exec playwright test ${runner.file} --project chromium --project firefox --project webkit --workers=2 --grep '${runner.grep}' --output midscene-original-results/${runner.id}/results --config playwright.original-evidence.config.ts`,
+      `pnpm exec playwright test ${runner.file} --project chromium --project firefox --project webkit --workers=2${
+        runner.grep ? ` --grep '${runner.grep}'` : ''
+      } --output midscene-original-results/${runner.id}/results --config playwright.original-evidence.config.ts`,
     );
     assert.ok(
       steps.indexOf(step)
         < steps.findIndex(item => item.name === 'Start web-core-e2e dev shell'),
     );
+    if (runner.sources) continue; // Multi-file declarations are checked below.
     const source = ts.createSourceFile(
       'original.ts',
       readFileSync(
@@ -186,11 +279,12 @@ function fixture(t) {
     );
     const suites = runner.keys.map((key, index) => {
       const [group, name] = key.split('/');
+      const descriptor = runner.sources?.find(source => source.key === key);
       return {
-        title: group,
+        title: descriptor?.suite ?? (descriptor ? descriptor.file : group),
         specs: [{
-          title: name,
-          file: runner.file,
+          title: descriptor?.title ?? name,
+          file: descriptor?.file ?? runner.file,
           line: index + 1,
           tests: runner.browsers.map(projectName => {
             const image = path.join(
@@ -222,7 +316,7 @@ function fixture(t) {
       path.join(directory, 'report.json'),
       JSON.stringify({
         errors: [],
-        suites: [{
+        suites: runner.sources ? suites : [{
           title: runner.file,
           suites: [{ title: runner.suite, suites }],
         }],
@@ -259,17 +353,17 @@ function fixture(t) {
   };
 }
 
-test('all five producer manifests publish 60 unique mode-aware rows and 14 deduplicated sources', t => {
+test('all six producer manifests publish 105 unique mode-aware rows and 26 deduplicated sources', t => {
   const { root, outcomes, stage, entry, env } = fixture(t);
   assert.equal(writeOriginalRunnerEvidence(root, outcomes), 0);
   stage();
   const result = prepareOriginalRunnerPublication(entry, env);
-  assert.equal(result.sourceCount, 14);
-  assert.equal(result.expectedCount, 60);
-  assert.equal(result.cases.length, 60);
+  assert.equal(result.sourceCount, 26);
+  assert.equal(result.expectedCount, 105);
+  assert.equal(result.cases.length, 105);
   assert.equal(
     new Set(result.cases.map(row => `${row.platform}/${row.name}`)).size,
-    60,
+    105,
   );
   assert.deepEqual(result.errors, []);
   assert.ok(
@@ -280,7 +374,7 @@ test('all five producer manifests publish 60 unique mode-aware rows and 14 dedup
   );
 });
 
-test('skipped producer is distinct and cannot be hidden by four successful producers', t => {
+test('skipped producer is distinct and cannot be hidden by successful producers', t => {
   const { root, outcomes, stage, entry, env } = fixture(t);
   outcomes['keyboard-ssr'] = 'skipped';
   rmSync(
@@ -293,7 +387,7 @@ test('skipped producer is distinct and cannot be hidden by four successful produ
   stage();
   const result = prepareOriginalRunnerPublication(entry, env);
   assert.equal(result.cases.filter(row => row.status === 'not-run').length, 18);
-  assert.equal(result.cases.filter(row => row.status === 'success').length, 42);
+  assert.equal(result.cases.filter(row => row.status === 'success').length, 87);
   assert.match(result.errors.join(' '), /keyboard-ssr.*skipped/);
 });
 
@@ -350,8 +444,8 @@ test('new and existing original evidence share one validated two-section Summary
   const existing = prepareOriginalRunnerPublication(entry, env);
   const retained = await prepareRetainedPublication(entry, env);
   const combined = mergeOriginalEvidence(retained.supplemental, existing);
-  assert.equal(combined.sourceCount, 42);
-  assert.equal(combined.expectedCount, 144);
+  assert.equal(combined.sourceCount, 26 + retainedCatalog.keys.length);
+  assert.equal(combined.expectedCount, 105 + retainedCatalog.keys.length * 3);
   assert.doesNotThrow(() => validateSupplementalEvidence(combined));
   const summary = renderSummary({
     title: 'Combined original evidence',
@@ -361,8 +455,12 @@ test('new and existing original evidence share one validated two-section Summary
     supplementalEvidence: combined,
   });
   assert.equal((summary.match(/<details>/g) ?? []).length, 1);
-  assert.equal((summary.match(/<img /g) ?? []).length, 60);
-  assert.match(summary, /42 source cases \/ 144 browser cases/);
+  assert.equal((summary.match(/<img /g) ?? []).length, 105);
+  assert.ok(
+    summary.includes(
+      `${combined.sourceCount} source cases / ${combined.expectedCount} browser cases`,
+    ),
+  );
 });
 
 test('a WebKit keyboard retry stays flaky, uses its final screenshot and appears before the passed appendix', t => {
@@ -413,7 +511,7 @@ test('a WebKit keyboard retry stays flaky, uses its final screenshot and appears
     entries: [],
     supplementalEvidence: supplemental,
   });
-  assert.match(summary, /1 need attention · 59 passed/);
+  assert.match(summary, /1 need attention · 104 passed/);
   assert.ok(
     summary.indexOf('basic-global-bindkeydown-key (CSR)')
       < summary.indexOf('<details>'),

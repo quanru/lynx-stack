@@ -73,7 +73,9 @@ export function prepareOriginalRunnerPublication(entry, env) {
     supplemental.cases.push(
       ...group.cases.map(row => ({
         ...row,
-        name: `${catalog.file} / ${row.name} (${catalog.mode})`,
+        name: `${
+          catalog.sources ? row.name : `${catalog.file} / ${row.name}`
+        } (${catalog.mode})`,
       })),
     );
   }

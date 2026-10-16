@@ -201,7 +201,11 @@ test('eighteen original runners retain profiles and the five new batches are exp
     assert.equal(matches.length, 1);
     const step = matches[0];
     assert.equal(step.id, `original-${runner.id}`);
-    assert.equal(step.if, undefined);
+    assert.equal(
+      step.if,
+      '${{ !cancelled() && steps.build-web.outcome == \'success\' && steps.original-collection.outcome == \'success\' }}',
+    );
+    assert.equal(step['continue-on-error'], undefined);
     assert.equal(
       step['working-directory'],
       `packages/web-platform/${runner.package}`,

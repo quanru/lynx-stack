@@ -58,7 +58,10 @@ test('ambiguous same-color blocks retain the original CSR runner and all three b
     step.name,
     'Validate original ambiguous block inputs (CSR)',
   );
-  assert.equal(step.if, undefined);
+  assert.equal(
+    step.if,
+    '${{ !cancelled() && steps.build-web.outcome == \'success\' && steps.original-collection.outcome == \'success\' }}',
+  );
   assert.equal(step['working-directory'], 'packages/web-platform/web-core-e2e');
   assert.deepEqual(step.env, {
     ENABLE_SSR: '',

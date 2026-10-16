@@ -3,6 +3,103 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import YAML from 'yaml';
 
+test('independent serial groups continue after test failures but never bypass prerequisites or cancellation', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const steps = workflow.jobs['web-shell-ai-e2e'].steps;
+  const base = ['build-web', 'original-collection'];
+  const expected = new Map([
+    ['original-html', ['build-web']],
+    ['original-collection', ['build-web']],
+    ['retained-collection', base],
+    ['retained-inputs', [...base, 'retained-collection']],
+    ['core-ready', base],
+    ['elements-ready', base],
+    ['case-contracts', base],
+    ['visual-prerequisites', [
+      ...base,
+      'core-ready',
+      'elements-ready',
+      'case-contracts',
+    ]],
+    ['run-cases', [
+      ...base,
+      'model-compatible',
+      'core-ready',
+      'elements-ready',
+      'case-contracts',
+      'visual-prerequisites',
+    ]],
+  ]);
+  const original = steps.filter(step =>
+    step.id?.startsWith('original-')
+    && step.run?.includes('pnpm exec playwright test')
+  );
+  assert.equal(original.length, 18);
+  for (const step of original) expected.set(step.id, base);
+  for (const [id, dependencies] of expected) {
+    const step = steps.find(item => item.id === id);
+    const expression = '${{ !cancelled() && ' + dependencies.map(name =>
+      `steps.${name}.outcome == 'success'`
+    ).join(' && ') + ' }}';
+    assert.equal(step.if, expression, id);
+    assert.equal(
+      step['continue-on-error'],
+      undefined,
+      'Original failure must keep the job red',
+    );
+    for (const dependency of dependencies) {
+      assert.ok(
+        steps.findIndex(item =>
+          item.id === dependency
+        ) < steps.indexOf(step),
+        id + ': prerequisite must finish first',
+      );
+    }
+    // No prior test/evidence status participates: an SSR test or manifest failure
+    // cannot suppress a later independent group with successful prerequisites.
+    assert.ok(!dependencies.includes('original-bulk-react-ssr'));
+    for (const failed of ['failure', 'skipped', 'cancelled']) {
+      const state = Object.fromEntries(
+        dependencies.map(name => [name, 'success']),
+      );
+      state['original-bulk-react-ssr'] = failed;
+      assert.ok(dependencies.every(name => state[name] === 'success'));
+      for (const required of dependencies) {
+        assert.equal(
+          dependencies.every(name =>
+            (name === required ? failed : state[name]) === 'success'
+          ),
+          false,
+        );
+      }
+    }
+  }
+  const firstServer = steps.findIndex(step => step.id === 'core-ready');
+  for (
+    const step of [
+      ...original,
+      steps.find(step => step.id === 'retained-inputs'),
+    ]
+  ) {
+    assert.ok(
+      steps.indexOf(step) < firstServer,
+      'Original runners retain serial ownership of their own servers',
+    );
+  }
+  assert.equal(
+    workflow.jobs['web-shell-ai-e2e']['continue-on-error'],
+    undefined,
+  );
+});
+
 test('workspace collection remains mandatory in the built producer, isolated from standalone publication', () => {
   const workflow = YAML.parse(
     readFileSync(
@@ -18,7 +115,10 @@ test('workspace collection remains mandatory in the built producer, isolated fro
     'node --test packages/web-platform/web-core-e2e/midscene/scripts/required-browser-coverage.integration.mjs';
   const checks = producer.filter(step => step.run?.includes(command));
   assert.equal(checks.length, 1);
-  assert.equal(checks[0].if, undefined);
+  assert.equal(
+    checks[0].if,
+    '${{ !cancelled() && steps.build-web.outcome == \'success\' }}',
+  );
   assert.ok(
     producer.indexOf(checks[0])
       > producer.findIndex(step => step.run?.includes('pnpm turbo build')),
@@ -134,7 +234,10 @@ test('the original server HTML snapshot runner executes once without snapshot up
     step.name === 'Validate original server-rendering HTML snapshots'
   );
   assert.equal(matching.length, 1);
-  assert.equal(matching[0].if, undefined);
+  assert.equal(
+    matching[0].if,
+    '${{ !cancelled() && steps.build-web.outcome == \'success\' }}',
+  );
   assert.equal(
     matching[0]['working-directory'],
     'packages/web-platform/web-core-e2e',
@@ -173,7 +276,10 @@ test('the original worker/runtime API suite retains its runner and disabled case
       step.name === 'Validate original worker and runtime API contracts'
     );
   assert.equal(matching.length, 1);
-  assert.equal(matching[0].if, undefined);
+  assert.equal(
+    matching[0].if,
+    '${{ !cancelled() && steps.build-web.outcome == \'success\' && steps.original-collection.outcome == \'success\' }}',
+  );
   assert.equal(
     matching[0]['working-directory'],
     'packages/web-platform/web-core-e2e',
@@ -209,7 +315,10 @@ test('performance integration retains original CDP budgets rather than visual su
       step.name === 'Validate original layout and style performance budgets'
     );
   assert.equal(matching.length, 1);
-  assert.equal(matching[0].if, undefined);
+  assert.equal(
+    matching[0].if,
+    '${{ !cancelled() && steps.build-web.outcome == \'success\' && steps.original-collection.outcome == \'success\' }}',
+  );
   assert.equal(
     matching[0]['working-directory'],
     'packages/web-platform/web-elements',
@@ -245,7 +354,10 @@ test('SVG selection and iframe integration preserves original deterministic runn
       step.name === 'Validate original SVG selection and iframe API contracts'
     );
   assert.equal(matching.length, 1);
-  assert.equal(matching[0].if, undefined);
+  assert.equal(
+    matching[0].if,
+    '${{ !cancelled() && steps.build-web.outcome == \'success\' && steps.original-collection.outcome == \'success\' }}',
+  );
   assert.equal(
     matching[0]['working-directory'],
     'packages/web-platform/web-elements',
@@ -289,7 +401,10 @@ test('retained Markdown API runner excludes the migrated user-click flow', () =>
       step.name === 'Validate original Markdown rendering and API contracts'
     );
   assert.equal(matching.length, 1);
-  assert.equal(matching[0].if, undefined);
+  assert.equal(
+    matching[0].if,
+    '${{ !cancelled() && steps.build-web.outcome == \'success\' && steps.original-collection.outcome == \'success\' }}',
+  );
   assert.equal(
     matching[0]['working-directory'],
     'packages/web-platform/web-elements',
@@ -455,7 +570,11 @@ test('mouse drag, wheel and template runners keep complete source contracts', ()
     step.name === 'Validate original Rust and TypeScript template consistency'
   );
   for (const step of [pointer, template]) {
-    assert.equal(step.if, undefined);
+    assert.match(
+      step.if,
+      /^\$\{\{ !cancelled\(\) && steps\.build-web\.outcome == 'success' && steps\.original-collection\.outcome == 'success'/,
+    );
+    assert.equal(step['continue-on-error'], undefined);
     assert.equal(
       step['working-directory'],
       'packages/web-platform/web-elements',

@@ -145,6 +145,7 @@ jobs:
         run: npm ci --no-audit --no-fund
 
       - name: Verify Midscene model compatibility
+        id: model-compatible
         working-directory: packages/web-platform/web-core-e2e/midscene
         env: *midscene-model-env
         run: npm run check:model
@@ -173,12 +174,15 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build web-core-e2e dependency closure
+        id: build-web
         # Includes web-core (Rust -> wasm), rspeedy and the ReactLynx plugin
         # chain; the package's own build:csr emits dist/*.web.bundle.
         run: |
           pnpm turbo build --filter='@lynx-js/web-core-e2e...'
 
       - name: Validate original server-rendering HTML snapshots
+        id: original-html
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' }}
         working-directory: packages/web-platform/web-core-e2e
         # Deterministic non-UI contracts retain their original runner and snapshots.
         # CI forbids creating missing snapshots; never pass an update flag.
@@ -187,12 +191,15 @@ jobs:
       # Original Playwright runners own their server lifecycle in CI. Run them
       # before the persistent Midscene servers, never weaken reuse guards.
       - name: Validate existing original runner collection without launching browsers
+        id: original-collection
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' }}
         run: |
           node packages/web-platform/web-core-e2e/midscene/scripts/check-original-runner-collection.mjs
           node --test packages/web-platform/web-core-e2e/midscene/scripts/required-browser-coverage.integration.mjs
 
       - name: Validate original worker and runtime API contracts
         id: original-runtime
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' }}
         working-directory: packages/web-platform/web-core-e2e
         env:
           ORIGINAL_EVIDENCE_RUNNER: runtime
@@ -200,6 +207,7 @@ jobs:
 
       - name: Validate original keyboard event contracts (CSR)
         id: original-keyboard-csr
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' }}
         working-directory: packages/web-platform/web-core-e2e
         env:
           ENABLE_SSR: ""
@@ -210,6 +218,7 @@ jobs:
 
       - name: Validate original keyboard event contracts (SSR)
         id: original-keyboard-ssr
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' }}
         working-directory: packages/web-platform/web-core-e2e
         env:
           ENABLE_SSR: "1"
@@ -218,6 +227,7 @@ jobs:
 
       - name: Validate original pointer event contracts (CSR)
         id: original-pointer-csr
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' }}
         working-directory: packages/web-platform/web-core-e2e
         env:
           ORIGINAL_EVIDENCE_RUNNER: pointer-csr
@@ -232,6 +242,7 @@ jobs:
 
       - name: Validate original pointer event contracts (SSR)
         id: original-pointer-ssr
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' }}
         working-directory: packages/web-platform/web-core-e2e
         env:
           ORIGINAL_EVIDENCE_RUNNER: pointer-ssr
@@ -244,6 +255,7 @@ jobs:
 
       - name: Validate original animation sampling (CSR)
         id: original-animation-csr
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' }}
         working-directory: packages/web-platform/web-core-e2e
         env:
           ENABLE_SSR: ""
@@ -254,6 +266,7 @@ jobs:
 
       - name: Validate original ambiguous block inputs (CSR)
         id: original-lazy-components-csr
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' }}
         working-directory: packages/web-platform/web-core-e2e
         env:
           ENABLE_SSR: ""
@@ -264,6 +277,7 @@ jobs:
 
       - name: Validate original layout and style performance budgets
         id: original-performance
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' }}
         working-directory: packages/web-platform/web-elements
         env:
           ORIGINAL_EVIDENCE_RUNNER: performance
@@ -272,6 +286,7 @@ jobs:
 
       - name: Validate original SVG selection and iframe API contracts
         id: original-svg-selection-webview
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' }}
         working-directory: packages/web-platform/web-elements
         env:
           PORT: "3081"
@@ -280,6 +295,7 @@ jobs:
 
       - name: Validate original Markdown rendering and API contracts
         id: original-markdown
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' }}
         working-directory: packages/web-platform/web-elements
         env:
           ORIGINAL_EVIDENCE_RUNNER: markdown
@@ -289,6 +305,7 @@ jobs:
 
       - name: Validate original mouse drag and wheel contracts
         id: original-drag-wheel
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' }}
         working-directory: packages/web-platform/web-elements
         env:
           ORIGINAL_EVIDENCE_RUNNER: drag-wheel
@@ -299,6 +316,7 @@ jobs:
 
       - name: Validate original list API and orientation contracts
         id: original-list-api
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' }}
         working-directory: packages/web-platform/web-elements
         env:
           PORT: "3081"
@@ -309,6 +327,7 @@ jobs:
 
       - name: Validate original Rust and TypeScript template consistency
         id: original-template
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' }}
         working-directory: packages/web-platform/web-elements
         env:
           ORIGINAL_EVIDENCE_RUNNER: template
@@ -317,10 +336,13 @@ jobs:
         run: pnpm exec playwright test tests/template.spec.ts --project chromium --workers=2 --output midscene-original-results/template/results --config playwright.original-evidence.config.ts
 
       - name: Validate retained input collection without launching browsers
+        id: retained-collection
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' }}
         run: node packages/web-platform/web-core-e2e/midscene/scripts/check-retained-input-collection.mjs
 
       - name: Validate remaining original React contracts (CSR)
         id: original-bulk-react-csr
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' }}
         working-directory: packages/web-platform/web-core-e2e
         env:
           ENABLE_SSR: ""
@@ -329,6 +351,7 @@ jobs:
 
       - name: Validate remaining original React contracts (SSR)
         id: original-bulk-react-ssr
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' }}
         working-directory: packages/web-platform/web-core-e2e
         env:
           ENABLE_SSR: "1"
@@ -337,6 +360,7 @@ jobs:
 
       - name: Validate remaining original component contracts
         id: original-bulk-elements
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' }}
         working-directory: packages/web-platform/web-elements
         env:
           PORT: "3081"
@@ -345,6 +369,7 @@ jobs:
 
       - name: Validate original remaining Firefox and WebKit core contracts (CSR)
         id: original-browser-core-csr
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' }}
         working-directory: packages/web-platform/web-core-e2e
         env:
           ENABLE_SSR: ""
@@ -353,6 +378,7 @@ jobs:
 
       - name: Validate original remaining Firefox and WebKit component contracts
         id: original-browser-elements
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' }}
         working-directory: packages/web-platform/web-elements
         env:
           PORT: "3081"
@@ -368,6 +394,7 @@ jobs:
 
       - name: Validate original keyboard and input contracts with evidence
         id: retained-inputs
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' && steps.retained-collection.outcome == 'success' }}
         working-directory: packages/web-platform/web-elements
         env:
           PORT: "3081"
@@ -385,6 +412,8 @@ jobs:
           node packages/web-platform/web-core-e2e/midscene/scripts/write-retained-input-evidence.mjs "$(realpath "$evidence")" "$RETAINED_RESULT"
 
       - name: Start web-core-e2e dev shell
+        id: core-ready
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' }}
         working-directory: packages/web-platform/web-core-e2e
         run: |
           nohup pnpm run serve > /tmp/web-shell.log 2>&1 &
@@ -400,6 +429,8 @@ jobs:
           exit 1
 
       - name: Start independent web-elements fixture server
+        id: elements-ready
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' }}
         working-directory: packages/web-platform/web-elements
         run: |
           PORT=3081 nohup pnpm run serve > /tmp/web-elements.log 2>&1 &
@@ -415,12 +446,16 @@ jobs:
           exit 1
 
       - name: Validate case collection and exact assertion contracts
+        id: case-contracts
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' }}
         working-directory: packages/web-platform/web-core-e2e/midscene
         run: |
           npm run typecheck
           node --test scripts/*.test.mjs
 
       - name: Validate original SSR loader and visual target geometry
+        id: visual-prerequisites
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' && steps.core-ready.outcome == 'success' && steps.elements-ready.outcome == 'success' && steps.case-contracts.outcome == 'success' }}
         working-directory: packages/web-platform/web-core-e2e/midscene
         run: |
           node scripts/check-ssr-client.mjs
@@ -428,6 +463,7 @@ jobs:
 
       - name: Run Web Midscene cases
         id: run-cases
+        if: ${{ !cancelled() && steps.build-web.outcome == 'success' && steps.original-collection.outcome == 'success' && steps.model-compatible.outcome == 'success' && steps.core-ready.outcome == 'success' && steps.elements-ready.outcome == 'success' && steps.case-contracts.outcome == 'success' && steps.visual-prerequisites.outcome == 'success' }}
         working-directory: packages/web-platform/web-core-e2e/midscene
         env: *midscene-model-env
         run: |

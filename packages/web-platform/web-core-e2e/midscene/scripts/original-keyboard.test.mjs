@@ -51,7 +51,10 @@ test('six original keyboard contracts run in CSR and SSR across the three unchan
     );
     assert.equal(matching.length, 1);
     const step = matching[0];
-    assert.equal(step.if, undefined);
+    assert.equal(
+      step.if,
+      '${{ !cancelled() && steps.build-web.outcome == \'success\' && steps.original-collection.outcome == \'success\' }}',
+    );
     assert.equal(
       step['working-directory'],
       'packages/web-platform/web-core-e2e',

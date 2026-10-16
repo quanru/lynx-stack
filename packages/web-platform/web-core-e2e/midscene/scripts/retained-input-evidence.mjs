@@ -1,9 +1,6 @@
 import { realpathSync, statSync } from 'node:fs';
 import path from 'node:path';
-import {
-  retainedInputBrowsers,
-  retainedInputKeys,
-} from './retained-input-selection.mjs';
+import { retainedCatalog } from './original-runner-catalog.mjs';
 
 // Local, verified relative paths only. Publishing owns URL construction later.
 function existingFile(root, value) {
@@ -44,7 +41,13 @@ function existingFile(root, value) {
 // evidenceRoot directory; never reinterpret producer absolute paths after download.
 // Shape follows Playwright 1.61.1 JSONReporter._serializeTest/Result: suites/specs,
 // projectName, expectedStatus, outcome status, results[].retry/status/attachments.
-export function retainedInputEvidence(report, evidenceRoot) {
+export function retainedInputEvidence(
+  report,
+  evidenceRoot,
+  catalog = retainedCatalog,
+) {
+  const { keys: sourceKeys, browsers, suite: suiteName, file: sourceFile } =
+    catalog;
   const root = path.resolve(evidenceRoot);
   if (!statSync(root).isDirectory()) {
     throw new Error('Evidence root is not a directory');
@@ -62,15 +65,15 @@ export function retainedInputEvidence(report, evidenceRoot) {
       const group = titles.at(-1);
       const source = `${group}/${spec.title}`;
       if (
-        !titles.includes('web-elements test suite')
-        || !retainedInputKeys.includes(source)
-        || !/(^|\/)tests\/web-elements\.spec\.ts$/.test(spec.file)
+        !titles.includes(suiteName)
+        || !sourceKeys.includes(source)
+        || spec.file !== sourceFile
         || !Number.isInteger(spec.line) || spec.line < 1
       ) {
         throw new Error('Unexpected retained source declaration');
       }
       for (const item of spec.tests ?? []) {
-        if (!retainedInputBrowsers.includes(item.projectName)) {
+        if (!browsers.includes(item.projectName)) {
           throw new Error('Unexpected browser profile');
         }
         const key = `${source}:${item.projectName}`;
@@ -130,8 +133,8 @@ export function retainedInputEvidence(report, evidenceRoot) {
     for (const child of suite.suites ?? []) visit(child, titles);
   }
   for (const suite of report.suites) visit(suite);
-  const cases = retainedInputKeys.flatMap(source =>
-    retainedInputBrowsers.map(browser =>
+  const cases = sourceKeys.flatMap(source =>
+    browsers.map(browser =>
       records.get(`${source}:${browser}`) ?? {
         source,
         browser,
@@ -150,7 +153,9 @@ export function retainedInputEvidence(report, evidenceRoot) {
   return {
     schemaVersion: 1,
     kind: 'retained-original-input',
-    sourceDeclarations: retainedInputKeys.length,
+    sourceDeclarations: sourceKeys.length,
+    runnerId: catalog.id,
+    sourceFile,
     expectedExecutions: cases.length,
     runnerErrorCount: report.errors.length,
     cases,

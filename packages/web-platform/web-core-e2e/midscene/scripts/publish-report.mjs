@@ -6,6 +6,10 @@ import { testRunDump } from './render-ci-summary.mjs';
 import { caseNames } from './case-inventory.mjs';
 import { publishRetainedInputs } from './publish-retained-inputs.mjs';
 import {
+  prepareOriginalRunnerPublication,
+  mergeOriginalEvidence,
+} from './publish-original-runners.mjs';
+import {
   retainedInputBrowsers,
   retainedInputKeys,
 } from './retained-input-selection.mjs';
@@ -234,6 +238,10 @@ async function main() {
     ),
   ];
   const retained = await prepareRetainedPublication(entries[0], process.env);
+  const supplemental = mergeOriginalEvidence(
+    retained.supplemental,
+    prepareOriginalRunnerPublication(entries[0], process.env),
+  );
   const supplementalFile = resolve(
     process.env.RUNNER_TEMP,
     'midscene-publication/retained-evidence.json',
@@ -241,7 +249,7 @@ async function main() {
   await mkdir(resolve(process.env.RUNNER_TEMP, 'midscene-publication'), {
     recursive: true,
   });
-  await writeFile(supplementalFile, JSON.stringify(retained.supplemental));
+  await writeFile(supplementalFile, JSON.stringify(supplemental));
   const args = publicationArguments(entries, process.env, supplementalFile);
   const child = spawnSync(process.execPath, args, { stdio: 'inherit' });
   if (child.error) throw child.error;
@@ -258,8 +266,8 @@ async function main() {
   // Summary warning, not a new CI failure policy. Missing evidence still fails.
   if (
     process.exitCode === 0 && (
-      retained.supplemental.errors.length
-      || retained.supplemental.cases.some(row =>
+      supplemental.errors.length
+      || supplemental.cases.some(row =>
         !['success', 'flaky'].includes(row.status)
       )
     )

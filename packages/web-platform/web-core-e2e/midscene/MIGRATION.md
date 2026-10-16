@@ -1,5 +1,45 @@
 # Full E2E migration scope
 
+## Existing original runner evidence ledger
+
+These thirteen preexisting Playwright steps collect 380 browser/render items
+from 120 unique source declarations. Counts were verified with original
+Playwright collection and source browser/SSR guards, not browser execution.
+CSR/SSR declarations are deduplicated in the 120 total; the SVG loop expands one
+declaration into four titles. Thus per-step declaration counts cannot be summed
+as a repository-wide unique-source count.
+
+| Existing step         | Source declarations | Expanded titles | Collected items | Statically eligible | Unified evidence                  |
+| --------------------- | ------------------: | --------------: | --------------: | ------------------: | --------------------------------- |
+| Worker/runtime API    |                  35 |              35 |             105 |                  73 | Pending                           |
+| Keyboard CSR          |                   6 |               6 |              18 |                  18 | Wired; hosted validation pending  |
+| Keyboard SSR          |                   6 |               6 |              18 |                  18 | Wired; hosted validation pending  |
+| Pointer CSR           |                   3 |               3 |               9 |                   4 | Pending                           |
+| Pointer SSR           |                   3 |               3 |               9 |                   4 | Pending                           |
+| Animation CSR         |                   1 |               1 |               3 |                   3 | Wired; hosted validation pending  |
+| Lazy/reload CSR       |                   3 |               3 |               9 |                   9 | Wired; hosted validation pending  |
+| Performance           |                   7 |               7 |               7 |                   7 | Pending                           |
+| SVG/selection/webview |                  12 |              15 |              45 |                  45 | Pending                           |
+| Markdown              |                  33 |              33 |              99 |                  90 | Pending                           |
+| Drag/wheel            |                  15 |              15 |              45 |                  42 | Pending                           |
+| List API              |                   4 |               4 |              12 |                  12 | Wired; hosted validation pending  |
+| Template consistency  |                   1 |               1 |               1 |          1 (non-UI) | Pending; no screenshot applicable |
+
+The first evidence follow-up wires 14 unique declarations / 60 existing
+executions without adding or duplicating test invocations. The remaining gap is
+320 collected items: 265 eligible UI executions, 54 source-declared skips and one
+non-UI contract. Source skips must remain explicit, not counted as passed or
+silently enabled. Future integration must model skipped/non-UI evidence policies;
+the current five-runner batch contains neither exception.
+
+Runner identity includes its package, source file, source key, browser and render
+mode. Separate CSR/SSR rows share a source declaration but not an execution ID.
+Each runner owns HTML/JSON and final-attempt screenshot paths; producer outcomes
+are preserved independently and no previous-attempt evidence is borrowed.
+The original 28-source/84-item retained collection remains disjoint, giving
+42 original sources / 144 evidence-enabled execution items in total, alongside
+484 YAML cases. These are wiring/collection counts, not hosted acceptance.
+
 ## Scrollend payload follow-up
 
 The YAML collection increases from 483 to 484 with

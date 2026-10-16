@@ -285,6 +285,19 @@ test('retained browser variants bound workers without replacing original profile
         step.run,
         /--config playwright\.retained-inputs\.config\.ts(?:\s|$)/,
       );
+    } else if (
+      [
+        'original-keyboard-csr',
+        'original-keyboard-ssr',
+        'original-animation-csr',
+        'original-lazy-components-csr',
+        'original-list-api',
+      ].includes(step.id)
+    ) {
+      assert.match(
+        step.run,
+        /--config playwright\.original-evidence\.config\.ts$/,
+      );
     } else {
       assert.doesNotMatch(step.run, /--config(?:[=\s]|$)/);
     }

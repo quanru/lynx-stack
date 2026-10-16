@@ -63,10 +63,13 @@ test('animation timing follows the upstream render matrix with three original br
       step['working-directory'],
       'packages/web-platform/web-core-e2e',
     );
-    assert.deepEqual(step.env, { ENABLE_SSR: mode === 'SSR' ? '1' : '' });
+    assert.deepEqual(step.env, {
+      ENABLE_SSR: mode === 'SSR' ? '1' : '',
+      ORIGINAL_EVIDENCE_RUNNER: `animation-${mode.toLowerCase()}`,
+    });
     assert.equal(
       step.run,
-      `pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'api-animate$' --output midscene-original-results/animation-${mode.toLowerCase()} --reporter line`,
+      `pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'api-animate$' --output midscene-original-results/animation-${mode.toLowerCase()}/results --config playwright.original-evidence.config.ts`,
     );
     const filter = new RegExp(step.run.match(/--grep '([^']+)'/)[1]);
     assert.deepEqual(

@@ -1,5 +1,29 @@
 # Midscene E2E for web-core and web-elements
 
+## Existing original runner evidence follow-up (hosted acceptance pending)
+
+Five existing invocations now record final-attempt screenshots and HTML/JSON
+without adding test executions: keyboard CSR/SSR, lazy/reload CSR, animation CSR,
+and list APIs. Their 14 unique source declarations expand to 60 browser/render
+items. Original callbacks, grep selections, profiles, workers, waits, retries and
+server lifecycles are unchanged. The two package-local evidence configurations
+inherit the original configurations and only add end-of-test recording.
+
+Each producer outcome is tracked separately, including skipped or cancelled
+steps. Manifests are converted before upload and validated against their runner
+identity; a CSR manifest cannot stand in for SSR. Publication combines this
+evidence with the preceding 28-source/84-item collection through the same
+two-section Summary: 42 unique original sources / 144 execution items, separate
+from 484 YAML cases. Browser-free collection and synthetic tests do not establish
+hosted passes or public report availability.
+
+The preexisting report gap was 120 unique source declarations / 380 collected
+browser/render items. This patch wires 60 of those items, leaving 320 without
+unified per-case evidence: 265 statically eligible UI items, 54 original skips,
+and one non-UI template contract. Skips are never passes; the template contract
+must report screenshots as not applicable rather than manufacture a blank page.
+See [the detailed ledger](MIGRATION.md#existing-original-runner-evidence-ledger).
+
 ## Scrollend payload follow-up (hosted validation pending)
 
 Collection is now 484 YAML cases. The original scroll-view scrollend callback

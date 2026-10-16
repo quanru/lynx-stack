@@ -2,9 +2,16 @@ import { lstatSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { retainedInputEvidence } from './retained-input-evidence.mjs';
+import { retainedCatalog } from './original-runner-catalog.mjs';
 
-export function writeRetainedInputEvidence(evidenceRoot, producerResult) {
-  if (!['success', 'failure'].includes(producerResult)) {
+export function writeRetainedInputEvidence(
+  evidenceRoot,
+  producerResult,
+  catalog = retainedCatalog,
+) {
+  if (
+    !['success', 'failure', 'skipped', 'cancelled'].includes(producerResult)
+  ) {
     throw new Error('Invalid producer result');
   }
   const root = path.resolve(evidenceRoot);
@@ -43,10 +50,15 @@ export function writeRetainedInputEvidence(evidenceRoot, producerResult) {
     manifest = retainedInputEvidence(
       JSON.parse(readFileSync(input, 'utf8')),
       root,
+      catalog,
     );
   } catch {
     // Fail closed, but keep a publishable inventory for every missing execution.
-    manifest = retainedInputEvidence({ suites: [], errors: [{}] }, root);
+    manifest = retainedInputEvidence(
+      { suites: [], errors: [{}] },
+      root,
+      catalog,
+    );
     manifest.collectionError =
       'Producer JSON report is missing, invalid or unsafe';
   }

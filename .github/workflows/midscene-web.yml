@@ -186,23 +186,30 @@ jobs:
 
       # Original Playwright runners own their server lifecycle in CI. Run them
       # before the persistent Midscene servers, never weaken reuse guards.
+      - name: Validate existing original runner collection without launching browsers
+        run: node packages/web-platform/web-core-e2e/midscene/scripts/check-original-runner-collection.mjs
+
       - name: Validate original worker and runtime API contracts
         working-directory: packages/web-platform/web-core-e2e
         run: pnpm exec playwright test tests/web-core.test.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/runtime --reporter line
 
       - name: Validate original keyboard event contracts (CSR)
+        id: original-keyboard-csr
         working-directory: packages/web-platform/web-core-e2e
         env:
           ENABLE_SSR: ""
+          ORIGINAL_EVIDENCE_RUNNER: keyboard-csr
         # Key-down/up separation and absence of focus are original inputs.
         # A combined AI keypress or preparatory click changes these contracts.
-        run: pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'basic-(global-bindkeydown(-key|-code|-shift)?|global-bindkeyup|bindkeydown-out-of-view-noop)$' --output midscene-original-results/keyboard-csr --reporter line
+        run: pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'basic-(global-bindkeydown(-key|-code|-shift)?|global-bindkeyup|bindkeydown-out-of-view-noop)$' --output midscene-original-results/keyboard-csr/results --config playwright.original-evidence.config.ts
 
       - name: Validate original keyboard event contracts (SSR)
+        id: original-keyboard-ssr
         working-directory: packages/web-platform/web-core-e2e
         env:
           ENABLE_SSR: "1"
-        run: pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'basic-(global-bindkeydown(-key|-code|-shift)?|global-bindkeyup|bindkeydown-out-of-view-noop)$' --output midscene-original-results/keyboard-ssr --reporter line
+          ORIGINAL_EVIDENCE_RUNNER: keyboard-ssr
+        run: pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'basic-(global-bindkeydown(-key|-code|-shift)?|global-bindkeyup|bindkeydown-out-of-view-noop)$' --output midscene-original-results/keyboard-ssr/results --config playwright.original-evidence.config.ts
 
       - name: Validate original pointer event contracts (CSR)
         working-directory: packages/web-platform/web-core-e2e
@@ -227,20 +234,24 @@ jobs:
           pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'basic-(mts-bindtouchstart|bindmouse|bindwheel-view)$' --output midscene-original-results/pointer-ssr --reporter line
 
       - name: Validate original animation sampling (CSR)
+        id: original-animation-csr
         working-directory: packages/web-platform/web-core-e2e
         env:
           ENABLE_SSR: ""
+          ORIGINAL_EVIDENCE_RUNNER: animation-csr
         # aiAct completes after its post-input planning, not at the input time.
         # Keep the original click-relative wait and pixel matcher unchanged.
-        run: pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'api-animate$' --output midscene-original-results/animation-csr --reporter line
+        run: pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'api-animate$' --output midscene-original-results/animation-csr/results --config playwright.original-evidence.config.ts
 
       - name: Validate original ambiguous block inputs (CSR)
+        id: original-lazy-components-csr
         working-directory: packages/web-platform/web-core-e2e
         env:
           ENABLE_SSR: ""
+          ORIGINAL_EVIDENCE_RUNNER: lazy-components-csr
         # Same-color cells have no visible boundary. Keep the two indexed lazy
         # inputs and the distinct target/reload clicks, waits and exact reads.
-        run: pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep '(basic-lazy-component-multi(-import)?|basic-lynx-reload)$' --output midscene-original-results/lazy-components-csr --reporter line
+        run: pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep '(basic-lazy-component-multi(-import)?|basic-lynx-reload)$' --output midscene-original-results/lazy-components-csr/results --config playwright.original-evidence.config.ts
 
       - name: Validate original layout and style performance budgets
         working-directory: packages/web-platform/web-elements
@@ -270,12 +281,14 @@ jobs:
         run: pnpm exec playwright test tests/scroll-view-mouse-drag.spec.ts tests/x-foldview-ng-wheel.spec.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/drag-wheel --reporter line
 
       - name: Validate original list API and orientation contracts
+        id: original-list-api
         working-directory: packages/web-platform/web-elements
         env:
           PORT: "3081"
+          ORIGINAL_EVIDENCE_RUNNER: list-api
         # Preserve evaluateHandle/jsonValue boundaries, separate geometry reads
         # and scrollBy interception around the original animation-frame barrier.
-        run: pnpm exec playwright test tests/web-elements.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'x-list (auto-scroll-follows-orientation|get-visible-cells|get-scroll-container-info(-horizontal)?)$' --output midscene-original-results/list-api --reporter line
+        run: pnpm exec playwright test tests/web-elements.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'x-list (auto-scroll-follows-orientation|get-visible-cells|get-scroll-container-info(-horizontal)?)$' --output midscene-original-results/list-api/results --config playwright.original-evidence.config.ts
 
       - name: Validate original Rust and TypeScript template consistency
         working-directory: packages/web-platform/web-elements
@@ -286,6 +299,13 @@ jobs:
 
       - name: Validate retained input collection without launching browsers
         run: node packages/web-platform/web-core-e2e/midscene/scripts/check-retained-input-collection.mjs
+
+      - name: Preserve existing original runner evidence before moving artifacts
+        if: always()
+        env:
+          ORIGINAL_RUNNER_OUTCOMES: >-
+            {"keyboard-csr":"${{ steps.original-keyboard-csr.outcome }}","keyboard-ssr":"${{ steps.original-keyboard-ssr.outcome }}","animation-csr":"${{ steps.original-animation-csr.outcome }}","lazy-components-csr":"${{ steps.original-lazy-components-csr.outcome }}","list-api":"${{ steps.original-list-api.outcome }}"}
+        run: node packages/web-platform/web-core-e2e/midscene/scripts/write-original-runner-evidence.mjs
 
       - name: Validate original keyboard and input contracts with evidence
         id: retained-inputs
@@ -387,6 +407,13 @@ jobs:
           if [ -d "$retained" ]; then
             cp -R "$retained" "$target/retained-inputs"
           fi
+          mkdir -p "$target/original-runners"
+          for runner in keyboard-csr keyboard-ssr animation-csr lazy-components-csr; do
+            source="packages/web-platform/web-core-e2e/midscene-original-results/$runner"
+            if [ -d "$source" ]; then cp -R "$source" "$target/original-runners/$runner"; fi
+          done
+          source=packages/web-platform/web-elements/midscene-original-results/list-api
+          if [ -d "$source" ]; then cp -R "$source" "$target/original-runners/list-api"; fi
           node -e 'require("fs").writeFileSync(process.argv[1], JSON.stringify({sha: process.env.GITHUB_SHA, attempt: Number(process.env.GITHUB_RUN_ATTEMPT), result: process.env.PRODUCER_RESULT}))' "$target/result.json"
 
       - name: Upload Web report

@@ -57,6 +57,14 @@ test('six original keyboard contracts run in CSR and SSR across the three unchan
       'packages/web-platform/web-core-e2e',
     );
     assert.equal(step.env.ENABLE_SSR, mode === 'SSR' ? '1' : '');
+    assert.equal(
+      step.env.ORIGINAL_EVIDENCE_RUNNER,
+      `keyboard-${mode.toLowerCase()}`,
+    );
+    assert.match(
+      step.run,
+      /--config playwright\.original-evidence\.config\.ts$/,
+    );
     assert.ok(
       step.run.startsWith('pnpm exec playwright test tests/reactlynx.spec.ts '),
     );
@@ -74,7 +82,7 @@ test('six original keyboard contracts run in CSR and SSR across the three unchan
     assert.match(step.run, /--workers=2/);
     assert.doesNotMatch(
       step.run,
-      /--(?:retries|timeout|update-snapshots|config)(?:[=\s]|$)/,
+      /--(?:retries|timeout|update-snapshots)(?:[=\s]|$)/,
     );
     assert.ok(
       steps.indexOf(step)

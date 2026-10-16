@@ -60,10 +60,13 @@ test('ambiguous same-color blocks retain the original CSR runner and all three b
   );
   assert.equal(step.if, undefined);
   assert.equal(step['working-directory'], 'packages/web-platform/web-core-e2e');
-  assert.deepEqual(step.env, { ENABLE_SSR: '' });
+  assert.deepEqual(step.env, {
+    ENABLE_SSR: '',
+    ORIGINAL_EVIDENCE_RUNNER: 'lazy-components-csr',
+  });
   assert.equal(
     step.run,
-    'pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep \'(basic-lazy-component-multi(-import)?|basic-lynx-reload)$\' --output midscene-original-results/lazy-components-csr --reporter line',
+    'pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep \'(basic-lazy-component-multi(-import)?|basic-lynx-reload)$\' --output midscene-original-results/lazy-components-csr/results --config playwright.original-evidence.config.ts',
   );
   const filter = new RegExp(step.run.match(/--grep '([^']+)'/)[1]);
   assert.deepEqual(

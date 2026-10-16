@@ -7,10 +7,7 @@ import {
   readdirSync,
 } from 'node:fs';
 import path from 'node:path';
-import {
-  retainedInputBrowsers,
-  retainedInputKeys,
-} from './retained-input-selection.mjs';
+import { retainedCatalog } from './original-runner-catalog.mjs';
 
 function relativePath(value) {
   if (
@@ -85,8 +82,17 @@ const escapeHTML = value =>
 // The caller must supply the selected CURRENT attempt's retained-inputs directory.
 // No artifact search, attempt fallback or producer absolute path interpretation.
 export function publishRetainedInputs(
-  { evidenceRoot, destination, sitePrefix, publicBaseUrl, artifact = null },
+  {
+    evidenceRoot,
+    destination,
+    sitePrefix,
+    publicBaseUrl,
+    artifact = null,
+    catalog = retainedCatalog,
+  },
 ) {
+  const sourceCount = catalog.keys.length;
+  const expectedCount = sourceCount * catalog.browsers.length;
   relativePath(sitePrefix);
   if (
     artifact !== null
@@ -114,12 +120,16 @@ export function publishRetainedInputs(
   const manifest = JSON.parse(readFileSync(manifestFile, 'utf8'));
   if (
     manifest.schemaVersion !== 1 || manifest.kind !== 'retained-original-input'
-    || manifest.sourceDeclarations !== 28 || manifest.expectedExecutions !== 84
+    || manifest.sourceDeclarations !== sourceCount
+    || manifest.expectedExecutions !== expectedCount
+    || manifest.runnerId !== catalog.id || manifest.sourceFile !== catalog.file
     || !Number.isInteger(manifest.runnerErrorCount)
     || manifest.runnerErrorCount < 0
-    || !['success', 'failure'].includes(manifest.producerResult)
+    || !['success', 'failure', 'skipped', 'cancelled'].includes(
+      manifest.producerResult,
+    )
     || typeof manifest.evidenceComplete !== 'boolean'
-    || !Array.isArray(manifest.cases) || manifest.cases.length !== 84
+    || !Array.isArray(manifest.cases) || manifest.cases.length !== expectedCount
   ) {
     throw new Error('Invalid retained input evidence manifest');
   }
@@ -127,8 +137,8 @@ export function publishRetainedInputs(
   const rows = manifest.cases.map(row => {
     const key = `${row.source}:${row.browser}`;
     if (
-      !retainedInputKeys.includes(row.source)
-      || !retainedInputBrowsers.includes(row.browser)
+      !catalog.keys.includes(row.source)
+      || !catalog.browsers.includes(row.browser)
       || seen.has(key) || !Array.isArray(row.screenshots)
       || !['passed', 'failed', 'timedOut', 'skipped', 'interrupted', 'not-run']
         .includes(row.status)
@@ -179,8 +189,12 @@ export function publishRetainedInputs(
   // Preserve 84 passed cases when the runner failed after their callbacks, but
   // never present that run as an overall success.
   const infrastructureErrors = [
-    ...(manifest.producerResult === 'failure'
-      ? ['The original runner producer failed.']
+    ...(manifest.producerResult !== 'success'
+      ? [
+        manifest.producerResult === 'failure'
+          ? 'The original runner producer failed.'
+          : `The original runner producer was ${manifest.producerResult}.`,
+      ]
       : []),
     ...(!manifest.evidenceComplete
       ? ['The producer evidence inventory is incomplete.']
@@ -192,8 +206,8 @@ export function publishRetainedInputs(
   );
   const supplemental = {
     label: 'Original input contracts',
-    sourceCount: 28,
-    expectedCount: 84,
+    sourceCount,
+    expectedCount,
     errors: [
       ...infrastructureErrors,
       ...(manifest.runnerErrorCount
@@ -288,8 +302,8 @@ export function publishRetainedInputs(
     summary,
     supplemental,
     cases: rows,
-    sourceDeclarations: 28,
-    expectedExecutions: 84,
+    sourceDeclarations: sourceCount,
+    expectedExecutions: expectedCount,
     passed: passed.length,
     needsAttention: attention.length,
     runnerErrorCount: manifest.runnerErrorCount,

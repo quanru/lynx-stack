@@ -53,7 +53,10 @@ test('list API contracts retain exactly four original callbacks across three bro
   const step = matches[0];
   assert.equal(step.if, undefined);
   assert.equal(step['working-directory'], 'packages/web-platform/web-elements');
-  assert.deepEqual(step.env, { PORT: '3081' });
+  assert.deepEqual(step.env, {
+    PORT: '3081',
+    ORIGINAL_EVIDENCE_RUNNER: 'list-api',
+  });
   assert.ok(
     step.run.startsWith(
       'pnpm exec playwright test tests/web-elements.spec.ts ',
@@ -67,7 +70,7 @@ test('list API contracts retain exactly four original callbacks across three bro
   assert.match(step.run, /--workers=2 /);
   assert.match(
     step.run,
-    /--output midscene-original-results\/list-api --reporter line$/,
+    /--output midscene-original-results\/list-api\/results --config playwright\.original-evidence\.config\.ts$/,
   );
   const filter = new RegExp(step.run.match(/--grep '([^']+)'/)[1]);
   assert.deepEqual(
@@ -89,7 +92,7 @@ test('list API contracts retain exactly four original callbacks across three bro
   );
   assert.doesNotMatch(
     step.run,
-    /--(?:retries|timeout|update-snapshots|config)(?:[=\s]|$)/,
+    /--(?:retries|timeout|update-snapshots)(?:[=\s]|$)/,
   );
 });
 

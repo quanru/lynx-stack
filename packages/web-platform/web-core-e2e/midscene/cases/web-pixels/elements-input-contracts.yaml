@@ -1,0 +1,56 @@
+# Keep one-read autocomplete semantics and the original textarea fixture alias.
+cases:
+  - name: web-elements/x-input/attribute-autocomplete
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-input/attribute-autocomplete.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: |-
+          new Promise((resolve, reject) => {
+            const deadline = Date.now() + 30000;
+            const check = () => {
+              const matches = document.querySelectorAll('#target');
+              if (matches.length > 1) return reject(new Error('Original input locator strictness violation'));
+              if (matches.length === 1) {
+                try {
+                  const shadowRoot = matches[0].shadowRoot;
+                  const input = shadowRoot ? shadowRoot.querySelector('#input') : null;
+                  const actual = input ? input.getAttribute('autocomplete') : null;
+                  if (actual !== 'username') throw new Error('Original autocomplete assertion failed: ' + actual);
+                  return resolve(true);
+                } catch (error) { return reject(error); }
+              }
+              if (Date.now() >= deadline) return reject(new Error('Original input locator attachment timed out'));
+              requestAnimationFrame(check);
+            };
+            check();
+          })
+      - recordToReport: Original single-read autocomplete contract passed
+  - name: web-elements/x-textarea/method-setSelectionRange
+    steps:
+      # Preserve the original x-input fixture alias; do not repair it here.
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-input/method.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - javascript: |-
+          new Promise((resolve, reject) => {
+            const deadline = Date.now() + 30000;
+            const check = () => {
+              const matches = document.querySelectorAll('#target');
+              if (matches.length > 1) return reject(new Error('Original input locator strictness violation'));
+              if (matches.length === 1) {
+                try {
+                  matches[0].setSelectionRange({ selectionStart: 2, selectionEnd: 4 });
+                  return resolve(true);
+                } catch (error) { return reject(error); }
+              }
+              if (Date.now() >= deadline) return reject(new Error('Original input locator attachment timed out'));
+              requestAnimationFrame(check);
+            };
+            check();
+          })
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-textarea/method-setSelectionRange/select-ll,
+        }
+      - recordToReport: Original textarea selection fixture alias contract passed

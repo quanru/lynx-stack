@@ -1,5 +1,16 @@
 # Midscene E2E for web-core and web-elements
 
+## Input contract follow-up (hosted validation pending)
+
+Collection is now 477 YAML cases. The two additional source contracts preserve
+the single-read autocomplete assertion and the textarea selection test's
+original x-input/method fixture alias. Attachment is awaited before reading,
+but a missing shadow input or incorrect attribute fails immediately rather
+than polling into a pass. The selection API parameters, two 100 ms waits,
+original textarea PNG and Firefox exclusion remain unchanged. Source-derived
+replay covers normal, delayed, missing and duplicate targets and invalid
+autocomplete states. Hosted Chromium acceptance is pending.
+
 ## Selection and public API batch (hosted validation pending)
 
 The collection now contains 475 YAML cases. Four new original contracts cover

@@ -1,6 +1,16 @@
 # Full E2E migration scope
 
-## Current selection and public API batch
+## Current input contract follow-up
+
+Collection increases from 475 to 477 with x-input/attribute-autocomplete and
+x-textarea/method-setSelectionRange. The former preserves one attribute read
+after target attachment and rejects null or incorrect values without retry.
+The latter intentionally retains the original x-input/method fixture alias,
+selectionStart=2, selectionEnd=4, both 100 ms waits and the textarea PNG.
+Firefox remains excluded by the original callback. Source replay checks
+successful and invalid states; hosted Chromium acceptance remains pending.
+
+## Preceding selection and public API batch
 
 Four additional source callbacks increase collection from 471 to 475:
 viewpager select-index-0, input method-select, input method-setSelectionRange,

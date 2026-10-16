@@ -1,5 +1,17 @@
 # Full E2E migration scope
 
+## Retained timing and audio follow-up
+
+The retained original runner now selects 28 source declarations across three
+unchanged browser profiles (84 execution items), separately from 483 YAML cases.
+The fourteen additions are list auto-scroll, circular swiper coordinate clicks,
+and twelve audio callbacks covering source changes, loop close, pause-on-hide,
+interval timing, loading/playback/finished/seek/error events and method-play.
+These callbacks remain byte-for-byte unchanged; none has a browser guard or
+skip. Actual browser-free Playwright collection verifies the full matrix.
+Hosted browser acceptance is pending, especially media timing and codec behavior.
+This is original-contract integration, not conversion to AI-generated inputs.
+
 ## Current exposure viewport batch
 
 Collection increases from 480 to 483 with api-exposure-basic,

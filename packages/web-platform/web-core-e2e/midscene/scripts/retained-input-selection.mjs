@@ -18,6 +18,22 @@ export const retainedInputSelections = {
     'event-confirm',
     'event-focus-blur',
   ],
+  'x-list': ['auto-scroll'],
+  'x-swiper': ['x-swiper/x-swiper-circular-click'],
+  'x-audio-tt': [
+    'attribute-src-change',
+    'attribute-loop-close',
+    'attribute-pause-on-hide',
+    'attribute-interval',
+    'event-srcloadingstatechanged',
+    'event-playbackstatechanged',
+    'event-finished',
+    'event-seek',
+    'event-error-src',
+    'event-error-src-json',
+    'event-error-playback',
+    'method-play',
+  ],
 };
 export const retainedInputBrowsers = ['chromium', 'firefox', 'webkit'];
 export const retainedInputKeys = Object.entries(retainedInputSelections)

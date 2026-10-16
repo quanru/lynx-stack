@@ -13,8 +13,8 @@ acceptance remains pending; Firefox/WebKit and SSR coverage are not inferred.
 
 ## Retained input evidence integration (hosted acceptance pending)
 
-`web-elements/playwright.retained-inputs.config.ts` selects 14 original keyboard
-and input declarations across the three unchanged browser profiles (42 execution
+`web-elements/playwright.retained-inputs.config.ts` selects 28 original input,
+timing and audio declarations across the three unchanged browser profiles (84 execution
 items). It adds end-of-test screenshots and HTML/JSON reporters without editing
 the original callbacks. `check-retained-input-collection.mjs` validates actual
 Playwright collection after the root build without launching browsers.
@@ -25,9 +25,16 @@ final-attempt screenshots and distinguishes case failures from infrastructure
 or missing-evidence failures. The workflow now executes this collection before
 starting the persistent Midscene fixture servers and stages the portable
 evidence with the current attempt. Publication uses the same two Summary
-sections, with separate YAML and source/browser counts. The 42 browser items
+sections, with separate YAML and source/browser counts. The 84 browser items
 are not additional AI/YAML cases. Hosted browser and report acceptance remains
 pending; model-free checks and collection alone do not prove it.
+
+The second retained batch adds the exact four-event auto-scroll window, circular
+swiper coordinate-click targeting and twelve audio contracts. It keeps the
+original listener registration order, raw clicks, separate state reads, error
+codes, waits and all assertion tails byte-for-byte. Audio interval observation
+starts after play, as in the original callback. None of these additions is
+counted as an AI migration or a hosted pass. The YAML collection remains 483.
 
 A fully evidenced flaky pass keeps the original runner's successful exit policy
 but remains visible as a Summary warning. Missing evidence or producer failures

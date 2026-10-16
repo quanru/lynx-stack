@@ -24,8 +24,8 @@ test('retained publication never borrows missing or older attempt evidence', asy
       attempt,
     }, env);
     assert.equal(result.hasAttention, true);
-    assert.equal(result.supplemental.sourceCount, 14);
-    assert.equal(result.supplemental.cases.length, 42);
+    assert.equal(result.supplemental.sourceCount, 28);
+    assert.equal(result.supplemental.cases.length, 84);
     assert.ok(
       result.supplemental.cases.every(row =>
         row.status === 'not-run' && !row.previewPath && !row.reportPath

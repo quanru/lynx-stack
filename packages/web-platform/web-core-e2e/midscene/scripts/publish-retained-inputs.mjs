@@ -114,12 +114,12 @@ export function publishRetainedInputs(
   const manifest = JSON.parse(readFileSync(manifestFile, 'utf8'));
   if (
     manifest.schemaVersion !== 1 || manifest.kind !== 'retained-original-input'
-    || manifest.sourceDeclarations !== 14 || manifest.expectedExecutions !== 42
+    || manifest.sourceDeclarations !== 28 || manifest.expectedExecutions !== 84
     || !Number.isInteger(manifest.runnerErrorCount)
     || manifest.runnerErrorCount < 0
     || !['success', 'failure'].includes(manifest.producerResult)
     || typeof manifest.evidenceComplete !== 'boolean'
-    || !Array.isArray(manifest.cases) || manifest.cases.length !== 42
+    || !Array.isArray(manifest.cases) || manifest.cases.length !== 84
   ) {
     throw new Error('Invalid retained input evidence manifest');
   }
@@ -176,7 +176,7 @@ export function publishRetainedInputs(
   );
   const attention = rows.filter(row => !passed.includes(row));
   // Infrastructure disposition is independent of individual assertion results.
-  // Preserve 42 passed cases when the runner failed after their callbacks, but
+  // Preserve 84 passed cases when the runner failed after their callbacks, but
   // never present that run as an overall success.
   const infrastructureErrors = [
     ...(manifest.producerResult === 'failure'
@@ -192,8 +192,8 @@ export function publishRetainedInputs(
   );
   const supplemental = {
     label: 'Original input contracts',
-    sourceCount: 14,
-    expectedCount: 42,
+    sourceCount: 28,
+    expectedCount: 84,
     errors: [
       ...infrastructureErrors,
       ...(manifest.runnerErrorCount
@@ -288,8 +288,8 @@ export function publishRetainedInputs(
     summary,
     supplemental,
     cases: rows,
-    sourceDeclarations: 14,
-    expectedExecutions: 42,
+    sourceDeclarations: 28,
+    expectedExecutions: 84,
     passed: passed.length,
     needsAttention: attention.length,
     runnerErrorCount: manifest.runnerErrorCount,

@@ -54,8 +54,8 @@ function visit(node, groups = []) {
 }
 visit(source);
 
-test('retained selection matches exactly fourteen component-scoped original callbacks', () => {
-  assert.equal(retainedInputKeys.length, 14);
+test('retained selection matches exactly twenty-eight component-scoped original callbacks', () => {
+  assert.equal(retainedInputKeys.length, 28);
   assert.deepEqual(
     [...declarations.keys()].sort(),
     [...retainedInputKeys].sort(),
@@ -72,8 +72,71 @@ test('retained selection matches exactly fourteen component-scoped original call
   );
 });
 
+test('new retained contracts preserve the full swiper title and exact audio/list selection', () => {
+  assert.ok(
+    retainedInputKeys.includes('x-swiper/x-swiper/x-swiper-circular-click'),
+  );
+  assert.ok(retainedInputGrep.test(
+    'web-elements test suite x-swiper x-swiper/x-swiper-circular-click',
+  ));
+  assert.equal(
+    retainedInputKeys.filter(key => key.startsWith('x-audio-tt/')).length,
+    12,
+  );
+  assert.ok(retainedInputKeys.includes('x-list/auto-scroll'));
+  assert.equal(
+    retainedInputGrep.test(
+      'web-elements test suite x-list auto-scroll-follows-orientation',
+    ),
+    false,
+  );
+  // Adjacent audio tests with WebKit skips must not be enabled by a broad grep.
+  for (
+    const title of [
+      'attribute-loop',
+      'method-resume',
+      'method-getCurrentTime',
+      'method-getDuration',
+    ]
+  ) {
+    assert.equal(
+      retainedInputGrep.test('web-elements test suite x-audio-tt ' + title),
+      false,
+    );
+  }
+});
+
 // Review a source change explicitly; never silently weaken its input or oracle.
 const callbackDigests = {
+  'x-list/auto-scroll':
+    'ceec57cd05acaed47fc8f1c5a6c80121cdfb18e4a6e4bcd8e744f682fce5102f',
+  'x-swiper/x-swiper/x-swiper-circular-click':
+    'be97a3735b234fbe04d4292ab5db97e2b7c609aa3b4bd3f642799a7f38e116b9',
+  'x-audio-tt/attribute-src-change':
+    '23b00c18ba7e60943f1993d15c2c6b67687cc46550283f388aff9054c53f1f30',
+  'x-audio-tt/attribute-loop-close':
+    '922fc21553501ba80fabe9e16dbb06528ab29aadd63d7e156152526199f7f24a',
+  'x-audio-tt/attribute-pause-on-hide':
+    '7df7e085f17e0ef16eb5c046e24eb4362771be0a2b59d33a94bad9436d552d98',
+  'x-audio-tt/attribute-interval':
+    'd55865307100d02126572083f92f99ef707ba5f6b0fc252dd7e451686e9bd339',
+  'x-audio-tt/event-srcloadingstatechanged':
+    '899511d9563f3d9eef750755a4b6d0d34911d99fc3190c43e35eb81f5478634b',
+  'x-audio-tt/event-playbackstatechanged':
+    '1b8bc6a226718458ed5b12020911fe69e227578319a84b227a7006a1b9c98a93',
+  'x-audio-tt/event-finished':
+    '92ff989a4faeb031bd98ea1f6fbe3f7b286fa798aaa0405e5c233cf07cd33cf5',
+  'x-audio-tt/event-seek':
+    '2855d4bc42c1183ede83dc4c3b61d1a03cc26b28ffafd353c16ec5ac85bf232e',
+  'x-audio-tt/event-error-src':
+    '00f378e503d30379e49fc0d55e87167214f3dbabb9bb320aafe329adfd4c18f0',
+  'x-audio-tt/event-error-src-json':
+    'f8c08ef3a95df7853e65e4688facc7cbbca17f761261943f4663a7e9cc0c3f6c',
+  'x-audio-tt/event-error-playback':
+    '4de7e090b651cc6acfda5dab8648b47027f8b101452927c15224048884666f29',
+  'x-audio-tt/method-play':
+    '1e03a81ff1bed150291353209940c9eaab899311ce3bbbf481170c8f57a4f83d',
+
   'x-input/type-value-do-not-show-input':
     '9230c341c7b77bc1f67014ca5553014e75667054c93f6c42250a2617b97951f7',
   'x-input/type-password':

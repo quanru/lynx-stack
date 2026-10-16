@@ -86,8 +86,8 @@ test('source/browser manifest retains flaky outcome and only final-attempt scree
   const { root, report } = fixture(t);
   const manifest = retainedInputEvidence(report, root);
   assert.equal(manifest.kind, 'retained-original-input');
-  assert.equal(manifest.sourceDeclarations, 14);
-  assert.equal(manifest.cases.length, 42);
+  assert.equal(manifest.sourceDeclarations, 28);
+  assert.equal(manifest.cases.length, 84);
   const row = manifest.cases.find(row =>
     row.source === 'x-input/type-password' && row.browser === 'chromium'
   );
@@ -98,7 +98,7 @@ test('source/browser manifest retains flaky outcome and only final-attempt scree
   assert.equal(row.report, 'html/index.html');
   assert.equal(
     manifest.cases.filter(row => row.status === 'not-run').length,
-    41,
+    83,
   );
 });
 

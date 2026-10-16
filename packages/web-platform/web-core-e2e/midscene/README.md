@@ -1,5 +1,15 @@
 # Midscene E2E for web-core and web-elements
 
+## Programmatic scroll batch (hosted validation pending)
+
+Collection is now 479 YAML cases. api-exposure-area and x-list/item-snap retain
+their original programmatic scroll calls, individual waits and six unchanged
+Linux PNG checkpoints. These APIs are not replaced with AI gestures. Source
+replay executes the original navigation, font and screenshot helpers as well
+as the test callbacks, covering missing host/shadow/content behavior. The
+original WebKit exclusion for item-snap is unchanged. Hosted Chromium
+acceptance remains pending; this batch does not establish Firefox or SSR parity.
+
 ## Unpublished report fallback
 
 If Pages is not configured, the report job still shows individual case rows:

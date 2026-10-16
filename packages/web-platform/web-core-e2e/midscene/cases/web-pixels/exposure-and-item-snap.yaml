@@ -1,0 +1,30 @@
+# Original programmatic scrolling is part of each contract, not an AI gesture.
+cases:
+  - name: api-exposure-area
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-exposure-area"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: { baseline: exposure/api-exposure-area/initial }
+      - javascript: "document.querySelector('lynx-view').shadowRoot.querySelector('#x').scrollTo({ offset: 200 })"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 200))"
+      - web.pixels: {
+          baseline: exposure/api-exposure-area/scroll-200-do-not-meet-exposure-area-requirement,
+        }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 200))"
+      - javascript: "document.querySelector('lynx-view').shadowRoot.querySelector('#x').scrollTo({ offset: 400 })"
+      # Keep the original checkpoint name even though the second offset is 400.
+      - web.pixels: { baseline: exposure/api-exposure-area/scroll-200-green }
+      - recordToReport: Original exposure area contract passed
+  - name: web-elements/x-list/item-snap
+    steps:
+      # The original callback excludes WebKit; this project uses Chromium.
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-list/item-snap.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: { suite: web-elements, baseline: x-list/item-snap/index }
+      - javascript: "document.querySelector('x-list')?.shadowRoot?.querySelector('#content')?.scrollBy(0, 10)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: { suite: web-elements, baseline: x-list/item-snap/scroll-1 }
+      - javascript: "document.querySelector('x-list')?.shadowRoot?.querySelector('#content')?.scrollBy(0, 250)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: { suite: web-elements, baseline: x-list/item-snap/scroll-2 }
+      - recordToReport: Original list item snap contract passed

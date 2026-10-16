@@ -1,6 +1,15 @@
 # Full E2E migration scope
 
-## Current input contract follow-up
+## Current programmatic scroll batch
+
+Collection increases from 477 to 479 with api-exposure-area and x-list/item-snap.
+Exposure retains offsets 200 and 400, its two 200 ms waits and all three original
+checkpoint names, including scroll-200-green after offset 400. Item-snap retains
+scrollBy(0, 10), scrollBy(0, 250), both 100 ms waits and three PNGs. Source replay
+checks exact helper behavior and missing DOM layers without changing the
+original optional chaining or WebKit skip. Hosted Chromium acceptance is pending.
+
+## Preceding input contract follow-up
 
 Collection increases from 475 to 477 with x-input/attribute-autocomplete and
 x-textarea/method-setSelectionRange. The former preserves one attribute read

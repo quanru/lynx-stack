@@ -28,7 +28,7 @@ test('unfiltered SDK projects collect the complete original YAML inventory exact
     }
   }
   assert.deepEqual(actual.sort(), (await caseNames(root)).sort());
-  assert.equal(actual.length, 477);
+  assert.equal(actual.length, 479);
   assert.equal(new Set(actual).size, actual.length);
 });
 

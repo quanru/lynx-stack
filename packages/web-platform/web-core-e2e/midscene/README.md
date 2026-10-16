@@ -1,5 +1,43 @@
 # Midscene E2E for web-core and web-elements
 
+## Current checkpoint — 2026-10-16 (local acceptance only)
+
+Implementation checkpoint: Web `bac0c85` (bulk integration `a25fddc`);
+Native `25b69bd`. The Web inventory contains **487 YAML cases**, separately
+from **273 original source declarations / 1007 execution items**. Sixteen
+original runners collect 240 sources / 905 items; the additional retained
+collection contributes 33 sources / 34 expanded titles / 102 items.
+
+The 1007 original items comprise 219 source-declared skips, one source early
+return and 787 statically eligible items, including one non-UI template
+contract. Skips and the early return are not passes; the template contract has
+no applicable screenshot. These counts describe collection and evidence policy,
+not executed or passing tests.
+
+Independent local verification passed: full root Turbo build 74/74, Web
+311/311 model-free tests and TypeScript, Native 253/253 model-free tests and
+TypeScript, both original collection checks, and byte-for-byte shared renderer
+parity. No browser was launched for collection or model-free verification.
+
+The frozen plan's 174 active source dispositions are implemented, but this is
+not full browser/SSR parity or completed migration acceptance. The broader
+browser/render variant audit is ongoing. The 24 conditional AI candidates are
+temporarily retained with their original callbacks and specific reasons; they
+are not declared permanently unsuitable for AI.
+
+No hosted acceptance exists for this new local head. Last verified Web
+publication remains run 38871678621 at `bdd709c`: 471 first-attempt YAML passes,
+471 linked screenshots and report links, and 473 unique evidence URLs returning
+HTTP 200. Its original runners reported one flaky pass and 54 source skips.
+Native run 38874311848 at `aa0bece` still has Android running and an iOS WDA
+startup failure before XCTest/case execution. Do not transfer those older
+results to the new local inventory.
+
+## Historical implementation checkpoints
+
+The sections below record earlier batches. Their counts and pending states are
+historical; the current checkpoint above supersedes them.
+
 ## Dynamic image and complete original-runner evidence (hosted acceptance pending)
 
 The retained collection now contains 33 source declarations / 34 expanded

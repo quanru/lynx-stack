@@ -119,30 +119,32 @@ export async function selectReport(
   };
 }
 
-async function main() {
-  const entries = [
-    await selectReport(
-      resolve(process.env.RUNNER_TEMP, 'midscene-artifacts'),
-      process.env.GITHUB_SHA,
-      Number(process.env.GITHUB_RUN_ATTEMPT),
-      await caseNames(fileURLToPath(new URL('../', import.meta.url))),
-      process.env.PRODUCER_RESULT,
-    ),
-  ];
+export function publicationArguments(entries, env) {
+  if (
+    env.REPORT_LINKS_PUBLISHED !== undefined
+    && !['true', 'false'].includes(env.REPORT_LINKS_PUBLISHED)
+  ) {
+    throw new Error('Invalid report publication mode.');
+  }
+  const published = env.REPORT_LINKS_PUBLISHED !== 'false';
+  if (published && !env.PAGES_URL) {
+    throw new Error('Published reports require a Pages URL.');
+  }
   const args = [
     fileURLToPath(new URL('./render-ci-summary.mjs', import.meta.url)),
     '--title',
     'Lynx Web × Midscene',
     '--run-url',
-    process.env.RUN_URL,
-    '--pages-url',
-    process.env.PAGES_URL,
+    env.RUN_URL,
+    ...(published
+      ? ['--pages-url', env.PAGES_URL]
+      : ['--links-published', 'false']),
     '--site-prefix',
-    `runs/${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT}`,
+    `runs/${env.GITHUB_RUN_ID}-${env.GITHUB_RUN_ATTEMPT}`,
     '--site-dir',
-    resolve(process.env.RUNNER_TEMP, 'midscene-publication/site'),
+    resolve(env.RUNNER_TEMP, 'midscene-publication/site'),
     '--output',
-    resolve(process.env.RUNNER_TEMP, 'midscene-publication/summary.md'),
+    resolve(env.RUNNER_TEMP, 'midscene-publication/summary.md'),
   ];
   for (const entry of entries) {
     args.push(
@@ -154,6 +156,20 @@ async function main() {
       `${entry.label}=${entry.artifact}`,
     );
   }
+  return args;
+}
+
+async function main() {
+  const entries = [
+    await selectReport(
+      resolve(process.env.RUNNER_TEMP, 'midscene-artifacts'),
+      process.env.GITHUB_SHA,
+      Number(process.env.GITHUB_RUN_ATTEMPT),
+      await caseNames(fileURLToPath(new URL('../', import.meta.url))),
+      process.env.PRODUCER_RESULT,
+    ),
+  ];
+  const args = publicationArguments(entries, process.env);
   const child = spawnSync(process.execPath, args, { stdio: 'inherit' });
   if (child.error) throw child.error;
   process.exitCode = child.status ?? 1;

@@ -459,6 +459,20 @@ jobs:
           echo "::warning::$message"
           echo "$message Results and reports remain available in the test job Summary and Actions artifacts." >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Show unpublished case evidence
+        if: steps.pages.outcome != 'success'
+        env:
+          REPORT_LINKS_PUBLISHED: "false"
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          PRODUCER_RESULT: ${{ needs.web-shell-ai-e2e.result }}
+        run: |
+          status=0
+          node packages/web-platform/web-core-e2e/midscene/scripts/publish-report.mjs || status=$?
+          if [ -f "$RUNNER_TEMP/midscene-publication/summary.md" ]; then
+            cat "$RUNNER_TEMP/midscene-publication/summary.md" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$status"
+
       - name: Test the evidence renderer
         if: steps.pages.outcome == 'success'
         run: |

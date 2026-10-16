@@ -3,7 +3,50 @@ import { mkdir, mkdtemp, writeFile, rm, rename } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { selectReport } from './publish-report.mjs';
+import { publicationArguments, selectReport } from './publish-report.mjs';
+
+test('unpublished fallback cannot emit Pages URLs or hide case rows', () => {
+  const env = {
+    RUNNER_TEMP: '/tmp/report-test',
+    RUN_URL: 'https://github.com/example/repo/actions/runs/123',
+    GITHUB_RUN_ID: '123',
+    GITHUB_RUN_ATTEMPT: '2',
+  };
+  const entries = [{
+    label: 'Web',
+    path: '/tmp/report-test/source',
+    result: 'success',
+    artifact: 'midscene-ai-e2e-web-2',
+  }];
+  const fallback = publicationArguments(entries, {
+    ...env,
+    REPORT_LINKS_PUBLISHED: 'false',
+    PAGES_URL: 'https://unused.example',
+  });
+  assert.ok(fallback.includes('--links-published'));
+  assert.equal(fallback[fallback.indexOf('--links-published') + 1], 'false');
+  assert.ok(!fallback.includes('--pages-url'));
+  assert.ok(!fallback.includes('https://unused.example'));
+  assert.ok(!fallback.includes('--job-summary-only'));
+  assert.ok(fallback.includes('Web=midscene-ai-e2e-web-2'));
+  assert.throws(
+    () => publicationArguments(entries, env),
+    /require a Pages URL/,
+  );
+  assert.throws(
+    () =>
+      publicationArguments(entries, { ...env, REPORT_LINKS_PUBLISHED: 'typo' }),
+    /Invalid/,
+  );
+  const published = publicationArguments(entries, {
+    ...env,
+    PAGES_URL: 'https://pages.example',
+  });
+  assert.equal(
+    published[published.indexOf('--pages-url') + 1],
+    'https://pages.example',
+  );
+});
 
 async function fixture(t) {
   const directory = await mkdtemp(join(tmpdir(), 'midscene-report-artifacts-'));

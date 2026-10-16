@@ -1,5 +1,13 @@
 # Midscene E2E for web-core and web-elements
 
+## Unpublished report fallback
+
+If Pages is not configured, the report job still shows individual case rows:
+failures first and passed cases in a collapsed appendix. Screenshots are marked
+`Not published`; artifact links open the run's download list, not a public HTML
+report. The same manifest identity and complete-coverage checks apply to this
+fallback. This improves visibility but does not count as Pages acceptance.
+
 ## Input contract follow-up (hosted validation pending)
 
 Collection is now 477 YAML cases. The two additional source contracts preserve

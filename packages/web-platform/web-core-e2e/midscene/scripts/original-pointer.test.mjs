@@ -73,7 +73,11 @@ test('three pointer contracts run unchanged in CSR and SSR with all original bro
     );
     assert.doesNotMatch(
       step.run,
-      /--(?:retries|timeout|update-snapshots|config)(?:[=\s]|$)/,
+      /--(?:retries|timeout|update-snapshots)(?:[=\s]|$)/,
+    );
+    assert.match(
+      step.run,
+      /--config playwright\.original-evidence\.config\.ts\s*$/,
     );
     assert.ok(
       step.run.indexOf('ulimit -Sn "$(ulimit -Hn)"')

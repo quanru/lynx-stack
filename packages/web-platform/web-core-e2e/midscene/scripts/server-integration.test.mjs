@@ -99,7 +99,7 @@ test('the original worker/runtime API suite retains its runner and disabled case
   );
   assert.equal(
     matching[0].run,
-    'pnpm exec playwright test tests/web-core.test.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/runtime --reporter line',
+    'pnpm exec playwright test tests/web-core.test.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/runtime/results --config playwright.original-evidence.config.ts',
   );
   const source = readFileSync(
     new URL('../../tests/web-core.test.ts', import.meta.url),
@@ -136,7 +136,7 @@ test('performance integration retains original CDP budgets rather than visual su
   assert.equal(matching[0].env.PORT, '3081');
   assert.equal(
     matching[0].run,
-    'pnpm exec playwright test tests/performance.test.ts --project chromium --workers=2 --output midscene-original-results/performance --reporter line',
+    'pnpm exec playwright test tests/performance.test.ts --project chromium --workers=2 --output midscene-original-results/performance/results --config playwright.original-evidence.config.ts',
   );
   const source = readFileSync(
     new URL('../../../web-elements/tests/performance.test.ts', import.meta.url),
@@ -216,7 +216,7 @@ test('retained Markdown API runner excludes the migrated user-click flow', () =>
   assert.equal(matching[0].env.PORT, '3081');
   assert.equal(
     matching[0].run,
-    'pnpm exec playwright test tests/x-markdown.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep-invert \'should fire bindlink and bindimageTap events\' --output midscene-original-results/markdown --reporter line',
+    'pnpm exec playwright test tests/x-markdown.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep-invert \'should fire bindlink and bindimageTap events\' --output midscene-original-results/markdown/results --config playwright.original-evidence.config.ts',
   );
 });
 
@@ -293,11 +293,18 @@ test('retained browser variants bound workers without replacing original profile
         'original-lazy-components-csr',
         'original-list-api',
         'original-svg-selection-webview',
+        'original-runtime',
+        'original-performance',
+        'original-markdown',
+        'original-drag-wheel',
+        'original-template',
+        'original-pointer-csr',
+        'original-pointer-ssr',
       ].includes(step.id)
     ) {
       assert.match(
         step.run,
-        /--config playwright\.original-evidence\.config\.ts$/,
+        /--config playwright\.original-evidence\.config\.ts\s*$/,
       );
     } else {
       assert.doesNotMatch(step.run, /--config(?:[=\s]|$)/);
@@ -367,11 +374,11 @@ test('mouse drag, wheel and template runners keep complete source contracts', ()
   }
   assert.equal(
     pointer.run,
-    'pnpm exec playwright test tests/scroll-view-mouse-drag.spec.ts tests/x-foldview-ng-wheel.spec.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/drag-wheel --reporter line',
+    'pnpm exec playwright test tests/scroll-view-mouse-drag.spec.ts tests/x-foldview-ng-wheel.spec.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/drag-wheel/results --config playwright.original-evidence.config.ts',
   );
   assert.equal(
     template.run,
-    'pnpm exec playwright test tests/template.spec.ts --project chromium --workers=2 --output midscene-original-results/template --reporter line',
+    'pnpm exec playwright test tests/template.spec.ts --project chromium --workers=2 --output midscene-original-results/template/results --config playwright.original-evidence.config.ts',
   );
   const source = readFileSync(
     new URL(

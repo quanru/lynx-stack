@@ -1,13 +1,18 @@
 import {
   retainedInputBrowsers,
   retainedInputKeys,
+  retainedInputSources,
 } from './retained-input-selection.mjs';
+import remainingSources from './original-remaining-sources.json' with {
+  type: 'json',
+};
 
 export const retainedCatalog = {
   id: 'retained-inputs',
   suite: 'web-elements test suite',
   file: 'tests/web-elements.spec.ts',
   keys: retainedInputKeys,
+  sources: retainedInputSources,
   browsers: retainedInputBrowsers,
 };
 const keyboard = [
@@ -76,6 +81,66 @@ export function catalogSourceCount(catalog) {
   ).size;
 }
 export const originalRunnerCatalog = [
+  ...[
+    {
+      id: 'runtime',
+      package: 'web-core-e2e',
+      files: ['tests/web-core.test.ts'],
+      mode: 'CSR',
+      stepName: 'Validate original worker and runtime API contracts',
+    },
+    ...['csr', 'ssr'].map(mode => ({
+      id: `pointer-${mode}`,
+      package: 'web-core-e2e',
+      files: ['tests/reactlynx.spec.ts'],
+      mode: mode.toUpperCase(),
+      grep: 'basic-(mts-bindtouchstart|bindmouse|bindwheel-view)$',
+      stepName:
+        `Validate original pointer event contracts (${mode.toUpperCase()})`,
+    })),
+    {
+      id: 'performance',
+      package: 'web-elements',
+      files: ['tests/performance.test.ts'],
+      browsers: ['chromium'],
+      stepName: 'Validate original layout and style performance budgets',
+    },
+    {
+      id: 'markdown',
+      package: 'web-elements',
+      files: ['tests/x-markdown.spec.ts'],
+      grepInvert: 'should fire bindlink and bindimageTap events',
+      stepName: 'Validate original Markdown rendering and API contracts',
+    },
+    {
+      id: 'drag-wheel',
+      package: 'web-elements',
+      files: [
+        'tests/scroll-view-mouse-drag.spec.ts',
+        'tests/x-foldview-ng-wheel.spec.ts',
+      ],
+      stepName: 'Validate original mouse drag and wheel contracts',
+    },
+    {
+      id: 'template',
+      package: 'web-elements',
+      files: ['tests/template.spec.ts'],
+      browsers: ['chromium'],
+      stepName: 'Validate original Rust and TypeScript template consistency',
+    },
+  ].map(runner => {
+    const sources = remainingSources.filter(source =>
+      source.package === runner.package && runner.files.includes(source.file)
+    );
+    return {
+      mode: 'component',
+      browsers: retainedInputBrowsers,
+      ...runner,
+      file: runner.files.join(' '),
+      sources,
+      keys: sources.map(source => source.key),
+    };
+  }),
   ...['csr', 'ssr'].map(mode => ({
     ...core,
     id: `keyboard-${mode}`,

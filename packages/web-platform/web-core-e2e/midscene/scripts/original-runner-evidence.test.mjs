@@ -18,6 +18,7 @@ import {
   originalRunnerSourceCount,
   originalEvidenceConfig,
   retainedCatalog,
+  catalogSourceCount,
 } from './original-runner-catalog.mjs';
 import { retainedInputEvidence } from './retained-input-evidence.mjs';
 import { writeOriginalRunnerEvidence } from './write-original-runner-evidence.mjs';
@@ -130,14 +131,14 @@ test('multi-file manifest rejects forged declaration identity without dropping e
   );
 });
 
-test('six existing commands keep exact sources, grep, profiles and mode; no additional test invocation', () => {
-  assert.equal(originalRunnerSourceCount, 26);
+test('thirteen existing commands keep exact sources, grep, profiles and mode; no additional test invocation', () => {
+  assert.equal(originalRunnerSourceCount, 120);
   assert.equal(
     originalRunnerCatalog.reduce(
       (sum, row) => sum + row.keys.length * row.browsers.length,
       0,
     ),
-    105,
+    380,
   );
   assert.equal(
     steps.filter(step => step.run?.includes('pnpm exec playwright test'))
@@ -155,13 +156,17 @@ test('six existing commands keep exact sources, grep, profiles and mode; no addi
       `packages/web-platform/${runner.package}`,
     );
     assert.equal(step.env.ORIGINAL_EVIDENCE_RUNNER, runner.id);
-    if (runner.package === 'web-core-e2e') {
+    if (runner.package === 'web-core-e2e' && runner.id !== 'runtime') {
       assert.equal(step.env.ENABLE_SSR, runner.mode === 'SSR' ? '1' : '');
-    } else assert.equal(step.env.PORT, '3081');
+    } else if (runner.package === 'web-elements') {
+      assert.equal(step.env.PORT, '3081');
+    }
     assert.equal(
-      step.run,
-      `pnpm exec playwright test ${runner.file} --project chromium --project firefox --project webkit --workers=2${
-        runner.grep ? ` --grep '${runner.grep}'` : ''
+      step.run.trim().split('\n').at(-1),
+      `pnpm exec playwright test ${runner.file} ${
+        runner.browsers.map(browser => `--project ${browser}`).join(' ')
+      } --workers=2${runner.grep ? ` --grep '${runner.grep}'` : ''}${
+        runner.grepInvert ? ` --grep-invert '${runner.grepInvert}'` : ''
       } --output midscene-original-results/${runner.id}/results --config playwright.original-evidence.config.ts`,
     );
     assert.ok(
@@ -287,6 +292,8 @@ function fixture(t) {
           file: descriptor?.file ?? runner.file,
           line: index + 1,
           tests: runner.browsers.map(projectName => {
+            const skipped = descriptor?.skipBrowsers?.includes(projectName);
+            const nonUI = descriptor?.evidencePolicy === 'non-ui';
             const image = path.join(
               directory,
               'results',
@@ -295,13 +302,13 @@ function fixture(t) {
             writeFileSync(image, 'synthetic screenshot');
             return {
               projectName,
-              expectedStatus: 'passed',
-              status: 'expected',
+              expectedStatus: skipped ? 'skipped' : 'passed',
+              status: skipped ? 'skipped' : 'expected',
               results: [{
                 retry: 0,
-                status: 'passed',
+                status: skipped ? 'skipped' : 'passed',
                 duration: 10,
-                attachments: [{
+                attachments: skipped || nonUI ? [] : [{
                   name: 'screenshot',
                   contentType: 'image/png',
                   path: image,
@@ -353,25 +360,31 @@ function fixture(t) {
   };
 }
 
-test('all six producer manifests publish 105 unique mode-aware rows and 26 deduplicated sources', t => {
+test('all thirteen producers preserve 380 rows, 120 sources, 54 original skips and one non-UI case', t => {
   const { root, outcomes, stage, entry, env } = fixture(t);
   assert.equal(writeOriginalRunnerEvidence(root, outcomes), 0);
   stage();
   const result = prepareOriginalRunnerPublication(entry, env);
-  assert.equal(result.sourceCount, 26);
-  assert.equal(result.expectedCount, 105);
-  assert.equal(result.cases.length, 105);
+  assert.equal(result.sourceCount, 120);
+  assert.equal(result.expectedCount, 380);
+  assert.equal(result.cases.length, 380);
   assert.equal(
     new Set(result.cases.map(row => `${row.platform}/${row.name}`)).size,
-    105,
+    380,
   );
   assert.deepEqual(result.errors, []);
   assert.ok(
-    result.cases.every(row =>
+    result.cases.filter(row => row.evidencePolicy === 'ui').every(row =>
       row.status === 'success' && row.previewPath && row.reportPath
       && row.durationMs === 10
     ),
   );
+  assert.equal(result.cases.filter(row => row.status === 'skipped').length, 54);
+  assert.equal(
+    result.cases.filter(row => row.evidencePolicy === 'non-ui').length,
+    1,
+  );
+  assert.doesNotThrow(() => validateSupplementalEvidence(result));
 });
 
 test('skipped producer is distinct and cannot be hidden by successful producers', t => {
@@ -387,8 +400,151 @@ test('skipped producer is distinct and cannot be hidden by successful producers'
   stage();
   const result = prepareOriginalRunnerPublication(entry, env);
   assert.equal(result.cases.filter(row => row.status === 'not-run').length, 18);
-  assert.equal(result.cases.filter(row => row.status === 'success').length, 87);
+  assert.equal(
+    result.cases.filter(row => row.status === 'success').length,
+    308,
+  );
   assert.match(result.errors.join(' '), /keyboard-ssr.*skipped/);
+});
+
+test('allowlisted browser without an applied skip guard stays not-run attention', t => {
+  const { root, outcomes, stage, entry, env } = fixture(t);
+  const file = path.join(
+    root,
+    'web-core-e2e/midscene-original-results/runtime/report.json',
+  );
+  const report = JSON.parse(readFileSync(file, 'utf8'));
+  const item = report.suites.flatMap(suite => suite.specs).flatMap(spec =>
+    spec.tests
+  ).find(item => item.expectedStatus === 'skipped');
+  item.expectedStatus = 'passed'; // Worker skipped this item before executing test.skip.
+  writeFileSync(file, JSON.stringify(report));
+  assert.equal(writeOriginalRunnerEvidence(root, outcomes), 1);
+  stage();
+  const result = prepareOriginalRunnerPublication(entry, env);
+  assert.equal(result.cases.filter(row => row.status === 'skipped').length, 53);
+  assert.equal(result.cases.filter(row => row.status === 'not-run').length, 1);
+  assert.equal(
+    result.cases.find(row => row.status === 'not-run').evidencePolicy,
+    'ui',
+  );
+});
+
+test('missing producer never fabricates source skips; non-UI still requires real HTML', t => {
+  const { root, outcomes, stage, entry, env } = fixture(t);
+  rmSync(
+    path.join(
+      root,
+      'web-core-e2e/midscene-original-results/runtime/report.json',
+    ),
+  );
+  rmSync(
+    path.join(
+      root,
+      'web-elements/midscene-original-results/template/html/index.html',
+    ),
+  );
+  assert.equal(writeOriginalRunnerEvidence(root, outcomes), 1);
+  stage();
+  const result = prepareOriginalRunnerPublication(entry, env);
+  assert.equal(
+    result.cases.filter(row => row.status === 'not-run').length,
+    105,
+  );
+  assert.equal(result.cases.filter(row => row.status === 'skipped').length, 22);
+  const template = result.cases.find(row => row.evidencePolicy === 'non-ui');
+  assert.equal(template.status, 'failed');
+  assert.equal(template.reportPath, null);
+  assert.equal(template.previewPath, null);
+  assert.doesNotThrow(() => validateSupplementalEvidence(result));
+});
+
+test('publisher rejects non-UI and source-skip exemptions outside trusted catalog', t => {
+  const { root, outcomes, stage, entry, env } = fixture(t);
+  writeOriginalRunnerEvidence(root, outcomes);
+  stage();
+  const file = path.join(
+    entry.path,
+    'original-runners/keyboard-csr/evidence.json',
+  );
+  const manifest = JSON.parse(readFileSync(file, 'utf8'));
+  for (const policy of ['non-ui', 'source-skip']) {
+    manifest.cases[0].evidencePolicy = policy;
+    writeFileSync(file, JSON.stringify(manifest));
+    assert.throws(
+      () =>
+        prepareOriginalRunnerPublication(entry, {
+          ...env,
+          GITHUB_RUN_ID: policy === 'non-ui' ? '124' : '125',
+        }),
+      /Invalid or duplicate/,
+    );
+  }
+});
+
+test('source-skip publication requires the original expectedStatus proof', t => {
+  const { root, outcomes, stage, entry, env } = fixture(t);
+  writeOriginalRunnerEvidence(root, outcomes);
+  stage();
+  const file = path.join(entry.path, 'original-runners/runtime/evidence.json');
+  const manifest = JSON.parse(readFileSync(file, 'utf8'));
+  const row = manifest.cases.find(row => row.evidencePolicy === 'source-skip');
+  row.expectedStatus = 'passed';
+  writeFileSync(file, JSON.stringify(manifest));
+  assert.throws(
+    () => prepareOriginalRunnerPublication(entry, env),
+    /Invalid or duplicate/,
+  );
+  delete row.expectedStatus;
+  writeFileSync(file, JSON.stringify(manifest));
+  assert.throws(
+    () => prepareOriginalRunnerPublication(entry, env),
+    /Invalid or duplicate/,
+  );
+});
+
+test('retained same-title input and textarea descriptors are matched inside the correct group', t => {
+  const { root } = fixture(t);
+  const sources = retainedCatalog.sources.filter(source =>
+    source.title === 'attribute-disabled'
+  );
+  assert.equal(sources.length, 2);
+  const report = {
+    errors: [],
+    suites: [{
+      title: retainedCatalog.file,
+      suites: [{
+        title: retainedCatalog.suite,
+        suites: sources.map(source => ({
+          title: source.group,
+          specs: [{
+            title: source.title,
+            file: source.file,
+            line: 1,
+            tests: [{
+              projectName: 'chromium',
+              expectedStatus: 'passed',
+              status: 'skipped',
+              results: [],
+            }],
+          }],
+        })),
+      }],
+    }],
+  };
+  const result = retainedInputEvidence(report, root);
+  for (const source of sources) {
+    const row = result.cases.find(row =>
+      row.source === source.key && row.browser === 'chromium'
+    );
+    assert.equal(row.line, 1);
+    assert.equal(row.sourceId, source.sourceId);
+  }
+  report.suites[0].suites[0].suites[0].title = 'x-text';
+  assert.throws(
+    () => retainedInputEvidence(report, root),
+    /Unexpected retained source/,
+  );
 });
 
 test('old attempts are never used, and a different runner manifest is rejected', t => {
@@ -419,7 +575,7 @@ test('catalog rejects misrouted source files and missing producer dispositions',
     () => writeOriginalRunnerEvidence(root, outcomes),
     /complete catalog/,
   );
-  const runner = originalRunnerCatalog[0];
+  const runner = originalRunnerCatalog.find(item => item.id === 'keyboard-csr');
   const directory = path.join(
     root,
     runner.package,
@@ -444,8 +600,8 @@ test('new and existing original evidence share one validated two-section Summary
   const existing = prepareOriginalRunnerPublication(entry, env);
   const retained = await prepareRetainedPublication(entry, env);
   const combined = mergeOriginalEvidence(retained.supplemental, existing);
-  assert.equal(combined.sourceCount, 26 + retainedCatalog.keys.length);
-  assert.equal(combined.expectedCount, 105 + retainedCatalog.keys.length * 3);
+  assert.equal(combined.sourceCount, 120 + catalogSourceCount(retainedCatalog));
+  assert.equal(combined.expectedCount, 380 + retainedCatalog.keys.length * 3);
   assert.doesNotThrow(() => validateSupplementalEvidence(combined));
   const summary = renderSummary({
     title: 'Combined original evidence',
@@ -455,7 +611,7 @@ test('new and existing original evidence share one validated two-section Summary
     supplementalEvidence: combined,
   });
   assert.equal((summary.match(/<details>/g) ?? []).length, 1);
-  assert.equal((summary.match(/<img /g) ?? []).length, 105);
+  assert.equal((summary.match(/<img /g) ?? []).length, 325);
   assert.ok(
     summary.includes(
       `${combined.sourceCount} source cases / ${combined.expectedCount} browser cases`,
@@ -511,7 +667,7 @@ test('a WebKit keyboard retry stays flaky, uses its final screenshot and appears
     entries: [],
     supplementalEvidence: supplemental,
   });
-  assert.match(summary, /1 need attention · 104 passed/);
+  assert.match(summary, /1 need attention · 325 passed/);
   assert.ok(
     summary.indexOf('basic-global-bindkeydown-key (CSR)')
       < summary.indexOf('<details>'),

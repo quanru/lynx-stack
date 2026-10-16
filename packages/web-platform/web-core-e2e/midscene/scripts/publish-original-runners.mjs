@@ -42,6 +42,9 @@ export function prepareOriginalRunnerPublication(entry, env) {
             platform,
             name,
             status: 'not-run',
+            evidencePolicy: catalog.sources?.find(source =>
+              source.key === name
+            )?.evidencePolicy ?? 'ui',
             reason: 'Current-attempt source/browser evidence is unavailable.',
             durationMs: null,
             previewPath: null,

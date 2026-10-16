@@ -190,8 +190,11 @@ jobs:
         run: node packages/web-platform/web-core-e2e/midscene/scripts/check-original-runner-collection.mjs
 
       - name: Validate original worker and runtime API contracts
+        id: original-runtime
         working-directory: packages/web-platform/web-core-e2e
-        run: pnpm exec playwright test tests/web-core.test.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/runtime --reporter line
+        env:
+          ORIGINAL_EVIDENCE_RUNNER: runtime
+        run: pnpm exec playwright test tests/web-core.test.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/runtime/results --config playwright.original-evidence.config.ts
 
       - name: Validate original keyboard event contracts (CSR)
         id: original-keyboard-csr
@@ -212,8 +215,10 @@ jobs:
         run: pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'basic-(global-bindkeydown(-key|-code|-shift)?|global-bindkeyup|bindkeydown-out-of-view-noop)$' --output midscene-original-results/keyboard-ssr/results --config playwright.original-evidence.config.ts
 
       - name: Validate original pointer event contracts (CSR)
+        id: original-pointer-csr
         working-directory: packages/web-platform/web-core-e2e
         env:
+          ORIGINAL_EVIDENCE_RUNNER: pointer-csr
           ENABLE_SSR: ""
         # Touch payloads, separate mouse phases and wheel deltas are the inputs
         # under test. Preserve their original runner and browser exclusions.
@@ -221,17 +226,19 @@ jobs:
           echo "open files limit before: soft=$(ulimit -Sn), hard=$(ulimit -Hn)"
           ulimit -Sn "$(ulimit -Hn)"
           echo "open files limit after: soft=$(ulimit -Sn), hard=$(ulimit -Hn)"
-          pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'basic-(mts-bindtouchstart|bindmouse|bindwheel-view)$' --output midscene-original-results/pointer-csr --reporter line
+          pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'basic-(mts-bindtouchstart|bindmouse|bindwheel-view)$' --output midscene-original-results/pointer-csr/results --config playwright.original-evidence.config.ts
 
       - name: Validate original pointer event contracts (SSR)
+        id: original-pointer-ssr
         working-directory: packages/web-platform/web-core-e2e
         env:
+          ORIGINAL_EVIDENCE_RUNNER: pointer-ssr
           ENABLE_SSR: "1"
         run: |
           echo "open files limit before: soft=$(ulimit -Sn), hard=$(ulimit -Hn)"
           ulimit -Sn "$(ulimit -Hn)"
           echo "open files limit after: soft=$(ulimit -Sn), hard=$(ulimit -Hn)"
-          pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'basic-(mts-bindtouchstart|bindmouse|bindwheel-view)$' --output midscene-original-results/pointer-ssr --reporter line
+          pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'basic-(mts-bindtouchstart|bindmouse|bindwheel-view)$' --output midscene-original-results/pointer-ssr/results --config playwright.original-evidence.config.ts
 
       - name: Validate original animation sampling (CSR)
         id: original-animation-csr
@@ -254,10 +261,12 @@ jobs:
         run: pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep '(basic-lazy-component-multi(-import)?|basic-lynx-reload)$' --output midscene-original-results/lazy-components-csr/results --config playwright.original-evidence.config.ts
 
       - name: Validate original layout and style performance budgets
+        id: original-performance
         working-directory: packages/web-platform/web-elements
         env:
+          ORIGINAL_EVIDENCE_RUNNER: performance
           PORT: "3081"
-        run: pnpm exec playwright test tests/performance.test.ts --project chromium --workers=2 --output midscene-original-results/performance --reporter line
+        run: pnpm exec playwright test tests/performance.test.ts --project chromium --workers=2 --output midscene-original-results/performance/results --config playwright.original-evidence.config.ts
 
       - name: Validate original SVG selection and iframe API contracts
         id: original-svg-selection-webview
@@ -268,19 +277,23 @@ jobs:
         run: pnpm exec playwright test tests/x-svg-inline.spec.ts tests/x-text-selection.spec.ts tests/x-webview.spec.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/svg-selection-webview/results --config playwright.original-evidence.config.ts
 
       - name: Validate original Markdown rendering and API contracts
+        id: original-markdown
         working-directory: packages/web-platform/web-elements
         env:
+          ORIGINAL_EVIDENCE_RUNNER: markdown
           PORT: "3081"
         # The excluded user-click flow is translated in markdown-events.yaml.
-        run: pnpm exec playwright test tests/x-markdown.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep-invert 'should fire bindlink and bindimageTap events' --output midscene-original-results/markdown --reporter line
+        run: pnpm exec playwright test tests/x-markdown.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep-invert 'should fire bindlink and bindimageTap events' --output midscene-original-results/markdown/results --config playwright.original-evidence.config.ts
 
       - name: Validate original mouse drag and wheel contracts
+        id: original-drag-wheel
         working-directory: packages/web-platform/web-elements
         env:
+          ORIGINAL_EVIDENCE_RUNNER: drag-wheel
           PORT: "3081"
         # Exact mouse trajectories, pointer delivery and wheel deltas are inputs
         # under test. Keep the complete source suites and original browser skips.
-        run: pnpm exec playwright test tests/scroll-view-mouse-drag.spec.ts tests/x-foldview-ng-wheel.spec.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/drag-wheel --reporter line
+        run: pnpm exec playwright test tests/scroll-view-mouse-drag.spec.ts tests/x-foldview-ng-wheel.spec.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/drag-wheel/results --config playwright.original-evidence.config.ts
 
       - name: Validate original list API and orientation contracts
         id: original-list-api
@@ -293,11 +306,13 @@ jobs:
         run: pnpm exec playwright test tests/web-elements.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep 'x-list (auto-scroll-follows-orientation|get-visible-cells|get-scroll-container-info(-horizontal)?)$' --output midscene-original-results/list-api/results --config playwright.original-evidence.config.ts
 
       - name: Validate original Rust and TypeScript template consistency
+        id: original-template
         working-directory: packages/web-platform/web-elements
         env:
+          ORIGINAL_EVIDENCE_RUNNER: template
           PORT: "3081"
         # No browser interaction exists in this source test; execute it once.
-        run: pnpm exec playwright test tests/template.spec.ts --project chromium --workers=2 --output midscene-original-results/template --reporter line
+        run: pnpm exec playwright test tests/template.spec.ts --project chromium --workers=2 --output midscene-original-results/template/results --config playwright.original-evidence.config.ts
 
       - name: Validate retained input collection without launching browsers
         run: node packages/web-platform/web-core-e2e/midscene/scripts/check-retained-input-collection.mjs
@@ -306,7 +321,7 @@ jobs:
         if: always()
         env:
           ORIGINAL_RUNNER_OUTCOMES: >-
-            {"keyboard-csr":"${{ steps.original-keyboard-csr.outcome }}","keyboard-ssr":"${{ steps.original-keyboard-ssr.outcome }}","animation-csr":"${{ steps.original-animation-csr.outcome }}","lazy-components-csr":"${{ steps.original-lazy-components-csr.outcome }}","list-api":"${{ steps.original-list-api.outcome }}","svg-selection-webview":"${{ steps.original-svg-selection-webview.outcome }}"}
+            {"keyboard-csr":"${{ steps.original-keyboard-csr.outcome }}","keyboard-ssr":"${{ steps.original-keyboard-ssr.outcome }}","animation-csr":"${{ steps.original-animation-csr.outcome }}","lazy-components-csr":"${{ steps.original-lazy-components-csr.outcome }}","list-api":"${{ steps.original-list-api.outcome }}","svg-selection-webview":"${{ steps.original-svg-selection-webview.outcome }}","runtime":"${{ steps.original-runtime.outcome }}","pointer-csr":"${{ steps.original-pointer-csr.outcome }}","pointer-ssr":"${{ steps.original-pointer-ssr.outcome }}","performance":"${{ steps.original-performance.outcome }}","markdown":"${{ steps.original-markdown.outcome }}","drag-wheel":"${{ steps.original-drag-wheel.outcome }}","template":"${{ steps.original-template.outcome }}"}
         run: node packages/web-platform/web-core-e2e/midscene/scripts/write-original-runner-evidence.mjs
 
       - name: Validate original keyboard and input contracts with evidence
@@ -410,11 +425,11 @@ jobs:
             cp -R "$retained" "$target/retained-inputs"
           fi
           mkdir -p "$target/original-runners"
-          for runner in keyboard-csr keyboard-ssr animation-csr lazy-components-csr; do
+          for runner in keyboard-csr keyboard-ssr animation-csr lazy-components-csr runtime pointer-csr pointer-ssr; do
             source="packages/web-platform/web-core-e2e/midscene-original-results/$runner"
             if [ -d "$source" ]; then cp -R "$source" "$target/original-runners/$runner"; fi
           done
-          for runner in list-api svg-selection-webview; do
+          for runner in list-api svg-selection-webview performance markdown drag-wheel template; do
             source="packages/web-platform/web-elements/midscene-original-results/$runner"
             if [ -d "$source" ]; then cp -R "$source" "$target/original-runners/$runner"; fi
           done

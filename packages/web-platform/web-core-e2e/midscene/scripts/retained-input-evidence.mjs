@@ -68,6 +68,9 @@ export function retainedInputEvidence(
       const group = titles.at(-1);
       const descriptor = catalog.sources?.find(source =>
         source.file === spec.file && source.title === spec.title
+        && (source.group
+          ? source.group === group
+          : !source.suite || source.suite === group)
       );
       const source = catalog.sources
         ? descriptor?.key
@@ -115,7 +118,10 @@ export function retainedInputEvidence(
           )
           .map(attachment => existingFile(root, attachment.path))
           .filter(Boolean);
-        if (item.expectedStatus !== 'passed') {
+        if (
+          item.expectedStatus !== 'passed'
+          && !(item.expectedStatus === 'skipped' && final?.status === 'skipped')
+        ) {
           throw new Error('Unexpected source expectedStatus');
         }
         if (
@@ -129,8 +135,15 @@ export function retainedInputEvidence(
             ? { sourceId: descriptor.sourceId, sourceFile: descriptor.file }
             : {}),
           browser: item.projectName,
+          evidencePolicy:
+            final?.status === 'skipped' && item.status === 'skipped'
+              && item.expectedStatus === 'skipped'
+              && descriptor?.skipBrowsers?.includes(item.projectName)
+              ? 'source-skip'
+              : descriptor?.evidencePolicy ?? 'ui',
           line: spec.line,
           status: final?.status ?? 'not-run',
+          expectedStatus: item.expectedStatus,
           outcome: item.status,
           retry: final?.retry ?? null,
           durationMs: typeof final?.duration === 'number'
@@ -162,8 +175,12 @@ export function retainedInputEvidence(
           }
           : {}),
         browser,
+        evidencePolicy: catalog.sources?.find(item =>
+          item.key === source
+        )?.evidencePolicy ?? 'ui',
         line: null,
         status: 'not-run',
+        expectedStatus: null,
         outcome: 'missing',
         retry: null,
         durationMs: null,

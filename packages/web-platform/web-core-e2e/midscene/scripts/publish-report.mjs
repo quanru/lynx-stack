@@ -6,6 +6,10 @@ import { testRunDump } from './render-ci-summary.mjs';
 import { caseNames } from './case-inventory.mjs';
 import { publishRetainedInputs } from './publish-retained-inputs.mjs';
 import {
+  retainedCatalog,
+  catalogSourceCount,
+} from './original-runner-catalog.mjs';
+import {
   prepareOriginalRunnerPublication,
   mergeOriginalEvidence,
 } from './publish-original-runners.mjs';
@@ -196,7 +200,7 @@ export async function prepareRetainedPublication(entry, env) {
       hasAttention: true,
       supplemental: {
         label: 'Original input contracts',
-        sourceCount: retainedInputKeys.length,
+        sourceCount: catalogSourceCount(retainedCatalog),
         expectedCount: retainedInputKeys.length * retainedInputBrowsers.length,
         errors: [
           'No retained input evidence from the current workflow attempt.',
@@ -269,6 +273,7 @@ async function main() {
       supplemental.errors.length
       || supplemental.cases.some(row =>
         !['success', 'flaky'].includes(row.status)
+        && !(row.status === 'skipped' && row.evidencePolicy === 'source-skip')
       )
     )
   ) process.exitCode = 1;

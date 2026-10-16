@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { originalRunnerCatalog } from './original-runner-catalog.mjs';
 import { writeRetainedInputEvidence } from './write-retained-input-evidence.mjs';
 
-// Called once on the producer after the six unchanged test invocations. Every
+// Called once on the producer after the thirteen unchanged test invocations. Every
 // outcome is explicit; a step skipped after an earlier failure is not a pass.
 export function writeOriginalRunnerEvidence(webPlatformRoot, outcomes) {
   if (

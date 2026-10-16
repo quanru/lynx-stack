@@ -140,8 +140,18 @@ export function publishRetainedInputs(
   const rows = manifest.cases.map(row => {
     const key = `${row.source}:${row.browser}`;
     const descriptor = catalog.sources?.find(item => item.key === row.source);
+    const policy = row.evidencePolicy ?? 'ui';
     if (
       !catalog.keys.includes(row.source)
+      || !['ui', 'non-ui', 'source-skip'].includes(policy)
+      || (policy === 'non-ui' && descriptor?.evidencePolicy !== 'non-ui')
+      || (descriptor?.evidencePolicy === 'non-ui' && policy !== 'non-ui')
+      || (row.expectedStatus !== undefined
+        && ![null, 'passed', 'skipped'].includes(row.expectedStatus))
+      || (policy === 'source-skip'
+        && (!descriptor?.skipBrowsers?.includes(row.browser)
+          || row.status !== 'skipped' || row.outcome !== 'skipped'
+          || row.expectedStatus !== 'skipped'))
       || (catalog.sources
         && (!descriptor || row.sourceId !== descriptor.sourceId
           || row.sourceFile !== descriptor.file))
@@ -189,9 +199,12 @@ export function publishRetainedInputs(
     ).href;
   const passed = rows.filter(row =>
     row.status === 'passed' && row.outcome === 'expected'
-    && row.screenshots.length > 0 && row.report
+    && (row.evidencePolicy === 'non-ui' || row.screenshots.length > 0)
+    && row.report
   );
-  const attention = rows.filter(row => !passed.includes(row));
+  const attention = rows.filter(row =>
+    !passed.includes(row) && row.evidencePolicy !== 'source-skip'
+  );
   // Infrastructure disposition is independent of individual assertion results.
   // Preserve 84 passed cases when the runner failed after their callbacks, but
   // never present that run as an overall success.
@@ -224,8 +237,12 @@ export function publishRetainedInputs(
         : []),
     ],
     cases: rows.map(row => {
-      const hasEvidence = row.screenshots.length > 0 && Boolean(row.report);
-      const status = row.status === 'not-run' || row.status === 'skipped'
+      const hasEvidence =
+        (row.evidencePolicy === 'non-ui' || row.screenshots.length > 0)
+        && Boolean(row.report);
+      const status = row.evidencePolicy === 'source-skip'
+        ? 'skipped'
+        : row.status === 'not-run' || row.status === 'skipped'
         ? 'not-run'
         : row.status === 'passed' && hasEvidence
         ? row.outcome === 'expected'
@@ -235,6 +252,16 @@ export function publishRetainedInputs(
           : 'failed'
         : 'failed';
       const reasons = [
+        ...(row.evidencePolicy === 'source-skip'
+          ? [
+            'Original source/browser guard skipped this execution; no screenshot exists.',
+          ]
+          : []),
+        ...(row.evidencePolicy === 'non-ui'
+          ? [
+            'Original template consistency contract has no browser UI or screenshot.',
+          ]
+          : []),
         ...(status === 'success'
           ? []
           : [`Original Playwright result: ${row.status} (${row.outcome}).`]),
@@ -247,11 +274,15 @@ export function publishRetainedInputs(
         platform: row.browser,
         name: row.source,
         status,
+        evidencePolicy: row.evidencePolicy ?? 'ui',
         reason: reasons.join(' ') || null,
-        durationMs: row.durationMs,
-        previewPath: row.screenshots.length
-          ? `${sitePrefix}/${row.screenshots[0]}`
-          : null,
+        durationMs: row.evidencePolicy === 'source-skip'
+          ? null
+          : row.durationMs,
+        previewPath:
+          (row.evidencePolicy ?? 'ui') === 'ui' && row.screenshots.length
+            ? `${sitePrefix}/${row.screenshots[0]}`
+            : null,
         reportPath: row.report ? `${sitePrefix}/${row.report}` : null,
         artifact,
       };

@@ -65,9 +65,12 @@ export function writeRetainedInputEvidence(
   const complete = producerResult === 'success'
     && manifest.runnerErrorCount === 0
     && manifest.cases.every(row =>
-      row.status === 'passed'
-      && ['expected', 'flaky'].includes(row.outcome)
-      && row.screenshots.length > 0 && row.report
+      row.evidencePolicy === 'source-skip' && row.status === 'skipped'
+        && row.outcome === 'skipped'
+      || row.status === 'passed'
+        && ['expected', 'flaky'].includes(row.outcome)
+        && (row.evidencePolicy === 'non-ui' || row.screenshots.length > 0)
+        && row.report
     );
   manifest.producerResult = producerResult;
   manifest.evidenceComplete = complete;

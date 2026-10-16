@@ -3,7 +3,44 @@ import { mkdir, mkdtemp, writeFile, rm, rename } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { publicationArguments, selectReport } from './publish-report.mjs';
+import {
+  publicationArguments,
+  prepareRetainedPublication,
+  selectReport,
+} from './publish-report.mjs';
+
+test('retained publication never borrows missing or older attempt evidence', async t => {
+  const directory = await mkdtemp(join(tmpdir(), 'retained-selection-'));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const env = {
+    RUNNER_TEMP: directory,
+    GITHUB_RUN_ID: '123',
+    GITHUB_RUN_ATTEMPT: '2',
+    REPORT_LINKS_PUBLISHED: 'false',
+  };
+  for (const attempt of [1, 2, null]) {
+    const result = await prepareRetainedPublication({
+      path: directory,
+      attempt,
+    }, env);
+    assert.equal(result.hasAttention, true);
+    assert.equal(result.supplemental.sourceCount, 14);
+    assert.equal(result.supplemental.cases.length, 42);
+    assert.ok(
+      result.supplemental.cases.every(row =>
+        row.status === 'not-run' && !row.previewPath && !row.reportPath
+      ),
+    );
+    assert.equal(result.supplemental.errors.length, 1);
+  }
+  await assert.rejects(
+    prepareRetainedPublication({ path: directory, attempt: 2 }, {
+      ...env,
+      GITHUB_RUN_ID: '../123',
+    }),
+    /identity/,
+  );
+});
 
 test('unpublished fallback cannot emit Pages URLs or hide case rows', () => {
   const env = {
@@ -45,6 +82,14 @@ test('unpublished fallback cannot emit Pages URLs or hide case rows', () => {
   assert.equal(
     published[published.indexOf('--pages-url') + 1],
     'https://pages.example',
+  );
+  const withOriginals = publicationArguments(entries, {
+    ...env,
+    REPORT_LINKS_PUBLISHED: 'false',
+  }, '/tmp/report-test/retained.json');
+  assert.equal(
+    withOriginals[withOriginals.indexOf('--supplemental-evidence') + 1],
+    '/tmp/report-test/retained.json',
   );
 });
 

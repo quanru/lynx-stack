@@ -102,6 +102,31 @@ test('source/browser manifest retains flaky outcome and only final-attempt scree
   );
 });
 
+test('duration uses only a finite nonnegative final-attempt value, never an earlier retry', t => {
+  const { root, report, item } = fixture(t);
+  item.results[0].duration = 999;
+  for (
+    const duration of [0, 125.5, undefined, null, -1, Infinity, NaN, '123']
+  ) {
+    item.results[1].duration = duration;
+    const row = retainedInputEvidence(report, root).cases.find(row =>
+      row.retry === 1
+    );
+    assert.equal(
+      row.durationMs,
+      typeof duration === 'number' && Number.isFinite(duration) && duration >= 0
+        ? duration
+        : null,
+    );
+  }
+  item.results = [];
+  assert.ok(
+    retainedInputEvidence(report, root).cases.every(row =>
+      row.durationMs === null
+    ),
+  );
+});
+
 test('missing final screenshot never borrows previous evidence; absent HTML has no link', t => {
   const { root, report, item } = fixture(t);
   item.results[1].attachments[0].path = 'results/missing.png';

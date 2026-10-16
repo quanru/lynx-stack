@@ -268,18 +268,26 @@ test('retained browser variants bound workers without replacing original profile
       step.name?.startsWith('Validate original')
       && step.run?.includes('playwright test')
     );
-  assert.equal(runners.length, 13);
+  assert.equal(runners.length, 14);
   for (const step of runners) {
     assert.ok(
       step.run.includes('--workers=2'),
       'Never rely on machine-dependent default browser concurrency',
     );
     assert.ok(
-      !/--(?:retries|timeout|update-snapshots|config)(?:[=\s]|$)/.test(
+      !/--(?:retries|timeout|update-snapshots)(?:[=\s]|$)/.test(
         step.run,
       ),
       'Keep original retry, timing, snapshots and profiles',
     );
+    if (step.id === 'retained-inputs') {
+      assert.match(
+        step.run,
+        /--config playwright\.retained-inputs\.config\.ts(?:\s|$)/,
+      );
+    } else {
+      assert.doesNotMatch(step.run, /--config(?:[=\s]|$)/);
+    }
     const projects = [...step.run.matchAll(/--project (\w+)/g)].map(match =>
       match[1]
     );

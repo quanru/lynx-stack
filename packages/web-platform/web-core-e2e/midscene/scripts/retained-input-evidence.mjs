@@ -114,6 +114,10 @@ export function retainedInputEvidence(report, evidenceRoot) {
           status: final?.status ?? 'not-run',
           outcome: item.status,
           retry: final?.retry ?? null,
+          durationMs: typeof final?.duration === 'number'
+              && Number.isFinite(final.duration) && final.duration >= 0
+            ? final.duration
+            : null,
           screenshots,
           screenshotUnavailable: screenshots.length
             ? null
@@ -135,6 +139,7 @@ export function retainedInputEvidence(report, evidenceRoot) {
         status: 'not-run',
         outcome: 'missing',
         retry: null,
+        durationMs: null,
         screenshots: [],
         screenshotUnavailable: 'Source/browser result missing',
         report: html,

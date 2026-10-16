@@ -284,6 +284,27 @@ jobs:
         # No browser interaction exists in this source test; execute it once.
         run: pnpm exec playwright test tests/template.spec.ts --project chromium --workers=2 --output midscene-original-results/template --reporter line
 
+      - name: Validate retained input collection without launching browsers
+        run: node packages/web-platform/web-core-e2e/midscene/scripts/check-retained-input-collection.mjs
+
+      - name: Validate original keyboard and input contracts with evidence
+        id: retained-inputs
+        working-directory: packages/web-platform/web-elements
+        env:
+          PORT: "3081"
+        # Original callbacks, profiles and retry budgets are unchanged.
+        # Screenshots are collected after each original callback completes.
+        run: pnpm exec playwright test --config playwright.retained-inputs.config.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/retained-inputs/results
+
+      - name: Preserve retained input evidence before moving artifacts
+        if: always()
+        env:
+          RETAINED_RESULT: ${{ steps.retained-inputs.outcome == 'success' && 'success' || 'failure' }}
+        run: |
+          evidence=packages/web-platform/web-elements/midscene-original-results/retained-inputs
+          mkdir -p "$evidence"
+          node packages/web-platform/web-core-e2e/midscene/scripts/write-retained-input-evidence.mjs "$(realpath "$evidence")" "$RETAINED_RESULT"
+
       - name: Start web-core-e2e dev shell
         working-directory: packages/web-platform/web-core-e2e
         run: |
@@ -361,6 +382,10 @@ jobs:
           report=packages/web-platform/web-core-e2e/midscene/midscene_run
           if [ -d "$report" ]; then
             cp -R "$report"/. "$target"/
+          fi
+          retained=packages/web-platform/web-elements/midscene-original-results/retained-inputs
+          if [ -d "$retained" ]; then
+            cp -R "$retained" "$target/retained-inputs"
           fi
           node -e 'require("fs").writeFileSync(process.argv[1], JSON.stringify({sha: process.env.GITHUB_SHA, attempt: Number(process.env.GITHUB_RUN_ATTEMPT), result: process.env.PRODUCER_RESULT}))' "$target/result.json"
 
@@ -480,16 +505,23 @@ jobs:
           node --test .github/scripts/vision-preflight.test.mjs
 
       - name: Build native Midscene report and linked screenshot summary
+        id: build-report
+        continue-on-error: true
         if: steps.pages.outcome == 'success'
         env:
           PAGES_URL: ${{ steps.pages.outputs.base_url }}/midscene
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           PRODUCER_RESULT: ${{ needs.web-shell-ai-e2e.result }}
         run: |
-          node packages/web-platform/web-core-e2e/midscene/scripts/publish-report.mjs
+          status=0
+          node packages/web-platform/web-core-e2e/midscene/scripts/publish-report.mjs || status=$?
+          if [ -f "$RUNNER_TEMP/midscene-publication/rendered.json" ]; then
+            echo 'rendered=true' >> "$GITHUB_OUTPUT"
+          fi
+          exit "$status"
 
       - name: Add complete case evidence table to Summary
-        if: steps.pages.outcome == 'success'
+        if: always() && !cancelled() && steps.build-report.outputs.rendered == 'true'
         run: |
           echo 'Report links below become available after the Pages deployment job succeeds.' >> "$GITHUB_STEP_SUMMARY"
           echo '' >> "$GITHUB_STEP_SUMMARY"
@@ -497,12 +529,16 @@ jobs:
 
       - name: Upload report publication bundle
         id: upload-publication
-        if: steps.pages.outcome == 'success'
+        if: always() && !cancelled() && steps.build-report.outputs.rendered == 'true'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: midscene-publication-${{ github.run_attempt }}
           path: ${{ runner.temp }}/midscene-publication
           if-no-files-found: error
+
+      - name: Preserve evidence validation failure after retaining its report
+        if: always() && !cancelled() && steps.build-report.outcome == 'failure'
+        run: exit 1
 
       - name: Explain report publication failure
         if: failure()

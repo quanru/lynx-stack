@@ -1,9 +1,14 @@
-import { readdir, readFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { testRunDump } from './render-ci-summary.mjs';
 import { caseNames } from './case-inventory.mjs';
+import { publishRetainedInputs } from './publish-retained-inputs.mjs';
+import {
+  retainedInputBrowsers,
+  retainedInputKeys,
+} from './retained-input-selection.mjs';
 
 async function reportedCases(directory) {
   const runs = [];
@@ -85,6 +90,7 @@ export async function selectReport(
       path: resolve(directory, 'missing'),
       result: 'failure',
       artifact: prefix + 'missing',
+      attempt: null,
     };
   }
   const { attempt, artifact, path } = selected;
@@ -116,10 +122,11 @@ export async function selectReport(
     path,
     result: producerResult === 'success' ? result.result : 'failure',
     artifact,
+    attempt,
   };
 }
 
-export function publicationArguments(entries, env) {
+export function publicationArguments(entries, env, supplementalFile) {
   if (
     env.REPORT_LINKS_PUBLISHED !== undefined
     && !['true', 'false'].includes(env.REPORT_LINKS_PUBLISHED)
@@ -156,7 +163,64 @@ export function publicationArguments(entries, env) {
       `${entry.label}=${entry.artifact}`,
     );
   }
+  if (supplementalFile) args.push('--supplemental-evidence', supplementalFile);
   return args;
+}
+
+export async function prepareRetainedPublication(entry, env) {
+  const currentAttempt = Number(env.GITHUB_RUN_ATTEMPT);
+  if (
+    !/^[1-9][0-9]*$/.test(env.GITHUB_RUN_ID ?? '')
+    || !Number.isSafeInteger(currentAttempt) || currentAttempt < 1
+  ) {
+    throw new Error('Invalid retained publication identity');
+  }
+  const sitePrefix =
+    `runs/${env.GITHUB_RUN_ID}-${currentAttempt}/retained-inputs`;
+  const evidenceRoot = resolve(entry.path, 'retained-inputs');
+  let missing = entry.attempt !== currentAttempt;
+  if (!missing) {
+    try {
+      await stat(resolve(evidenceRoot, 'evidence.json'));
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error;
+      missing = true;
+    }
+  }
+  if (missing) {
+    return {
+      hasAttention: true,
+      supplemental: {
+        label: 'Original input contracts',
+        sourceCount: retainedInputKeys.length,
+        expectedCount: retainedInputKeys.length * retainedInputBrowsers.length,
+        errors: [
+          'No retained input evidence from the current workflow attempt.',
+        ],
+        cases: retainedInputKeys.flatMap(name =>
+          retainedInputBrowsers.map(browser => ({
+            platform: `Original · ${browser}`,
+            name,
+            status: 'not-run',
+            reason: 'Current-attempt source/browser evidence is unavailable.',
+          }))
+        ),
+      },
+    };
+  }
+  return publishRetainedInputs({
+    evidenceRoot,
+    destination: resolve(
+      env.RUNNER_TEMP,
+      'midscene-publication/site',
+      sitePrefix,
+    ),
+    sitePrefix,
+    artifact: entry.artifact,
+    publicBaseUrl: env.REPORT_LINKS_PUBLISHED === 'false'
+      ? undefined
+      : env.PAGES_URL,
+  });
 }
 
 async function main() {
@@ -169,10 +233,37 @@ async function main() {
       process.env.PRODUCER_RESULT,
     ),
   ];
-  const args = publicationArguments(entries, process.env);
+  const retained = await prepareRetainedPublication(entries[0], process.env);
+  const supplementalFile = resolve(
+    process.env.RUNNER_TEMP,
+    'midscene-publication/retained-evidence.json',
+  );
+  await mkdir(resolve(process.env.RUNNER_TEMP, 'midscene-publication'), {
+    recursive: true,
+  });
+  await writeFile(supplementalFile, JSON.stringify(retained.supplemental));
+  const args = publicationArguments(entries, process.env, supplementalFile);
   const child = spawnSync(process.execPath, args, { stdio: 'inherit' });
   if (child.error) throw child.error;
   process.exitCode = child.status ?? 1;
+  if (process.exitCode === 0) {
+    // A failed test/evidence disposition can still have a valid failure report.
+    // Only this marker allows publishing the rendered site after a nonzero exit.
+    await writeFile(
+      resolve(process.env.RUNNER_TEMP, 'midscene-publication/rendered.json'),
+      JSON.stringify({ schemaVersion: 1 }),
+    );
+  }
+  // Preserve the original retry policy: a fully evidenced flaky pass is a
+  // Summary warning, not a new CI failure policy. Missing evidence still fails.
+  if (
+    process.exitCode === 0 && (
+      retained.supplemental.errors.length
+      || retained.supplemental.cases.some(row =>
+        !['success', 'flaky'].includes(row.status)
+      )
+    )
+  ) process.exitCode = 1;
 }
 
 if (

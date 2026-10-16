@@ -1,6 +1,6 @@
 # Midscene E2E for web-core and web-elements
 
-## Retained input evidence preparation (not yet enabled in CI)
+## Retained input evidence integration (hosted acceptance pending)
 
 `web-elements/playwright.retained-inputs.config.ts` selects 14 original keyboard
 and input declarations across the three unchanged browser profiles (42 execution
@@ -11,9 +11,18 @@ Playwright collection after the root build without launching browsers.
 The producer-side evidence writer converts absolute attachment paths into a
 portable relative manifest before upload. The independent publisher preserves
 final-attempt screenshots and distinguishes case failures from infrastructure
-or missing-evidence failures. These helpers are preparation only: workflow and
-unified Summary integration are still pending. They do not add 42 AI/YAML cases
-or establish browser execution acceptance.
+or missing-evidence failures. The workflow now executes this collection before
+starting the persistent Midscene fixture servers and stages the portable
+evidence with the current attempt. Publication uses the same two Summary
+sections, with separate YAML and source/browser counts. The 42 browser items
+are not additional AI/YAML cases. Hosted browser and report acceptance remains
+pending; model-free checks and collection alone do not prove it.
+
+A fully evidenced flaky pass keeps the original runner's successful exit policy
+but remains visible as a Summary warning. Missing evidence or producer failures
+cannot be hidden by passed assertions. A validated failure report may still be
+published while its preparation check remains failed; this retains diagnostic
+screenshots without turning a failed run green.
 
 ## Foldview follow-up (hosted validation pending)
 

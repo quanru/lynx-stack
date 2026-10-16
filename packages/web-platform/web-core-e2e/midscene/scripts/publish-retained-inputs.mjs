@@ -85,17 +85,26 @@ const escapeHTML = value =>
 // The caller must supply the selected CURRENT attempt's retained-inputs directory.
 // No artifact search, attempt fallback or producer absolute path interpretation.
 export function publishRetainedInputs(
-  { evidenceRoot, destination, sitePrefix, publicBaseUrl },
+  { evidenceRoot, destination, sitePrefix, publicBaseUrl, artifact = null },
 ) {
   relativePath(sitePrefix);
-  const base = new URL(publicBaseUrl);
   if (
-    base.protocol !== 'https:' || base.username || base.password || base.search
-    || base.hash
+    artifact !== null
+    && (typeof artifact !== 'string' || !artifact.trim()
+      || /[\x00-\x1f\x7f]/.test(artifact))
+  ) {
+    throw new Error('Invalid artifact name');
+  }
+  const base = publicBaseUrl ? new URL(publicBaseUrl) : null;
+  if (
+    base
+    && (base.protocol !== 'https:' || base.username || base.password
+      || base.search
+      || base.hash)
   ) {
     throw new Error('Expected a clean HTTPS publication base URL');
   }
-  if (!base.pathname.endsWith('/')) base.pathname += '/';
+  if (base && !base.pathname.endsWith('/')) base.pathname += '/';
   rejectSymlinkAncestors(evidenceRoot);
   inspectTree(evidenceRoot);
   const manifestFile = path.join(evidenceRoot, 'evidence.json');
@@ -132,6 +141,10 @@ export function publishRetainedInputs(
     seen.add(key);
     return {
       ...row,
+      durationMs: typeof row.durationMs === 'number'
+          && Number.isFinite(row.durationMs) && row.durationMs >= 0
+        ? row.durationMs
+        : null,
       screenshots: row.screenshots.map(file =>
         fileOrNull(evidenceRoot, file, 'image')
       ).filter(Boolean),
@@ -177,15 +190,61 @@ export function publishRetainedInputs(
     attention.length || manifest.runnerErrorCount
       || infrastructureErrors.length,
   );
+  const supplemental = {
+    label: 'Original input contracts',
+    sourceCount: 14,
+    expectedCount: 42,
+    errors: [
+      ...infrastructureErrors,
+      ...(manifest.runnerErrorCount
+        ? [
+          `Original runner reported ${manifest.runnerErrorCount} infrastructure errors.`,
+        ]
+        : []),
+    ],
+    cases: rows.map(row => {
+      const hasEvidence = row.screenshots.length > 0 && Boolean(row.report);
+      const status = row.status === 'not-run' || row.status === 'skipped'
+        ? 'not-run'
+        : row.status === 'passed' && hasEvidence
+        ? row.outcome === 'expected'
+          ? 'success'
+          : row.outcome === 'flaky'
+          ? 'flaky'
+          : 'failed'
+        : 'failed';
+      const reasons = [
+        ...(status === 'success'
+          ? []
+          : [`Original Playwright result: ${row.status} (${row.outcome}).`]),
+        ...(!row.screenshots.length
+          ? ['Final-attempt screenshot unavailable.']
+          : []),
+        ...(!row.report ? ['HTML report unavailable.'] : []),
+      ];
+      return {
+        platform: row.browser,
+        name: row.source,
+        status,
+        reason: reasons.join(' ') || null,
+        durationMs: row.durationMs,
+        previewPath: row.screenshots.length
+          ? `${sitePrefix}/${row.screenshots[0]}`
+          : null,
+        reportPath: row.report ? `${sitePrefix}/${row.report}` : null,
+        artifact,
+      };
+    }),
+  };
   const table = items =>
     [
       '| Case | Browser | Result | Screenshot | Report |',
       '| --- | --- | --- | --- | --- |',
       ...items.map(row => {
-        const report = row.report
+        const report = !base ? 'Not published' : row.report
           ? `[Open report](${url(row.report)})`
           : 'Unavailable';
-        const images = row.screenshots.length
+        const images = !base ? 'Not published' : row.screenshots.length
           ? row.screenshots.map(file => {
             const image = `<img src="${
               escapeHTML(url(file))
@@ -227,6 +286,7 @@ export function publishRetainedInputs(
   ].join('\n');
   return {
     summary,
+    supplemental,
     cases: rows,
     sourceDeclarations: 14,
     expectedExecutions: 42,

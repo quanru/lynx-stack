@@ -18,6 +18,35 @@ import {
 } from './retained-input-selection.mjs';
 import { writeRetainedInputEvidence } from './write-retained-input-evidence.mjs';
 import { publishRetainedInputs } from './publish-retained-inputs.mjs';
+import {
+  renderSummary,
+  validateSupplementalEvidence,
+} from './render-ci-summary.mjs';
+
+test('producer and publisher output is accepted by the shared two-section renderer', t => {
+  const { root, options } = fixture(t);
+  assert.equal(writeRetainedInputEvidence(root, 'success').exitCode, 0);
+  const published = publishRetainedInputs({
+    ...options,
+    artifact: 'midscene-ai-e2e-web-1',
+  });
+  assert.doesNotThrow(() =>
+    validateSupplementalEvidence(published.supplemental)
+  );
+  const summary = renderSummary({
+    title: 'Combined evidence',
+    runUrl: 'https://github.com/example/project/actions/runs/123',
+    pagesUrl: options.publicBaseUrl,
+    entries: [],
+    supplementalEvidence: published.supplemental,
+  });
+  assert.match(summary, /0 need attention · 42 passed/);
+  assert.match(summary, /14 source cases \/ 42 browser cases/);
+  assert.equal((summary.match(/<details>/g) ?? []).length, 1);
+  assert.equal((summary.match(/<img /g) ?? []).length, 42);
+  assert.equal((summary.match(/\[Open report\]/g) ?? []).length, 42);
+  assert.doesNotMatch(summary, /runner-step=/);
+});
 
 function fixture(t) {
   const sandbox = realpathSync(
@@ -266,4 +295,84 @@ test('producer rejects symlink ancestors and accepts an explicitly canonicalized
   assert.equal(result.exitCode, 1);
   assert.equal(result.manifest.cases.length, 42);
   assert.ok(existsSync(path.join(nested, 'evidence.json')));
+});
+
+test('supplemental evidence uses verified site-relative paths, one preview and final duration', t => {
+  const { root, options, report, writeReport } = fixture(t);
+  const first = report.suites[0].suites[0].suites[0].specs[0].tests[0];
+  const original = first.results[0];
+  original.duration = 999;
+  first.status = 'flaky';
+  original.status = 'failed';
+  first.results.push({
+    ...original,
+    retry: 1,
+    status: 'passed',
+    duration: 123.5,
+    attachments: [
+      original.attachments[0],
+      report.suites[0].suites[0].suites[0].specs[0].tests[1].results[0]
+        .attachments[0],
+    ],
+  });
+  writeReport();
+  writeRetainedInputEvidence(root, 'success');
+  const { supplemental } = publishRetainedInputs({
+    ...options,
+    artifact: 'midscene-ai-e2e-web-1',
+  });
+  assert.equal(supplemental.label, 'Original input contracts');
+  assert.equal(supplemental.sourceCount, 14);
+  assert.equal(supplemental.expectedCount, 42);
+  assert.deepEqual(supplemental.errors, []);
+  const row = supplemental.cases[0];
+  assert.equal(row.platform, 'chromium');
+  assert.equal(row.name, 'x-input/type-value-do-not-show-input');
+  assert.equal(row.status, 'flaky');
+  assert.equal(row.durationMs, 123.5);
+  assert.equal(row.previewPath, `${options.sitePrefix}/results/1-chromium.png`);
+  assert.equal(row.reportPath, `${options.sitePrefix}/html/index.html`);
+  assert.equal(row.artifact, 'midscene-ai-e2e-web-1');
+  assert.equal(supplemental.cases[1].status, 'success');
+  assert.equal(supplemental.cases[1].durationMs, null);
+  for (const item of supplemental.cases) {
+    for (const value of [item.previewPath, item.reportPath].filter(Boolean)) {
+      assert.equal(path.isAbsolute(value), false);
+      assert.doesNotMatch(value, /^https?:/);
+    }
+  }
+});
+
+test('without Pages supplemental paths remain local and candidate summary has no invented URLs', t => {
+  const { root, options } = fixture(t);
+  writeRetainedInputEvidence(root, 'success');
+  const result = publishRetainedInputs({
+    ...options,
+    publicBaseUrl: undefined,
+    artifact: 'original-results-1',
+  });
+  assert.match(result.summary, /Not published/);
+  assert.doesNotMatch(result.summary, /https?:|href=|src=/);
+  assert.ok(
+    result.supplemental.cases.every(row =>
+      row.artifact === 'original-results-1' && row.previewPath && row.reportPath
+    ),
+  );
+});
+
+test('supplemental errors preserve producer failure and missing evidence prevents success', t => {
+  const { root, options } = fixture(t);
+  const { manifest } = writeRetainedInputEvidence(root, 'failure');
+  rmSync(path.join(root, manifest.cases[0].screenshots[0]));
+  rmSync(path.join(root, 'html/index.html'));
+  const { supplemental } = publishRetainedInputs(options);
+  assert.match(supplemental.errors.join(' '), /producer failed/);
+  assert.match(supplemental.errors.join(' '), /incomplete/);
+  assert.ok(supplemental.cases.every(row => row.status === 'failed'));
+  assert.equal(supplemental.cases[0].previewPath, null);
+  assert.equal(supplemental.cases[0].reportPath, null);
+  assert.match(
+    supplemental.cases[0].reason,
+    /screenshot unavailable.*HTML report unavailable/,
+  );
 });

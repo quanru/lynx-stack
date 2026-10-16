@@ -474,6 +474,13 @@ jobs:
         run: |
           node packages/web-platform/web-core-e2e/midscene/scripts/publish-report.mjs
 
+      - name: Add complete case evidence table to Summary
+        if: steps.pages.outcome == 'success'
+        run: |
+          echo 'Report links below become available after the Pages deployment job succeeds.' >> "$GITHUB_STEP_SUMMARY"
+          echo '' >> "$GITHUB_STEP_SUMMARY"
+          cat "$RUNNER_TEMP/midscene-publication/summary.md" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Upload report publication bundle
         id: upload-publication
         if: steps.pages.outcome == 'success'

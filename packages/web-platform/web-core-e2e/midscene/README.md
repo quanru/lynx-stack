@@ -1,5 +1,30 @@
 # Midscene E2E for web-core and web-elements
 
+## Required-matrix regression and corrected YAML profiles
+
+Run `node scripts/check-required-browser-coverage.mjs` from this directory
+(or `node --test scripts/required-browser-coverage.test.mjs`). The check collects
+original suites with Playwright `--list`, joins exact file/title/group/browser/mode
+identities against the retained catalogs and Chromium-only YAML mappings, and
+fails for any uncovered required eligible variant or unknown source guard.
+Current collection has **zero required CSR/component browser gaps**; **729
+optional hydrated-SSR variants** remain separately identified. Explicit empty
+callbacks and repeated non-UI template allocations are not counted as passes.
+This is a selection regression, not runtime acceptance or an assertion-equivalence
+proof; source-specific differential contracts remain necessary.
+
+Commit `5f7437d` corrects **217 ordinary YAML contexts** (178 web-shell and 39
+web-elements) to inherit the original Chromium Pixel 5 profile: viewport
+393 × 727, screen 393 × 851, DPR 2.75, mobile/touch settings, user agent and all
+13 launch flags. The prior ordinary viewport was 393 × 851. Assertions,
+timeouts, fixtures and source callbacks are unchanged. The earlier hosted
+471-case green result used the previous profile and **does not accept this
+corrected profile**; a fresh hosted run is required.
+
+The root Turbo build passed 74/74 before this documentation freeze. Final
+combined model-free tests/typecheck and fresh hosted execution are separate
+gates; collection alone cannot establish that all 2424 evidence rows pass.
+
 ## Required Firefox/WebKit extension (collection verified; hosted acceptance pending)
 
 The required browser-variant extension adds 461 unchanged source declarations /

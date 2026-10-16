@@ -1,5 +1,25 @@
 # Midscene E2E for web-core and web-elements
 
+## Host observation and SVG evidence follow-up (hosted acceptance pending)
+
+The retained collection now selects 32 unchanged source callbacks across three
+original profiles (96 execution items). Four additions retain the original
+list scroll and visible-item events, text page/console-error observation, and
+audio request-header interception. Listener and route registration order,
+1000/500 ms waits, empty-array acceptance, and every assertion remain unchanged.
+The audio header callback deliberately retains its original limitation: without
+an intercepted request it can pass without checking a header. No request-count
+oracle was added, and route.continue remains unawaited.
+
+The existing SVG/selection/webview invocation now also produces unified evidence:
+12 source declarations expand to 15 titles / 45 browser items because one SVG
+declaration generates four titles. Existing-runner evidence totals 26 sources /
+105 items; combined with the retained collection this is 58 unique sources /
+201 execution items, separate from 487 YAML cases. The remaining existing-runner
+report gap is 275 collected items: 220 eligible UI items, 54 original skips and
+one non-UI contract. This is evidence integration, not AI migration or hosted
+acceptance. Source callbacks, fixtures and original runner behavior are unchanged.
+
 ## Stable visible actions (hosted validation pending)
 
 Collection is now 487 YAML cases. Three additions use aiAct only for the

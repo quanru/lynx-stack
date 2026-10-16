@@ -40,13 +40,13 @@ const report = JSON.parse(execFileSync(process.execPath, [
 const root = mkdtempSync(path.join(os.tmpdir(), 'retained-collection-'));
 try {
   const manifest = retainedInputEvidence(report, root);
-  assert.equal(manifest.cases.length, 84);
+  assert.equal(manifest.cases.length, 96);
   assert.ok(
     manifest.cases.every(row => row.line !== null && row.status === 'not-run'),
   );
   assert.equal(manifest.runnerErrorCount, 0);
   console.log(
-    'Collected 28 retained source declarations across 3 original profiles (84 executions); no browsers launched.',
+    'Collected 32 retained source declarations across 3 original profiles (96 executions); no browsers launched.',
   );
 } finally {
   rmSync(root, { recursive: true, force: true });

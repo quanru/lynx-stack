@@ -54,8 +54,8 @@ function visit(node, groups = []) {
 }
 visit(source);
 
-test('retained selection matches exactly twenty-eight component-scoped original callbacks', () => {
-  assert.equal(retainedInputKeys.length, 28);
+test('retained selection matches exactly thirty-two component-scoped original callbacks', () => {
+  assert.equal(retainedInputKeys.length, 32);
   assert.deepEqual(
     [...declarations.keys()].sort(),
     [...retainedInputKeys].sort(),
@@ -81,7 +81,7 @@ test('new retained contracts preserve the full swiper title and exact audio/list
   ));
   assert.equal(
     retainedInputKeys.filter(key => key.startsWith('x-audio-tt/')).length,
-    12,
+    13,
   );
   assert.ok(retainedInputKeys.includes('x-list/auto-scroll'));
   assert.equal(
@@ -108,6 +108,14 @@ test('new retained contracts preserve the full swiper title and exact audio/list
 
 // Review a source change explicitly; never silently weaken its input or oracle.
 const callbackDigests = {
+  'x-list/event-scroll':
+    'a5ddb50aeae14ae2744226dafb279d4c29b4bc2e68249bcc88f6ea98fb653c01',
+  'x-list/need-visible-item-info':
+    '74fbd90ad4893c9290a6b119010e93767a3aae3f5833cc1b77f25575ce7b13cb',
+  'x-text/x-text/text-maxline-with-inline-view-and-custom-truncation':
+    '6bffe4ffc91e3370e8512340399300db309ae04300b4f1623ac05fedf314b8a7',
+  'x-audio-tt/attribute-headers':
+    'd21b8bd74582a515421cf16b76453dafccd897d67d4b1982551fb76708f7d8e8',
   'x-list/auto-scroll':
     'ceec57cd05acaed47fc8f1c5a6c80121cdfb18e4a6e4bcd8e744f682fce5102f',
   'x-swiper/x-swiper/x-swiper-circular-click':
@@ -173,7 +181,16 @@ test('raw input, complete assertion tails and timing stay byte-for-byte unchange
       callbackDigests[key],
       key,
     );
-    assert.doesNotMatch(callback, /test\.(skip|fixme)|browserName|ENABLE_SSR/);
+    assert.doesNotMatch(callback, /test\.(skip|fixme)|ENABLE_SSR/);
+    // These two callbacks destructure browserName but never read or guard it.
+    const unusedBrowserArgument = [
+      'x-list/event-scroll',
+      'x-list/need-visible-item-info',
+    ].includes(key);
+    assert.equal(
+      (callback.match(/\bbrowserName\b/g) ?? []).length,
+      unusedBrowserArgument ? 1 : 0,
+    );
   }
 });
 
@@ -195,6 +212,139 @@ test('original navigation, pixel options, title mapping and waits are unchanged'
       name,
     );
   }
+});
+
+test('new host-observation callbacks preserve listener boundaries, weak array checks and route semantics', async () => {
+  async function replay(key, options = {}) {
+    const trace = [];
+    const listeners = new Map();
+    let routeHandler;
+    const pending = [];
+    const emit = event => {
+      const handler = listeners.get('console');
+      if (handler) {
+        pending.push(
+          handler({ args: () => [{ evaluate: async fn => fn(event) }] }),
+        );
+      }
+    };
+    const context = {
+      getTitle: () => key,
+      expect: actual => ({
+        toBe: expected => assert.equal(actual, expected),
+        toBeTruthy: () => assert.ok(actual),
+        toEqual: expected =>
+          assert.equal(JSON.stringify(actual), JSON.stringify(expected)),
+      }),
+      wait: async ms => {
+        trace.push(['wait', ms]);
+        await Promise.all(pending);
+      },
+      gotoWebComponentPage: async () => {
+        trace.push(['goto']);
+        if (key.startsWith('x-text/') && options.error) {
+          if (options.error === 'pageerror') {
+            listeners.get('pageerror')({ message: 'failure' });
+          } else {listeners.get('console')({
+              type: () => options.error,
+              text: () => 'failure',
+            });}
+        }
+        if (routeHandler && options.request) {
+          routeHandler({
+            request: () => ({
+              headers: () => ({ 'custom-header': options.header }),
+            }),
+            continue: () => {
+              trace.push(['continue']);
+              return {
+                then() {
+                  assert.fail('Original route.continue must remain unawaited');
+                },
+              };
+            },
+          });
+        }
+      },
+      document: {
+        querySelector: () => ({
+          shadowRoot: {
+            querySelector: () => ({
+              scrollTo(x, y) {
+                trace.push(['scrollTo', x, y]);
+                if (options.noEvents) return;
+                const types = key.endsWith('event-scroll')
+                  ? ['lynxscroll', 'lynxscrollend']
+                  : ['lynxscroll', 'scrolltoupper', 'scrolltolower'];
+                for (const type of types) {
+                  emit({
+                    type,
+                    detail: { attachedCells: options.cells ?? [] },
+                  });
+                }
+              },
+            }),
+          },
+        }),
+      },
+    };
+    const page = {
+      on(type, callback) {
+        trace.push(['listen', type]);
+        listeners.set(type, callback);
+      },
+      route: async (pattern, callback) => {
+        trace.push(['route', pattern]);
+        routeHandler = callback;
+      },
+      evaluate: fn => fn(),
+    };
+    const code = ts.transpile('(' + declarations.get(key) + ')', {
+      target: ts.ScriptTarget.ES2022,
+    });
+    await runInNewContext(code, context)({ page, browserName: 'webkit' }, {
+      title: key,
+      titlePath: [],
+    });
+    return trace;
+  }
+  for (
+    const [key, offset] of [['x-list/event-scroll', 500], [
+      'x-list/need-visible-item-info',
+      5000,
+    ]]
+  ) {
+    assert.deepEqual(await replay(key), [['listen', 'console'], ['goto'], [
+      'scrollTo',
+      0,
+      offset,
+    ], ['wait', 1000]]);
+    await assert.rejects(replay(key, { noEvents: true }));
+  }
+  await assert.rejects(replay('x-list/need-visible-item-info', { cells: {} }));
+  // Empty arrays remain valid: no nonempty or item-field assertion is invented.
+  await replay('x-list/need-visible-item-info', { cells: [] });
+  const textKey =
+    'x-text/x-text/text-maxline-with-inline-view-and-custom-truncation';
+  assert.ok(retainedInputKeys.includes(textKey));
+  assert.deepEqual(await replay(textKey), [
+    ['listen', 'pageerror'],
+    ['listen', 'console'],
+    ['goto'],
+    ['wait', 500],
+  ]);
+  for (const error of ['pageerror', 'error']) {
+    await assert.rejects(replay(textKey, { error }));
+  }
+  await replay(textKey, { error: 'warning' });
+  const headersKey = 'x-audio-tt/attribute-headers';
+  // The source has no request-occurrence assertion and can pass without a request.
+  assert.deepEqual(await replay(headersKey), [['route', '**/*.mp3'], ['goto']]);
+  assert.deepEqual(
+    await replay(headersKey, { request: true, header: 'test' }),
+    [['route', '**/*.mp3'], ['goto'], ['continue']],
+  );
+  await assert.rejects(replay(headersKey, { request: true, header: 'wrong' }));
 });
 
 test('evidence configuration changes only selection, outputs and post-callback screenshots', () => {

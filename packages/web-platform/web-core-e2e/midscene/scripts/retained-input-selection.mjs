@@ -18,7 +18,8 @@ export const retainedInputSelections = {
     'event-confirm',
     'event-focus-blur',
   ],
-  'x-list': ['auto-scroll'],
+  'x-list': ['auto-scroll', 'event-scroll', 'need-visible-item-info'],
+  'x-text': ['x-text/text-maxline-with-inline-view-and-custom-truncation'],
   'x-swiper': ['x-swiper/x-swiper-circular-click'],
   'x-audio-tt': [
     'attribute-src-change',
@@ -33,6 +34,7 @@ export const retainedInputSelections = {
     'event-error-src-json',
     'event-error-playback',
     'method-play',
+    'attribute-headers',
   ],
 };
 export const retainedInputBrowsers = ['chromium', 'firefox', 'webkit'];

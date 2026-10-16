@@ -1,5 +1,23 @@
 # Full E2E migration scope
 
+## Host observation retained follow-up (hosted validation pending)
+
+Four original callbacks increase the separate retained collection from 28 to
+32 sources / 96 browser items: x-list/event-scroll,
+x-list/need-visible-item-info,
+x-text/x-text/text-maxline-with-inline-view-and-custom-truncation and
+x-audio-tt/attribute-headers. The repeated x-text prefix is the exact component
+plus original title, not a duplicate source. The two list callbacks destructure
+browserName without using a browser guard; all three original profiles remain.
+
+Callback hashes and replay preserve pre-navigation host listeners, route
+registration, all waits, weak attachedCells Array checks, and text error
+collection. Header validation retains custom-header=test and the original
+unawaited route.continue. It can pass without any matching request; this known
+source limitation is preserved and not counted as proof a request occurred.
+The YAML count remains 487. No source callback, fixture or product changes are
+part of this retained integration.
+
 ## Stable visible action follow-up (hosted validation pending)
 
 The YAML collection increases from 484 to 487 with
@@ -36,26 +54,27 @@ as a repository-wide unique-source count.
 | Animation CSR         |                   1 |               1 |               3 |                   3 | Wired; hosted validation pending  |
 | Lazy/reload CSR       |                   3 |               3 |               9 |                   9 | Wired; hosted validation pending  |
 | Performance           |                   7 |               7 |               7 |                   7 | Pending                           |
-| SVG/selection/webview |                  12 |              15 |              45 |                  45 | Pending                           |
+| SVG/selection/webview |                  12 |              15 |              45 |                  45 | Wired; hosted validation pending  |
 | Markdown              |                  33 |              33 |              99 |                  90 | Pending                           |
 | Drag/wheel            |                  15 |              15 |              45 |                  42 | Pending                           |
 | List API              |                   4 |               4 |              12 |                  12 | Wired; hosted validation pending  |
 | Template consistency  |                   1 |               1 |               1 |          1 (non-UI) | Pending; no screenshot applicable |
 
-The first evidence follow-up wires 14 unique declarations / 60 existing
+The two evidence follow-ups wire 26 unique declarations / 105 existing
 executions without adding or duplicating test invocations. The remaining gap is
-320 collected items: 265 eligible UI executions, 54 source-declared skips and one
+275 collected items: 220 eligible UI executions, 54 source-declared skips and one
 non-UI contract. Source skips must remain explicit, not counted as passed or
 silently enabled. Future integration must model skipped/non-UI evidence policies;
-the current five-runner batch contains neither exception.
+the current wired batches contain neither exception. The SVG/selection/webview
+batch adds 12 source declarations / 45 execution items.
 
 Runner identity includes its package, source file, source key, browser and render
 mode. Separate CSR/SSR rows share a source declaration but not an execution ID.
 Each runner owns HTML/JSON and final-attempt screenshot paths; producer outcomes
 are preserved independently and no previous-attempt evidence is borrowed.
-The original 28-source/84-item retained collection remains disjoint, giving
-42 original sources / 144 evidence-enabled execution items in total, alongside
-484 YAML cases. These are wiring/collection counts, not hosted acceptance.
+The separate 32-source/96-item retained collection remains disjoint, giving
+58 original sources / 201 evidence-enabled execution items in total, alongside
+487 YAML cases. These are wiring/collection counts, not hosted acceptance.
 
 ## Scrollend payload follow-up
 

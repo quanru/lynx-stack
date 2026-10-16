@@ -40,11 +40,11 @@ test('producer and publisher output is accepted by the shared two-section render
     entries: [],
     supplementalEvidence: published.supplemental,
   });
-  assert.match(summary, /0 need attention · 84 passed/);
-  assert.match(summary, /28 source cases \/ 84 browser cases/);
+  assert.match(summary, /0 need attention · 96 passed/);
+  assert.match(summary, /32 source cases \/ 96 browser cases/);
   assert.equal((summary.match(/<details>/g) ?? []).length, 1);
-  assert.equal((summary.match(/<img /g) ?? []).length, 84);
-  assert.equal((summary.match(/\[Open report\]/g) ?? []).length, 84);
+  assert.equal((summary.match(/<img /g) ?? []).length, 96);
+  assert.equal((summary.match(/\[Open report\]/g) ?? []).length, 96);
   assert.doesNotMatch(summary, /runner-step=/);
 });
 
@@ -114,16 +114,16 @@ function fixture(t) {
   return { root, sandbox, report, writeReport, options };
 }
 
-test('producer success requires all 84 final screenshots and HTML, publishing real copied links', t => {
+test('producer success requires all 96 final screenshots and HTML, publishing real copied links', t => {
   const { root, options } = fixture(t);
   const result = writeRetainedInputEvidence(root, 'success');
   assert.equal(result.exitCode, 0);
   assert.equal(result.manifest.evidenceComplete, true);
   const published = publishRetainedInputs(options);
-  assert.equal(published.passed, 84);
+  assert.equal(published.passed, 96);
   assert.equal(published.needsAttention, 0);
-  assert.equal(published.cases.length, 84);
-  assert.equal((published.summary.match(/<img /g) ?? []).length, 84);
+  assert.equal(published.cases.length, 96);
+  assert.equal((published.summary.match(/<img /g) ?? []).length, 96);
   assert.match(published.summary, /<details>/);
   assert.match(
     published.summary,
@@ -142,7 +142,7 @@ test('producer success requires all 84 final screenshots and HTML, publishing re
   assert.throws(() => publishRetainedInputs(options), /already exists/);
 });
 
-test('missing producer report writes 84 not-run rows and exits nonzero without invented passes', t => {
+test('missing producer report writes 96 not-run rows and exits nonzero without invented passes', t => {
   const { root } = fixture(t);
   rmSync(path.join(root, 'report.json'));
   const result = writeRetainedInputEvidence(root, 'success');
@@ -156,7 +156,7 @@ test('missing producer report writes 84 not-run rows and exits nonzero without i
       row.status === 'not-run' && row.screenshots.length === 0
     ),
   );
-  assert.equal(saved.cases.length, 84);
+  assert.equal(saved.cases.length, 96);
 });
 
 test('producer failure, missing screenshot, missing HTML and failed final attempts cannot green', t => {
@@ -186,7 +186,7 @@ test('publication does not manufacture missing links or borrow a previous attemp
   assert.deepEqual(published.cases[0].screenshots, []);
   assert.equal(published.cases[0].report, null);
   assert.equal(published.passed, 0);
-  assert.equal(published.needsAttention, 84);
+  assert.equal(published.needsAttention, 96);
   assert.match(published.summary, /Unavailable/);
   assert.doesNotMatch(published.summary, /Open report|href=/);
 });
@@ -226,11 +226,11 @@ test('producer refuses symlink input/output and never writes outside its root', 
   assert.equal(readFileSync(outside, 'utf8'), 'untouched');
 });
 
-test('producer failure cannot turn 84 successful callbacks into a green overall publication', t => {
+test('producer failure cannot turn 96 successful callbacks into a green overall publication', t => {
   const { root, options } = fixture(t);
   writeRetainedInputEvidence(root, 'failure');
   const published = publishRetainedInputs(options);
-  assert.equal(published.passed, 84);
+  assert.equal(published.passed, 96);
   assert.ok(published.cases.every(row => row.status === 'passed'));
   assert.equal(published.needsAttention, 0);
   assert.equal(published.runnerErrorCount, 0);
@@ -249,7 +249,7 @@ test('incomplete evidence is independent attention even when JSON and producer s
   manifest.evidenceComplete = false;
   writeFileSync(path.join(root, 'evidence.json'), JSON.stringify(manifest));
   const published = publishRetainedInputs(options);
-  assert.equal(published.passed, 84);
+  assert.equal(published.passed, 96);
   assert.equal(published.infrastructureErrorCount, 1);
   assert.equal(published.hasAttention, true);
   assert.match(published.summary, /⚠️/);
@@ -293,7 +293,7 @@ test('producer rejects symlink ancestors and accepts an explicitly canonicalized
     'failure',
   );
   assert.equal(result.exitCode, 1);
-  assert.equal(result.manifest.cases.length, 84);
+  assert.equal(result.manifest.cases.length, 96);
   assert.ok(existsSync(path.join(nested, 'evidence.json')));
 });
 
@@ -322,8 +322,8 @@ test('supplemental evidence uses verified site-relative paths, one preview and f
     artifact: 'midscene-ai-e2e-web-1',
   });
   assert.equal(supplemental.label, 'Original input contracts');
-  assert.equal(supplemental.sourceCount, 28);
-  assert.equal(supplemental.expectedCount, 84);
+  assert.equal(supplemental.sourceCount, 32);
+  assert.equal(supplemental.expectedCount, 96);
   assert.deepEqual(supplemental.errors, []);
   const row = supplemental.cases[0];
   assert.equal(row.platform, 'chromium');

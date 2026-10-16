@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import {
   existsSync,
   mkdirSync,
@@ -330,7 +331,21 @@ test('supplemental evidence uses verified site-relative paths, one preview and f
   assert.equal(row.name, 'x-input/type-value-do-not-show-input');
   assert.equal(row.status, 'flaky');
   assert.equal(row.durationMs, 123.5);
-  assert.equal(row.previewPath, `${options.sitePrefix}/results/1-chromium.png`);
+  const digest = createHash('sha256').update('synthetic screenshot').digest(
+    'hex',
+  );
+  assert.equal(row.previewPath, `${options.sitePrefix}/p/${digest}.png`);
+  assert.equal(
+    new Set(supplemental.cases.map(item => item.previewPath)).size,
+    1,
+  );
+  assert.deepEqual(
+    readFileSync(path.join(options.destination, 'p', `${digest}.png`)),
+    readFileSync(path.join(root, 'results/1-chromium.png')),
+  );
+  assert.ok(
+    existsSync(path.join(options.destination, 'results/1-chromium.png')),
+  );
   assert.equal(row.reportPath, `${options.sitePrefix}/html/index.html`);
   assert.equal(row.artifact, 'midscene-ai-e2e-web-1');
   assert.equal(supplemental.cases[1].status, 'success');

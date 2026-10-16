@@ -5,7 +5,9 @@ import {
   mkdirSync,
   readFileSync,
   readdirSync,
+  writeFileSync,
 } from 'node:fs';
+import { createHash } from 'node:crypto';
 import path from 'node:path';
 import {
   retainedCatalog,
@@ -196,6 +198,27 @@ export function publishRetainedInputs(
       cpSync(source, path.join(destination, directory), { recursive: true });
     }
   }
+  // Publication-only aliases keep every Summary row within GitHub's byte cap.
+  // Hash the verified copied bytes; original results and HTML assets stay intact.
+  const previewAliases = new Map();
+  for (const row of rows) {
+    const relative = row.screenshots[0];
+    if (!relative || previewAliases.has(relative)) continue;
+    const bytes = readFileSync(path.join(destination, relative));
+    if (!bytes.equals(readFileSync(path.join(evidenceRoot, relative)))) {
+      throw new Error('Copied preview differs from original PNG bytes');
+    }
+    const alias = `p/${createHash('sha256').update(bytes).digest('hex')}.png`;
+    mkdirSync(path.join(destination, 'p'), { recursive: true });
+    const target = path.join(destination, alias);
+    if (!existsSync(target)) writeFileSync(target, bytes, { flag: 'wx' });
+    if (!readFileSync(target).equals(bytes)) {
+      throw new Error(
+        'Published preview alias differs from original PNG bytes',
+      );
+    }
+    previewAliases.set(relative, alias);
+  }
   const url = relative =>
     new URL(
       [sitePrefix, relative].join('/').split('/').map(encodeURIComponent).join(
@@ -300,7 +323,7 @@ export function publishRetainedInputs(
         previewPath:
           ['ui', 'source-return'].includes(row.evidencePolicy ?? 'ui')
             && row.screenshots.length
-            ? `${sitePrefix}/${row.screenshots[0]}`
+            ? `${sitePrefix}/${previewAliases.get(row.screenshots[0])}`
             : null,
         reportPath: row.report ? `${sitePrefix}/${row.report}` : null,
         artifact,

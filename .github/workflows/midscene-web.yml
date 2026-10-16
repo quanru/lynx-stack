@@ -341,11 +341,27 @@ jobs:
           ORIGINAL_EVIDENCE_RUNNER: bulk-elements
         run: pnpm exec playwright test tests/web-elements.spec.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/bulk-elements/results --config playwright.original-evidence.config.ts
 
+      - name: Validate original remaining Firefox and WebKit core contracts (CSR)
+        id: original-browser-core-csr
+        working-directory: packages/web-platform/web-core-e2e
+        env:
+          ENABLE_SSR: ""
+          ORIGINAL_EVIDENCE_RUNNER: browser-core-csr
+        run: pnpm exec playwright test tests/reactlynx-css-var-fallback.spec.ts tests/reactlynx.spec.ts tests/ssr-no-js.spec.ts --project firefox --project webkit --workers=2 --output midscene-original-results/browser-core-csr/results --config playwright.original-evidence.config.ts
+
+      - name: Validate original remaining Firefox and WebKit component contracts
+        id: original-browser-elements
+        working-directory: packages/web-platform/web-elements
+        env:
+          PORT: "3081"
+          ORIGINAL_EVIDENCE_RUNNER: browser-elements
+        run: pnpm exec playwright test tests/component-event.spec.ts tests/web-elements.spec.ts tests/x-markdown.spec.ts --project firefox --project webkit --workers=2 --output midscene-original-results/browser-elements/results --config playwright.original-evidence.config.ts
+
       - name: Preserve existing original runner evidence before moving artifacts
         if: always()
         env:
           ORIGINAL_RUNNER_OUTCOMES: >-
-            {"keyboard-csr":"${{ steps.original-keyboard-csr.outcome }}","keyboard-ssr":"${{ steps.original-keyboard-ssr.outcome }}","animation-csr":"${{ steps.original-animation-csr.outcome }}","lazy-components-csr":"${{ steps.original-lazy-components-csr.outcome }}","list-api":"${{ steps.original-list-api.outcome }}","svg-selection-webview":"${{ steps.original-svg-selection-webview.outcome }}","runtime":"${{ steps.original-runtime.outcome }}","pointer-csr":"${{ steps.original-pointer-csr.outcome }}","pointer-ssr":"${{ steps.original-pointer-ssr.outcome }}","performance":"${{ steps.original-performance.outcome }}","markdown":"${{ steps.original-markdown.outcome }}","drag-wheel":"${{ steps.original-drag-wheel.outcome }}","template":"${{ steps.original-template.outcome }}","bulk-react-csr":"${{ steps.original-bulk-react-csr.outcome }}","bulk-react-ssr":"${{ steps.original-bulk-react-ssr.outcome }}","bulk-elements":"${{ steps.original-bulk-elements.outcome }}"}
+            {"keyboard-csr":"${{ steps.original-keyboard-csr.outcome }}","keyboard-ssr":"${{ steps.original-keyboard-ssr.outcome }}","animation-csr":"${{ steps.original-animation-csr.outcome }}","lazy-components-csr":"${{ steps.original-lazy-components-csr.outcome }}","list-api":"${{ steps.original-list-api.outcome }}","svg-selection-webview":"${{ steps.original-svg-selection-webview.outcome }}","runtime":"${{ steps.original-runtime.outcome }}","pointer-csr":"${{ steps.original-pointer-csr.outcome }}","pointer-ssr":"${{ steps.original-pointer-ssr.outcome }}","performance":"${{ steps.original-performance.outcome }}","markdown":"${{ steps.original-markdown.outcome }}","drag-wheel":"${{ steps.original-drag-wheel.outcome }}","template":"${{ steps.original-template.outcome }}","bulk-react-csr":"${{ steps.original-bulk-react-csr.outcome }}","bulk-react-ssr":"${{ steps.original-bulk-react-ssr.outcome }}","bulk-elements":"${{ steps.original-bulk-elements.outcome }}","browser-core-csr":"${{ steps.original-browser-core-csr.outcome }}","browser-elements":"${{ steps.original-browser-elements.outcome }}"}
         run: node packages/web-platform/web-core-e2e/midscene/scripts/write-original-runner-evidence.mjs
 
       - name: Validate original keyboard and input contracts with evidence
@@ -449,11 +465,11 @@ jobs:
             cp -R "$retained" "$target/retained-inputs"
           fi
           mkdir -p "$target/original-runners"
-          for runner in keyboard-csr keyboard-ssr animation-csr lazy-components-csr runtime pointer-csr pointer-ssr bulk-react-csr bulk-react-ssr; do
+          for runner in keyboard-csr keyboard-ssr animation-csr lazy-components-csr runtime pointer-csr pointer-ssr bulk-react-csr bulk-react-ssr browser-core-csr; do
             source="packages/web-platform/web-core-e2e/midscene-original-results/$runner"
             if [ -d "$source" ]; then cp -R "$source" "$target/original-runners/$runner"; fi
           done
-          for runner in list-api svg-selection-webview performance markdown drag-wheel template bulk-elements; do
+          for runner in list-api svg-selection-webview performance markdown drag-wheel template bulk-elements browser-elements; do
             source="packages/web-platform/web-elements/midscene-original-results/$runner"
             if [ -d "$source" ]; then cp -R "$source" "$target/original-runners/$runner"; fi
           done

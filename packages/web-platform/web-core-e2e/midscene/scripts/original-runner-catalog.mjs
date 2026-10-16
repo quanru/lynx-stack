@@ -10,6 +10,10 @@ import {
   bulkReactSources,
   bulkElementSources,
 } from './bulk-candidate-sources.mjs';
+import {
+  browserCoreSources,
+  browserElementSources,
+} from './browser-variant-sources.mjs';
 
 export const retainedCatalog = {
   id: 'retained-inputs',
@@ -102,6 +106,34 @@ export function sourceSelectionPattern(sources) {
   );
 }
 export const originalRunnerCatalog = [
+  ...[
+    {
+      id: 'browser-core-csr',
+      package: 'web-core-e2e',
+      mode: 'CSR',
+      sources: browserCoreSources,
+      stepName:
+        'Validate original remaining Firefox and WebKit core contracts (CSR)',
+    },
+    {
+      id: 'browser-elements',
+      package: 'web-elements',
+      mode: 'component',
+      sources: browserElementSources,
+      stepName:
+        'Validate original remaining Firefox and WebKit component contracts',
+    },
+  ].map(runner => {
+    const files = [...new Set(runner.sources.map(source => source.file))];
+    return {
+      ...runner,
+      files,
+      file: files.join(' '),
+      selectSources: true,
+      keys: runner.sources.map(source => source.key),
+      browsers: ['firefox', 'webkit'],
+    };
+  }),
   ...['CSR', 'SSR'].map(mode => ({
     ...core,
     id: `bulk-react-${mode.toLowerCase()}`,

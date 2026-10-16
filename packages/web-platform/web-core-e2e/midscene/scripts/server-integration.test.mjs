@@ -307,7 +307,7 @@ test('retained browser variants bound workers without replacing original profile
         || step.name?.startsWith('Validate remaining original'))
       && step.run?.includes('playwright test')
     );
-  assert.equal(runners.length, 17);
+  assert.equal(runners.length, 19);
   for (const step of runners) {
     assert.ok(
       step.run.includes('--workers=2'),
@@ -340,6 +340,8 @@ test('retained browser variants bound workers without replacing original profile
         'original-bulk-react-csr',
         'original-bulk-react-ssr',
         'original-bulk-elements',
+        'original-browser-core-csr',
+        'original-browser-elements',
         'original-pointer-csr',
         'original-pointer-ssr',
       ].includes(step.id)
@@ -356,8 +358,10 @@ test('retained browser variants bound workers without replacing original profile
     );
     assert.deepEqual(
       projects,
-      step.name.includes('performance')
-        || step.name.includes('template consistency')
+      step.id?.startsWith('original-browser-')
+        ? ['firefox', 'webkit']
+        : step.name.includes('performance')
+            || step.name.includes('template consistency')
         ? ['chromium']
         : ['chromium', 'firefox', 'webkit'],
     );

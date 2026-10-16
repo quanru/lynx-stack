@@ -182,19 +182,19 @@ test('multi-file manifest rejects forged declaration identity without dropping e
   );
 });
 
-test('sixteen original runners retain profiles and the three new batches are explicitly bounded', () => {
-  assert.equal(originalRunnerSourceCount, 240);
+test('eighteen original runners retain profiles and the five new batches are explicitly bounded', () => {
+  assert.equal(originalRunnerSourceCount, 701);
   assert.equal(
     originalRunnerCatalog.reduce(
       (sum, row) => sum + row.keys.length * row.browsers.length,
       0,
     ),
-    905,
+    1835,
   );
   assert.equal(
     steps.filter(step => step.run?.includes('pnpm exec playwright test'))
       .length,
-    17,
+    19,
   );
   for (const runner of originalRunnerCatalog) {
     const matches = steps.filter(step => step.name === runner.stepName);
@@ -370,7 +370,9 @@ function fixture(t) {
           }),
         }],
       };
-      if (!descriptor?.group) return unit;
+      if (!descriptor?.group || descriptor.group === descriptor.suite) {
+        return unit;
+      }
       const middle = descriptor.fullTitle?.slice(
         descriptor.suite.length + 1,
         -(descriptor.group.length + descriptor.title.length + 1),
@@ -421,17 +423,17 @@ function fixture(t) {
   };
 }
 
-test('all sixteen producers preserve 905 rows, 240 sources, 219 skips and one non-UI case', t => {
+test('all eighteen producers preserve 1835 rows, 701 sources, 229 skips and one non-UI case', t => {
   const { root, outcomes, stage, entry, env } = fixture(t);
   assert.equal(writeOriginalRunnerEvidence(root, outcomes), 0);
   stage();
   const result = prepareOriginalRunnerPublication(entry, env);
-  assert.equal(result.sourceCount, 240);
-  assert.equal(result.expectedCount, 905);
-  assert.equal(result.cases.length, 905);
+  assert.equal(result.sourceCount, 701);
+  assert.equal(result.expectedCount, 1835);
+  assert.equal(result.cases.length, 1835);
   assert.equal(
     new Set(result.cases.map(row => `${row.platform}/${row.name}`)).size,
-    905,
+    1835,
   );
   assert.deepEqual(result.errors, []);
   assert.ok(
@@ -442,7 +444,7 @@ test('all sixteen producers preserve 905 rows, 240 sources, 219 skips and one no
   );
   assert.equal(
     result.cases.filter(row => row.status === 'skipped').length,
-    219,
+    229,
   );
   assert.equal(
     result.cases.filter(row => row.evidencePolicy === 'non-ui').length,
@@ -466,7 +468,7 @@ test('skipped producer is distinct and cannot be hidden by successful producers'
   assert.equal(result.cases.filter(row => row.status === 'not-run').length, 18);
   assert.equal(
     result.cases.filter(row => row.status === 'success').length,
-    667,
+    1587,
   );
   assert.match(result.errors.join(' '), /keyboard-ssr.*skipped/);
 });
@@ -488,7 +490,7 @@ test('allowlisted browser without an applied skip guard stays not-run attention'
   const result = prepareOriginalRunnerPublication(entry, env);
   assert.equal(
     result.cases.filter(row => row.status === 'skipped').length,
-    218,
+    228,
   );
   assert.equal(result.cases.filter(row => row.status === 'not-run').length, 1);
   assert.equal(
@@ -520,7 +522,7 @@ test('missing producer never fabricates source skips; non-UI still requires real
   );
   assert.equal(
     result.cases.filter(row => row.status === 'skipped').length,
-    187,
+    197,
   );
   const template = result.cases.find(row => row.evidencePolicy === 'non-ui');
   assert.equal(template.status, 'failed');
@@ -659,7 +661,7 @@ test('actual passed early-return branch is not applicable, with real HTML and op
   assert.doesNotThrow(() => validateSupplementalEvidence(supplemental));
   assert.equal(
     supplemental.cases.filter(row => row.status === 'success').length,
-    685,
+    1605,
   );
 });
 
@@ -786,8 +788,8 @@ test('new and existing original evidence share one validated two-section Summary
   const existing = prepareOriginalRunnerPublication(entry, env);
   const retained = await prepareRetainedPublication(entry, env);
   const combined = mergeOriginalEvidence(retained.supplemental, existing);
-  assert.equal(combined.sourceCount, 240 + catalogSourceCount(retainedCatalog));
-  assert.equal(combined.expectedCount, 905 + retainedCatalog.keys.length * 3);
+  assert.equal(combined.sourceCount, 701 + catalogSourceCount(retainedCatalog));
+  assert.equal(combined.expectedCount, 1835 + retainedCatalog.keys.length * 3);
   assert.doesNotThrow(() => validateSupplementalEvidence(combined));
   const summary = renderSummary({
     title: 'Combined original evidence',
@@ -797,7 +799,7 @@ test('new and existing original evidence share one validated two-section Summary
     supplementalEvidence: combined,
   });
   assert.equal((summary.match(/<details>/g) ?? []).length, 1);
-  assert.equal((summary.match(/<img /g) ?? []).length, 685);
+  assert.equal((summary.match(/<img /g) ?? []).length, 1605);
   assert.ok(
     summary.includes(
       `${combined.sourceCount} source cases / ${combined.expectedCount} browser cases`,
@@ -844,7 +846,12 @@ test('a WebKit keyboard retry stays flaky, uses its final screenshot and appears
   const flaky = supplemental.cases.find(row => row.status === 'flaky');
   assert.equal(flaky.platform, 'webkit');
   assert.match(flaky.name, /basic-global-bindkeydown-key \(CSR\)$/);
-  assert.ok(flaky.previewPath.endsWith('/2-webkit.png'));
+  assert.match(flaky.previewPath, /\/p\/[a-f0-9]{64}\.png$/);
+  const preview = readFileSync(
+    path.join(root, 'midscene-publication/site', flaky.previewPath),
+  );
+  assert.deepEqual(preview, readFileSync(final.attachments[0].path));
+  assert.notDeepEqual(preview, readFileSync(oldImage));
   assert.equal(flaky.durationMs, 10);
   const summary = renderSummary({
     title: 'Original retry evidence',
@@ -853,7 +860,7 @@ test('a WebKit keyboard retry stays flaky, uses its final screenshot and appears
     entries: [],
     supplementalEvidence: supplemental,
   });
-  assert.match(summary, /1 need attention · 684 passed/);
+  assert.match(summary, /1 need attention · 1604 passed/);
   assert.ok(
     summary.indexOf('basic-global-bindkeydown-key (CSR)')
       < summary.indexOf('<details>'),

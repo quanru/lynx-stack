@@ -162,6 +162,15 @@ export function publicationArguments(entries, env, supplementalFile) {
     resolve(env.RUNNER_TEMP, 'midscene-publication/summary.md'),
   ];
   for (const entry of entries) {
+    if (entry.attempt !== null && entry.attempt !== undefined) {
+      if (
+        !Number.isSafeInteger(entry.attempt) || entry.attempt < 1
+        || entry.attempt > Number(env.GITHUB_RUN_ATTEMPT)
+      ) {
+        throw new Error('Invalid selected artifact attempt');
+      }
+      args.push('--artifact-attempt', `${entry.label}=${entry.attempt}`);
+    }
     args.push(
       '--entry',
       `${entry.label}=${entry.path}`,

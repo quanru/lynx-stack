@@ -130,6 +130,14 @@ jobs:
           corepack prepare pnpm@12.4.0 --activate
           pnpm --version
 
+      - name: Install Midscene test dependencies
+        working-directory: packages/web-platform/web-core-e2e/midscene
+        run: npm ci --no-audit --no-fund
+
+      - name: Collect expected Web cases before runtime prerequisites
+        working-directory: packages/web-platform/web-core-e2e/midscene
+        run: node scripts/expected-cases.mjs collect
+
       - name: Preflight model endpoint
         working-directory: packages/web-platform/web-core-e2e/midscene
         env: &midscene-model-env
@@ -139,10 +147,6 @@ jobs:
           MIDSCENE_MODEL_FAMILY: ${{ vars.MIDSCENE_MODEL_FAMILY || secrets.MIDSCENE_MODEL_FAMILY }}
           MIDSCENE_MODEL_REASONING_ENABLED: ${{ vars.MIDSCENE_MODEL_REASONING_ENABLED || secrets.MIDSCENE_MODEL_REASONING_ENABLED }}
         run: bash ../../../../.github/scripts/preflight-model.sh
-
-      - name: Install Midscene test dependencies
-        working-directory: packages/web-platform/web-core-e2e/midscene
-        run: npm ci --no-audit --no-fund
 
       - name: Verify Midscene model compatibility
         id: model-compatible
@@ -489,6 +493,7 @@ jobs:
       - name: Stage Web report for this attempt
         if: always()
         env:
+          EXECUTION_OUTCOME: ${{ steps.run-cases.outcome }}
           PRODUCER_RESULT: ${{ steps.run-cases.outcome == 'success' && 'success' || 'failure' }}
         run: |
           target="$RUNNER_TEMP/midscene-upload/attempt-$GITHUB_RUN_ATTEMPT"
@@ -497,6 +502,11 @@ jobs:
           report=packages/web-platform/web-core-e2e/midscene/midscene_run
           if [ -d "$report" ]; then
             cp -R "$report"/. "$target"/
+          fi
+          inventory=packages/web-platform/web-core-e2e/midscene/midscene-inventory
+          if [ -f "$inventory/expected-cases.json" ]; then
+            node packages/web-platform/web-core-e2e/midscene/scripts/expected-cases.mjs status "$EXECUTION_OUTCOME"
+            cp "$inventory/expected-cases.json" "$inventory/execution-status.json" "$target"/
           fi
           retained=packages/web-platform/web-elements/midscene-original-results/retained-inputs
           if [ -d "$retained" ]; then
@@ -532,7 +542,7 @@ jobs:
             --title "Lynx Web × Midscene" \
             --run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
             --links-published false \
-            --entry "Web=packages/web-platform/web-core-e2e/midscene/midscene_run" \
+            --entry "Web=$RUNNER_TEMP/midscene-upload/attempt-$GITHUB_RUN_ATTEMPT" \
             --result "Web=$PRODUCER_RESULT" \
             --artifact "Web=midscene-ai-e2e-web-$GITHUB_RUN_ATTEMPT" \
             --site-prefix "runs/$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \

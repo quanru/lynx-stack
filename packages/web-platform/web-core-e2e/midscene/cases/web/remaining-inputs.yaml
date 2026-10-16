@@ -1,0 +1,16 @@
+cases:
+  - name: basic-element-input-bindinput
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-input-bindinput"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original input value and event payload snapshot
+      - aiAct:
+          prompt: Press Enter once in the input without changing its contents.
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 200))"
+      - aiAct:
+          prompt: Replace all contents of the input with the literal string "foobar" exactly once, leaving the caret at the end. Stop after that entry.
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 200))"
+      - web.expect: { selector: .result, text: foobar-6-6, immediate: true }
+      - recordToReport: Original input value and event length payload passed

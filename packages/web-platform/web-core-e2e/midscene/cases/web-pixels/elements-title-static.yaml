@@ -1,0 +1,139 @@
+afterEach:
+  - recordToReport: Original nested-title pixel contract result
+cases:
+  - name: web-elements/x-text/text-maxline-basic
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-text/text-maxline-basic.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-text/text-maxline-basic/x-text/text-maxline-basic
+  - name: web-elements/x-text/text-maxline-basic-with-lynx-wrapper
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-text/text-maxline-basic-with-lynx-wrapper.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-text/text-maxline-basic-with-lynx-wrapper/x-text/text-maxline-basic-with-lynx-wrapper
+  - name: web-elements/x-text/text-maxline-with-tail-color-convert-false
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-text/text-maxline-with-tail-color-convert-false.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-text/text-maxline-with-tail-color-convert-false/x-text/text-maxline-with-tail-color-convert-false
+  - name: web-elements/x-text/text-maxline-with-custom-truncation
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-text/text-maxline-with-custom-truncation.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-text/text-maxline-with-custom-truncation/x-text/text-maxline-with-custom-truncation
+  - name: web-elements/x-text/text-inline-no-whitespace
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-text/text-inline-no-whitespace.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-text/text-inline-no-whitespace/x-text/text-inline-no-whitespace
+  - name: web-elements/x-text/text-is-block-element
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-text/text-is-block-element.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-text/text-is-block-element/x-text/text-is-block-element
+  - name: web-elements/x-text/text-no-maxline-do-not-show-inline-truncation
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-text/text-no-maxline-do-not-show-inline-truncation.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-text/text-no-maxline-do-not-show-inline-truncation/x-text/text-no-maxline-do-not-show-inline-truncation
+  - name: web-elements/x-text/text-maxline-with-padding
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-text/text-maxline-with-padding.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-text/text-maxline-with-padding/x-text/text-maxline-with-padding
+  - name: web-elements/x-text/text-sizing-in-flex-container
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-text/text-sizing-in-flex-container.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-text/text-sizing-in-flex-container/x-text/text-sizing-in-flex-container
+  - name: web-elements/x-text/text-overflow-inherit
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-text/text-overflow-inherit.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-text/text-overflow-inherit/x-text/text-overflow-inherit
+  - name: web-elements/x-text/text-not-resize-detect-new-line
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-text/text-not-resize-detect-new-line.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 500))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-text/text-not-resize-detect-new-line/x-text/text-not-resize-detect-new-line
+  - name: web-elements/x-text/truncation-first-element-is-image
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-text/truncation-first-element-is-image.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 500))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-text/truncation-first-element-is-image/x-text/truncation-first-element-is-image
+  - name: web-elements/x-text/raw-text
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-text/raw-text.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 500))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-text/raw-text/x-text/raw-text
+  - name: web-elements/x-text/raw-text-with-lynx-wrapper
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-text/raw-text-with-lynx-wrapper.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 500))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-text/raw-text-with-lynx-wrapper/x-text/raw-text-with-lynx-wrapper
+  - name: web-elements/x-text/text-maxlength-with-raw-text
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-text/text-maxlength-with-raw-text.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 500))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-text/text-maxlength-with-raw-text/x-text/text-maxlength-with-raw-text
+  - name: web-elements/x-text/text-maxline-with-raw-text
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-text/text-maxline-with-raw-text.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 500))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-text/text-maxline-with-raw-text/x-text/text-maxline-with-raw-text
+  - name: web-elements/scroll-view/scroll-view-linear-gravity-scroll
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/scroll-view/scroll-view-linear-gravity-scroll.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/scroll-view-linear-gravity-scroll/scroll-view/scroll-view-linear-gravity-scroll

@@ -1,0 +1,677 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import test from 'node:test';
+import YAML from 'yaml';
+
+test('independent serial groups continue after test failures but never bypass prerequisites or cancellation', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const steps = workflow.jobs['web-shell-ai-e2e'].steps;
+  const base = ['build-web', 'original-collection'];
+  const expected = new Map([
+    ['original-html', ['build-web']],
+    ['original-collection', ['build-web']],
+    ['retained-collection', base],
+    ['retained-inputs', [...base, 'retained-collection']],
+    ['core-ready', base],
+    ['elements-ready', base],
+    ['case-contracts', base],
+    ['visual-prerequisites', [
+      ...base,
+      'core-ready',
+      'elements-ready',
+      'case-contracts',
+    ]],
+    ['run-cases', [
+      ...base,
+      'model-compatible',
+      'core-ready',
+      'elements-ready',
+      'case-contracts',
+      'visual-prerequisites',
+    ]],
+  ]);
+  const original = steps.filter(step =>
+    step.id?.startsWith('original-')
+    && step.run?.includes('pnpm exec playwright test')
+  );
+  assert.equal(original.length, 18);
+  for (const step of original) expected.set(step.id, base);
+  for (const [id, dependencies] of expected) {
+    const step = steps.find(item => item.id === id);
+    const expression = '${{ !cancelled() && ' + dependencies.map(name =>
+      `steps.${name}.outcome == 'success'`
+    ).join(' && ') + ' }}';
+    assert.equal(step.if, expression, id);
+    assert.equal(
+      step['continue-on-error'],
+      undefined,
+      'Original failure must keep the job red',
+    );
+    for (const dependency of dependencies) {
+      assert.ok(
+        steps.findIndex(item =>
+          item.id === dependency
+        ) < steps.indexOf(step),
+        id + ': prerequisite must finish first',
+      );
+    }
+    // No prior test/evidence status participates: an SSR test or manifest failure
+    // cannot suppress a later independent group with successful prerequisites.
+    assert.ok(!dependencies.includes('original-bulk-react-ssr'));
+    for (const failed of ['failure', 'skipped', 'cancelled']) {
+      const state = Object.fromEntries(
+        dependencies.map(name => [name, 'success']),
+      );
+      state['original-bulk-react-ssr'] = failed;
+      assert.ok(dependencies.every(name => state[name] === 'success'));
+      for (const required of dependencies) {
+        assert.equal(
+          dependencies.every(name =>
+            (name === required ? failed : state[name]) === 'success'
+          ),
+          false,
+        );
+      }
+    }
+  }
+  const firstServer = steps.findIndex(step => step.id === 'core-ready');
+  for (
+    const step of [
+      ...original,
+      steps.find(step => step.id === 'retained-inputs'),
+    ]
+  ) {
+    assert.ok(
+      steps.indexOf(step) < firstServer,
+      'Original runners retain serial ownership of their own servers',
+    );
+  }
+  assert.equal(
+    workflow.jobs['web-shell-ai-e2e']['continue-on-error'],
+    undefined,
+  );
+});
+
+test('workspace collection remains mandatory in the built producer, isolated from standalone publication', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const producer = workflow.jobs['web-shell-ai-e2e'].steps;
+  const command =
+    'node --test packages/web-platform/web-core-e2e/midscene/scripts/required-browser-coverage.integration.mjs';
+  const checks = producer.filter(step => step.run?.includes(command));
+  assert.equal(checks.length, 1);
+  assert.equal(
+    checks[0].if,
+    '${{ !cancelled() && steps.build-web.outcome == \'success\' }}',
+  );
+  assert.ok(
+    producer.indexOf(checks[0])
+      > producer.findIndex(step => step.run?.includes('pnpm turbo build')),
+  );
+  assert.ok(
+    producer.indexOf(checks[0])
+      < producer.findIndex(step =>
+        step.run?.includes('pnpm exec playwright test')
+      ),
+  );
+  for (const name of ['pages-report', 'fork-contract-check']) {
+    const commands = workflow.jobs[name].steps.map(step => step.run ?? '').join(
+      '\n',
+    );
+    assert.match(commands, /scripts\/\*\.test\.mjs/);
+    assert.doesNotMatch(
+      commands,
+      /required-browser-coverage|check-original-runner-collection|pnpm turbo build/,
+    );
+  }
+  assert.equal(
+    producer.find(step =>
+      step.name === 'Preserve retained input evidence before moving artifacts'
+    ).env.RETAINED_RESULT,
+    '${{ steps.retained-inputs.outcome }}',
+  );
+});
+
+test('oversized Summary diagnostics survive renderer failure without approving a partial publication', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const steps = workflow.jobs['pages-report'].steps;
+  const upload = steps.find(step =>
+    step.name === 'Retain oversized Summary diagnostics'
+  );
+  assert.equal(upload.if, 'always() && !cancelled()');
+  assert.equal(
+    upload.with.name,
+    'midscene-summary-overflow-${{ github.run_id }}-${{ github.run_attempt }}',
+  );
+  assert.deepEqual(upload.with.path.trim().split('\n'), [
+    '${{ runner.temp }}/midscene-publication/site/summary-overflow.md',
+    '${{ runner.temp }}/midscene-publication/site/summary-overflow.json',
+  ]);
+  assert.equal(upload.with['if-no-files-found'], 'ignore');
+  assert.match(
+    steps.find(step => step.name === 'Upload report publication bundle').if,
+    /outputs.rendered == 'true'/,
+  );
+  assert.match(
+    steps.find(step =>
+      step.name
+        === 'Preserve evidence validation failure after retaining its report'
+    ).if,
+    /outcome == 'failure'/,
+  );
+});
+
+test('Firefox container setup fixes the observed root/home UID mismatch without changing HOME or browser guards', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const job = workflow.jobs['web-shell-ai-e2e'];
+  const steps = job.steps;
+  const matching = steps.filter(step =>
+    step.name === 'Align container home ownership for Firefox'
+  );
+  assert.equal(matching.length, 1);
+  const step = matching[0];
+  assert.equal(step.shell, 'bash');
+  assert.ok(step.run.includes('test "$(id -u)" = "0"'));
+  assert.ok(step.run.includes('test ! -L /github/home'));
+  assert.ok(step.run.includes('chown -- "$(id -u):$(id -g)" /github/home'));
+  assert.ok(
+    step.run.includes('test "$(stat -c %u /github/home)" = "$(id -u)"'),
+  );
+  assert.ok(!step.run.includes('-R'));
+  assert.ok(!/HOME\s*=|MOZ_.*SANDBOX/.test(JSON.stringify(job)));
+  assert.ok(
+    steps.indexOf(step)
+      < steps.findIndex(item =>
+        item.name === 'Validate original worker and runtime API contracts'
+      ),
+  );
+});
+
+test('the original server HTML snapshot runner executes once without snapshot updates', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const jobs = Object.values(workflow.jobs);
+  const steps = jobs.flatMap(job => job.steps ?? []);
+  const matching = steps.filter(step =>
+    step.name === 'Validate original server-rendering HTML snapshots'
+  );
+  assert.equal(matching.length, 1);
+  assert.equal(
+    matching[0].if,
+    '${{ !cancelled() && steps.build-web.outcome == \'success\' }}',
+  );
+  assert.equal(
+    matching[0]['working-directory'],
+    'packages/web-platform/web-core-e2e',
+  );
+  assert.equal(matching[0].run, 'pnpm exec rstest --config rstest.config.ts');
+  assert.ok(
+    jobs.some(job =>
+      job.container?.env?.CI === '1' && job.steps?.includes(matching[0])
+    ),
+  );
+  const config = readFileSync(
+    new URL('../../rstest.config.ts', import.meta.url),
+    'utf8',
+  );
+  assert.ok(config.includes('include: [\'server-tests/**/*.test.ts\']'));
+  const source = readFileSync(
+    new URL('../../server-tests/server-e2e.test.ts', import.meta.url),
+    'utf8',
+  );
+  assert.equal(source.match(/^test\('/gm)?.length, 17);
+  assert.ok(source.includes('expect(formatted).toMatchSnapshot()'));
+});
+
+test('the original worker/runtime API suite retains its runner and disabled case', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const matching = Object.values(workflow.jobs).flatMap(job => job.steps ?? [])
+    .filter(step =>
+      step.name === 'Validate original worker and runtime API contracts'
+    );
+  assert.equal(matching.length, 1);
+  assert.equal(
+    matching[0].if,
+    '${{ !cancelled() && steps.build-web.outcome == \'success\' && steps.original-collection.outcome == \'success\' }}',
+  );
+  assert.equal(
+    matching[0]['working-directory'],
+    'packages/web-platform/web-core-e2e',
+  );
+  assert.equal(
+    matching[0].run,
+    'pnpm exec playwright test tests/web-core.test.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/runtime/results --config playwright.original-evidence.config.ts',
+  );
+  const source = readFileSync(
+    new URL('../../tests/web-core.test.ts', import.meta.url),
+    'utf8',
+  );
+  assert.ok(
+    source.includes(
+      'test.skip(); // https://github.com/microsoft/playwright/issues/34774',
+    ),
+  );
+  assert.ok(source.includes('getBackgroundThreadWorker'));
+});
+
+test('performance integration retains original CDP budgets rather than visual substitutes', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const matching = Object.values(workflow.jobs).flatMap(job => job.steps ?? [])
+    .filter(step =>
+      step.name === 'Validate original layout and style performance budgets'
+    );
+  assert.equal(matching.length, 1);
+  assert.equal(
+    matching[0].if,
+    '${{ !cancelled() && steps.build-web.outcome == \'success\' && steps.original-collection.outcome == \'success\' }}',
+  );
+  assert.equal(
+    matching[0]['working-directory'],
+    'packages/web-platform/web-elements',
+  );
+  assert.equal(matching[0].env.PORT, '3081');
+  assert.equal(
+    matching[0].run,
+    'pnpm exec playwright test tests/performance.test.ts --project chromium --workers=2 --output midscene-original-results/performance/results --config playwright.original-evidence.config.ts',
+  );
+  const source = readFileSync(
+    new URL('../../../web-elements/tests/performance.test.ts', import.meta.url),
+    'utf8',
+  );
+  assert.ok(source.includes('cdpSession.send(\'Performance.getMetrics\')'));
+  assert.ok(source.includes('mode: \'serial\', retries: 5'));
+  for (const limit of [3, 4, 100]) {
+    assert.ok(source.includes(`toBeLessThanOrEqual(${limit})`));
+  }
+});
+
+test('SVG selection and iframe integration preserves original deterministic runners', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const matching = Object.values(workflow.jobs).flatMap(job => job.steps ?? [])
+    .filter(step =>
+      step.name === 'Validate original SVG selection and iframe API contracts'
+    );
+  assert.equal(matching.length, 1);
+  assert.equal(
+    matching[0].if,
+    '${{ !cancelled() && steps.build-web.outcome == \'success\' && steps.original-collection.outcome == \'success\' }}',
+  );
+  assert.equal(
+    matching[0]['working-directory'],
+    'packages/web-platform/web-elements',
+  );
+  assert.equal(matching[0].env.PORT, '3081');
+  assert.equal(
+    matching[0].run,
+    'pnpm exec playwright test tests/x-svg-inline.spec.ts tests/x-text-selection.spec.ts tests/x-webview.spec.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/svg-selection-webview/results --config playwright.original-evidence.config.ts',
+  );
+  for (
+    const file of [
+      'x-svg-inline.spec.ts',
+      'x-text-selection.spec.ts',
+      'x-webview.spec.ts',
+    ]
+  ) {
+    const source = readFileSync(
+      new URL('../../../web-elements/tests/' + file, import.meta.url),
+      'utf8',
+    );
+    assert.ok(source.includes('from \'@lynx-js/playwright-fixtures\''));
+    assert.ok(
+      !source.includes('toHaveScreenshot'),
+      'Do not create missing platform PNGs via retained API runners',
+    );
+  }
+});
+
+test('retained Markdown API runner excludes the migrated user-click flow', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const matching = Object.values(workflow.jobs).flatMap(job => job.steps ?? [])
+    .filter(step =>
+      step.name === 'Validate original Markdown rendering and API contracts'
+    );
+  assert.equal(matching.length, 1);
+  assert.equal(
+    matching[0].if,
+    '${{ !cancelled() && steps.build-web.outcome == \'success\' && steps.original-collection.outcome == \'success\' }}',
+  );
+  assert.equal(
+    matching[0]['working-directory'],
+    'packages/web-platform/web-elements',
+  );
+  assert.equal(matching[0].env.PORT, '3081');
+  assert.equal(
+    matching[0].run,
+    'pnpm exec playwright test tests/x-markdown.spec.ts --project chromium --project firefox --project webkit --workers=2 --grep-invert \'should fire bindlink and bindimageTap events\' --output midscene-original-results/markdown/results --config playwright.original-evidence.config.ts',
+  );
+});
+
+test('original Playwright runners own servers before persistent Midscene fixtures start', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const steps =
+    Object.values(workflow.jobs).find(job =>
+      job.steps?.some(step =>
+        step.name === 'Validate original worker and runtime API contracts'
+      )
+    ).steps;
+  const start = steps.findIndex(step =>
+    step.name === 'Start web-core-e2e dev shell'
+  );
+  assert.ok(start >= 0);
+  for (
+    const step of steps.filter(step =>
+      (step.name?.startsWith('Validate original')
+        || step.name?.startsWith('Validate remaining original'))
+      && step.run?.includes('playwright test')
+    )
+  ) {
+    assert.ok(
+      steps.indexOf(step) < start,
+      `${step.name} must run before persistent servers occupy original ports`,
+    );
+  }
+});
+
+test('retained browser variants bound workers without replacing original profiles or skip rules', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const runners = Object.values(workflow.jobs).flatMap(job => job.steps ?? [])
+    .filter(step =>
+      (step.name?.startsWith('Validate original')
+        || step.name?.startsWith('Validate remaining original'))
+      && step.run?.includes('playwright test')
+    );
+  assert.equal(runners.length, 19);
+  for (const step of runners) {
+    assert.ok(
+      step.run.includes('--workers=2'),
+      'Never rely on machine-dependent default browser concurrency',
+    );
+    assert.ok(
+      !/--(?:retries|timeout|update-snapshots)(?:[=\s]|$)/.test(
+        step.run,
+      ),
+      'Keep original retry, timing, snapshots and profiles',
+    );
+    if (step.id === 'retained-inputs') {
+      assert.match(
+        step.run,
+        /--config playwright\.retained-inputs\.config\.ts(?:\s|$)/,
+      );
+    } else if (
+      [
+        'original-keyboard-csr',
+        'original-keyboard-ssr',
+        'original-animation-csr',
+        'original-lazy-components-csr',
+        'original-list-api',
+        'original-svg-selection-webview',
+        'original-runtime',
+        'original-performance',
+        'original-markdown',
+        'original-drag-wheel',
+        'original-template',
+        'original-bulk-react-csr',
+        'original-bulk-react-ssr',
+        'original-bulk-elements',
+        'original-browser-core-csr',
+        'original-browser-elements',
+        'original-pointer-csr',
+        'original-pointer-ssr',
+      ].includes(step.id)
+    ) {
+      assert.match(
+        step.run,
+        /--config playwright\.original-evidence\.config\.ts\s*$/,
+      );
+    } else {
+      assert.doesNotMatch(step.run, /--config(?:[=\s]|$)/);
+    }
+    const projects = [...step.run.matchAll(/--project (\w+)/g)].map(match =>
+      match[1]
+    );
+    assert.deepEqual(
+      projects,
+      step.id?.startsWith('original-browser-')
+        ? ['firefox', 'webkit']
+        : step.name.includes('performance')
+            || step.name.includes('template consistency')
+        ? ['chromium']
+        : ['chromium', 'firefox', 'webkit'],
+    );
+  }
+  const config = readFileSync(
+    new URL(
+      '../../../playwright-fixtures/src/playwright.common.ts',
+      import.meta.url,
+    ),
+    'utf8',
+  );
+  for (
+    const profile of [
+      'devices[\'iPhone 12 Pro\']',
+      'devices[\'Pixel 5\']',
+      'devices[\'Desktop Firefox HiDPI\']',
+      'reuseExistingServer: !isCI',
+    ]
+  ) assert.ok(config.includes(profile));
+  const markdown = readFileSync(
+    new URL('../../../web-elements/tests/x-markdown.spec.ts', import.meta.url),
+    'utf8',
+  );
+  assert.ok(markdown.includes('browserName === \'webkit\''));
+  assert.ok(
+    markdown.includes(
+      'test.skip(browserName !== \'chromium\', \'selection automation is flaky\')',
+    ),
+  );
+});
+
+test('mouse drag, wheel and template runners keep complete source contracts', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const steps = Object.values(workflow.jobs).flatMap(job => job.steps ?? []);
+  const pointer = steps.find(step =>
+    step.name === 'Validate original mouse drag and wheel contracts'
+  );
+  const template = steps.find(step =>
+    step.name === 'Validate original Rust and TypeScript template consistency'
+  );
+  for (const step of [pointer, template]) {
+    assert.match(
+      step.if,
+      /^\$\{\{ !cancelled\(\) && steps\.build-web\.outcome == 'success' && steps\.original-collection\.outcome == 'success'/,
+    );
+    assert.equal(step['continue-on-error'], undefined);
+    assert.equal(
+      step['working-directory'],
+      'packages/web-platform/web-elements',
+    );
+    assert.equal(step.env.PORT, '3081');
+  }
+  assert.equal(
+    pointer.run,
+    'pnpm exec playwright test tests/scroll-view-mouse-drag.spec.ts tests/x-foldview-ng-wheel.spec.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/drag-wheel/results --config playwright.original-evidence.config.ts',
+  );
+  assert.equal(
+    template.run,
+    'pnpm exec playwright test tests/template.spec.ts --project chromium --workers=2 --output midscene-original-results/template/results --config playwright.original-evidence.config.ts',
+  );
+  const source = readFileSync(
+    new URL(
+      '../../../web-elements/tests/scroll-view-mouse-drag.spec.ts',
+      import.meta.url,
+    ),
+    'utf8',
+  );
+  for (
+    const field of [
+      'callsAfterMicrotask: 1',
+      'callsAfterPointerUp: 1',
+      'callsBeforePointerUp: 0',
+      'scrollTop: 60',
+      'dispatchPointer(\'pointerup\', 40, 0)',
+    ]
+  ) assert.ok(source.includes(field));
+  assert.equal(source.match(/^\s*test\('/gm)?.length, 12);
+  for (
+    const contract of [
+      'await page.mouse.down({ button: \'left\' })',
+      'await page.mouse.move(start.x + delta.x, start.y + delta.y, { steps: 5 })',
+      'await page.mouse.move(start.x, start.y - 80, { steps: 5 })',
+      'await page.mouse.move(start.x, start.y - 10, { steps: 5 })',
+      'await page.mouse.up({ button: \'left\' })',
+      'expect((await scrollOffset(inner)).top).toBe(80)',
+      'expect((await scrollOffset(inner)).top).toBe(startScrollTop + 10)',
+    ]
+  ) assert.ok(source.includes(contract), contract);
+  const wheel = readFileSync(
+    new URL(
+      '../../../web-elements/tests/x-foldview-ng-wheel.spec.ts',
+      import.meta.url,
+    ),
+    'utf8',
+  );
+  assert.equal(wheel.match(/^\s*test\('/gm)?.length, 3);
+  assert.equal(
+    wheel.match(
+      /test\.skip\(browserName === 'webkit', 'mouse wheel unsupported on webkit'\)/g,
+    )?.length,
+    3,
+  );
+  assert.equal(wheel.match(/await page\.mouse\.wheel\(0, 120\)/g)?.length, 1);
+  assert.equal(wheel.match(/await page\.mouse\.wheel\(0, 200\)/g)?.length, 2);
+  assert.equal(wheel.match(/await wait\(200\)/g)?.length, 3);
+  assert.equal(wheel.match(/await wait\(100\)/g)?.length, 2);
+  const templates = readFileSync(
+    new URL('../../../web-elements/tests/template.spec.ts', import.meta.url),
+    'utf8',
+  );
+  assert.ok(templates.includes('test(\'sync between rust and ts\''));
+  assert.ok(templates.includes('../src/template.rs'));
+  assert.ok(
+    templates.includes('expect(templates.templateXSvg()).toBe(svgRsMatch[1])'),
+  );
+  assert.ok(templates.includes('templateXImage'));
+});
+
+test('retained original failure diagnostics are archived separately without inflating AI case reports', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const steps = Object.values(workflow.jobs).flatMap(job => job.steps ?? []);
+  const step = steps.find(item =>
+    item.name === 'Upload retained original runner diagnostics'
+  );
+  assert.equal(step.if, 'always()');
+  assert.equal(
+    step.with.name,
+    'midscene-original-runner-diagnostics-${{ github.run_attempt }}',
+  );
+  assert.deepEqual(step.with.path.trim().split('\n'), [
+    'packages/web-platform/web-core-e2e/test-results',
+    'packages/web-platform/web-elements/test-results',
+    'packages/web-platform/web-core-e2e/midscene-original-results',
+    'packages/web-platform/web-elements/midscene-original-results',
+  ]);
+  assert.equal(step.with['if-no-files-found'], 'ignore');
+  assert.ok(!step.with.name.startsWith('midscene-ai-e2e-web-'));
+});

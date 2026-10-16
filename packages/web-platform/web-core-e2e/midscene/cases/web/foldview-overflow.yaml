@@ -1,0 +1,17 @@
+afterEach:
+  - recordToReport: Original FoldView immediate scrollTop overflow assertion result
+cases:
+  - name: basic-element-x-foldview-ng-method-setFoldExpanded-overflow
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-foldview-ng-method-setFoldExpanded-overflow"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - aiAct:
+          prompt: Click the visible orange rectangular item immediately below the large pink header once. Do not drag or scroll, and do not click the pink header or blue toolbar. Stop after that single click.
+          options: { deepLocate: true, cacheable: false }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.expect: {
+          selector: "#foldview",
+          property: scrollTop,
+          equals: 200,
+          immediate: true,
+        }

@@ -1,0 +1,332 @@
+# Original static layout baselines; no sleeps, skipped tests or extra contracts omitted.
+cases:
+  - name: basic-linear-absolute-not-in-flow
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-absolute-not-in-flow"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: { baseline: basic-linear-absolute-not-in-flow/index/index }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-item-use-order
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-item-use-order"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: { baseline: basic-linear-item-use-order/index/index }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-orientation-vertical-with-direction
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-orientation-vertical-with-direction"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-linear-orientation-vertical-with-direction/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-orientation-horizontal-with-direction
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-orientation-horizontal-with-direction"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-linear-orientation-horizontal-with-direction/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-item-do-not-shrink
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-item-do-not-shrink"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: { baseline: basic-linear-item-do-not-shrink/index/index }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-weight-sum-is-zero
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-weight-sum-is-zero"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: { baseline: basic-linear-weight-sum-is-zero/index/index }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-item-do-not-respond-to-flex
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-item-do-not-respond-to-flex"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-linear-item-do-not-respond-to-flex/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-item-do-not-respond-to-flex-basis
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-item-do-not-respond-to-flex-basis"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-linear-item-do-not-respond-to-flex-basis/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-row-container-main-axis-graverty-right-left-with-direction-rtl
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-row-container-main-axis-graverty-right-left-with-direction-rtl"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-linear-row-container-main-axis-graverty-right-left-with-direction-rtl/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-row-container-main-axis-justify-content-right-left-with-direction-rtl
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-row-container-main-axis-justify-content-right-left-with-direction-rtl"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-linear-row-container-main-axis-justify-content-right-left-with-direction-rtl/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-row-container-main-axis-justify-content-start-end-with-direction-rtl
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-row-container-main-axis-justify-content-start-end-with-direction-rtl"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-linear-row-container-main-axis-justify-content-start-end-with-direction-rtl/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-row-container-main-axis-graverty-top-bottom-with-direction-rtl
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-row-container-main-axis-graverty-top-bottom-with-direction-rtl"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-linear-row-container-main-axis-graverty-top-bottom-with-direction-rtl/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-row-container-main-axis-graverty-start-end-with-direction-rtl
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-row-container-main-axis-graverty-start-end-with-direction-rtl"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-linear-row-container-main-axis-graverty-start-end-with-direction-rtl/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-column-container-main-axis-graverty-top-bottom-with-direction-rtl
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-column-container-main-axis-graverty-top-bottom-with-direction-rtl"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-linear-column-container-main-axis-graverty-top-bottom-with-direction-rtl/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-column-container-main-axis-graverty-right-left-with-direction-rtl
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-column-container-main-axis-graverty-right-left-with-direction-rtl"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-linear-column-container-main-axis-graverty-right-left-with-direction-rtl/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-column-container-main-axis-graverty-start-end-with-direction-rtl
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-column-container-main-axis-graverty-start-end-with-direction-rtl"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-linear-column-container-main-axis-graverty-start-end-with-direction-rtl/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-row-container-main-axis-graverty-center
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-row-container-main-axis-graverty-center"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-linear-row-container-main-axis-graverty-center/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-column-container-main-axis-graverty-center
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-column-container-main-axis-graverty-center"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-linear-column-container-main-axis-graverty-center/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-graverty-space-between
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-graverty-space-between"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-linear-graverty-space-between/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-row-cross-gravity
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-row-cross-gravity"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: { baseline: basic-linear-row-cross-gravity/index/index }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-column-cross-gravity
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-column-cross-gravity"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: { baseline: basic-linear-column-cross-gravity/index/index }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-column-align-items
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-column-align-items"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: { baseline: basic-linear-column-align-items/index/index }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-column-container-items-layout-gravity
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-column-container-items-layout-gravity"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-linear-column-container-items-layout-gravity/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-column-container-items-align-self
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-column-container-items-align-self"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-linear-column-container-items-align-self/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-row-container-items-layout-gravity
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-row-container-items-layout-gravity"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-linear-row-container-items-layout-gravity/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-child-container-wrap
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-child-container-wrap"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: { baseline: basic-linear-child-container-wrap/index/index }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-default-orientation
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-default-orientation"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: { baseline: basic-linear-default-orientation/index/index }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-grand-kid-weight
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-grand-kid-weight"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: { baseline: basic-linear-grand-kid-weight/index/index }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-column-container-main-axis-justify-content-right-left-with-direction-rtl
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-column-container-main-axis-justify-content-right-left-with-direction-rtl"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-linear-column-container-main-axis-justify-content-right-left-with-direction-rtl/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-column-container-main-axis-justify-content-center
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-column-container-main-axis-justify-content-center"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-linear-column-container-main-axis-justify-content-center/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-linear-column-container-main-axis-justify-content-start-end-with-direction-rtl
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-column-container-main-axis-justify-content-start-end-with-direction-rtl"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-linear-column-container-main-axis-justify-content-start-end-with-direction-rtl/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-flex-item-main-axis-content-based-min-size-not-from-content-size-suggestion
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-flex-item-main-axis-content-based-min-size-not-from-content-size-suggestion"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-flex-item-main-axis-content-based-min-size-not-from-content-size-suggestion/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-flex-item-not-shrink-to-zero
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-flex-item-not-shrink-to-zero"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: { baseline: basic-flex-item-not-shrink-to-zero/index/index }
+      - recordToReport: Original layout baseline passed
+  - name: basic-flex-item-shrink
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-flex-item-shrink"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: { baseline: basic-flex-item-shrink/index/index }
+      - recordToReport: Original layout baseline passed
+  - name: basic-flex-with-overflow
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-flex-with-overflow"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: { baseline: basic-flex-with-overflow/index/index }
+      - recordToReport: Original layout baseline passed
+  - name: basic-flex-1
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-flex-1"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: { baseline: basic-flex-1/index/index }
+      - recordToReport: Original layout baseline passed
+  - name: basic-flex-column-container-main-axis-justify-content-start-end-with-direction-rtl
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-flex-column-container-main-axis-justify-content-start-end-with-direction-rtl"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-flex-column-container-main-axis-justify-content-start-end-with-direction-rtl/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-flex-column-container-items-align-self
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-flex-column-container-items-align-self"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-flex-column-container-items-align-self/index/index,
+        }
+      - recordToReport: Original layout baseline passed
+  - name: basic-flex-column-align-items
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-flex-column-align-items"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: { baseline: basic-flex-column-align-items/index/index }
+      - recordToReport: Original layout baseline passed
+  - name: basic-flex-row-container-main-axis-justify-content-start-end-with-direction-rtl
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-flex-row-container-main-axis-justify-content-start-end-with-direction-rtl"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before the original layout pixel contract
+      - web.pixels: {
+          baseline: basic-flex-row-container-main-axis-justify-content-start-end-with-direction-rtl/index/index,
+        }
+      - recordToReport: Original layout baseline passed

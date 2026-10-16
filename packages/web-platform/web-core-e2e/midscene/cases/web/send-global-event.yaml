@@ -1,0 +1,19 @@
+cases:
+  - name: api-sendGlobalEvent
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-sendGlobalEvent"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before original global event API and CSS contracts
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(255, 192, 203)",
+        }
+      - javascript: "(() => { document.querySelector('lynx-view').sendGlobalEvent('event-test', ['change']); return true; })()"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 200))"
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+      - recordToReport: Original global event name, array payload and CSS result passed

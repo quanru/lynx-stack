@@ -1,0 +1,16 @@
+cases:
+  - name: api-bindtap-lynx-view-relative
+    steps:
+      - web.prepareLynxView: { style: offset }
+      - gotoUrl: "${shellUrl}?casename=api-bindtap-lynx-view-relative"
+      - javascript: document.fonts.ready.then(() => true)
+      - recordToReport: Original source checkpoint before interaction
+      - aiAct:
+          prompt: "Click once at the center of the BLUE square above the pink square in the offset Lynx view. Stop after that single click."
+          options: { effort: deepThink, deepLocate: false, cacheable: false }
+      - web.expect: {
+          selector: "#target",
+          css: background-color,
+          equals: "rgb(0, 128, 0)",
+        }
+      - recordToReport: Original ordered source CSS assertions passed

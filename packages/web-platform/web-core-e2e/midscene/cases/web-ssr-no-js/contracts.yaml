@@ -1,0 +1,100 @@
+afterEach:
+  - recordToReport: Original SSR no-JavaScript contract result
+cases:
+  - name: ssr-no-js/config-css-inheritance-true
+    steps:
+      - gotoUrl: ${shellUrl}ssr?casename=config-css-inheritance-true
+      - web.expect:
+          selector: '[part="page"]'
+          attribute: lynx-enable-css-inheritance
+          equals: "true"
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#solid-text"
+          css: color
+          equals: rgb(255, 0, 0)
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#gradient-text"
+          css: background-image
+          equals: linear-gradient(rgb(255, 0, 0), rgb(0, 0, 255))
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#gradient-text"
+          css: background-clip
+          equals: text
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#wrapped-gradient"
+          css: background-clip
+          equals: text
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#override-text"
+          css: color
+          equals: rgb(0, 128, 0)
+          timeoutMs: 5000
+  - name: ssr-no-js/config-css-inheritance-false
+    steps:
+      - gotoUrl: ${shellUrl}ssr?casename=config-css-inheritance-false
+      - web.expect:
+          selector: '[part="page"]'
+          attribute: lynx-enable-css-inheritance
+          equals: null
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#solid-text"
+          css: color
+          equals: rgb(0, 0, 0)
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#gradient-text"
+          css: background-image
+          equals: none
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#override-text"
+          css: color
+          equals: rgb(0, 128, 0)
+          timeoutMs: 5000
+  - name: ssr-no-js/config-css-inheritance-default
+    steps:
+      - gotoUrl: ${shellUrl}ssr?casename=config-css-inheritance-default
+      - web.expect:
+          selector: '[part="page"]'
+          attribute: lynx-enable-css-inheritance
+          equals: null
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#solid-text"
+          css: color
+          equals: rgb(0, 0, 0)
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#gradient-text"
+          css: background-image
+          equals: none
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#override-text"
+          css: color
+          equals: rgb(0, 128, 0)
+          timeoutMs: 5000
+  - name: ssr-no-js/basic-pink-rect
+    steps:
+      - gotoUrl: ${shellUrl}ssr?casename=basic-pink-rect
+      - web.expect:
+          selector: lynx-view
+          attribute: id
+          equals: lynxview1
+          timeoutMs: 5000
+      - web.expect:
+          selector: lynx-view
+          attribute: height
+          equals: auto
+          timeoutMs: 5000
+      - web.expect:
+          selector: lynx-view
+          attribute: url
+          equals: /dist/ssr/basic-pink-rect.web.bundle
+          timeoutMs: 5000

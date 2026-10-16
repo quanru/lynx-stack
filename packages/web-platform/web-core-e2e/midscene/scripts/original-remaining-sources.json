@@ -1,0 +1,1122 @@
+[
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "lynx.createIntersectionObserver observes Web elements",
+    "suite": "web core tests",
+    "sourceId": "lynx.createIntersectionObserver observes Web elements",
+    "key": "tests/web-core.test.ts::web core tests/lynx.createIntersectionObserver observes Web elements",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "lynx.createIntersectionObserver leaves exact thresholds upward",
+    "suite": "web core tests",
+    "sourceId": "lynx.createIntersectionObserver leaves exact thresholds upward",
+    "key": "tests/web-core.test.ts::web core tests/lynx.createIntersectionObserver leaves exact thresholds upward",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "selectComponent",
+    "suite": "web core tests",
+    "sourceId": "selectComponent",
+    "key": "tests/web-core.test.ts::web core tests/selectComponent",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "__AddClass when enableCSSSelector is false calls update_css_og_style",
+    "suite": "web core tests",
+    "sourceId": "__AddClass when enableCSSSelector is false calls update_css_og_style",
+    "key": "tests/web-core.test.ts::web core tests/__AddClass when enableCSSSelector is false calls update_css_og_style",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "lynx.requireModuleAsync",
+    "suite": "web core tests",
+    "sourceId": "lynx.requireModuleAsync",
+    "key": "tests/web-core.test.ts::web core tests/lynx.requireModuleAsync",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "lynx.requireModuleAsync-2",
+    "suite": "web core tests",
+    "sourceId": "lynx.requireModuleAsync-2",
+    "key": "tests/web-core.test.ts::web core tests/lynx.requireModuleAsync-2",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "lynx.requireModule+sync",
+    "suite": "web core tests",
+    "sourceId": "lynx.requireModule+sync",
+    "key": "tests/web-core.test.ts::web core tests/lynx.requireModule+sync",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "loadLepusChunk",
+    "suite": "web core tests",
+    "sourceId": "loadLepusChunk",
+    "key": "tests/web-core.test.ts::web core tests/loadLepusChunk",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "__QueryComponent without processEvalResult",
+    "suite": "web core tests",
+    "sourceId": "__QueryComponent without processEvalResult",
+    "key": "tests/web-core.test.ts::web core tests/__QueryComponent without processEvalResult",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "__QueryComponent with processEvalResult",
+    "suite": "web core tests",
+    "sourceId": "__QueryComponent with processEvalResult",
+    "key": "tests/web-core.test.ts::web core tests/__QueryComponent with processEvalResult",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "api-enableJSDataProcessor disables processData",
+    "suite": "web core tests",
+    "sourceId": "api-enableJSDataProcessor disables processData",
+    "key": "tests/web-core.test.ts::web core tests/api-enableJSDataProcessor disables processData",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "api-nativeApp-readScript",
+    "suite": "web core tests",
+    "sourceId": "api-nativeApp-readScript",
+    "key": "tests/web-core.test.ts::web core tests/api-nativeApp-readScript",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "api-nativeApp-callLepusMethod-callback-receives-return-value",
+    "suite": "web core tests",
+    "sourceId": "api-nativeApp-callLepusMethod-callback-receives-return-value",
+    "key": "tests/web-core.test.ts::web core tests/api-nativeApp-callLepusMethod-callback-receives-return-value",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "registerDataProcessor-as-global-var-update",
+    "suite": "web core tests",
+    "sourceId": "registerDataProcessor-as-global-var-update",
+    "key": "tests/web-core.test.ts::web core tests/registerDataProcessor-as-global-var-update",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "createJSObjectDestructionObserver",
+    "suite": "web core tests",
+    "sourceId": "createJSObjectDestructionObserver",
+    "key": "tests/web-core.test.ts::web core tests/createJSObjectDestructionObserver",
+    "skipGuards": [
+      "true",
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "api-onNapiModulesCall-func",
+    "suite": "web core tests",
+    "sourceId": "api-onNapiModulesCall-func",
+    "key": "tests/web-core.test.ts::web core tests/api-onNapiModulesCall-func",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "api-onNapiModulesCall-class",
+    "suite": "web core tests",
+    "sourceId": "api-onNapiModulesCall-class",
+    "key": "tests/web-core.test.ts::web core tests/api-onNapiModulesCall-class",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "api-onNapiModulesCall-dispatchNapiModules",
+    "suite": "web core tests",
+    "sourceId": "api-onNapiModulesCall-dispatchNapiModules",
+    "key": "tests/web-core.test.ts::web core tests/api-onNapiModulesCall-dispatchNapiModules",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "api-i18n-resources-translation",
+    "suite": "web core tests",
+    "sourceId": "api-i18n-resources-translation",
+    "key": "tests/web-core.test.ts::web core tests/api-i18n-resources-translation",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "event-i18n-resources-missed",
+    "suite": "web core tests",
+    "sourceId": "event-i18n-resources-missed",
+    "key": "tests/web-core.test.ts::web core tests/event-i18n-resources-missed",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "api-update-i18n-resources",
+    "suite": "web core tests",
+    "sourceId": "api-update-i18n-resources",
+    "key": "tests/web-core.test.ts::web core tests/api-update-i18n-resources",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "api-get-i18n-resource-by-mts",
+    "suite": "web core tests",
+    "sourceId": "api-get-i18n-resource-by-mts",
+    "key": "tests/web-core.test.ts::web core tests/api-get-i18n-resource-by-mts",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "api-get-i18n-resource-by-lynx-update",
+    "suite": "web core tests",
+    "sourceId": "api-get-i18n-resource-by-lynx-update",
+    "key": "tests/web-core.test.ts::web core tests/api-get-i18n-resource-by-lynx-update",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "api-onI18nResourceReady-by-mts",
+    "suite": "web core tests",
+    "sourceId": "api-onI18nResourceReady-by-mts",
+    "key": "tests/web-core.test.ts::web core tests/api-onI18nResourceReady-by-mts",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "api-onI18nResourceReady-by-lynx-update",
+    "suite": "web core tests",
+    "sourceId": "api-onI18nResourceReady-by-lynx-update",
+    "key": "tests/web-core.test.ts::web core tests/api-onI18nResourceReady-by-lynx-update",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "__ElementAnimate START creates animation",
+    "suite": "web core tests",
+    "sourceId": "__ElementAnimate START creates animation",
+    "key": "tests/web-core.test.ts::web core tests/__ElementAnimate START creates animation",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "__ElementAnimate PAUSE pauses animation",
+    "suite": "web core tests",
+    "sourceId": "__ElementAnimate PAUSE pauses animation",
+    "key": "tests/web-core.test.ts::web core tests/__ElementAnimate PAUSE pauses animation",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "__ElementAnimate PLAY resumes paused animation",
+    "suite": "web core tests",
+    "sourceId": "__ElementAnimate PLAY resumes paused animation",
+    "key": "tests/web-core.test.ts::web core tests/__ElementAnimate PLAY resumes paused animation",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "__ElementAnimate CANCEL removes animation",
+    "suite": "web core tests",
+    "sourceId": "__ElementAnimate CANCEL removes animation",
+    "key": "tests/web-core.test.ts::web core tests/__ElementAnimate CANCEL removes animation",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "__ElementAnimate FINISH finishes animation",
+    "suite": "web core tests",
+    "sourceId": "__ElementAnimate FINISH finishes animation",
+    "key": "tests/web-core.test.ts::web core tests/__ElementAnimate FINISH finishes animation",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "__ElementAnimate START replaces existing animation with same name",
+    "suite": "web core tests",
+    "sourceId": "__ElementAnimate START replaces existing animation with same name",
+    "key": "tests/web-core.test.ts::web core tests/__ElementAnimate START replaces existing animation with same name",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "__ElementAnimate FINISH replaces existing animation with same name",
+    "suite": "web core tests",
+    "sourceId": "__ElementAnimate FINISH replaces existing animation with same name",
+    "key": "tests/web-core.test.ts::web core tests/__ElementAnimate FINISH replaces existing animation with same name",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "api-triggerComponentEvent dispatches CustomEvent on component",
+    "suite": "web core tests",
+    "sourceId": "api-triggerComponentEvent dispatches CustomEvent on component",
+    "key": "tests/web-core.test.ts::web core tests/api-triggerComponentEvent dispatches CustomEvent on component",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "source-map-release",
+    "suite": "web core tests",
+    "sourceId": "source-map-release",
+    "key": "tests/web-core.test.ts::web core tests/source-map-release",
+    "skipGuards": [
+      "browserName === 'firefox'"
+    ],
+    "skipBrowsers": [
+      "firefox"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/web-core.test.ts",
+    "title": "should not throw error when removed immediately after connected",
+    "suite": "web core tests",
+    "sourceId": "should not throw error when removed immediately after connected",
+    "key": "tests/web-core.test.ts::web core tests/should not throw error when removed immediately after connected",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "title": "basic-mts-bindtouchstart",
+    "suite": "basic",
+    "sourceId": "basic-mts-bindtouchstart",
+    "key": "tests/reactlynx.spec.ts::reactlynx3 tests/basic/basic-mts-bindtouchstart",
+    "skipGuards": [
+      "browserName !== 'chromium'"
+    ],
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "title": "basic-bindmouse",
+    "suite": "basic",
+    "sourceId": "basic-bindmouse",
+    "key": "tests/reactlynx.spec.ts::reactlynx3 tests/basic/basic-bindmouse",
+    "skipGuards": [
+      "browserName !== 'chromium'"
+    ],
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "title": "basic-bindwheel-view",
+    "suite": "basic",
+    "sourceId": "basic-bindwheel-view",
+    "key": "tests/reactlynx.spec.ts::reactlynx3 tests/basic/basic-bindwheel-view",
+    "skipGuards": [
+      "browserName === 'webkit'"
+    ],
+    "skipBrowsers": [
+      "webkit"
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/performance.test.ts",
+    "title": "simple-one-div",
+    "suite": "performance",
+    "sourceId": "simple-one-div",
+    "key": "tests/performance.test.ts::performance/simple-one-div",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/performance.test.ts",
+    "title": "simple-one-dom",
+    "suite": "performance",
+    "sourceId": "simple-one-dom",
+    "key": "tests/performance.test.ts::performance/simple-one-dom",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/performance.test.ts",
+    "title": "simple-two-dom",
+    "suite": "performance",
+    "sourceId": "simple-two-dom",
+    "key": "tests/performance.test.ts::performance/simple-two-dom",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/performance.test.ts",
+    "title": "simple-append-two-dom",
+    "suite": "performance",
+    "sourceId": "simple-append-two-dom",
+    "key": "tests/performance.test.ts::performance/simple-append-two-dom",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/performance.test.ts",
+    "title": "connected-x-text",
+    "suite": "performance",
+    "sourceId": "connected-x-text",
+    "key": "tests/performance.test.ts::performance/connected-x-text",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/performance.test.ts",
+    "title": "div-10000",
+    "suite": "performance",
+    "sourceId": "div-10000",
+    "key": "tests/performance.test.ts::performance/div-10000",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/performance.test.ts",
+    "title": "x-list-waterfall-1000",
+    "suite": "performance",
+    "sourceId": "x-list-waterfall-1000",
+    "key": "tests/performance.test.ts::performance/x-list-waterfall-1000",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should render basic markdown",
+    "suite": "x-markdown",
+    "sourceId": "should render basic markdown",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should render basic markdown",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should apply markdown-style updates",
+    "suite": "x-markdown",
+    "sourceId": "should apply markdown-style updates",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should apply markdown-style updates",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should support markdown-style property updates",
+    "suite": "x-markdown",
+    "sourceId": "should support markdown-style property updates",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should support markdown-style property updates",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should render image",
+    "suite": "x-markdown",
+    "sourceId": "should render image",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should render image",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should update content on attribute change",
+    "suite": "x-markdown",
+    "sourceId": "should update content on attribute change",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should update content on attribute change",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should only allow span and p html tags in markdown content",
+    "suite": "x-markdown",
+    "sourceId": "should only allow span and p html tags in markdown content",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should only allow span and p html tags in markdown content",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should enable text selection and fire selectionchange",
+    "suite": "programmatic shadow selection",
+    "sourceId": "should enable text selection and fire selectionchange",
+    "key": "tests/x-markdown.spec.ts::x-markdown/programmatic shadow selection/should enable text selection and fire selectionchange",
+    "skipGuards": [
+      "browserName === 'webkit'"
+    ],
+    "skipBrowsers": [
+      "webkit"
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should fire selectionchange on mouseup in web",
+    "suite": "programmatic shadow selection",
+    "sourceId": "should fire selectionchange on mouseup in web",
+    "key": "tests/x-markdown.spec.ts::x-markdown/programmatic shadow selection/should fire selectionchange on mouseup in web",
+    "skipGuards": [
+      "browserName === 'webkit'"
+    ],
+    "skipBrowsers": [
+      "webkit"
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should show and position menu on selectionchange",
+    "suite": "programmatic shadow selection",
+    "sourceId": "should show and position menu on selectionchange",
+    "key": "tests/x-markdown.spec.ts::x-markdown/programmatic shadow selection/should show and position menu on selectionchange",
+    "skipGuards": [
+      "browserName === 'webkit'"
+    ],
+    "skipBrowsers": [
+      "webkit"
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should defer menu display until mouseup during pointer selection",
+    "suite": "programmatic shadow selection",
+    "sourceId": "should defer menu display until mouseup during pointer selection",
+    "key": "tests/x-markdown.spec.ts::x-markdown/programmatic shadow selection/should defer menu display until mouseup during pointer selection",
+    "skipGuards": [
+      "browserName === 'webkit'"
+    ],
+    "skipBrowsers": [
+      "webkit"
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should clear selection when selection extends outside markdown",
+    "suite": "programmatic shadow selection",
+    "sourceId": "should clear selection when selection extends outside markdown",
+    "key": "tests/x-markdown.spec.ts::x-markdown/programmatic shadow selection/should clear selection when selection extends outside markdown",
+    "skipGuards": [
+      "browserName === 'webkit'"
+    ],
+    "skipBrowsers": [
+      "webkit"
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should not fire selectionchange when text-selection is false",
+    "suite": "x-markdown",
+    "sourceId": "should not fire selectionchange when text-selection is false",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should not fire selectionchange when text-selection is false",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should getSelectedText return current selection text",
+    "suite": "selection methods",
+    "sourceId": "should getSelectedText return current selection text",
+    "key": "tests/x-markdown.spec.ts::x-markdown/selection methods/should getSelectedText return current selection text",
+    "skipGuards": [
+      "browserName !== 'chromium'"
+    ],
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should setTextSelection update current selection",
+    "suite": "selection methods",
+    "sourceId": "should setTextSelection update current selection",
+    "key": "tests/x-markdown.spec.ts::x-markdown/selection methods/should setTextSelection update current selection",
+    "skipGuards": [
+      "browserName !== 'chromium'"
+    ],
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should append content incrementally",
+    "suite": "x-markdown",
+    "sourceId": "should append content incrementally",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should append content incrementally",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should re-render when content diverges",
+    "suite": "x-markdown",
+    "sourceId": "should re-render when content diverges",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should re-render when content diverges",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should batch append by newline boundary",
+    "suite": "x-markdown",
+    "sourceId": "should batch append by newline boundary",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should batch append by newline boundary",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should render tables",
+    "suite": "x-markdown",
+    "sourceId": "should render tables",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should render tables",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should support basic methods",
+    "suite": "x-markdown",
+    "sourceId": "should support basic methods",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should support basic methods",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should return full text ranges for nested markdown tags",
+    "suite": "x-markdown",
+    "sourceId": "should return full text ranges for nested markdown tags",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should return full text ranges for nested markdown tags",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should support source indices in getTextBoundingRect",
+    "suite": "x-markdown",
+    "sourceId": "should support source indices in getTextBoundingRect",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should support source indices in getTextBoundingRect",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should getImages return image sources",
+    "suite": "x-markdown",
+    "sourceId": "should getImages return image sources",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should getImages return image sources",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should inject inline view via pre-set slot",
+    "suite": "x-markdown",
+    "sourceId": "should inject inline view via pre-set slot",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should inject inline view via pre-set slot",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should not create img for inline view in typewriter mode",
+    "suite": "x-markdown",
+    "sourceId": "should not create img for inline view in typewriter mode",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should not create img for inline view in typewriter mode",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should apply class styles to inline view",
+    "suite": "x-markdown",
+    "sourceId": "should apply class styles to inline view",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should apply class styles to inline view",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should clamp and append truncation marker",
+    "suite": "x-markdown",
+    "sourceId": "should clamp and append truncation marker",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should clamp and append truncation marker",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should fire typewriter drawStart/drawEnd",
+    "suite": "x-markdown",
+    "sourceId": "should fire typewriter drawStart/drawEnd",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should fire typewriter drawStart/drawEnd",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should pause and resume typewriter animation",
+    "suite": "x-markdown",
+    "sourceId": "should pause and resume typewriter animation",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should pause and resume typewriter animation",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should reset typewriter state when content is cleared and reassigned",
+    "suite": "x-markdown",
+    "sourceId": "should reset typewriter state when content is cleared and reassigned",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should reset typewriter state when content is cleared and reassigned",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should render custom typewriter cursor",
+    "suite": "x-markdown",
+    "sourceId": "should render custom typewriter cursor",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should render custom typewriter cursor",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should render typewriter cursor after trailing text node",
+    "suite": "x-markdown",
+    "sourceId": "should render typewriter cursor after trailing text node",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should render typewriter cursor after trailing text node",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should not hide cursor when content-complete is false",
+    "suite": "x-markdown",
+    "sourceId": "should not hide cursor when content-complete is false",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should not hide cursor when content-complete is false",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-markdown.spec.ts",
+    "title": "should render markdown effect",
+    "suite": "x-markdown",
+    "sourceId": "should render markdown effect",
+    "key": "tests/x-markdown.spec.ts::x-markdown/should render markdown effect",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/scroll-view-mouse-drag.spec.ts",
+    "title": "drags vertical, horizontal and both orientations like a touchscreen",
+    "suite": "scroll-view mouse drag",
+    "sourceId": "drags vertical, horizontal and both orientations like a touchscreen",
+    "key": "tests/scroll-view-mouse-drag.spec.ts::scroll-view mouse drag/drags vertical, horizontal and both orientations like a touchscreen",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/scroll-view-mouse-drag.spec.ts",
+    "title": "coalesces pointer moves and flushes the latest position on pointerup",
+    "suite": "scroll-view mouse drag",
+    "sourceId": "coalesces pointer moves and flushes the latest position on pointerup",
+    "key": "tests/scroll-view-mouse-drag.spec.ts::scroll-view mouse drag/coalesces pointer moves and flushes the latest position on pointerup",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/scroll-view-mouse-drag.spec.ts",
+    "title": "does not drag when scrolling is disabled",
+    "suite": "scroll-view mouse drag",
+    "sourceId": "does not drag when scrolling is disabled",
+    "key": "tests/scroll-view-mouse-drag.spec.ts::scroll-view mouse drag/does not drag when scrolling is disabled",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/scroll-view-mouse-drag.spec.ts",
+    "title": "only drags the nearest scrollable scroll-view",
+    "suite": "scroll-view mouse drag",
+    "sourceId": "only drags the nearest scrollable scroll-view",
+    "key": "tests/scroll-view-mouse-drag.spec.ts::scroll-view mouse drag/only drags the nearest scrollable scroll-view",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/scroll-view-mouse-drag.spec.ts",
+    "title": "selects the nested scroll-view chain by drag direction",
+    "suite": "scroll-view mouse drag",
+    "sourceId": "selects the nested scroll-view chain by drag direction",
+    "key": "tests/scroll-view-mouse-drag.spec.ts::scroll-view mouse drag/selects the nested scroll-view chain by drag direction",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/scroll-view-mouse-drag.spec.ts",
+    "title": "chains unused drag distance to an outer scroll-view at a boundary",
+    "suite": "scroll-view mouse drag",
+    "sourceId": "chains unused drag distance to an outer scroll-view at a boundary",
+    "key": "tests/scroll-view-mouse-drag.spec.ts::scroll-view mouse drag/chains unused drag distance to an outer scroll-view at a boundary",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/scroll-view-mouse-drag.spec.ts",
+    "title": "scrolls instantly when scroll-behavior is smooth",
+    "suite": "scroll-view mouse drag",
+    "sourceId": "scrolls instantly when scroll-behavior is smooth",
+    "key": "tests/scroll-view-mouse-drag.spec.ts::scroll-view mouse drag/scrolls instantly when scroll-behavior is smooth",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/scroll-view-mouse-drag.spec.ts",
+    "title": "recomputes the whole scroll chain when a drag reverses direction",
+    "suite": "scroll-view mouse drag",
+    "sourceId": "recomputes the whole scroll chain when a drag reverses direction",
+    "key": "tests/scroll-view-mouse-drag.spec.ts::scroll-view mouse drag/recomputes the whole scroll chain when a drag reverses direction",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/scroll-view-mouse-drag.spec.ts",
+    "title": "honors overscroll-behavior when chaining nested scroll-views",
+    "suite": "scroll-view mouse drag",
+    "sourceId": "honors overscroll-behavior when chaining nested scroll-views",
+    "key": "tests/scroll-view-mouse-drag.spec.ts::scroll-view mouse drag/honors overscroll-behavior when chaining nested scroll-views",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/scroll-view-mouse-drag.spec.ts",
+    "title": "suppresses a click after dragging but preserves an ordinary click",
+    "suite": "scroll-view mouse drag",
+    "sourceId": "suppresses a click after dragging but preserves an ordinary click",
+    "key": "tests/scroll-view-mouse-drag.spec.ts::scroll-view mouse drag/suppresses a click after dragging but preserves an ordinary click",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/scroll-view-mouse-drag.spec.ts",
+    "title": "still supports dragging after being disconnected and reconnected",
+    "suite": "scroll-view mouse drag",
+    "sourceId": "still supports dragging after being disconnected and reconnected",
+    "key": "tests/scroll-view-mouse-drag.spec.ts::scroll-view mouse drag/still supports dragging after being disconnected and reconnected",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/scroll-view-mouse-drag.spec.ts",
+    "title": "mouse dragging remains opt-in",
+    "suite": null,
+    "sourceId": "mouse dragging remains opt-in",
+    "key": "tests/scroll-view-mouse-drag.spec.ts::/mouse dragging remains opt-in",
+    "skipGuards": [],
+    "skipBrowsers": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-foldview-ng-wheel.spec.ts",
+    "title": "x-foldview-ng/wheel-parent-first",
+    "suite": "x-foldview-ng wheel",
+    "sourceId": "x-foldview-ng/wheel-parent-first",
+    "key": "tests/x-foldview-ng-wheel.spec.ts::x-foldview-ng wheel/x-foldview-ng/wheel-parent-first",
+    "skipGuards": [
+      "browserName === 'webkit'"
+    ],
+    "skipBrowsers": [
+      "webkit"
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-foldview-ng-wheel.spec.ts",
+    "title": "x-foldview-ng/wheel-smooth-continue",
+    "suite": "x-foldview-ng wheel",
+    "sourceId": "x-foldview-ng/wheel-smooth-continue",
+    "key": "tests/x-foldview-ng-wheel.spec.ts::x-foldview-ng wheel/x-foldview-ng/wheel-smooth-continue",
+    "skipGuards": [
+      "browserName === 'webkit'"
+    ],
+    "skipBrowsers": [
+      "webkit"
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/x-foldview-ng-wheel.spec.ts",
+    "title": "x-foldview-ng/wheel-overflow-visible-child",
+    "suite": "x-foldview-ng wheel",
+    "sourceId": "x-foldview-ng/wheel-overflow-visible-child",
+    "key": "tests/x-foldview-ng-wheel.spec.ts::x-foldview-ng wheel/x-foldview-ng/wheel-overflow-visible-child",
+    "skipGuards": [
+      "browserName === 'webkit'"
+    ],
+    "skipBrowsers": [
+      "webkit"
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/template.spec.ts",
+    "title": "sync between rust and ts",
+    "suite": "template sync",
+    "sourceId": "sync between rust and ts",
+    "key": "tests/template.spec.ts::template sync/sync between rust and ts",
+    "skipGuards": [],
+    "skipBrowsers": [],
+    "evidencePolicy": "non-ui"
+  }
+]

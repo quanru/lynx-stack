@@ -1,0 +1,51 @@
+cases:
+  - name: basic-rpx-unit
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-rpx-unit"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before preparing original rpx dimensions
+      - javascript: |
+          (() => {
+          const nodes = document.querySelectorAll('lynx-view');
+          if (nodes.length !== 1) throw new Error('Expected exactly one Lynx view');
+          const node = nodes[0];
+          node.style.width = '50px';
+          node.style.setProperty('--rpx-unit', '1cqw');
+          return true;
+          })()
+      - web.expect: { selector: "#target", css: height, equals: "10px" }
+      - web.expect: { selector: "#target", css: width, equals: "10px" }
+      - recordToReport: Original rpx dimensions passed
+  - name: basic-rpx-unit-js-value
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-rpx-unit-js-value"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before preparing original JavaScript rpx dimensions
+      - javascript: |
+          (() => {
+          const nodes = document.querySelectorAll('lynx-view');
+          if (nodes.length !== 1) throw new Error('Expected exactly one Lynx view');
+          const node = nodes[0];
+          node.style.width = '50px';
+          node.style.setProperty('--rpx-unit', '1cqw');
+          return true;
+          })()
+      - web.expect: { selector: "#target", css: height, equals: "10px" }
+      - web.expect: { selector: "#target", css: width, equals: "10px" }
+      - recordToReport: Original JavaScript rpx dimensions passed
+  - name: basic-ppx-unit
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-ppx-unit"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before preparing original ppx dimensions
+      - javascript: |
+          (() => {
+          const nodes = document.querySelectorAll('lynx-view');
+          if (nodes.length !== 1) throw new Error('Expected exactly one Lynx view');
+          const node = nodes[0];
+          node.style.width = '50px';
+          return true;
+          })()
+      - web.expect: { selector: "#target", css: height, equals: "10px" }
+      - web.expect: { selector: "#target", css: width, equals: "10px" }
+      - recordToReport: Original ppx dimensions passed

@@ -1,0 +1,32 @@
+afterEach:
+  - recordToReport: Original guarded static pixel evidence, including failures
+cases:
+  - name: web-elements/x-blur-view/basic
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-blur-view/basic.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-blur-view/basic/index
+  - name: web-elements/scroll-view/scroll-view-item-percentage-size
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/scroll-view/scroll-view-item-percentage-size.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/scroll-view-item-percentage-size/scroll-view-item-use-percentage-50-should-half-green
+  - name: web-elements/x-foldview-ng/size-controlled-by-parent-flex-cross-axis
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-foldview-ng/size-controlled-by-parent-flex-cross-axis.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-foldview-ng/size-controlled-by-parent-flex-cross-axis/300px-inf
+  - name: web-elements/x-foldview-ng/size-parent-grow-children-specific
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-foldview-ng/size-parent-grow-children-specific.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-foldview-ng/size-parent-grow-children-specific/300px-inf

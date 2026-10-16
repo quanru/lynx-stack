@@ -1,0 +1,17 @@
+cases:
+  - name: web-elements/x-foldview-ng/item-fixed
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-foldview-ng/item-fixed.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-foldview-ng/item-fixed/initial,
+        }
+      - javascript: "document.querySelector('x-foldview-ng')?.scrollBy(0, 200)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-foldview-ng/item-fixed/scroll,
+        }
+      - recordToReport: Original foldview item-fixed programmatic scroll contract passed

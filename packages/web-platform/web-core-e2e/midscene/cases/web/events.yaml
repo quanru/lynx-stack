@@ -1,0 +1,139 @@
+cases:
+  - name: basic-global-bind
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-global-bind
+      - aiWaitFor: A blue square is above a pink square near the top-left of the page.
+      - aiAct: Click the upper blue square exactly once to turn the lower pink square green. Stop after that single click.
+      - web.expect: {
+          selector: "#observer",
+          attribute: "style",
+          contains: "green",
+        }
+      - aiAct: Click the upper blue square exactly once to turn the lower green square pink. Stop after that single click.
+      - web.expect: {
+          selector: "#observer",
+          attribute: "style",
+          contains: "pink",
+        }
+
+  - name: basic-global-bindkeydown
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-global-bindkeydown
+      - aiWaitFor: A pink square is visible at the top-left of the page.
+      - aiAct: Press the lowercase a key once.
+      - web.expect: {
+          selector: "#observer",
+          attribute: "style",
+          contains: "green",
+        }
+
+  - name: basic-global-bindkeydown-key
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-global-bindkeydown-key
+      - aiWaitFor: A pink square containing the text none is visible.
+      - aiAct: Press Enter once.
+      - web.expect: {
+          selector: "#observer",
+          attribute: "data-key",
+          equals: "Enter",
+        }
+
+  - name: basic-global-bindkeydown-code
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-global-bindkeydown-code
+      - aiWaitFor: A pink square containing the text none is visible.
+      - aiAct: Press the lowercase a key once.
+      - web.expect: {
+          selector: "#observer",
+          attribute: "data-code",
+          equals: "KeyA",
+        }
+
+  - name: basic-bindtap-detail
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-bindtap-detail
+      - aiWaitFor: A pink square is visible at the top-left of the page.
+      - aiAct: Click the pink square once.
+      - web.expect: {
+          selector: "#target",
+          attribute: "style",
+          contains: "green",
+        }
+      - aiAct: Click the green square once.
+      - web.expect: {
+          selector: "#target",
+          attribute: "style",
+          contains: "pink",
+        }
+
+  - name: basic-event-target-id
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-event-target-id
+      - aiWaitFor: A pink square is visible at the top-left of the page.
+      - aiAct: Click the pink square once.
+      - web.expect: {
+          selector: "#target",
+          attribute: "style",
+          contains: "green",
+        }
+      - aiAct: Click the green square once.
+      - web.expect: {
+          selector: "#target",
+          attribute: "style",
+          contains: "pink",
+        }
+
+  - name: basic-bindtap-simultaneous
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-bindtap-simultaneous
+      - aiWaitFor: A red square and the text BTS Not Clicked are visible.
+      - aiAct: Click the red square once.
+      - web.expect: {
+          selector: "#target",
+          attribute: "style",
+          contains: "green",
+        }
+      - web.expect: {
+          selector: "#target",
+          attribute: "data-mts-clicked",
+          equals: "true",
+        }
+      - web.expect: { selector: "#bts-status", text: "BTS Clicked" }
+
+  - name: basic-element-x-input-bindfocus
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-element-x-input-bindfocus
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original input focus text snapshot
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - aiAct:
+          prompt: Click inside the password input to focus it without changing its contents.
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.expect: { selector: ".result", text: "bindfocus", immediate: true }
+      - recordToReport: Original input focus text snapshot passed
+
+  - name: basic-element-x-input-bindconfirm
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-element-x-input-bindconfirm
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original input confirm text snapshot
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - aiAct:
+          prompt: Focus the input containing bindconfirm and press Enter once without changing its text.
+          options: { effort: deepThink, deepLocate: true, cacheable: false }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.expect: {
+          selector: ".result",
+          text: "bindconfirm",
+          immediate: true,
+        }
+      - recordToReport: Original input confirm text snapshot passed
+
+  - name: basic-element-x-input-bindinput
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-element-x-input-bindinput
+      - aiWaitFor: An input containing bindinput is visible.
+      - web.expect: { selector: "input", value: "bindinput" }
+      - aiAct: Focus the input, press Enter, replace all its contents with "foobar", and leave the caret at the end.
+      - web.expect: { selector: ".result", text: "foobar-6-6" }

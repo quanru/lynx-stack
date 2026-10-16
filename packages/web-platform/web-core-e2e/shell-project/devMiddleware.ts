@@ -19,6 +19,13 @@ export async function ssrMiddleware(
   next: () => void,
 ) {
   const url = new URL(req.url ?? '', `http://${req.headers.host}`);
+  // Hydration uses the client bundle for the server-rendered fixture. Keep the
+  // public SSR URL contract while serving the existing build output.
+  if (url.pathname.startsWith('/dist/ssr/')) {
+    req.url = `${url.pathname.replace('/dist/ssr/', '/dist/')}${url.search}`;
+    next();
+    return;
+  }
   if (url.pathname === '/ssr') {
     const caseName = url.searchParams.get('casename');
     const hasdir = url.searchParams.get('hasdir') === 'true';

@@ -1,0 +1,53 @@
+# Preserve client eligibility, original 500 ms windows and exact event payloads.
+cases:
+  - name: api-error-detail
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-error"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - recordToReport: Before original error source-map and stack assertions
+      - web.expect: {
+          consoleError: {
+            type: error,
+            line: 2,
+            col: 0,
+            message: error,
+            stack: { nonemptyString: true },
+          },
+        }
+      - recordToReport: Original error source-map coordinates, message and nonempty stack passed
+  - name: api-error-mts
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-error"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - recordToReport: Before original main-thread error file name assertion
+      - web.expect: { consoleError: { type: error, fileName: lepus.js } }
+      - recordToReport: Original main-thread error file name passed
+  - name: api-error-bts
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-error"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - recordToReport: Before original background-thread error file name assertion
+      - web.expect: { consoleError: { type: error, fileName: app-service.js } }
+      - recordToReport: Original background-thread error file name passed
+  - name: api-set-release
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-set-release"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - recordToReport: Before original main-thread error release assertion
+      - web.expect: {
+          consoleError: { type: error, message: error, release: "1" },
+        }
+      - recordToReport: Original main-thread error release passed
+  - name: api-set-release-bts
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-set-release-bts"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - recordToReport: Before original background-thread error release assertion
+      - web.expect: {
+          consoleError: {
+            type: error,
+            message: "loadCard failed Error: error",
+            release: "111",
+          },
+        }
+      - recordToReport: Original background-thread error message and release passed

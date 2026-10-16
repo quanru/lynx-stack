@@ -1,0 +1,383 @@
+# Original describe-scoped web-elements static contracts, including source PNG aliases.
+afterEach:
+  - recordToReport: Original scoped web-elements pixel contract result
+cases:
+  - name: web-elements/x-text/raw-text-no-js
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-text/raw-text-no-js.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-text/raw-text-no-js/index
+  - name: web-elements/x-text/text-no-js
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-text/text-no-js.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-text/text-no-js/index
+  - name: web-elements/x-text/text-attribute-text
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-text/text-attribute-text.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-text/text-attribute-text/index
+  - name: web-elements/filter-image/basic
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/filter-image/basic.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: filter-image/basic/index
+  - name: web-elements/filter-image/mode-aspectfit
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/filter-image/mode-aspectfit.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: filter-image/mode-aspectfit/index
+  - name: web-elements/filter-image/mode-aspectfill
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/filter-image/mode-aspectfill.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: filter-image/mode-aspectfill/index
+  - name: web-elements/filter-image/mode-center
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/filter-image/mode-center.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: filter-image/mode-center/index
+  - name: web-elements/filter-image/basic-placeholder
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/filter-image/basic-placeholder.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: filter-image/basic/index
+  - name: web-elements/filter-image/mode-aspectfit-placeholder
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/filter-image/mode-aspectfit-placeholder.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: filter-image/mode-aspectfit/index
+  - name: web-elements/filter-image/mode-aspectfill-placeholder
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/filter-image/mode-aspectfill-placeholder.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: filter-image/mode-aspectfill/index
+  - name: web-elements/filter-image/mode-center-placeholder
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/filter-image/mode-center-placeholder.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: filter-image/mode-center/index
+  - name: web-elements/filter-image/blur-radius
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/filter-image/blur-radius.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: filter-image/blur-radius/index
+  - name: web-elements/filter-image/drop-shadow
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/filter-image/drop-shadow.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: filter-image/drop-shadow/index
+  - name: web-elements/x-image/basic
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-image/basic.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-image/basic/index
+  - name: web-elements/x-image/mode-aspectfit
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-image/mode-aspectfit.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-image/mode-aspectfit/index
+  - name: web-elements/x-image/mode-aspectfill
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-image/mode-aspectfill.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-image/mode-aspectfill/index
+  - name: web-elements/x-image/mode-center
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-image/mode-center.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-image/mode-center/index
+  - name: web-elements/x-image/basic-placeholder
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-image/basic-placeholder.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-image/basic/index
+  - name: web-elements/x-image/mode-aspectfit-placeholder
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-image/mode-aspectfit-placeholder.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-image/mode-aspectfit/index
+  - name: web-elements/x-image/mode-aspectfill-placeholder
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-image/mode-aspectfill-placeholder.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-image/mode-aspectfill/index
+  - name: web-elements/x-image/mode-center-placeholder
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-image/mode-center-placeholder.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-image/mode-center/index
+  - name: web-elements/x-image/placeholder-src-not-exist
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-image/placeholder-src-not-exist.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-image/placeholder-src-not-exist/firefox
+  - name: web-elements/x-image/placeholder-src-do-exist
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-image/placeholder-src-do-exist.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-image/placeholder-src-do-exist/chromium
+  - name: web-elements/x-image/border-radius
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-image/border-radius.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-image/border-radius/index
+  - name: web-elements/x-image/blur-radius
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-image/blur-radius.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-image/blur-radius/index
+  - name: web-elements/x-image/position-basic
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-image/position-basic.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-image/position-basic/index
+  - name: web-elements/x-image/position
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-image/position.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-image/position/index
+  - name: web-elements/x-image/basic-inherit
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-image/basic-inherit.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-image/basic-inherit/index
+  - name: web-elements/x-list/scroll-orientation
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-list/scroll-orientation.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-list/scroll-orientation/initial
+  - name: web-elements/x-list/initial-scroll-index
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-list/initial-scroll-index.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-list/initial-scroll-index/index
+  - name: web-elements/x-list/scroll-orientation-flow
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-list/scroll-orientation-flow.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-list/scroll-orientation-flow/index
+  - name: web-elements/x-list/full-span
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-list/full-span.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-list/full-span/index
+  - name: web-elements/x-list/axis-gap
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-list/axis-gap.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-list/axis-gap/index
+  - name: web-elements/x-list/axis-gap-flow
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-list/axis-gap-flow.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-list/axis-gap-flow/index
+  - name: web-elements/x-list/axios-gap-waterfall
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-list/axios-gap-waterfall.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-list/axios-gap-waterfall/index
+  - name: web-elements/x-list/list-item-linear
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-list/list-item-linear.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-list/list-item-linear/index
+  - name: web-elements/x-input/placeholder
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-input/placeholder.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-input/placeholder/index
+  - name: web-elements/x-input/placeholder-color
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-input/placeholder-color.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-input/placeholder-color/index
+  - name: web-elements/x-input/placeholder-weight
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-input/placeholder-weight.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-input/placeholder-weight/index
+  - name: web-elements/x-input/attribute-value
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-input/attribute-value.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-input/attribute-value/attribute-value
+  - name: web-elements/x-input/attribute-maxlength-first-screen-cut-value
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-input/attribute-maxlength-first-screen-cut-value.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-input/attribute-maxlength-first-screen-cut-value/text-hello
+  - name: web-elements/x-input/style-background-color
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-input/style-background-color.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-input/style-background-color/initial
+  - name: web-elements/x-input/style-border-radius
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-input/style-border-radius.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-input/style-border-radius/initial
+  - name: web-elements/x-input/style-inherit-margin
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-input/style-inherit-margin.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-input/style-inherit-margin/initial
+  - name: web-elements/x-input/style-inherit-padding
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-input/style-inherit-padding.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-input/style-inherit-padding/initial
+  - name: web-elements/x-input/style-inherit-color
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-input/style-inherit-color.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-input/style-inherit-color/initial
+  - name: web-elements/x-overlay-ng/basic-z-index
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-overlay-ng/basic-z-index.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-overlay-ng/basic-z-index/red-cover-next-z-staking-rect
+  - name: web-elements/x-textarea/placeholder
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-textarea/placeholder.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-textarea/placeholder/index
+  - name: web-elements/x-textarea/placeholder-color
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-textarea/placeholder-color.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-textarea/placeholder-color/index
+  - name: web-elements/x-textarea/placeholder-weight
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-textarea/placeholder-weight.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-textarea/placeholder-weight/index
+  - name: web-elements/x-textarea/attribute-value
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-textarea/attribute-value.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-textarea/attribute-value/attribute-value
+  - name: web-elements/x-textarea/attribute-maxlength-first-screen-cut-value
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-textarea/attribute-maxlength-first-screen-cut-value.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-textarea/attribute-maxlength-first-screen-cut-value/text-hello
+  - name: web-elements/x-textarea/background-color-inherit
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-textarea/background-color-inherit.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-textarea/background-color-inherit/index
+  - name: web-elements/x-textarea/outline-color-inherit
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-textarea/outline-color-inherit.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: x-textarea/outline-color-inherit/index

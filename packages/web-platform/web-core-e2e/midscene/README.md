@@ -1159,14 +1159,25 @@ PORT=3081 pnpm run serve
 # Terminal 3: run Midscene.
 cd packages/web-platform/web-core-e2e/midscene
 npm ci
-cp .env.example .env       # Add multimodal model credentials; do not commit.
-set -a && source .env && set +a
+# Run this block in Bash. Keep credentials in this process environment only.
+set +x
+read -r -p "Model base URL: " MIDSCENE_MODEL_BASE_URL
+read -r -p "Model name: " MIDSCENE_MODEL_NAME
+read -r -p "Model family: " MIDSCENE_MODEL_FAMILY
+read -r -s -p "Model API key (hidden): " MIDSCENE_MODEL_API_KEY
+printf '\n'
+export MIDSCENE_MODEL_BASE_URL MIDSCENE_MODEL_NAME MIDSCENE_MODEL_FAMILY MIDSCENE_MODEL_API_KEY
 npm test -- --project web-shell
 npm test -- --project web-elements
 
 # Run the complete original YAML collection, as CI does.
 npm test
 ```
+
+Never write API keys to `.env` files, shell startup files, command arguments or
+logs. A credential manager may instead inject the key directly into the process
+environment. Keep shell tracing disabled; when finished, run
+`unset MIDSCENE_MODEL_API_KEY` and close the credential-bearing shell.
 
 All 25 web-elements cases passed locally on the first attempt using
 the real Chromium browser and standard report captures, without model calls.

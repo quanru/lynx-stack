@@ -1,6 +1,35 @@
 # Midscene E2E for web-core and web-elements
 
-## Current checkpoint — 2026-10-16 (local acceptance only)
+## Required Firefox/WebKit extension (collection verified; hosted acceptance pending)
+
+The required browser-variant extension adds 461 unchanged source declarations /
+465 expanded titles / 930 Firefox-WebKit items: core CSR contributes 271
+declarations / 275 titles / 550 items, and components contribute 190 / 190 / 380.
+Ten original source skips remain, leaving 920 statically eligible items.
+The two CSS inheritance loops each produce three titles but count as one source.
+
+The corresponding catalog totals are 701 sources / 1835 original-runner items,
+plus the separate retained group at 33 sources / 102 items: **734 original
+sources / 1937 execution items**, alongside **487 YAML cases**. These produce
+2424 combined evidence rows, not 2424 passing tests. Original outcomes include
+229 source skips, one source early return and 1707 statically eligible items,
+including one non-UI template contract. Neither skips nor returns are passes.
+
+This extension selects only Firefox and WebKit, without adding Chromium or
+optional hydrated SSR. Original SSR-No-JS tests retain their fixed SSR URL and
+test-level JavaScript-disabled setting; they are not optional hydrated SSR.
+The separately audited 729 optional hydrated-SSR variants remain outside this
+extension. No product code, fixture, callback, assertion or browser profile is
+changed, and these original callbacks are not new AI migrations.
+
+The five source-catalog files at `f4ac279` passed three model-free source
+contracts and actual browser-free collection for all 930 items. This checks
+exact titles, source locations, two fixed dynamic expansions, callback/loop
+hashes and source guards. It does not establish runtime acceptance. The prior
+independent full-build/test checkpoint below predates this extension; new-head
+hosted execution and final combined validation remain separate gates.
+
+## Previous independently verified checkpoint — 2026-10-16 (local acceptance only)
 
 Implementation checkpoint: Web `bac0c85` (bulk integration `a25fddc`);
 Native `25b69bd`. The Web inventory contains **487 YAML cases**, separately

@@ -74,7 +74,7 @@ for (const catalog of originalRunnerCatalog) {
     rmSync(root, { recursive: true, force: true });
   }
 }
-assert.equal(count, 380);
+assert.equal(count, 905);
 console.log(
-  'Collected thirteen existing runners: 120 unique source declarations, 380 browser/render executions; no browsers launched.',
+  'Collected sixteen original runners: 240 unique source declarations, 905 browser/render executions; no browsers launched.',
 );

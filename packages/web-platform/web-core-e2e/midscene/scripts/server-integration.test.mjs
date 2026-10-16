@@ -3,6 +3,43 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import YAML from 'yaml';
 
+test('oversized Summary diagnostics survive renderer failure without approving a partial publication', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const steps = workflow.jobs['pages-report'].steps;
+  const upload = steps.find(step =>
+    step.name === 'Retain oversized Summary diagnostics'
+  );
+  assert.equal(upload.if, 'always() && !cancelled()');
+  assert.equal(
+    upload.with.name,
+    'midscene-summary-overflow-${{ github.run_id }}-${{ github.run_attempt }}',
+  );
+  assert.deepEqual(upload.with.path.trim().split('\n'), [
+    '${{ runner.temp }}/midscene-publication/site/summary-overflow.md',
+    '${{ runner.temp }}/midscene-publication/site/summary-overflow.json',
+  ]);
+  assert.equal(upload.with['if-no-files-found'], 'ignore');
+  assert.match(
+    steps.find(step => step.name === 'Upload report publication bundle').if,
+    /outputs.rendered == 'true'/,
+  );
+  assert.match(
+    steps.find(step =>
+      step.name
+        === 'Preserve evidence validation failure after retaining its report'
+    ).if,
+    /outcome == 'failure'/,
+  );
+});
+
 test('Firefox container setup fixes the observed root/home UID mismatch without changing HOME or browser guards', () => {
   const workflow = YAML.parse(
     readFileSync(
@@ -242,7 +279,8 @@ test('original Playwright runners own servers before persistent Midscene fixture
   assert.ok(start >= 0);
   for (
     const step of steps.filter(step =>
-      step.name?.startsWith('Validate original')
+      (step.name?.startsWith('Validate original')
+        || step.name?.startsWith('Validate remaining original'))
       && step.run?.includes('playwright test')
     )
   ) {
@@ -265,10 +303,11 @@ test('retained browser variants bound workers without replacing original profile
   );
   const runners = Object.values(workflow.jobs).flatMap(job => job.steps ?? [])
     .filter(step =>
-      step.name?.startsWith('Validate original')
+      (step.name?.startsWith('Validate original')
+        || step.name?.startsWith('Validate remaining original'))
       && step.run?.includes('playwright test')
     );
-  assert.equal(runners.length, 14);
+  assert.equal(runners.length, 17);
   for (const step of runners) {
     assert.ok(
       step.run.includes('--workers=2'),
@@ -298,6 +337,9 @@ test('retained browser variants bound workers without replacing original profile
         'original-markdown',
         'original-drag-wheel',
         'original-template',
+        'original-bulk-react-csr',
+        'original-bulk-react-ssr',
+        'original-bulk-elements',
         'original-pointer-csr',
         'original-pointer-ssr',
       ].includes(step.id)

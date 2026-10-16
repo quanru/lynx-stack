@@ -83,6 +83,9 @@ export function retainedInputEvidence(
               : titles.length !== 1)
           : !titles.includes(suiteName))
         || !sourceKeys.includes(source)
+        || (descriptor?.fullTitle
+          && [...titles.slice(titles.indexOf(descriptor.suite)), spec.title]
+              .join(' ') !== descriptor.fullTitle)
         || spec.file !== (descriptor?.file ?? sourceFile)
         || !Number.isInteger(spec.line) || spec.line < 1
       ) {
@@ -120,7 +123,8 @@ export function retainedInputEvidence(
           .filter(Boolean);
         if (
           item.expectedStatus !== 'passed'
-          && !(item.expectedStatus === 'skipped' && final?.status === 'skipped')
+          && !(item.expectedStatus === 'skipped'
+            && (!final || final.status === 'skipped'))
         ) {
           throw new Error('Unexpected source expectedStatus');
         }
@@ -140,6 +144,10 @@ export function retainedInputEvidence(
               && item.expectedStatus === 'skipped'
               && descriptor?.skipBrowsers?.includes(item.projectName)
               ? 'source-skip'
+              : final?.status === 'passed' && item.status === 'expected'
+                  && item.expectedStatus === 'passed' && html
+                  && descriptor?.earlyReturnBrowsers?.includes(item.projectName)
+              ? 'source-return'
               : descriptor?.evidencePolicy ?? 'ui',
           line: spec.line,
           status: final?.status ?? 'not-run',

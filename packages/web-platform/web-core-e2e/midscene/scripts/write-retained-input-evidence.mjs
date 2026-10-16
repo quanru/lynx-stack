@@ -69,7 +69,8 @@ export function writeRetainedInputEvidence(
         && row.outcome === 'skipped'
       || row.status === 'passed'
         && ['expected', 'flaky'].includes(row.outcome)
-        && (row.evidencePolicy === 'non-ui' || row.screenshots.length > 0)
+        && (['non-ui', 'source-return'].includes(row.evidencePolicy)
+          || row.screenshots.length > 0)
         && row.report
     );
   manifest.producerResult = producerResult;

@@ -19,6 +19,7 @@ import {
   originalEvidenceConfig,
   retainedCatalog,
   catalogSourceCount,
+  sourceSelectionPattern,
 } from './original-runner-catalog.mjs';
 import { retainedInputEvidence } from './retained-input-evidence.mjs';
 import { writeOriginalRunnerEvidence } from './write-original-runner-evidence.mjs';
@@ -42,6 +43,56 @@ const workflow = YAML.parse(
   ),
 );
 const steps = workflow.jobs['web-shell-ai-e2e'].steps;
+test('bulk selection escapes punctuation and requires the exact suite, group and complete title', () => {
+  const pattern = sourceSelectionPattern([{
+    suite: 'web-elements test suite',
+    group: 'x-input',
+    title: 'input.some+value (literal)?',
+  }]);
+  assert.ok(
+    pattern.test(
+      'chromium tests/web-elements.spec.ts web-elements test suite x-input input.some+value (literal)?',
+    ),
+  );
+  assert.ok(
+    !pattern.test(
+      'chromium tests/web-elements.spec.ts web-elements test suite x-textarea input.some+value (literal)?',
+    ),
+  );
+  assert.ok(
+    !pattern.test(
+      'chromium tests/web-elements.spec.ts web-elements test suite x-input inputXsomevalue literal',
+    ),
+  );
+  assert.ok(
+    !pattern.test(
+      'chromium tests/web-elements.spec.ts web-elements test suite x-input input.some+value (literal)? extra',
+    ),
+  );
+  assert.throws(() => sourceSelectionPattern([]), /Empty original/);
+});
+
+test('bulk source identities do not overlap any prior runner or retained source despite different key formats', () => {
+  const identities = catalog =>
+    catalog.sources
+      ? catalog.sources.map(source =>
+        `${source.file}::${source.group ?? source.suite ?? ''}/${source.title}`
+      )
+      : catalog.keys.map(key => `${catalog.file}::${key}`);
+  const prior = new Set(
+    [
+      ...originalRunnerCatalog.filter(runner => !runner.selectSources),
+      retainedCatalog,
+    ].flatMap(identities),
+  );
+  for (
+    const runner of originalRunnerCatalog.filter(runner => runner.selectSources)
+  ) {
+    for (const identity of identities(runner)) {
+      assert.ok(!prior.has(identity), identity);
+    }
+  }
+});
 test('SVG expansion preserves 12 original declarations, 15 titles and exact source identities', () => {
   const runner = originalRunnerCatalog.find(item =>
     item.id === 'svg-selection-webview'
@@ -131,19 +182,19 @@ test('multi-file manifest rejects forged declaration identity without dropping e
   );
 });
 
-test('thirteen existing commands keep exact sources, grep, profiles and mode; no additional test invocation', () => {
-  assert.equal(originalRunnerSourceCount, 120);
+test('sixteen original runners retain profiles and the three new batches are explicitly bounded', () => {
+  assert.equal(originalRunnerSourceCount, 240);
   assert.equal(
     originalRunnerCatalog.reduce(
       (sum, row) => sum + row.keys.length * row.browsers.length,
       0,
     ),
-    380,
+    905,
   );
   assert.equal(
     steps.filter(step => step.run?.includes('pnpm exec playwright test'))
       .length,
-    14,
+    17,
   );
   for (const runner of originalRunnerCatalog) {
     const matches = steps.filter(step => step.name === runner.stepName);
@@ -285,8 +336,9 @@ function fixture(t) {
     const suites = runner.keys.map((key, index) => {
       const [group, name] = key.split('/');
       const descriptor = runner.sources?.find(source => source.key === key);
-      return {
-        title: descriptor?.suite ?? (descriptor ? descriptor.file : group),
+      const unit = {
+        title: descriptor?.group ?? descriptor?.suite
+          ?? (descriptor ? descriptor.file : group),
         specs: [{
           title: descriptor?.title ?? name,
           file: descriptor?.file ?? runner.file,
@@ -317,6 +369,15 @@ function fixture(t) {
             };
           }),
         }],
+      };
+      if (!descriptor?.group) return unit;
+      const middle = descriptor.fullTitle?.slice(
+        descriptor.suite.length + 1,
+        -(descriptor.group.length + descriptor.title.length + 1),
+      ).trim();
+      return {
+        title: descriptor.suite,
+        suites: middle ? [{ title: middle, suites: [unit] }] : [unit],
       };
     });
     writeFileSync(
@@ -360,17 +421,17 @@ function fixture(t) {
   };
 }
 
-test('all thirteen producers preserve 380 rows, 120 sources, 54 original skips and one non-UI case', t => {
+test('all sixteen producers preserve 905 rows, 240 sources, 219 skips and one non-UI case', t => {
   const { root, outcomes, stage, entry, env } = fixture(t);
   assert.equal(writeOriginalRunnerEvidence(root, outcomes), 0);
   stage();
   const result = prepareOriginalRunnerPublication(entry, env);
-  assert.equal(result.sourceCount, 120);
-  assert.equal(result.expectedCount, 380);
-  assert.equal(result.cases.length, 380);
+  assert.equal(result.sourceCount, 240);
+  assert.equal(result.expectedCount, 905);
+  assert.equal(result.cases.length, 905);
   assert.equal(
     new Set(result.cases.map(row => `${row.platform}/${row.name}`)).size,
-    380,
+    905,
   );
   assert.deepEqual(result.errors, []);
   assert.ok(
@@ -379,7 +440,10 @@ test('all thirteen producers preserve 380 rows, 120 sources, 54 original skips a
       && row.durationMs === 10
     ),
   );
-  assert.equal(result.cases.filter(row => row.status === 'skipped').length, 54);
+  assert.equal(
+    result.cases.filter(row => row.status === 'skipped').length,
+    219,
+  );
   assert.equal(
     result.cases.filter(row => row.evidencePolicy === 'non-ui').length,
     1,
@@ -402,7 +466,7 @@ test('skipped producer is distinct and cannot be hidden by successful producers'
   assert.equal(result.cases.filter(row => row.status === 'not-run').length, 18);
   assert.equal(
     result.cases.filter(row => row.status === 'success').length,
-    308,
+    667,
   );
   assert.match(result.errors.join(' '), /keyboard-ssr.*skipped/);
 });
@@ -422,7 +486,10 @@ test('allowlisted browser without an applied skip guard stays not-run attention'
   assert.equal(writeOriginalRunnerEvidence(root, outcomes), 1);
   stage();
   const result = prepareOriginalRunnerPublication(entry, env);
-  assert.equal(result.cases.filter(row => row.status === 'skipped').length, 53);
+  assert.equal(
+    result.cases.filter(row => row.status === 'skipped').length,
+    218,
+  );
   assert.equal(result.cases.filter(row => row.status === 'not-run').length, 1);
   assert.equal(
     result.cases.find(row => row.status === 'not-run').evidencePolicy,
@@ -451,7 +518,10 @@ test('missing producer never fabricates source skips; non-UI still requires real
     result.cases.filter(row => row.status === 'not-run').length,
     105,
   );
-  assert.equal(result.cases.filter(row => row.status === 'skipped').length, 22);
+  assert.equal(
+    result.cases.filter(row => row.status === 'skipped').length,
+    187,
+  );
   const template = result.cases.find(row => row.evidencePolicy === 'non-ui');
   assert.equal(template.status, 'failed');
   assert.equal(template.reportPath, null);
@@ -498,7 +568,8 @@ test('source-skip publication requires the original expectedStatus proof', t => 
   delete row.expectedStatus;
   writeFileSync(file, JSON.stringify(manifest));
   assert.throws(
-    () => prepareOriginalRunnerPublication(entry, env),
+    () =>
+      prepareOriginalRunnerPublication(entry, { ...env, GITHUB_RUN_ID: '124' }),
     /Invalid or duplicate/,
   );
 });
@@ -544,6 +615,121 @@ test('retained same-title input and textarea descriptors are matched inside the 
   assert.throws(
     () => retainedInputEvidence(report, root),
     /Unexpected retained source/,
+  );
+});
+
+function earlyReturnResult(root) {
+  const file = path.join(
+    root,
+    'web-elements/midscene-original-results/bulk-elements/report.json',
+  );
+  const report = JSON.parse(readFileSync(file, 'utf8'));
+  const descriptor = originalRunnerCatalog.find(runner =>
+    runner.id === 'bulk-elements'
+  ).sources.find(source => source.earlyReturnBrowsers.length);
+  let item;
+  function visit(suite) {
+    for (const spec of suite.specs ?? []) {
+      if (spec.title === descriptor.title) {
+        item = spec.tests.find(test => test.projectName === 'webkit');
+      }
+    }
+    for (const child of suite.suites ?? []) visit(child);
+  }
+  report.suites.forEach(visit);
+  return { file, report, item, descriptor };
+}
+
+test('actual passed early-return branch is not applicable, with real HTML and optional screenshot', t => {
+  const { root, outcomes, stage, entry, env } = fixture(t);
+  const { file, report, item } = earlyReturnResult(root);
+  item.results[0].attachments = [];
+  writeFileSync(file, JSON.stringify(report));
+  assert.equal(writeOriginalRunnerEvidence(root, outcomes), 0);
+  stage();
+  const supplemental = prepareOriginalRunnerPublication(entry, env);
+  const returned = supplemental.cases.filter(row =>
+    row.status === 'not-applicable'
+  );
+  assert.equal(returned.length, 1);
+  assert.equal(returned[0].evidencePolicy, 'source-return');
+  assert.equal(returned[0].previewPath, null);
+  assert.ok(returned[0].reportPath);
+  assert.match(returned[0].reason, /returned before assertions/);
+  assert.doesNotThrow(() => validateSupplementalEvidence(supplemental));
+  assert.equal(
+    supplemental.cases.filter(row => row.status === 'success').length,
+    685,
+  );
+});
+
+test('early-return allowlist never conceals flaky, failed, missing or HTML-less outcomes', t => {
+  for (const outcome of ['flaky', 'failed', 'missing', 'missing-html']) {
+    const { root, outcomes, stage, entry, env } = fixture(t);
+    const { file, report, item, descriptor } = earlyReturnResult(root);
+    if (outcome === 'flaky') item.status = 'flaky';
+    if (outcome === 'failed') {
+      item.status = 'unexpected';
+      item.results[0].status = 'failed';
+    }
+    if (outcome === 'missing') {
+      item.status = 'skipped';
+      item.results = [];
+    }
+    if (outcome === 'missing-html') {
+      rmSync(
+        path.join(
+          root,
+          'web-elements/midscene-original-results/bulk-elements/html/index.html',
+        ),
+      );
+    }
+    writeFileSync(file, JSON.stringify(report));
+    assert.equal(
+      writeOriginalRunnerEvidence(root, outcomes),
+      outcome === 'flaky' ? 0 : 1,
+    );
+    stage();
+    const supplemental = prepareOriginalRunnerPublication(entry, env);
+    const row = supplemental.cases.find(row =>
+      row.name === `${descriptor.key} (component)` && row.platform === 'webkit'
+    );
+    assert.equal(row.evidencePolicy, 'ui');
+    assert.equal(
+      row.status,
+      outcome === 'flaky'
+        ? 'flaky'
+        : outcome === 'missing'
+        ? 'not-run'
+        : 'failed',
+    );
+    assert.equal(
+      supplemental.cases.filter(row => row.status === 'not-applicable').length,
+      0,
+    );
+  }
+});
+
+test('publisher rejects a forged source-return exemption for an unlisted browser', t => {
+  const { root, outcomes, stage, entry, env } = fixture(t);
+  writeOriginalRunnerEvidence(root, outcomes);
+  stage();
+  const file = path.join(
+    entry.path,
+    'original-runners/bulk-elements/evidence.json',
+  );
+  const manifest = JSON.parse(readFileSync(file, 'utf8'));
+  const returned = manifest.cases.find(row =>
+    row.evidencePolicy === 'source-return'
+  );
+  const chromium = manifest.cases.find(row =>
+    row.source === returned.source && row.browser === 'chromium'
+  );
+  chromium.evidencePolicy = 'source-return';
+  writeFileSync(file, JSON.stringify(manifest));
+  assert.throws(
+    () => prepareOriginalRunnerPublication(entry, env),
+    /Invalid or duplicate/,
   );
 });
 
@@ -600,8 +786,8 @@ test('new and existing original evidence share one validated two-section Summary
   const existing = prepareOriginalRunnerPublication(entry, env);
   const retained = await prepareRetainedPublication(entry, env);
   const combined = mergeOriginalEvidence(retained.supplemental, existing);
-  assert.equal(combined.sourceCount, 120 + catalogSourceCount(retainedCatalog));
-  assert.equal(combined.expectedCount, 380 + retainedCatalog.keys.length * 3);
+  assert.equal(combined.sourceCount, 240 + catalogSourceCount(retainedCatalog));
+  assert.equal(combined.expectedCount, 905 + retainedCatalog.keys.length * 3);
   assert.doesNotThrow(() => validateSupplementalEvidence(combined));
   const summary = renderSummary({
     title: 'Combined original evidence',
@@ -611,7 +797,7 @@ test('new and existing original evidence share one validated two-section Summary
     supplementalEvidence: combined,
   });
   assert.equal((summary.match(/<details>/g) ?? []).length, 1);
-  assert.equal((summary.match(/<img /g) ?? []).length, 325);
+  assert.equal((summary.match(/<img /g) ?? []).length, 685);
   assert.ok(
     summary.includes(
       `${combined.sourceCount} source cases / ${combined.expectedCount} browser cases`,
@@ -667,7 +853,7 @@ test('a WebKit keyboard retry stays flaky, uses its final screenshot and appears
     entries: [],
     supplementalEvidence: supplemental,
   });
-  assert.match(summary, /1 need attention · 325 passed/);
+  assert.match(summary, /1 need attention · 684 passed/);
   assert.ok(
     summary.indexOf('basic-global-bindkeydown-key (CSR)')
       < summary.indexOf('<details>'),

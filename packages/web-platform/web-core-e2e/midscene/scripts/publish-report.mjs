@@ -273,6 +273,8 @@ async function main() {
       supplemental.errors.length
       || supplemental.cases.some(row =>
         !['success', 'flaky'].includes(row.status)
+        && !(row.status === 'not-applicable'
+          && row.evidencePolicy === 'source-return')
         && !(row.status === 'skipped' && row.evidencePolicy === 'source-skip')
       )
     )

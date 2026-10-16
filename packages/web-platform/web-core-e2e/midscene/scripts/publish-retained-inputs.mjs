@@ -143,7 +143,11 @@ export function publishRetainedInputs(
     const policy = row.evidencePolicy ?? 'ui';
     if (
       !catalog.keys.includes(row.source)
-      || !['ui', 'non-ui', 'source-skip'].includes(policy)
+      || !['ui', 'non-ui', 'source-skip', 'source-return'].includes(policy)
+      || (policy === 'source-return'
+        && (!descriptor?.earlyReturnBrowsers?.includes(row.browser)
+          || row.status !== 'passed' || row.outcome !== 'expected'
+          || row.expectedStatus !== 'passed'))
       || (policy === 'non-ui' && descriptor?.evidencePolicy !== 'non-ui')
       || (descriptor?.evidencePolicy === 'non-ui' && policy !== 'non-ui')
       || (row.expectedStatus !== undefined
@@ -166,8 +170,10 @@ export function publishRetainedInputs(
       throw new Error('Invalid or duplicate source/browser evidence');
     }
     seen.add(key);
+    const report = fileOrNull(evidenceRoot, row.report, 'report');
     return {
       ...row,
+      evidencePolicy: policy === 'source-return' && !report ? 'ui' : policy,
       durationMs: typeof row.durationMs === 'number'
           && Number.isFinite(row.durationMs) && row.durationMs >= 0
         ? row.durationMs
@@ -175,7 +181,7 @@ export function publishRetainedInputs(
       screenshots: row.screenshots.map(file =>
         fileOrNull(evidenceRoot, file, 'image')
       ).filter(Boolean),
-      report: fileOrNull(evidenceRoot, row.report, 'report'),
+      report,
     };
   });
   if (existsSync(destination)) {
@@ -198,12 +204,17 @@ export function publishRetainedInputs(
       base,
     ).href;
   const passed = rows.filter(row =>
-    row.status === 'passed' && row.outcome === 'expected'
+    row.evidencePolicy !== 'source-return'
+    && row.status === 'passed' && row.outcome === 'expected'
     && (row.evidencePolicy === 'non-ui' || row.screenshots.length > 0)
     && row.report
   );
   const attention = rows.filter(row =>
-    !passed.includes(row) && row.evidencePolicy !== 'source-skip'
+    !passed.includes(row)
+    && !['source-skip', 'source-return'].includes(row.evidencePolicy)
+  );
+  const exclusions = rows.filter(row =>
+    ['source-skip', 'source-return'].includes(row.evidencePolicy)
   );
   // Infrastructure disposition is independent of individual assertion results.
   // Preserve 84 passed cases when the runner failed after their callbacks, but
@@ -240,7 +251,9 @@ export function publishRetainedInputs(
       const hasEvidence =
         (row.evidencePolicy === 'non-ui' || row.screenshots.length > 0)
         && Boolean(row.report);
-      const status = row.evidencePolicy === 'source-skip'
+      const status = row.evidencePolicy === 'source-return'
+        ? 'not-applicable'
+        : row.evidencePolicy === 'source-skip'
         ? 'skipped'
         : row.status === 'not-run' || row.status === 'skipped'
         ? 'not-run'
@@ -252,6 +265,11 @@ export function publishRetainedInputs(
           : 'failed'
         : 'failed';
       const reasons = [
+        ...(row.evidencePolicy === 'source-return'
+          ? [
+            'Original source/browser branch returned before assertions; the callback completed, but the full contract was not validated.',
+          ]
+          : []),
         ...(row.evidencePolicy === 'source-skip'
           ? [
             'Original source/browser guard skipped this execution; no screenshot exists.',
@@ -280,7 +298,8 @@ export function publishRetainedInputs(
           ? null
           : row.durationMs,
         previewPath:
-          (row.evidencePolicy ?? 'ui') === 'ui' && row.screenshots.length
+          ['ui', 'source-return'].includes(row.evidencePolicy ?? 'ui')
+            && row.screenshots.length
             ? `${sitePrefix}/${row.screenshots[0]}`
             : null,
         reportPath: row.report ? `${sitePrefix}/${row.report}` : null,
@@ -316,7 +335,11 @@ export function publishRetainedInputs(
     '',
     `${
       hasAttention ? '⚠️' : '✅'
-    } ${attention.length} cases need attention · ${passed.length} passed · ${manifest.runnerErrorCount} runner errors · ${infrastructureErrors.length} infrastructure errors`,
+    } ${attention.length} cases need attention · ${passed.length} passed · ${
+      exclusions.filter(row => row.evidencePolicy === 'source-skip').length
+    } source-skipped · ${
+      exclusions.filter(row => row.evidencePolicy === 'source-return').length
+    } source-returned · ${manifest.runnerErrorCount} runner errors · ${infrastructureErrors.length} infrastructure errors`,
     '',
     'Retained original Playwright inputs; excluded from the AI/YAML case count.',
     '',
@@ -324,12 +347,12 @@ export function publishRetainedInputs(
       ? [infrastructureErrors.join(' '), '']
       : []),
     ...(attention.length ? [table(attention), ''] : []),
-    ...(passed.length
+    ...(passed.length || exclusions.length
       ? [
         '<details>',
-        '<summary>Passed original contracts</summary>',
+        '<summary>Passed original contracts and source exclusions</summary>',
         '',
-        table(passed),
+        table([...passed, ...exclusions]),
         '',
         '</details>',
         '',

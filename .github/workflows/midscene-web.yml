@@ -317,11 +317,35 @@ jobs:
       - name: Validate retained input collection without launching browsers
         run: node packages/web-platform/web-core-e2e/midscene/scripts/check-retained-input-collection.mjs
 
+      - name: Validate remaining original React contracts (CSR)
+        id: original-bulk-react-csr
+        working-directory: packages/web-platform/web-core-e2e
+        env:
+          ENABLE_SSR: ""
+          ORIGINAL_EVIDENCE_RUNNER: bulk-react-csr
+        run: pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/bulk-react-csr/results --config playwright.original-evidence.config.ts
+
+      - name: Validate remaining original React contracts (SSR)
+        id: original-bulk-react-ssr
+        working-directory: packages/web-platform/web-core-e2e
+        env:
+          ENABLE_SSR: "1"
+          ORIGINAL_EVIDENCE_RUNNER: bulk-react-ssr
+        run: pnpm exec playwright test tests/reactlynx.spec.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/bulk-react-ssr/results --config playwright.original-evidence.config.ts
+
+      - name: Validate remaining original component contracts
+        id: original-bulk-elements
+        working-directory: packages/web-platform/web-elements
+        env:
+          PORT: "3081"
+          ORIGINAL_EVIDENCE_RUNNER: bulk-elements
+        run: pnpm exec playwright test tests/web-elements.spec.ts --project chromium --project firefox --project webkit --workers=2 --output midscene-original-results/bulk-elements/results --config playwright.original-evidence.config.ts
+
       - name: Preserve existing original runner evidence before moving artifacts
         if: always()
         env:
           ORIGINAL_RUNNER_OUTCOMES: >-
-            {"keyboard-csr":"${{ steps.original-keyboard-csr.outcome }}","keyboard-ssr":"${{ steps.original-keyboard-ssr.outcome }}","animation-csr":"${{ steps.original-animation-csr.outcome }}","lazy-components-csr":"${{ steps.original-lazy-components-csr.outcome }}","list-api":"${{ steps.original-list-api.outcome }}","svg-selection-webview":"${{ steps.original-svg-selection-webview.outcome }}","runtime":"${{ steps.original-runtime.outcome }}","pointer-csr":"${{ steps.original-pointer-csr.outcome }}","pointer-ssr":"${{ steps.original-pointer-ssr.outcome }}","performance":"${{ steps.original-performance.outcome }}","markdown":"${{ steps.original-markdown.outcome }}","drag-wheel":"${{ steps.original-drag-wheel.outcome }}","template":"${{ steps.original-template.outcome }}"}
+            {"keyboard-csr":"${{ steps.original-keyboard-csr.outcome }}","keyboard-ssr":"${{ steps.original-keyboard-ssr.outcome }}","animation-csr":"${{ steps.original-animation-csr.outcome }}","lazy-components-csr":"${{ steps.original-lazy-components-csr.outcome }}","list-api":"${{ steps.original-list-api.outcome }}","svg-selection-webview":"${{ steps.original-svg-selection-webview.outcome }}","runtime":"${{ steps.original-runtime.outcome }}","pointer-csr":"${{ steps.original-pointer-csr.outcome }}","pointer-ssr":"${{ steps.original-pointer-ssr.outcome }}","performance":"${{ steps.original-performance.outcome }}","markdown":"${{ steps.original-markdown.outcome }}","drag-wheel":"${{ steps.original-drag-wheel.outcome }}","template":"${{ steps.original-template.outcome }}","bulk-react-csr":"${{ steps.original-bulk-react-csr.outcome }}","bulk-react-ssr":"${{ steps.original-bulk-react-ssr.outcome }}","bulk-elements":"${{ steps.original-bulk-elements.outcome }}"}
         run: node packages/web-platform/web-core-e2e/midscene/scripts/write-original-runner-evidence.mjs
 
       - name: Validate original keyboard and input contracts with evidence
@@ -425,11 +449,11 @@ jobs:
             cp -R "$retained" "$target/retained-inputs"
           fi
           mkdir -p "$target/original-runners"
-          for runner in keyboard-csr keyboard-ssr animation-csr lazy-components-csr runtime pointer-csr pointer-ssr; do
+          for runner in keyboard-csr keyboard-ssr animation-csr lazy-components-csr runtime pointer-csr pointer-ssr bulk-react-csr bulk-react-ssr; do
             source="packages/web-platform/web-core-e2e/midscene-original-results/$runner"
             if [ -d "$source" ]; then cp -R "$source" "$target/original-runners/$runner"; fi
           done
-          for runner in list-api svg-selection-webview performance markdown drag-wheel template; do
+          for runner in list-api svg-selection-webview performance markdown drag-wheel template bulk-elements; do
             source="packages/web-platform/web-elements/midscene-original-results/$runner"
             if [ -d "$source" ]; then cp -R "$source" "$target/original-runners/$runner"; fi
           done
@@ -581,6 +605,16 @@ jobs:
           name: midscene-publication-${{ github.run_attempt }}
           path: ${{ runner.temp }}/midscene-publication
           if-no-files-found: error
+
+      - name: Retain oversized Summary diagnostics
+        if: always() && !cancelled()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: midscene-summary-overflow-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/midscene-publication/site/summary-overflow.md
+            ${{ runner.temp }}/midscene-publication/site/summary-overflow.json
+          if-no-files-found: ignore
 
       - name: Preserve evidence validation failure after retaining its report
         if: always() && !cancelled() && steps.build-report.outcome == 'failure'

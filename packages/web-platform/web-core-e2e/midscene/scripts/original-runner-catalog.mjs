@@ -6,6 +6,10 @@ import {
 import remainingSources from './original-remaining-sources.json' with {
   type: 'json',
 };
+import {
+  bulkReactSources,
+  bulkElementSources,
+} from './bulk-candidate-sources.mjs';
 
 export const retainedCatalog = {
   id: 'retained-inputs',
@@ -80,7 +84,48 @@ export function catalogSourceCount(catalog) {
       : catalog.keys,
   ).size;
 }
+// Playwright applies grep to the complete file/suite/test title. New retained
+// batches select exact title suffixes; escaped punctuation is never a wildcard.
+export function sourceSelectionPattern(sources) {
+  if (!sources.length) throw new Error('Empty original source selection');
+  const escape = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(
+    `(?:^| )(?:${
+      sources.map(source =>
+        source.fullTitle
+          ? escape(source.fullTitle)
+          : [source.suite, source.group, source.title].filter(Boolean).map(
+            escape,
+          ).join(' ')
+      ).join('|')
+    })$`,
+  );
+}
 export const originalRunnerCatalog = [
+  ...['CSR', 'SSR'].map(mode => ({
+    ...core,
+    id: `bulk-react-${mode.toLowerCase()}`,
+    mode,
+    selectSources: true,
+    sources: bulkReactSources.map(source => ({
+      ...source,
+      skipBrowsers: source.skipBrowsersByMode[mode],
+      earlyReturnBrowsers: source.earlyReturnBrowsersByMode[mode],
+    })),
+    keys: bulkReactSources.map(source => source.key),
+    stepName: `Validate remaining original React contracts (${mode})`,
+  })),
+  {
+    package: 'web-elements',
+    id: 'bulk-elements',
+    mode: 'component',
+    selectSources: true,
+    file: 'tests/web-elements.spec.ts',
+    sources: bulkElementSources,
+    keys: bulkElementSources.map(source => source.key),
+    browsers: retainedInputBrowsers,
+    stepName: 'Validate remaining original component contracts',
+  },
   ...[
     {
       id: 'runtime',
@@ -238,6 +283,9 @@ export function originalEvidenceConfig(
   const root = `${directory}/midscene-original-results/${runner.id}`;
   return {
     ...original,
+    ...(runner.selectSources
+      ? { grep: sourceSelectionPattern(runner.sources) }
+      : {}),
     use: { ...original.use, screenshot: 'on' },
     reporter: [['line'], ['html', {
       outputFolder: `${root}/html`,

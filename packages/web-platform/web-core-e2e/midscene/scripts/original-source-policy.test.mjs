@@ -102,7 +102,7 @@ test('trusted source/browser exemptions exactly match original AST guards and no
   }
   assert.deepEqual(actual, expected);
   const byRunner = Object.fromEntries(
-    originalRunnerCatalog.map(
+    originalRunnerCatalog.filter(runner => !runner.selectSources).map(
       runner => [
         runner.id,
         (runner.sources ?? []).reduce((count, source) =>

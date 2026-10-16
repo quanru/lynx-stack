@@ -1,6 +1,16 @@
 # Full E2E migration scope
 
-## Current overlay event batch
+## Current selection and public API batch
+
+Four additional source callbacks increase collection from 471 to 475:
+viewpager select-index-0, input method-select, input method-setSelectionRange,
+and text-maxline-with-custom-truncation-innertext-change. Preserve six PNG
+checkpoints, exact API parameters, fixture aliases and every wait. Model-free
+source replay checks normal, delayed, absent and duplicate locator matches.
+The original input selection browser guards are tested and unchanged. Hosted
+Chromium PNG acceptance is pending; this is not evidence for WebKit variants.
+
+## Preceding overlay event batch
 
 The `x-overlay-ng/event-layoutchange` source declaration now has a deterministic
 YAML mapping, increasing collection from 470 to 471. The original open mutation,

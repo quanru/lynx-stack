@@ -1,5 +1,17 @@
 # Midscene E2E for web-core and web-elements
 
+## Selection and public API batch (hosted validation pending)
+
+The collection now contains 475 YAML cases. Four new original contracts cover
+viewpager select-index=0, input select(), input setSelectionRange(2, 4), and
+custom-truncation text mutation. Their six original Linux PNG checkpoints,
+fixture aliases, separate waits and programmatic operations are preserved.
+Locator attachment is awaited with the existing 30-second budget; duplicate
+matches fail instead of silently choosing one. Source replay compares present,
+delayed, missing and duplicate targets. No product code, fixture or PNG changes
+are included. These cases are not accepted until hosted Chromium validation;
+the original browser skips remain unchanged and WebKit coverage is separate.
+
 ## Single-artifact publication correction (hosted validation pending)
 
 Run 38715707855 passed 470/470 cases (467 first attempts), but its successful

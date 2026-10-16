@@ -1,0 +1,126 @@
+# Preserve the original public APIs, locator attachment, waits and Linux PNGs.
+cases:
+  - name: web-elements/x-viewpager-ng/select-index-0
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-viewpager-ng/select-index-0.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 300))"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-viewpager-ng/select-index-0/initial-color-fuchsia,
+        }
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - javascript: |-
+          new Promise((resolve, reject) => {
+            const deadline = Date.now() + 30000;
+            const check = () => {
+              const matches = document.querySelectorAll('#target');
+              if (matches.length > 1) return reject(new Error('Original API locator strictness violation'));
+              if (matches.length === 1) {
+                try {
+                  const target = matches[0];
+                  target.setAttribute('select-index', '0');
+                  return resolve(true);
+                } catch (error) { return reject(error); }
+              }
+              if (Date.now() >= deadline) return reject(new Error('Original API locator attachment timed out'));
+              requestAnimationFrame(check);
+            };
+            check();
+          })
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 1000))"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-viewpager-ng/select-index-0/show-wheat,
+        }
+      - recordToReport: Original public API and pixel contract passed
+  - name: web-elements/x-input/method-select
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-input/method.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - javascript: |-
+          new Promise((resolve, reject) => {
+            const deadline = Date.now() + 30000;
+            const check = () => {
+              const matches = document.querySelectorAll('#target');
+              if (matches.length > 1) return reject(new Error('Original API locator strictness violation'));
+              if (matches.length === 1) {
+                try {
+                  const target = matches[0];
+                  target.select();
+                  return resolve(true);
+                } catch (error) { return reject(error); }
+              }
+              if (Date.now() >= deadline) return reject(new Error('Original API locator attachment timed out'));
+              requestAnimationFrame(check);
+            };
+            check();
+          })
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-input/method-select/method-select,
+        }
+      - recordToReport: Original public API and pixel contract passed
+  - name: web-elements/x-input/method-setSelectionRange
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-input/method.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - javascript: |-
+          new Promise((resolve, reject) => {
+            const deadline = Date.now() + 30000;
+            const check = () => {
+              const matches = document.querySelectorAll('#target');
+              if (matches.length > 1) return reject(new Error('Original API locator strictness violation'));
+              if (matches.length === 1) {
+                try {
+                  const target = matches[0];
+                  target.setSelectionRange({ selectionStart: 2, selectionEnd: 4 });
+                  return resolve(true);
+                } catch (error) { return reject(error); }
+              }
+              if (Date.now() >= deadline) return reject(new Error('Original API locator attachment timed out'));
+              requestAnimationFrame(check);
+            };
+            check();
+          })
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-input/method-setSelectionRange/select-ll,
+        }
+      - recordToReport: Original public API and pixel contract passed
+  - name: web-elements/x-text/text-maxline-with-custom-truncation-innertext-change
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-text/text-maxline-with-custom-truncation-innertext-change.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-text/text-maxline-with-custom-truncation-innertext-change/initial,
+        }
+      - javascript: |-
+          new Promise((resolve, reject) => {
+            const deadline = Date.now() + 30000;
+            const check = () => {
+              const matches = document.querySelectorAll('#target');
+              if (matches.length > 1) return reject(new Error('Original API locator strictness violation'));
+              if (matches.length === 1) {
+                try {
+                  const target = matches[0];
+                  target.childNodes[0].data = new Array(100).fill('a').join('');
+                  return resolve(true);
+                } catch (error) { return reject(error); }
+              }
+              if (Date.now() >= deadline) return reject(new Error('Original API locator attachment timed out'));
+              requestAnimationFrame(check);
+            };
+            check();
+          })
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: {
+          suite: web-elements,
+          baseline: x-text/text-maxline-with-custom-truncation-innertext-change/inner-changed,
+        }
+      - recordToReport: Original public API and pixel contract passed

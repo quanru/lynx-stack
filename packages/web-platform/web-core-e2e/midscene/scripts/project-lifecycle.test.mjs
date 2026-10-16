@@ -17,6 +17,7 @@ test('projects keep independent registries and release only their own case resou
   let browserId = 0;
   let failDestroy = false;
   const contextOptions = [];
+  const launchOptions = [];
   class Agent {
     constructor(page, options) {
       this.page = page;
@@ -53,7 +54,8 @@ test('projects keep independent registries and release only their own case resou
     },
     playwright: {
       chromium: {
-        async launch() {
+        async launch(options) {
+          launchOptions.push(options);
           const id = ++browserId;
           return {
             async close() {
@@ -119,6 +121,12 @@ test('projects keep independent registries and release only their own case resou
   const first = await shellContext.agentRegistry.getAgent(runId);
   assert.equal(await shellContext.agentRegistry.getAgent(runId), first);
   const second = await elementsContext.agentRegistry.getAgent(runId);
+  for (const options of contextOptions) {
+    assert.deepEqual({ ...options }, originalChromiumProfile().context);
+  }
+  for (const options of launchOptions) {
+    assert.deepEqual(options, originalChromiumProfile().launch);
+  }
   shellContext.getConsoleEvidence(runId).expectTexts(['browser-1']);
   assert.throws(
     () => shellContext.getConsoleEvidence(runId).expectTexts(['browser-2']),
@@ -140,10 +148,17 @@ test('projects keep independent registries and release only their own case resou
   const ssrContext = await setup(ssr);
   await ssrContext.getPage('ssr-no-js-context');
   assert.equal(contextOptions.at(-1).javaScriptEnabled, false);
-  assert.deepEqual(
-    contextOptions.at(-1).viewport,
-    originalChromiumProfile().context.viewport,
+  assert.deepEqual({ ...contextOptions.at(-1) }, {
+    ...originalChromiumProfile().context,
+    javaScriptEnabled: false,
+  });
+  assert.deepEqual(launchOptions.at(-1), originalChromiumProfile().launch);
+  const pixel = module.exports.default.projects.find(project =>
+    project.name === 'web-pixels'
   );
+  const launchedBeforePixelGate = launchOptions.length;
+  await assert.rejects(setup(pixel), /Unexpected pixel project setup/);
+  assert.equal(launchOptions.length, launchedBeforePixelGate);
   assert.equal(contextOptions[0].javaScriptEnabled, undefined);
   await ssrContext.agentRegistry.releaseAgent('ssr-no-js-context');
   await ssrContext.agentRegistry.getAgent('failed-agent-report');

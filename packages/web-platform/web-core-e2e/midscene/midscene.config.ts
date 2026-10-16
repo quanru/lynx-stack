@@ -65,12 +65,8 @@ function createWebSetup(pixels = false, javaScriptEnabled = true) {
     async setup({ onTeardown }) {
       const profile = pixels
         ? originalPixelProfile()
-        : !javaScriptEnabled
-        ? originalChromiumProfile()
-        : undefined;
-      const browser: Browser = await chromium.launch(
-        profile?.launch ?? { headless: true },
-      );
+        : originalChromiumProfile();
+      const browser: Browser = await chromium.launch(profile.launch);
       onTeardown(() => browser.close());
 
       const pages = new Map<string, Page>();
@@ -85,9 +81,7 @@ function createWebSetup(pixels = false, javaScriptEnabled = true) {
         if (!page) {
           const context = await browser.newContext(
             {
-              ...(profile?.context ?? {
-                viewport: { width: 393, height: 851 },
-              }),
+              ...profile.context,
               ...(!javaScriptEnabled ? { javaScriptEnabled: false } : {}),
             },
           );

@@ -1,0 +1,19 @@
+cases:
+  - name: basic-element-scroll-view-event-scrollend
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-scroll-view-event-scrollend"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 300))"
+      - javascript: "document.querySelector('lynx-view').shadowRoot.querySelector('scroll-view').scrollTop = 200"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 200))"
+      - javascript: |-
+          (() => {
+            const event = JSON.parse(document.querySelector('lynx-view').shadowRoot.querySelector('#result>raw-text').innerHTML);
+            const { scrollTop, scrollLeft, scrollHeight, scrollWidth } = event.detail;
+            if (event.type !== 'scrollend') throw new Error('Original scrollend event type assertion failed');
+            for (const value of [scrollTop, scrollLeft, scrollHeight, scrollWidth]) {
+              if (value === undefined) throw new Error('Original scrollend geometry assertion failed');
+            }
+            return true;
+          })()
+      - recordToReport: Original scrollend event payload contract passed

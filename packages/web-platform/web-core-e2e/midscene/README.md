@@ -1,5 +1,16 @@
 # Midscene E2E for web-core and web-elements
 
+## Scrollend payload follow-up (hosted validation pending)
+
+Collection is now 484 YAML cases. The original scroll-view scrollend callback
+retains its 300 ms wait, programmatic scrollTop=200, 200 ms wait and single
+innerHTML JSON read. Event type must equal scrollend; the four geometry fields
+only have to differ from undefined, exactly as originally asserted. Null,
+strings and other defined values are not silently rejected by stronger checks.
+Source replay covers missing DOM, malformed JSON and missing fields without
+polling. Hosted Chromium acceptance is pending; other browser profiles remain
+separate. Retained original runner coverage is not added to this YAML count.
+
 ## Exposure viewport batch (hosted validation pending)
 
 Collection is now 483 YAML cases. Three exposure contracts preserve thirteen

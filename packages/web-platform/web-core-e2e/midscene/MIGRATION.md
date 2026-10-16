@@ -1,5 +1,15 @@
 # Full E2E migration scope
 
+## Scrollend payload follow-up
+
+The YAML collection increases from 483 to 484 with
+basic-element-scroll-view-event-scrollend. Preserve both original waits,
+scrollTop=200, one JSON payload read, exact event type and four non-undefined
+geometry assertions. No numeric constraints, retries or extra polling were
+introduced. Differential replay covers original success and failure semantics;
+hosted Chromium acceptance remains pending. Product sources, fixtures and
+original callbacks are unchanged.
+
 ## Retained timing and audio follow-up
 
 The retained original runner now selects 28 source declarations across three

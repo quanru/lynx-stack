@@ -115,6 +115,29 @@ function fixture(t) {
   return { root, sandbox, report, writeReport, options };
 }
 
+test('a skipped producer preserves all not-run rows and the actual skipped outcome', t => {
+  const { root, options } = fixture(t);
+  rmSync(path.join(root, 'report.json'));
+  const { manifest, exitCode } = writeRetainedInputEvidence(root, 'skipped');
+  assert.equal(exitCode, 1);
+  assert.equal(manifest.producerResult, 'skipped');
+  assert.equal(manifest.evidenceComplete, false);
+  assert.equal(manifest.cases.length, 102);
+  assert.ok(
+    manifest.cases.every(row =>
+      row.status === 'not-run' && row.screenshots.length === 0
+    ),
+  );
+  const { supplemental } = publishRetainedInputs(options);
+  assert.equal(supplemental.cases.length, 102);
+  assert.ok(
+    supplemental.cases.every(row =>
+      row.status === 'not-run' && row.previewPath === null
+    ),
+  );
+  assert.ok(supplemental.errors.length > 0);
+});
+
 test('producer success requires all 102 final screenshots and HTML, publishing real copied links', t => {
   const { root, options } = fixture(t);
   const result = writeRetainedInputEvidence(root, 'success');

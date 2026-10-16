@@ -187,7 +187,9 @@ jobs:
       # Original Playwright runners own their server lifecycle in CI. Run them
       # before the persistent Midscene servers, never weaken reuse guards.
       - name: Validate existing original runner collection without launching browsers
-        run: node packages/web-platform/web-core-e2e/midscene/scripts/check-original-runner-collection.mjs
+        run: |
+          node packages/web-platform/web-core-e2e/midscene/scripts/check-original-runner-collection.mjs
+          node --test packages/web-platform/web-core-e2e/midscene/scripts/required-browser-coverage.integration.mjs
 
       - name: Validate original worker and runtime API contracts
         id: original-runtime
@@ -376,7 +378,7 @@ jobs:
       - name: Preserve retained input evidence before moving artifacts
         if: always()
         env:
-          RETAINED_RESULT: ${{ steps.retained-inputs.outcome == 'success' && 'success' || 'failure' }}
+          RETAINED_RESULT: ${{ steps.retained-inputs.outcome }}
         run: |
           evidence=packages/web-platform/web-elements/midscene-original-results/retained-inputs
           mkdir -p "$evidence"

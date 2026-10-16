@@ -3,6 +3,50 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import YAML from 'yaml';
 
+test('workspace collection remains mandatory in the built producer, isolated from standalone publication', () => {
+  const workflow = YAML.parse(
+    readFileSync(
+      new URL(
+        '../../../../../.github/workflows/midscene-web.yml',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  const producer = workflow.jobs['web-shell-ai-e2e'].steps;
+  const command =
+    'node --test packages/web-platform/web-core-e2e/midscene/scripts/required-browser-coverage.integration.mjs';
+  const checks = producer.filter(step => step.run?.includes(command));
+  assert.equal(checks.length, 1);
+  assert.equal(checks[0].if, undefined);
+  assert.ok(
+    producer.indexOf(checks[0])
+      > producer.findIndex(step => step.run?.includes('pnpm turbo build')),
+  );
+  assert.ok(
+    producer.indexOf(checks[0])
+      < producer.findIndex(step =>
+        step.run?.includes('pnpm exec playwright test')
+      ),
+  );
+  for (const name of ['pages-report', 'fork-contract-check']) {
+    const commands = workflow.jobs[name].steps.map(step => step.run ?? '').join(
+      '\n',
+    );
+    assert.match(commands, /scripts\/\*\.test\.mjs/);
+    assert.doesNotMatch(
+      commands,
+      /required-browser-coverage|check-original-runner-collection|pnpm turbo build/,
+    );
+  }
+  assert.equal(
+    producer.find(step =>
+      step.name === 'Preserve retained input evidence before moving artifacts'
+    ).env.RETAINED_RESULT,
+    '${{ steps.retained-inputs.outcome }}',
+  );
+});
+
 test('oversized Summary diagnostics survive renderer failure without approving a partial publication', () => {
   const workflow = YAML.parse(
     readFileSync(

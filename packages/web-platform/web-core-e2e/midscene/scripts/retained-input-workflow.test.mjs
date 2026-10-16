@@ -32,9 +32,9 @@ test('original input execution preserves profiles and creates portable evidence 
     step.name === 'Preserve retained input evidence before moving artifacts'
   );
   assert.equal(convert.if, 'always()');
-  assert.match(
+  assert.equal(
     convert.env.RETAINED_RESULT,
-    /steps\.retained-inputs\.outcome == 'success'/,
+    '${{ steps.retained-inputs.outcome }}',
   );
   assert.match(
     convert.run,

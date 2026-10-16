@@ -52,7 +52,15 @@ test('three hydrated SSR inheritance branches retain the complete original goto 
   assert.ok(migrated.afterEach[0].recordToReport);
 });
 
-test('attribute equals null requires actual absence, not a false/empty/undefined value', async () => {
+test('attribute equals null requires actual absence, not a false/empty/undefined value', async t => {
+  // Test equality, not host scheduling within a one-millisecond wall-clock window.
+  let clock = 0;
+  t.mock.method(Date, 'now', () => clock);
+  t.mock.method(globalThis, 'setTimeout', (callback, delay) => {
+    clock += delay;
+    queueMicrotask(callback);
+    return 0;
+  });
   const input = {
     selector: '[part="page"]',
     attribute: 'lynx-enable-css-inheritance',

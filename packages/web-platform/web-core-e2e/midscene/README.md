@@ -37,7 +37,7 @@ The corresponding catalog totals are 701 sources / 1835 original-runner items,
 plus the separate retained group at 33 sources / 102 items: **734 original
 sources / 1937 execution items**, alongside **487 YAML cases**. These produce
 2424 combined evidence rows, not 2424 passing tests. Original outcomes include
-229 source skips, one source early return and 1707 statically eligible items,
+238 source skips, one source early return and 1698 statically eligible items,
 including one non-UI template contract. Neither skips nor returns are passes.
 
 This extension selects only Firefox and WebKit, without adding Chromium or

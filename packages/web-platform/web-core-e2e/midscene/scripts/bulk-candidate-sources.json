@@ -41,6 +41,7 @@
         "webkit"
       ],
       "SSR": [
+        "chromium",
         "firefox",
         "webkit"
       ]
@@ -50,6 +51,11 @@
       "SSR": []
     },
     "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1929,
+        "text": "test.fixme(isSSR, 'TODO: migrate exposure from web-elements to runtime')"
+      },
       {
         "kind": "skip",
         "line": 2030,
@@ -72,13 +78,23 @@
     "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Host console observation and listener registration boundary remain required.",
     "skipBrowsersByMode": {
       "CSR": [],
-      "SSR": []
+      "SSR": [
+        "chromium",
+        "firefox",
+        "webkit"
+      ]
     },
     "earlyReturnBrowsersByMode": {
       "CSR": [],
       "SSR": []
     },
-    "guardEvidence": []
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1929,
+        "text": "test.fixme(isSSR, 'TODO: migrate exposure from web-elements to runtime')"
+      }
+    ]
   },
   {
     "package": "web-core-e2e",
@@ -95,13 +111,23 @@
     "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Host console observation and listener registration boundary remain required.",
     "skipBrowsersByMode": {
       "CSR": [],
-      "SSR": []
+      "SSR": [
+        "chromium",
+        "firefox",
+        "webkit"
+      ]
     },
     "earlyReturnBrowsersByMode": {
       "CSR": [],
       "SSR": []
     },
-    "guardEvidence": []
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1929,
+        "text": "test.fixme(isSSR, 'TODO: migrate exposure from web-elements to runtime')"
+      }
+    ]
   },
   {
     "package": "web-core-e2e",
@@ -121,6 +147,8 @@
         "webkit"
       ],
       "SSR": [
+        "chromium",
+        "firefox",
         "webkit"
       ]
     },
@@ -129,6 +157,11 @@
       "SSR": []
     },
     "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1929,
+        "text": "test.fixme(isSSR, 'TODO: migrate exposure from web-elements to runtime')"
+      },
       {
         "kind": "skip",
         "line": 2180,

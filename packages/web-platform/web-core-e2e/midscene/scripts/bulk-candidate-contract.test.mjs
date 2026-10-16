@@ -7,7 +7,10 @@ import {
   bulkReactSources,
   bulkElementSources,
 } from './bulk-candidate-sources.mjs';
-import { sourceGuardPolicy } from './bulk-source-audit.mjs';
+import {
+  sourceGuardPolicy,
+  singleThreadMiddlewareBindings,
+} from './bulk-source-audit.mjs';
 import { retainedInputSources } from './retained-input-selection.mjs';
 import { originalRunnerCatalog } from './original-runner-catalog.mjs';
 import { caseNames } from './case-inventory.mjs';
@@ -169,6 +172,90 @@ test('source return is limited to one WebKit callback; preceding skips take prec
   ]);
 });
 
+test('ancestor describe modifiers apply before callbacks without leaking sibling or hook guards', () => {
+  function policy(body) {
+    const source = ts.createSourceFile(
+      'guard.ts',
+      body,
+      ts.ScriptTarget.Latest,
+      true,
+    );
+    let callback;
+    function visit(node) {
+      if (
+        ts.isCallExpression(node) && node.expression.getText(source) === 'test'
+        && node.arguments[0]?.text === 'target'
+      ) callback = node.arguments.at(-1);
+      ts.forEachChild(node, visit);
+    }
+    visit(source);
+    return sourceGuardPolicy(callback, source);
+  }
+  const scoped = policy(`test.describe('outer', () => {
+    if (isSSR) test.fixme(true, 'unsupported SSR');
+    test.skip('sibling declaration', () => {});
+    test('sibling', () => { test.skip(true); });
+    test.beforeEach(() => { test.skip(true); });
+    test.describe('unrelated', () => { test.skip(true); });
+    test.describe('nested', () => { test('target', () => { if (browserName === 'webkit') return; }); });
+  });`);
+  assert.deepEqual(scoped.skipBrowsersByMode.CSR, []);
+  assert.deepEqual(scoped.skipBrowsersByMode.SSR, [
+    'chromium',
+    'firefox',
+    'webkit',
+  ]);
+  assert.deepEqual(scoped.earlyReturnBrowsersByMode.CSR, ['webkit']);
+  assert.deepEqual(scoped.earlyReturnBrowsersByMode.SSR, []);
+  assert.equal(scoped.guardEvidence.length, 2);
+  for (
+    const modifier of [
+      'test.skip(({ browserName }) => browserName === \'webkit\', \'reason\')',
+      'if (unknownFlag) test.fixme(true)',
+    ]
+  ) {
+    assert.throws(
+      () =>
+        policy(
+          `test.describe('outer', () => { ${modifier}; test('target', () => {}); });`,
+        ),
+      /Unreviewed source guard/,
+    );
+  }
+});
+
+test('ancestor exposure fixme adds exactly nine SSR profiles and never changes CSR', () => {
+  const affected = bulkReactSources.filter(source =>
+    source.guardEvidence.some(guard => guard.line === 1929)
+  );
+  assert.deepEqual(affected.map(source => source.title), [
+    'api-exposure-change-exposure-id',
+    'api-exposure-stop-events-has-complex-dataset',
+    'api-exposure-stop-events-has-dataset',
+    'api-exposure-stop-exposure',
+  ]);
+  assert.deepEqual(affected.map(source => source.skipBrowsersByMode.CSR), [
+    ['firefox', 'webkit'],
+    [],
+    [],
+    ['webkit'],
+  ]);
+  for (const source of affected) {
+    assert.deepEqual(source.skipBrowsersByMode.SSR, [
+      'chromium',
+      'firefox',
+      'webkit',
+    ]);
+  }
+  assert.equal(
+    bulkReactSources.reduce(
+      (sum, source) => sum + source.skipBrowsersByMode.SSR.length,
+      0,
+    ),
+    49,
+  );
+});
+
 test('guard audit fails closed for unsupported conditions and ignores nested callback returns', () => {
   const parse = code => {
     const source = ts.createSourceFile(
@@ -184,6 +271,41 @@ test('guard audit fails closed for unsupported conditions and ignores nested cal
     };
   };
   const unknown = parse('() => { if (window.flag) test.skip(); }');
+  const multiThread = parse('() => { test.skip(ENABLE_MULTI_THREAD); }');
+  assert.throws(
+    () => sourceGuardPolicy(multiThread.callback, multiThread.source),
+    /Unreviewed source guard/,
+  );
+  const bindingSource = ts.createSourceFile(
+    'middleware.ts',
+    'const ENABLE_MULTI_THREAD = !!process.env[\'ENABLE_MULTI_THREAD\'];',
+    ts.ScriptTarget.Latest,
+    true,
+  );
+  const bindings = singleThreadMiddlewareBindings(bindingSource);
+  assert.deepEqual(
+    sourceGuardPolicy(multiThread.callback, multiThread.source, bindings)
+      .skipBrowsersByMode.CSR,
+    [],
+  );
+  for (
+    const code of ['const ENABLE_MULTI_THREAD = true;', 'const OTHER = false;']
+  ) {
+    assert.throws(
+      () =>
+        singleThreadMiddlewareBindings(
+          ts.createSourceFile('bad.ts', code, ts.ScriptTarget.Latest, true),
+        ),
+      /Unreviewed middleware/,
+    );
+  }
+  assert.throws(
+    () =>
+      sourceGuardPolicy(multiThread.callback, multiThread.source, {
+        ENABLE_MULTI_THREAD: 'false',
+      }),
+    /Invalid reviewed/,
+  );
   assert.throws(
     () => sourceGuardPolicy(unknown.callback, unknown.source),
     /Unreviewed source guard/,

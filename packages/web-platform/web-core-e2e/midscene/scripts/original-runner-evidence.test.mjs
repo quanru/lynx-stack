@@ -43,6 +43,48 @@ const workflow = YAML.parse(
   ),
 );
 const steps = workflow.jobs['web-shell-ai-e2e'].steps;
+
+test('ancestor SSR exemption still requires actual final skipped result and expectedStatus proof', t => {
+  const catalog = originalRunnerCatalog.find(row =>
+    row.id === 'bulk-react-ssr'
+  );
+  const { root } = fixture(t);
+  const directory = path.join(
+    root,
+    catalog.package,
+    'midscene-original-results',
+    catalog.id,
+  );
+  const report = JSON.parse(
+    readFileSync(path.join(directory, 'report.json'), 'utf8'),
+  );
+  const title = 'api-exposure-stop-events-has-dataset';
+  let item;
+  function visit(suites) {
+    for (const suite of suites) {
+      for (const spec of suite.specs ?? []) {
+        if (spec.title === title) {
+          item = spec.tests.find(row => row.projectName === 'webkit');
+        }
+      }
+      visit(suite.suites ?? []);
+    }
+  }
+  visit(report.suites);
+  const convert = () =>
+    retainedInputEvidence(report, directory, catalog).cases.find(row =>
+      row.source.endsWith('/' + title) && row.browser === 'webkit'
+    );
+  assert.equal(convert().evidencePolicy, 'source-skip');
+  item.expectedStatus = 'passed';
+  assert.equal(convert().evidencePolicy, 'ui');
+  item.expectedStatus = 'skipped';
+  item.results = [];
+  const missing = convert();
+  assert.equal(missing.status, 'not-run');
+  assert.equal(missing.evidencePolicy, 'ui');
+  assert.deepEqual(missing.screenshots, []);
+});
 test('bulk selection escapes punctuation and requires the exact suite, group and complete title', () => {
   const pattern = sourceSelectionPattern([{
     suite: 'web-elements test suite',
@@ -427,7 +469,7 @@ function fixture(t) {
   };
 }
 
-test('all eighteen producers preserve 1835 rows, 701 sources, 229 skips and one non-UI case', t => {
+test('all eighteen producers preserve 1835 rows, 701 sources, 238 skips and one non-UI case', t => {
   const { root, outcomes, stage, entry, env } = fixture(t);
   assert.equal(writeOriginalRunnerEvidence(root, outcomes), 0);
   stage();
@@ -448,7 +490,7 @@ test('all eighteen producers preserve 1835 rows, 701 sources, 229 skips and one 
   );
   assert.equal(
     result.cases.filter(row => row.status === 'skipped').length,
-    229,
+    238,
   );
   assert.equal(
     result.cases.filter(row => row.evidencePolicy === 'non-ui').length,
@@ -472,7 +514,7 @@ test('skipped producer is distinct and cannot be hidden by successful producers'
   assert.equal(result.cases.filter(row => row.status === 'not-run').length, 18);
   assert.equal(
     result.cases.filter(row => row.status === 'success').length,
-    1587,
+    1578,
   );
   assert.match(result.errors.join(' '), /keyboard-ssr.*skipped/);
 });
@@ -494,7 +536,7 @@ test('allowlisted browser without an applied skip guard stays not-run attention'
   const result = prepareOriginalRunnerPublication(entry, env);
   assert.equal(
     result.cases.filter(row => row.status === 'skipped').length,
-    228,
+    237,
   );
   assert.equal(result.cases.filter(row => row.status === 'not-run').length, 1);
   assert.equal(
@@ -526,7 +568,7 @@ test('missing producer never fabricates source skips; non-UI still requires real
   );
   assert.equal(
     result.cases.filter(row => row.status === 'skipped').length,
-    197,
+    206,
   );
   const template = result.cases.find(row => row.evidencePolicy === 'non-ui');
   assert.equal(template.status, 'failed');
@@ -665,7 +707,7 @@ test('actual passed early-return branch is not applicable, with real HTML and op
   assert.doesNotThrow(() => validateSupplementalEvidence(supplemental));
   assert.equal(
     supplemental.cases.filter(row => row.status === 'success').length,
-    1605,
+    1596,
   );
 });
 
@@ -803,7 +845,7 @@ test('new and existing original evidence share one validated two-section Summary
     supplementalEvidence: combined,
   });
   assert.equal((summary.match(/<details>/g) ?? []).length, 1);
-  assert.equal((summary.match(/<img /g) ?? []).length, 1605);
+  assert.equal((summary.match(/<img /g) ?? []).length, 1596);
   assert.ok(
     summary.includes(
       `${combined.sourceCount} source cases / ${combined.expectedCount} browser cases`,
@@ -864,7 +906,7 @@ test('a WebKit keyboard retry stays flaky, uses its final screenshot and appears
     entries: [],
     supplementalEvidence: supplemental,
   });
-  assert.match(summary, /1 need attention · 1604 passed/);
+  assert.match(summary, /1 need attention · 1595 passed/);
   assert.ok(
     summary.indexOf('basic-global-bindkeydown-key (CSR)')
       < summary.indexOf('<details>'),

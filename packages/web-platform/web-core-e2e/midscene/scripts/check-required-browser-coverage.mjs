@@ -12,7 +12,9 @@ const require = createRequire(path.join(mid, 'package.json'));
 const ts = require('typescript');
 const moduleAt = name =>
   import(pathToFileURL(path.join(mid, 'scripts', name)).href);
-const { sourceGuardPolicy } = await moduleAt('bulk-source-audit.mjs');
+const { sourceGuardPolicy, singleThreadMiddlewareBindings } = await moduleAt(
+  'bulk-source-audit.mjs',
+);
 const { originalRunnerCatalog, retainedCatalog } = await moduleAt(
   'original-runner-catalog.mjs',
 );
@@ -58,6 +60,7 @@ for (
       ...process.env,
       CI: '1',
       ENABLE_SSR: mode === 'SSR' ? '1' : '',
+      ENABLE_MULTI_THREAD: '',
       PLAYWRIGHT_JSON_OUTPUT_FILE: '',
       PLAYWRIGHT_JSON_OUTPUT_NAME: '',
     },
@@ -135,7 +138,13 @@ for (
         const { sf, node } = declaration(spec.file, spec.line);
         let policy;
         try {
-          policy = sourceGuardPolicy(node.arguments.at(-1), sf);
+          policy = sourceGuardPolicy(
+            node.arguments.at(-1),
+            sf,
+            pkg === 'web-core-e2e' && spec.file === 'tests/middleware.spec.ts'
+              ? singleThreadMiddlewareBindings(sf)
+              : {},
+          );
         } catch (error) {
           unknown.push({
             pkg,

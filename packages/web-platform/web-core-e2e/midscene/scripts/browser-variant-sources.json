@@ -969,7 +969,13 @@
     "callbackSha256": "e3caf3180e1263c30a4e41b8ce43201ad94b72c02507833e6ab280307986a055",
     "skipBrowsers": [],
     "earlyReturnBrowsers": [],
-    "guardEvidence": []
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1929,
+        "text": "test.fixme(isSSR, 'TODO: migrate exposure from web-elements to runtime')"
+      }
+    ]
   },
   {
     "package": "web-core-e2e",
@@ -984,7 +990,13 @@
     "callbackSha256": "2d60057fabbdebcc8e831fd9c0084519688e3618a86de2018a1ad4d73419db4e",
     "skipBrowsers": [],
     "earlyReturnBrowsers": [],
-    "guardEvidence": []
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1929,
+        "text": "test.fixme(isSSR, 'TODO: migrate exposure from web-elements to runtime')"
+      }
+    ]
   },
   {
     "package": "web-core-e2e",
@@ -1002,6 +1014,11 @@
     ],
     "earlyReturnBrowsers": [],
     "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1929,
+        "text": "test.fixme(isSSR, 'TODO: migrate exposure from web-elements to runtime')"
+      },
       {
         "kind": "skip",
         "line": 1976,
@@ -1022,7 +1039,13 @@
     "callbackSha256": "ef2ca062c0f94014e92e176f8d8ee456e92ceee4aadb884e94b3f5b4fe6c2398",
     "skipBrowsers": [],
     "earlyReturnBrowsers": [],
-    "guardEvidence": []
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1929,
+        "text": "test.fixme(isSSR, 'TODO: migrate exposure from web-elements to runtime')"
+      }
+    ]
   },
   {
     "package": "web-core-e2e",
@@ -1037,7 +1060,13 @@
     "callbackSha256": "583f0cf88e72616d8c84d2fc6bd2c653df544d960ac6c865e617458581f7241b",
     "skipBrowsers": [],
     "earlyReturnBrowsers": [],
-    "guardEvidence": []
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1929,
+        "text": "test.fixme(isSSR, 'TODO: migrate exposure from web-elements to runtime')"
+      }
+    ]
   },
   {
     "package": "web-core-e2e",
@@ -1052,7 +1081,13 @@
     "callbackSha256": "b5ec510574f79fdaccb804df30f355f369719a64abfa902a5cfb01f3c27d432f",
     "skipBrowsers": [],
     "earlyReturnBrowsers": [],
-    "guardEvidence": []
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1929,
+        "text": "test.fixme(isSSR, 'TODO: migrate exposure from web-elements to runtime')"
+      }
+    ]
   },
   {
     "package": "web-core-e2e",

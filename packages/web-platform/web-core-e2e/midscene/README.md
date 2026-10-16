@@ -1,5 +1,15 @@
 # Midscene E2E for web-core and web-elements
 
+## Foldview follow-up (hosted validation pending)
+
+Collection is now 480 YAML cases. The original x-foldview-ng/item-fixed
+callback retains both 100 ms waits, scrollBy(0, 200), optional missing-host
+behavior and two unchanged Linux PNG checkpoints. Differential replay executes
+the original navigation, fonts and screenshot helpers. Hosted Chromium
+acceptance remains pending. The input and textarea bindselection candidates
+remain unported until their original case deadline can be preserved; a matching
+single host innerText read alone does not establish full timeout equivalence.
+
 ## Programmatic scroll batch (hosted validation pending)
 
 Collection is now 479 YAML cases. api-exposure-area and x-list/item-snap retain

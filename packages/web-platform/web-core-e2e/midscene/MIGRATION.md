@@ -1,6 +1,15 @@
 # Full E2E migration scope
 
-## Current programmatic scroll batch
+## Current foldview follow-up
+
+Collection increases from 479 to 480 with x-foldview-ng/item-fixed. Preserve
+the original programmatic scrollBy(0, 200), two 100 ms waits, optional chaining
+and both PNGs. Source replay covers present and missing hosts through the
+original helpers. Hosted Chromium acceptance is pending. The two bindselection
+candidates remain pending original case-deadline equivalence; neither is
+counted as migrated.
+
+## Preceding programmatic scroll batch
 
 Collection increases from 477 to 479 with api-exposure-area and x-list/item-snap.
 Exposure retains offsets 200 and 400, its two 200 ms waits and all three original

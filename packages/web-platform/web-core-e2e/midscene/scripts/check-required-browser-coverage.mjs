@@ -265,7 +265,14 @@ const output = {
   schemaVersion: 1,
   proof:
     'Collection and static guards only; not runtime acceptance or fresh assertion equivalence',
-  head: execFileSync('git', ['rev-parse', 'HEAD'], {
+  // Container checkout ownership may differ. Trust only this known checkout for
+  // this read-only metadata command; never change global Git configuration.
+  head: execFileSync('git', [
+    '-c',
+    `safe.directory=${repo}`,
+    'rev-parse',
+    'HEAD',
+  ], {
     cwd: repo,
     encoding: 'utf8',
   }).trim(),

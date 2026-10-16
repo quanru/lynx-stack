@@ -13,7 +13,15 @@ test('required original CSR/component browser matrix has no uncovered eligible v
     fileURLToPath(
       new URL('./check-required-browser-coverage.mjs', import.meta.url),
     ),
-  ], { encoding: 'utf8', timeout: 120_000, maxBuffer: 10_000_000 }));
+  ], {
+    encoding: 'utf8',
+    timeout: 120_000,
+    maxBuffer: 10_000_000,
+    // Exercise the container ownership mismatch without changing filesystem
+    // ownership or persisting any Git safe.directory configuration.
+    env: { ...process.env, GIT_TEST_ASSUME_DIFFERENT_OWNER: '1' },
+  }));
+  assert.match(output.head, /^[a-f0-9]{40}$/);
   assert.equal(output.required.variants, 0);
   assert.deepEqual(output.unknown, []);
   assert.equal(

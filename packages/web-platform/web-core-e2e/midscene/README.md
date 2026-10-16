@@ -1,5 +1,24 @@
 # Midscene E2E for web-core and web-elements
 
+## Dynamic image and complete original-runner evidence (hosted acceptance pending)
+
+The retained collection now contains 33 source declarations / 34 expanded
+titles / 102 browser items. The new unchanged detached-image callback expands
+over x-image and inline-image, sharing one source identity while retaining six
+independent browser rows. Its complete load queue, reconnect and detach sequence,
+six deep-equality assertions and original case deadline remain unchanged.
+AST checks pin the two-value loop and callback; actual browser-free collection
+confirms both titles at the same source line across all three original profiles.
+
+All preexisting original runners now have unified evidence wiring: 120 unique
+source declarations / 380 execution items, including 54 source-declared skips
+and one non-UI template contract. The latter has no applicable screenshot;
+skips are not passes. Combined with the separate retained collection, the
+original-runner totals are 153 source declarations / 482 execution items,
+alongside 487 YAML cases. The prior original-runner evidence wiring gap is zero,
+but this does not establish hosted acceptance or completion of all remaining
+source migrations. No original callback, fixture or product code changed.
+
 ## Host observation and SVG evidence follow-up (hosted acceptance pending)
 
 The retained collection now selects 32 unchanged source callbacks across three

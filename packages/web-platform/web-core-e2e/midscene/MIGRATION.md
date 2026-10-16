@@ -1,5 +1,20 @@
 # Full E2E migration scope
 
+## Dynamic detached-image follow-up (hosted validation pending)
+
+The original for-of declaration at web-elements.spec.ts:1715 expands to
+x-image and inline-image load-queue tests. Both titles share one sourceId but
+retain separate execution keys: retained coverage is now 33 declarations,
+34 expanded titles and 102 browser items. Original callback bytes, loop values,
+SVG dimensions, connection operations, six queue assertions and case deadlines
+are unchanged. No AI actions or new YAML cases are introduced.
+
+The source contract inspects the explicit AST loop rather than guessing arbitrary
+template titles. Actual Playwright collection verifies both titles, their shared
+source line, all three original browser profiles and no execution results.
+Group-aware descriptors prevent same-named input/textarea callbacks from borrowing
+one another's identity. Collection and model-free checks are not browser acceptance.
+
 ## Host observation retained follow-up (hosted validation pending)
 
 Four original callbacks increase the separate retained collection from 28 to
@@ -44,36 +59,34 @@ CSR/SSR declarations are deduplicated in the 120 total; the SVG loop expands one
 declaration into four titles. Thus per-step declaration counts cannot be summed
 as a repository-wide unique-source count.
 
-| Existing step         | Source declarations | Expanded titles | Collected items | Statically eligible | Unified evidence                  |
-| --------------------- | ------------------: | --------------: | --------------: | ------------------: | --------------------------------- |
-| Worker/runtime API    |                  35 |              35 |             105 |                  73 | Pending                           |
-| Keyboard CSR          |                   6 |               6 |              18 |                  18 | Wired; hosted validation pending  |
-| Keyboard SSR          |                   6 |               6 |              18 |                  18 | Wired; hosted validation pending  |
-| Pointer CSR           |                   3 |               3 |               9 |                   4 | Pending                           |
-| Pointer SSR           |                   3 |               3 |               9 |                   4 | Pending                           |
-| Animation CSR         |                   1 |               1 |               3 |                   3 | Wired; hosted validation pending  |
-| Lazy/reload CSR       |                   3 |               3 |               9 |                   9 | Wired; hosted validation pending  |
-| Performance           |                   7 |               7 |               7 |                   7 | Pending                           |
-| SVG/selection/webview |                  12 |              15 |              45 |                  45 | Wired; hosted validation pending  |
-| Markdown              |                  33 |              33 |              99 |                  90 | Pending                           |
-| Drag/wheel            |                  15 |              15 |              45 |                  42 | Pending                           |
-| List API              |                   4 |               4 |              12 |                  12 | Wired; hosted validation pending  |
-| Template consistency  |                   1 |               1 |               1 |          1 (non-UI) | Pending; no screenshot applicable |
+| Existing step         | Source declarations | Expanded titles | Collected items | Statically eligible | Unified evidence                 |
+| --------------------- | ------------------: | --------------: | --------------: | ------------------: | -------------------------------- |
+| Worker/runtime API    |                  35 |              35 |             105 |                  73 | Wired; hosted validation pending |
+| Keyboard CSR          |                   6 |               6 |              18 |                  18 | Wired; hosted validation pending |
+| Keyboard SSR          |                   6 |               6 |              18 |                  18 | Wired; hosted validation pending |
+| Pointer CSR           |                   3 |               3 |               9 |                   4 | Wired; hosted validation pending |
+| Pointer SSR           |                   3 |               3 |               9 |                   4 | Wired; hosted validation pending |
+| Animation CSR         |                   1 |               1 |               3 |                   3 | Wired; hosted validation pending |
+| Lazy/reload CSR       |                   3 |               3 |               9 |                   9 | Wired; hosted validation pending |
+| Performance           |                   7 |               7 |               7 |                   7 | Wired; hosted validation pending |
+| SVG/selection/webview |                  12 |              15 |              45 |                  45 | Wired; hosted validation pending |
+| Markdown              |                  33 |              33 |              99 |                  90 | Wired; hosted validation pending |
+| Drag/wheel            |                  15 |              15 |              45 |                  42 | Wired; hosted validation pending |
+| List API              |                   4 |               4 |              12 |                  12 | Wired; hosted validation pending |
+| Template consistency  |                   1 |               1 |               1 |          1 (non-UI) | Wired; no screenshot applicable  |
 
-The two evidence follow-ups wire 26 unique declarations / 105 existing
-executions without adding or duplicating test invocations. The remaining gap is
-275 collected items: 220 eligible UI executions, 54 source-declared skips and one
-non-UI contract. Source skips must remain explicit, not counted as passed or
-silently enabled. Future integration must model skipped/non-UI evidence policies;
-the current wired batches contain neither exception. The SVG/selection/webview
-batch adds 12 source declarations / 45 execution items.
+All thirteen existing invocations now have evidence wiring: 120 unique source
+declarations / 380 execution items, without adding or duplicating invocations.
+The remaining wiring gap is zero. Original source guards yield 54 skipped items;
+the one non-UI template contract has no applicable screenshot. These outcomes
+remain explicit, never silently enabled or counted as browser passes.
 
 Runner identity includes its package, source file, source key, browser and render
 mode. Separate CSR/SSR rows share a source declaration but not an execution ID.
 Each runner owns HTML/JSON and final-attempt screenshot paths; producer outcomes
 are preserved independently and no previous-attempt evidence is borrowed.
-The separate 32-source/96-item retained collection remains disjoint, giving
-58 original sources / 201 evidence-enabled execution items in total, alongside
+The separate 33-source/102-item retained collection remains disjoint, giving
+153 original sources / 482 evidence-enabled execution items in total, alongside
 487 YAML cases. These are wiring/collection counts, not hosted acceptance.
 
 ## Scrollend payload follow-up

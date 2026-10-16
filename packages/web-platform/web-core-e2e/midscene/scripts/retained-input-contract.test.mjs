@@ -8,6 +8,7 @@ import ts from 'typescript';
 import {
   retainedInputGrep,
   retainedInputKeys,
+  retainedInputSources,
 } from './retained-input-selection.mjs';
 
 const source = ts.createSourceFile(
@@ -24,6 +25,7 @@ const source = ts.createSourceFile(
 );
 const declarations = new Map();
 const helpers = new Map();
+let imageLoop;
 function visit(node, groups = []) {
   if (
     ts.isVariableDeclaration(node) && node.initializer
@@ -41,6 +43,41 @@ function visit(node, groups = []) {
   }
   if (
     ts.isCallExpression(node) && node.expression.getText(source) === 'test'
+    && node.arguments[0] && ts.isTemplateExpression(node.arguments[0])
+    && node.arguments[0].getText(source).includes('defers detached load events')
+  ) {
+    assert.equal(groups.at(-1), 'x-image');
+    const template = node.arguments[0];
+    assert.equal(template.head.text, '');
+    assert.equal(template.templateSpans.length, 1);
+    assert.equal(
+      template.templateSpans[0].expression.getText(source),
+      'tagName',
+    );
+    assert.equal(
+      template.templateSpans[0].literal.text,
+      ' defers detached load events until connected',
+    );
+    let loop = node.parent;
+    while (loop && !ts.isForOfStatement(loop)) loop = loop.parent;
+    assert.ok(loop);
+    assert.ok(!imageLoop);
+    imageLoop = loop;
+    assert.equal(loop.initializer.getText(source), 'const tagName');
+    assert.ok(ts.isArrayLiteralExpression(loop.expression));
+    const tags = loop.expression.elements.map(element => {
+      assert.ok(ts.isStringLiteral(element));
+      return element.text;
+    });
+    assert.deepEqual(tags, ['x-image', 'inline-image']);
+    for (const tag of tags) {
+      const title = tag + template.templateSpans[0].literal.text;
+      assert.ok(retainedInputGrep.test([...groups, title].join(' ')));
+      declarations.set('x-image/' + title, node.arguments[1].getText(source));
+    }
+  }
+  if (
+    ts.isCallExpression(node) && node.expression.getText(source) === 'test'
     && ts.isStringLiteral(node.arguments[0])
   ) {
     const title = [...groups, node.arguments[0].text].join(' ');
@@ -54,8 +91,26 @@ function visit(node, groups = []) {
 }
 visit(source);
 
-test('retained selection matches exactly thirty-two component-scoped original callbacks', () => {
-  assert.equal(retainedInputKeys.length, 32);
+test('retained selection expands thirty-three original callbacks into thirty-four titles', () => {
+  assert.equal(retainedInputKeys.length, 34);
+  assert.equal(
+    new Set(retainedInputSources.map(item => item.sourceId)).size,
+    33,
+  );
+  assert.deepEqual(
+    retainedInputSources.map(item => item.key),
+    retainedInputKeys,
+  );
+  for (const item of retainedInputSources) {
+    assert.equal(item.key, item.group + '/' + item.title);
+    assert.equal(item.file, 'tests/web-elements.spec.ts');
+    assert.equal(
+      item.sourceId,
+      item.group === 'x-image'
+        ? 'x-image/detached-load-until-connected'
+        : item.key,
+    );
+  }
   assert.deepEqual(
     [...declarations.keys()].sort(),
     [...retainedInputKeys].sort(),
@@ -108,6 +163,10 @@ test('new retained contracts preserve the full swiper title and exact audio/list
 
 // Review a source change explicitly; never silently weaken its input or oracle.
 const callbackDigests = {
+  'x-image/x-image defers detached load events until connected':
+    '60f95cb5848112f73fa7502692e7fc4b6da9d630fb877bf3f3d5867a0a32ff09',
+  'x-image/inline-image defers detached load events until connected':
+    '60f95cb5848112f73fa7502692e7fc4b6da9d630fb877bf3f3d5867a0a32ff09',
   'x-list/event-scroll':
     'a5ddb50aeae14ae2744226dafb279d4c29b4bc2e68249bcc88f6ea98fb653c01',
   'x-list/need-visible-item-info':
@@ -175,6 +234,11 @@ const callbackDigests = {
     '94e7452088b6e166394349c22ddcf04c9c663e7426b0f4248eea278f34574461',
 };
 test('raw input, complete assertion tails and timing stay byte-for-byte unchanged', () => {
+  assert.ok(imageLoop);
+  assert.equal(
+    createHash('sha256').update(imageLoop.getText(source)).digest('hex'),
+    '03232f3993d9af4d2b4651f1001ce20914d1f1d44cebc043b50177ba140024fc',
+  );
   for (const [key, callback] of declarations) {
     assert.equal(
       createHash('sha256').update(callback).digest('hex'),

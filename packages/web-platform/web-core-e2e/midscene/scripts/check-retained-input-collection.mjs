@@ -40,13 +40,26 @@ const report = JSON.parse(execFileSync(process.execPath, [
 const root = mkdtempSync(path.join(os.tmpdir(), 'retained-collection-'));
 try {
   const manifest = retainedInputEvidence(report, root);
-  assert.equal(manifest.cases.length, 96);
+  assert.equal(manifest.sourceDeclarations, 33);
+  assert.equal(new Set(manifest.cases.map(row => row.source)).size, 34);
+  assert.equal(manifest.cases.length, 102);
+  const imageRows = manifest.cases.filter(row =>
+    row.source.startsWith('x-image/')
+  );
+  assert.equal(imageRows.length, 6);
+  assert.equal(new Set(imageRows.map(row => row.sourceId)).size, 1);
+  assert.ok(imageRows.every(row => row.line === 1715));
+  assert.deepEqual([...new Set(imageRows.map(row => row.browser))].sort(), [
+    'chromium',
+    'firefox',
+    'webkit',
+  ]);
   assert.ok(
     manifest.cases.every(row => row.line !== null && row.status === 'not-run'),
   );
   assert.equal(manifest.runnerErrorCount, 0);
   console.log(
-    'Collected 32 retained source declarations across 3 original profiles (96 executions); no browsers launched.',
+    'Collected 33 retained source declarations / 34 titles across 3 original profiles (102 executions); no browsers launched.',
   );
 } finally {
   rmSync(root, { recursive: true, force: true });

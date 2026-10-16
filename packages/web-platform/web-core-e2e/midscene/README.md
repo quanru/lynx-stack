@@ -1,5 +1,20 @@
 # Midscene E2E for web-core and web-elements
 
+## Retained input evidence preparation (not yet enabled in CI)
+
+`web-elements/playwright.retained-inputs.config.ts` selects 14 original keyboard
+and input declarations across the three unchanged browser profiles (42 execution
+items). It adds end-of-test screenshots and HTML/JSON reporters without editing
+the original callbacks. `check-retained-input-collection.mjs` validates actual
+Playwright collection after the root build without launching browsers.
+
+The producer-side evidence writer converts absolute attachment paths into a
+portable relative manifest before upload. The independent publisher preserves
+final-attempt screenshots and distinguishes case failures from infrastructure
+or missing-evidence failures. These helpers are preparation only: workflow and
+unified Summary integration are still pending. They do not add 42 AI/YAML cases
+or establish browser execution acceptance.
+
 ## Foldview follow-up (hosted validation pending)
 
 Collection is now 480 YAML cases. The original x-foldview-ng/item-fixed

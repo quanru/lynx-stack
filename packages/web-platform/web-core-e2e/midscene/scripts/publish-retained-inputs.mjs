@@ -1,0 +1,242 @@
+import {
+  cpSync,
+  existsSync,
+  lstatSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+} from 'node:fs';
+import path from 'node:path';
+import {
+  retainedInputBrowsers,
+  retainedInputKeys,
+} from './retained-input-selection.mjs';
+
+function relativePath(value) {
+  if (
+    typeof value !== 'string' || !value || path.isAbsolute(value)
+    || /[\\\x00-\x1f\x7f?#%:]/.test(value)
+    || value.split('/').some(part => !part || part === '.' || part === '..')
+  ) {
+    throw new Error('Unsafe publication-relative path');
+  }
+  return value;
+}
+
+function inspectTree(root) {
+  const info = lstatSync(root);
+  if (info.isSymbolicLink()) {
+    throw new Error('Publication tree contains a symlink');
+  }
+  if (info.isDirectory()) {
+    for (const name of readdirSync(root)) {
+      relativePath(name);
+      inspectTree(path.join(root, name));
+    }
+  } else if (!info.isFile()) {
+    throw new Error('Publication tree contains a special file');
+  }
+}
+
+function rejectSymlinkAncestors(target) {
+  let ancestor = path.resolve(target);
+  while (path.dirname(ancestor) !== ancestor) {
+    try {
+      if (lstatSync(ancestor).isSymbolicLink()) {
+        throw new Error('Publication path has a symlink ancestor');
+      }
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error;
+    }
+    ancestor = path.dirname(ancestor);
+  }
+}
+
+function fileOrNull(root, relative, kind) {
+  if (relative === null) return null;
+  relativePath(relative);
+  if (
+    kind === 'image'
+    && (!relative.startsWith('results/') || !relative.endsWith('.png'))
+  ) {
+    throw new Error('Screenshot is not a final runner result PNG');
+  }
+  if (kind === 'report' && relative !== 'html/index.html') {
+    throw new Error('Unexpected HTML entry point');
+  }
+  const file = path.join(root, relative);
+  if (!existsSync(file)) return null;
+  if (!lstatSync(file).isFile()) {
+    throw new Error('Evidence entry is not a file');
+  }
+  return relative;
+}
+
+const escapeHTML = value =>
+  String(value).replace(/[&<>"']/g, character =>
+    ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      '\'': '&#39;',
+    })[character]);
+
+// The caller must supply the selected CURRENT attempt's retained-inputs directory.
+// No artifact search, attempt fallback or producer absolute path interpretation.
+export function publishRetainedInputs(
+  { evidenceRoot, destination, sitePrefix, publicBaseUrl },
+) {
+  relativePath(sitePrefix);
+  const base = new URL(publicBaseUrl);
+  if (
+    base.protocol !== 'https:' || base.username || base.password || base.search
+    || base.hash
+  ) {
+    throw new Error('Expected a clean HTTPS publication base URL');
+  }
+  if (!base.pathname.endsWith('/')) base.pathname += '/';
+  rejectSymlinkAncestors(evidenceRoot);
+  inspectTree(evidenceRoot);
+  const manifestFile = path.join(evidenceRoot, 'evidence.json');
+  if (lstatSync(manifestFile).size > 8 * 1024 * 1024) {
+    throw new Error('Manifest is too large');
+  }
+  const manifest = JSON.parse(readFileSync(manifestFile, 'utf8'));
+  if (
+    manifest.schemaVersion !== 1 || manifest.kind !== 'retained-original-input'
+    || manifest.sourceDeclarations !== 14 || manifest.expectedExecutions !== 42
+    || !Number.isInteger(manifest.runnerErrorCount)
+    || manifest.runnerErrorCount < 0
+    || !['success', 'failure'].includes(manifest.producerResult)
+    || typeof manifest.evidenceComplete !== 'boolean'
+    || !Array.isArray(manifest.cases) || manifest.cases.length !== 42
+  ) {
+    throw new Error('Invalid retained input evidence manifest');
+  }
+  const seen = new Set();
+  const rows = manifest.cases.map(row => {
+    const key = `${row.source}:${row.browser}`;
+    if (
+      !retainedInputKeys.includes(row.source)
+      || !retainedInputBrowsers.includes(row.browser)
+      || seen.has(key) || !Array.isArray(row.screenshots)
+      || !['passed', 'failed', 'timedOut', 'skipped', 'interrupted', 'not-run']
+        .includes(row.status)
+      || !['expected', 'unexpected', 'flaky', 'skipped', 'missing'].includes(
+        row.outcome,
+      )
+    ) {
+      throw new Error('Invalid or duplicate source/browser evidence');
+    }
+    seen.add(key);
+    return {
+      ...row,
+      screenshots: row.screenshots.map(file =>
+        fileOrNull(evidenceRoot, file, 'image')
+      ).filter(Boolean),
+      report: fileOrNull(evidenceRoot, row.report, 'report'),
+    };
+  });
+  if (existsSync(destination)) {
+    throw new Error('Publication destination already exists');
+  }
+  // Reject an existing symlink in every ancestor, not only the final directory.
+  rejectSymlinkAncestors(destination);
+  mkdirSync(destination, { recursive: true });
+  for (const directory of ['html', 'results']) {
+    const source = path.join(evidenceRoot, directory);
+    if (existsSync(source)) {
+      cpSync(source, path.join(destination, directory), { recursive: true });
+    }
+  }
+  const url = relative =>
+    new URL(
+      [sitePrefix, relative].join('/').split('/').map(encodeURIComponent).join(
+        '/',
+      ),
+      base,
+    ).href;
+  const passed = rows.filter(row =>
+    row.status === 'passed' && row.outcome === 'expected'
+    && row.screenshots.length > 0 && row.report
+  );
+  const attention = rows.filter(row => !passed.includes(row));
+  // Infrastructure disposition is independent of individual assertion results.
+  // Preserve 42 passed cases when the runner failed after their callbacks, but
+  // never present that run as an overall success.
+  const infrastructureErrors = [
+    ...(manifest.producerResult === 'failure'
+      ? ['The original runner producer failed.']
+      : []),
+    ...(!manifest.evidenceComplete
+      ? ['The producer evidence inventory is incomplete.']
+      : []),
+  ];
+  const hasAttention = Boolean(
+    attention.length || manifest.runnerErrorCount
+      || infrastructureErrors.length,
+  );
+  const table = items =>
+    [
+      '| Case | Browser | Result | Screenshot | Report |',
+      '| --- | --- | --- | --- | --- |',
+      ...items.map(row => {
+        const report = row.report
+          ? `[Open report](${url(row.report)})`
+          : 'Unavailable';
+        const images = row.screenshots.length
+          ? row.screenshots.map(file => {
+            const image = `<img src="${
+              escapeHTML(url(file))
+            }" width="240" alt="Final-attempt screenshot">`;
+            return row.report
+              ? `<a href="${escapeHTML(url(row.report))}">${image}</a>`
+              : image;
+          }).join(' ')
+          : 'Unavailable — no final-attempt screenshot';
+        return `| ${row.source} | ${row.browser} | ${row.status}${
+          row.outcome !== 'expected' ? ` (${row.outcome})` : ''
+        } | ${images} | ${report} |`;
+      }),
+    ].join('\n');
+  const summary = [
+    '## Original input contracts',
+    '',
+    `${
+      hasAttention ? '⚠️' : '✅'
+    } ${attention.length} cases need attention · ${passed.length} passed · ${manifest.runnerErrorCount} runner errors · ${infrastructureErrors.length} infrastructure errors`,
+    '',
+    'Retained original Playwright inputs; excluded from the AI/YAML case count.',
+    '',
+    ...(infrastructureErrors.length
+      ? [infrastructureErrors.join(' '), '']
+      : []),
+    ...(attention.length ? [table(attention), ''] : []),
+    ...(passed.length
+      ? [
+        '<details>',
+        '<summary>Passed original contracts</summary>',
+        '',
+        table(passed),
+        '',
+        '</details>',
+        '',
+      ]
+      : []),
+  ].join('\n');
+  return {
+    summary,
+    cases: rows,
+    sourceDeclarations: 14,
+    expectedExecutions: 42,
+    passed: passed.length,
+    needsAttention: attention.length,
+    runnerErrorCount: manifest.runnerErrorCount,
+    producerResult: manifest.producerResult,
+    evidenceComplete: manifest.evidenceComplete,
+    infrastructureErrors,
+    infrastructureErrorCount: infrastructureErrors.length,
+    hasAttention,
+  };
+}

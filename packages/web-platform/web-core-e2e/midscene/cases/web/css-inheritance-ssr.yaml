@@ -1,0 +1,338 @@
+afterEach:
+  - recordToReport: Original hydrated SSR CSS inheritance contract result
+cases:
+  - name: ssr/config-css-inheritance-true
+    steps:
+      - gotoUrl: ${shellUrl}ssr?casename=config-css-inheritance-true
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 300))
+      - web.expect:
+          selector: '[part="page"]'
+          attribute: lynx-enable-css-inheritance
+          equals: "true"
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#solid-text"
+          css: color
+          equals: rgb(255, 0, 0)
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#wrapped-text"
+          css: color
+          equals: rgb(255, 0, 0)
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#nested-text"
+          css: color
+          equals: rgb(255, 0, 0)
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#wrapped-gradient"
+          css: background-image
+          equals: linear-gradient(rgb(255, 0, 0), rgb(0, 0, 255))
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#wrapped-gradient"
+          css: background-clip
+          equals: text
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#wrapped-text"
+          css: text-decoration-line
+          equals: underline
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#gradient-text"
+          css: color
+          equals: rgba(0, 0, 0, 0)
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#gradient-text"
+          css: background-image
+          equals: linear-gradient(rgb(255, 0, 0), rgb(0, 0, 255))
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#gradient-text"
+          css: background-clip
+          equals: text
+          timeoutMs: 5000
+      - web.expect:
+          selector: '#gradient-text [part="inner-box"]'
+          css: background-clip
+          equals: text
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#solid-text"
+          css: direction
+          equals: rtl
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#solid-text"
+          css: font-family
+          equals: monospace
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#solid-text"
+          css: font-size
+          equals: 24px
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#solid-text"
+          css: font-style
+          equals: italic
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#solid-text"
+          css: font-weight
+          equals: "700"
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#solid-text"
+          css: letter-spacing
+          equals: 2px
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#solid-text"
+          css: line-height
+          equals: 32px
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#solid-text"
+          css: text-align
+          equals: right
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#solid-text"
+          css: text-decoration-line
+          equals: underline
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#solid-text"
+          css: text-shadow
+          equals: rgb(0, 0, 255) 1px 2px 3px
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#override-text"
+          css: color
+          equals: rgb(0, 128, 0)
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#override-text"
+          css: background-image
+          equals: none
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#override-text"
+          css: background-clip
+          equals: border-box
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#override-text"
+          css: font-size
+          equals: 18px
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#override-text"
+          css: text-decoration-line
+          equals: none
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#own-gradient"
+          css: background-image
+          equals: linear-gradient(rgb(255, 0, 0), rgb(0, 0, 255))
+          timeoutMs: 5000
+      - aiAct:
+          prompt: Click the visible text "Update" once. Stop after that single click.
+          options:
+            deepLocate: true
+            cacheable: false
+      - web.expect:
+          selector: "#solid-text"
+          css: font-size
+          equals: 30px
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#solid-text"
+          css: color
+          equals: rgba(0, 0, 0, 0)
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#solid-text"
+          css: background-image
+          equals: linear-gradient(rgb(0, 128, 0), rgb(0, 0, 255))
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#solid-text"
+          css: background-clip
+          equals: text
+          timeoutMs: 5000
+  - name: ssr/config-css-inheritance-false
+    steps:
+      - gotoUrl: ${shellUrl}ssr?casename=config-css-inheritance-false
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 300))
+      - web.expect:
+          selector: '[part="page"]'
+          attribute: lynx-enable-css-inheritance
+          equals: null
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#solid-text"
+          css: color
+          equals: rgb(0, 0, 0)
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#wrapped-text"
+          css: color
+          equals: rgb(0, 0, 0)
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#nested-text"
+          css: color
+          equals: rgb(0, 0, 0)
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#wrapped-gradient"
+          css: background-image
+          equals: none
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#gradient-text"
+          css: color
+          equals: rgb(0, 0, 0)
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#gradient-text"
+          css: background-image
+          equals: none
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#override-text"
+          css: color
+          equals: rgb(0, 128, 0)
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#override-text"
+          css: background-image
+          equals: none
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#override-text"
+          css: background-clip
+          equals: border-box
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#override-text"
+          css: font-size
+          equals: 18px
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#override-text"
+          css: text-decoration-line
+          equals: none
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#own-gradient"
+          css: background-image
+          equals: linear-gradient(rgb(255, 0, 0), rgb(0, 0, 255))
+          timeoutMs: 5000
+      - aiAct:
+          prompt: Click the visible text "Update" once. Stop after that single click.
+          options:
+            deepLocate: true
+            cacheable: false
+      - web.expect:
+          selector: "#solid-text"
+          css: color
+          equals: rgb(0, 0, 0)
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#solid-text"
+          css: background-image
+          equals: none
+          timeoutMs: 5000
+  - name: ssr/config-css-inheritance-default
+    steps:
+      - gotoUrl: ${shellUrl}ssr?casename=config-css-inheritance-default
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 300))
+      - web.expect:
+          selector: '[part="page"]'
+          attribute: lynx-enable-css-inheritance
+          equals: null
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#solid-text"
+          css: color
+          equals: rgb(0, 0, 0)
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#wrapped-text"
+          css: color
+          equals: rgb(0, 0, 0)
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#nested-text"
+          css: color
+          equals: rgb(0, 0, 0)
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#wrapped-gradient"
+          css: background-image
+          equals: none
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#gradient-text"
+          css: color
+          equals: rgb(0, 0, 0)
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#gradient-text"
+          css: background-image
+          equals: none
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#override-text"
+          css: color
+          equals: rgb(0, 128, 0)
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#override-text"
+          css: background-image
+          equals: none
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#override-text"
+          css: background-clip
+          equals: border-box
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#override-text"
+          css: font-size
+          equals: 18px
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#override-text"
+          css: text-decoration-line
+          equals: none
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#own-gradient"
+          css: background-image
+          equals: linear-gradient(rgb(255, 0, 0), rgb(0, 0, 255))
+          timeoutMs: 5000
+      - aiAct:
+          prompt: Click the visible text "Update" once. Stop after that single click.
+          options:
+            deepLocate: true
+            cacheable: false
+      - web.expect:
+          selector: "#solid-text"
+          css: color
+          equals: rgb(0, 0, 0)
+          timeoutMs: 5000
+      - web.expect:
+          selector: "#solid-text"
+          css: background-image
+          equals: none
+          timeoutMs: 5000

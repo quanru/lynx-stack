@@ -1,0 +1,116 @@
+afterEach:
+  - recordToReport: Original text, image, SVG and input pixel contract result
+cases:
+  - name: basic-element-text-maxline
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-text-maxline"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: { baseline: text/maxline/index }
+  - name: basic-element-text-maxlength
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-text-maxlength"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: { baseline: text/maxlength/index }
+  - name: basic-element-text-tail-color-convert
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-text-tail-color-convert"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: { baseline: text/tail-color-convert/index }
+  - name: basic-element-text-display-none
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-text-display-none"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: { baseline: text/display-none/index }
+  - name: basic-element-text-linear-gradient-color
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-text-linear-gradient-color"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: { baseline: text/linear-gradient-color/index }
+  - name: basic-element-text-maxline-with-setData
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-text-maxline-with-setData"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 1500))"
+      - web.pixels: { baseline: text/maxline-with-setData/index/index }
+  - name: basic-element-text-set-native-props-with-maxlength
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-text-set-native-props-with-maxlength"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 200))"
+      - web.pixels: {
+          baseline: text/set-native-props-with-maxlength/index/index,
+        }
+  - name: basic-element-text-word-break
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-text-word-break"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: { baseline: text/word-break/index }
+  - name: basic-element-text-color
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-text-color"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: { baseline: text/basic-element-text-color/index }
+  - name: basic-element-image-src
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-image-src"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: { baseline: image/basic-element-image-src/index }
+  - name: basic-element-image-placeholder
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-image-placeholder"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: { baseline: image/placeholder/index }
+  - name: basic-element-image-border-radius
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-image-border-radius"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: { baseline: image/border-radius/index }
+  - name: basic-element-svg-hex-color
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-svg-hex-color"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: { baseline: svg/hex-color/index }
+  - name: basic-element-svg-utf8
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-svg-utf8"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: { baseline: svg/utf8/index }
+  - name: basic-element-svg-with-css
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-svg-with-css"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: { baseline: svg/with-css/index }
+  - name: basic-element-svg-with-position
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-svg-with-position"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: { baseline: svg/with-position/index }
+  - name: basic-element-svg-background-image
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-svg-background-image"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: { baseline: svg/background-image/index }
+  - name: basic-element-x-input-placeholder
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-input-placeholder"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: { baseline: x-input/placeholder/index }
+  - name: basic-element-x-input-placeholder-pseudo-element
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-input-placeholder-pseudo-element"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: { baseline: x-input/placeholder-pseudo-element/index }
+  - name: basic-element-x-input-type
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-input-type"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: { baseline: x-input/type/index }

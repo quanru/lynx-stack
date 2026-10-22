@@ -1,0 +1,67 @@
+afterEach:
+  - recordToReport: Original pixel and numeric/font contract result
+cases:
+  - name: basic-linear-weight-not-assign-full-free-space
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-weight-not-assign-full-free-space"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          baseline: basic-linear-weight-not-assign-full-free-space/index/index,
+        }
+      - web.expect: {
+          selector: "#weight1",
+          bounds: width,
+          equals: 10,
+          immediate: true,
+        }
+      - web.expect: {
+          selector: "#weight2",
+          bounds: width,
+          equals: 20,
+          immediate: true,
+        }
+  - name: basic-linear-sum-of-item-weight-larger-than-container-weight-sum
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-sum-of-item-weight-larger-than-container-weight-sum"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          baseline: basic-linear-sum-of-item-weight-larger-than-container-weight-sum/index/index,
+        }
+      - web.expect: {
+          selector: "#weight1",
+          bounds: width,
+          equals: 20,
+          immediate: true,
+        }
+      - web.expect: {
+          selector: "#weight2",
+          bounds: width,
+          equals: 40,
+          immediate: true,
+        }
+  - name: basic-linear-weight-sum-equal-to-item-weight
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-linear-weight-sum-equal-to-item-weight"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          baseline: basic-linear-weight-sum-equal-to-item-weight/index/index,
+        }
+      - web.expect: {
+          selector: "#weight1",
+          bounds: width,
+          equals: 20,
+          immediate: true,
+        }
+      - web.expect: {
+          selector: "#weight2",
+          bounds: width,
+          equals: 40,
+          immediate: true,
+        }
+  - name: basic-element-text-extra-font-family
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-text-extra-font-family"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "(async () => { await document.fonts.load('18px \"Press Start 2P E2E\"', 'EXTRA FONT 0123'); await document.fonts.ready; return true; })()"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: { baseline: text/extra-font-family/index }

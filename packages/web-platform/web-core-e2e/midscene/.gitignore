@@ -1,0 +1,7 @@
+node_modules/
+midscene_run/
+midscene-inventory/
+.midscene/
+.midscene-shards/
+.env
+*.log

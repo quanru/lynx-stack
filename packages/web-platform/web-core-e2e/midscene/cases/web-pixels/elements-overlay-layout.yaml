@@ -1,0 +1,22 @@
+# Preserve the original programmatic open operation and single-read event contract.
+cases:
+  - name: web-elements/x-overlay-ng/event-layoutchange
+    steps:
+      - gotoUrl: "${elementsUrl}tests/fixtures/x-overlay-ng/event-layoutchange.html"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - recordToReport: Before checking the original overlay layout event
+      - javascript: "document.getElementById('target')?.setAttribute('open', '')"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - javascript: |-
+          (() => {
+            const detail = globalThis.detail;
+            if (!detail) throw new Error('Expected a truthy layoutchange detail');
+            for (const field of ['width', 'height', 'left', 'right', 'top', 'bottom']) {
+              if (typeof detail[field] !== 'number') {
+                throw new Error('Expected numeric layoutchange ' + field);
+              }
+            }
+            if (detail.id !== 'target') throw new Error('Expected layoutchange id target');
+            return true;
+          })()
+      - recordToReport: Original overlay layout event contract passed

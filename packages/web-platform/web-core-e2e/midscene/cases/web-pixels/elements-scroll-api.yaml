@@ -1,0 +1,48 @@
+afterEach:
+  - recordToReport: Original programmatic scroll API pixel result
+cases:
+  - name: web-elements/scroll-view/scroll-view-padding
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/scroll-view/scroll-view-padding.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/scroll-view-padding/index
+      - javascript: |-
+          (() => {
+                  document.querySelector('scroll-view').scrollTop = 300;
+              })()
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/scroll-view-padding/padding-should-be-scrolled
+  - name: web-elements/scroll-view/event-scrolltolower
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/scroll-view/event-scrolltolower.html
+      - javascript: document.fonts.ready.then(() => true)
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/event-scrolltolower/initial-yellow
+      - javascript: new Promise((resolve, reject) => { const deadline = Date.now() +
+          30000; const check = () => { const matches =
+          document.querySelectorAll("scroll-view"); if (matches.length > 1)
+          return reject(new Error('Original scroll API locator strictness
+          violation')); if (matches.length === 1) { try { return resolve(((e) =>
+          (e.scrollTop = 99))(matches[0])); } catch (error) { return
+          reject(error); } } if (Date.now() >= deadline) return reject(new
+          Error('Original scroll API locator attachment timed out'));
+          requestAnimationFrame(check); }; check(); })
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/event-scrolltolower/scroll-not-trigger-scrolltolower-yellow
+      - javascript: new Promise((resolve, reject) => { const deadline = Date.now() +
+          30000; const check = () => { const matches =
+          document.querySelectorAll("scroll-view"); if (matches.length > 1)
+          return reject(new Error('Original scroll API locator strictness
+          violation')); if (matches.length === 1) { try { return resolve(((e) =>
+          (e.scrollTop = 101))(matches[0])); } catch (error) { return
+          reject(error); } } if (Date.now() >= deadline) return reject(new
+          Error('Original scroll API locator attachment timed out'));
+          requestAnimationFrame(check); }; check(); })
+      - web.pixels:
+          suite: web-elements
+          baseline: scroll-view/event-scrolltolower/triggered-green

@@ -1,0 +1,176 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import vm from 'node:vm';
+import test from 'node:test';
+import ts from 'typescript';
+import { prepareLynxViewStyle } from '../fixture-style.ts';
+import { originalChromiumProfile } from '../web-pixels.ts';
+import {
+  createConsoleEvidence,
+  captureConsoleMessage,
+  expectWebRuntime,
+} from '../runtime-contract.ts';
+
+test('projects keep independent registries and release only their own case resources', async () => {
+  const events = [];
+  let browserId = 0;
+  let failDestroy = false;
+  const contextOptions = [];
+  const launchOptions = [];
+  class Agent {
+    constructor(page, options) {
+      this.page = page;
+      assert.equal(options.aiContexts, undefined);
+    }
+    async destroy() {
+      events.push(['agent', this.page.id]);
+      if (failDestroy) throw new Error('Agent report finalization failed');
+    }
+  }
+  const modules = {
+    '@midscene/web/playwright/agent': { PlaywrightAgent: Agent },
+    '@midscene/test': { defineNode: x => x },
+    '@midscene/test/config': {
+      defineProjectSetup: x => x,
+      defineTestProject: x => x,
+    },
+    '@midscene/test/midscene': {
+      createMidsceneNodes: options => [{ provider: options.agentProvider }],
+    },
+    './expectation.js': { expectWebValue: () => {} },
+    './fixture-style.js': { prepareLynxViewStyle },
+    './web-pixels.js': {
+      originalChromiumProfile,
+      originalPixelProfile: () => {
+        throw new Error('Unexpected pixel project setup');
+      },
+      expectWebPixels: () => {},
+    },
+    './runtime-contract.js': {
+      createConsoleEvidence,
+      captureConsoleMessage,
+      expectWebRuntime,
+    },
+    playwright: {
+      chromium: {
+        async launch(options) {
+          launchOptions.push(options);
+          const id = ++browserId;
+          return {
+            async close() {
+              events.push(['browser', id]);
+            },
+            async newContext(options) {
+              contextOptions.push(options);
+              const context = {
+                async close() {
+                  events.push(['context', id]);
+                },
+                async newPage() {
+                  return {
+                    id,
+                    context: () => context,
+                    on(event, callback) {
+                      assert.equal(event, 'console');
+                      callback({ text: () => 'browser-' + id });
+                    },
+                  };
+                },
+              };
+              return context;
+            },
+          };
+        },
+      },
+    },
+  };
+  const require = createRequire(import.meta.url);
+  const module = { exports: {} };
+  const source = readFileSync(
+    new URL('../midscene.config.ts', import.meta.url),
+    'utf8',
+  );
+  vm.runInNewContext(
+    ts.transpileModule(source, {
+      compilerOptions: {
+        module: ts.ModuleKind.CommonJS,
+        target: ts.ScriptTarget.ES2022,
+      },
+    }).outputText,
+    {
+      module,
+      exports: module.exports,
+      require: name => modules[name] ?? require(name),
+      process,
+    },
+  );
+  const shell = module.exports.default.projects.find(project =>
+    project.name === 'web-shell'
+  );
+  const elements = module.exports.default.projects.find(project =>
+    project.name === 'web-elements'
+  );
+  const teardowns = [];
+  const setup = project =>
+    project.setup.setup({ onTeardown: fn => teardowns.push(fn) });
+  const shellContext = await setup(shell);
+  const elementsContext = await setup(elements);
+  // The same run identity deliberately exercises the cross-project collision.
+  const runId = 'independent-project-lifecycle-test';
+  const first = await shellContext.agentRegistry.getAgent(runId);
+  assert.equal(await shellContext.agentRegistry.getAgent(runId), first);
+  const second = await elementsContext.agentRegistry.getAgent(runId);
+  for (const options of contextOptions) {
+    assert.deepEqual({ ...options }, originalChromiumProfile().context);
+  }
+  for (const options of launchOptions) {
+    assert.deepEqual(options, originalChromiumProfile().launch);
+  }
+  shellContext.getConsoleEvidence(runId).expectTexts(['browser-1']);
+  assert.throws(
+    () => shellContext.getConsoleEvidence(runId).expectTexts(['browser-2']),
+    /not observed/,
+  );
+  elementsContext.getConsoleEvidence(runId).expectTexts(['browser-2']);
+  assert.notEqual(first, second);
+  await shell.nodes[0].provider.releaseAgent(runId);
+  assert.throws(() => shellContext.getConsoleEvidence(runId), /live case page/);
+  assert.deepEqual(events, [['agent', 1], ['context', 1]]);
+  assert.equal(await elementsContext.agentRegistry.getAgent(runId), second);
+  await elements.nodes[0].provider.releaseAgent(runId);
+  assert.deepEqual(events.slice(2), [['agent', 2], ['context', 2]]);
+  await Promise.all(teardowns.map(fn => fn()));
+  assert.deepEqual(events.slice(4), [['browser', 1], ['browser', 2]]);
+  const ssr = module.exports.default.projects.find(project =>
+    project.name === 'web-ssr-no-js'
+  );
+  const ssrContext = await setup(ssr);
+  await ssrContext.getPage('ssr-no-js-context');
+  assert.equal(contextOptions.at(-1).javaScriptEnabled, false);
+  assert.deepEqual({ ...contextOptions.at(-1) }, {
+    ...originalChromiumProfile().context,
+    javaScriptEnabled: false,
+  });
+  assert.deepEqual(launchOptions.at(-1), originalChromiumProfile().launch);
+  const pixel = module.exports.default.projects.find(project =>
+    project.name === 'web-pixels'
+  );
+  const launchedBeforePixelGate = launchOptions.length;
+  await assert.rejects(setup(pixel), /Unexpected pixel project setup/);
+  assert.equal(launchOptions.length, launchedBeforePixelGate);
+  assert.equal(contextOptions[0].javaScriptEnabled, undefined);
+  await ssrContext.agentRegistry.releaseAgent('ssr-no-js-context');
+  await ssrContext.agentRegistry.getAgent('failed-agent-report');
+  failDestroy = true;
+  await assert.rejects(
+    ssrContext.agentRegistry.releaseAgent('failed-agent-report'),
+    /report finalization failed/,
+  );
+  assert.deepEqual(events.slice(-2), [['agent', 3], ['context', 3]]);
+  assert.throws(
+    () => ssrContext.getConsoleEvidence('failed-agent-report'),
+    /live case page/,
+  );
+  await teardowns.at(-1)();
+});

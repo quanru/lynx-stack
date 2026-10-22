@@ -1,0 +1,102 @@
+# Original CSR-only list removal contract. Counts and ID arrays remain separate reads.
+cases:
+  - name: basic-element-list-remove-action
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-list-remove-action"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - javascript: |-
+          (() => {
+            const items = [];
+            function query(root) {
+              items.push(...root.querySelectorAll('list-item'));
+              if (root.shadowRoot) query(root.shadowRoot);
+              for (const element of root.querySelectorAll('*')) {
+                if (element.shadowRoot) query(element.shadowRoot);
+              }
+            }
+            query(document);
+            if (items.length !== 4) throw new Error('Original list count assertion failed');
+            return true;
+          })()
+      - javascript: |-
+          (() => {
+            const items = [];
+            function query(root) {
+              items.push(...root.querySelectorAll('list-item'));
+              if (root.shadowRoot) query(root.shadowRoot);
+              for (const element of root.querySelectorAll('*')) {
+                if (element.shadowRoot) query(element.shadowRoot);
+              }
+            }
+            query(document);
+            const ids = items.map(item => item.id);
+            const expected = ["1","2","3","5"];
+            if (ids.length !== expected.length || ids.some((id, index) => id !== expected[index])) throw new Error('Original ordered list IDs assertion failed');
+            return true;
+          })()
+      - aiAct: "Click the solid blue square above the colored list exactly once."
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 1000))"
+      - javascript: |-
+          (() => {
+            const items = [];
+            function query(root) {
+              items.push(...root.querySelectorAll('list-item'));
+              if (root.shadowRoot) query(root.shadowRoot);
+              for (const element of root.querySelectorAll('*')) {
+                if (element.shadowRoot) query(element.shadowRoot);
+              }
+            }
+            query(document);
+            if (items.length !== 3) throw new Error('Original list count assertion failed');
+            return true;
+          })()
+      - javascript: |-
+          (() => {
+            const items = [];
+            function query(root) {
+              items.push(...root.querySelectorAll('list-item'));
+              if (root.shadowRoot) query(root.shadowRoot);
+              for (const element of root.querySelectorAll('*')) {
+                if (element.shadowRoot) query(element.shadowRoot);
+              }
+            }
+            query(document);
+            const ids = items.map(item => item.id);
+            const expected = ["1","4","5"];
+            if (ids.length !== expected.length || ids.some((id, index) => id !== expected[index])) throw new Error('Original ordered list IDs assertion failed');
+            return true;
+          })()
+      - aiAct: "Click the solid blue square above the colored list exactly once."
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 1000))"
+      - javascript: |-
+          (() => {
+            const items = [];
+            function query(root) {
+              items.push(...root.querySelectorAll('list-item'));
+              if (root.shadowRoot) query(root.shadowRoot);
+              for (const element of root.querySelectorAll('*')) {
+                if (element.shadowRoot) query(element.shadowRoot);
+              }
+            }
+            query(document);
+            if (items.length !== 4) throw new Error('Original list count assertion failed');
+            return true;
+          })()
+      - javascript: |-
+          (() => {
+            const items = [];
+            function query(root) {
+              items.push(...root.querySelectorAll('list-item'));
+              if (root.shadowRoot) query(root.shadowRoot);
+              for (const element of root.querySelectorAll('*')) {
+                if (element.shadowRoot) query(element.shadowRoot);
+              }
+            }
+            query(document);
+            const ids = items.map(item => item.id);
+            const expected = ["1","2","3","5"];
+            if (ids.length !== expected.length || ids.some((id, index) => id !== expected[index])) throw new Error('Original ordered list IDs assertion failed');
+            return true;
+          })()
+      - recordToReport: Original list removal count and ordered IDs contract passed

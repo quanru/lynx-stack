@@ -1,0 +1,27 @@
+afterEach:
+  - recordToReport: Original clipped text pixel contract result
+cases:
+  - name: web-elements/x-text/text-maxline-1-instrict-size
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-text/text-maxline-1-instrict-size.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-text/text-maxline-1-instrict-size/x-text/text-maxline-1-instrict-size
+  - name: web-elements/x-text/view-flex-in-text
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-text/view-flex-in-text.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-text/view-flex-in-text/x-text/view-flex-in-text
+  - name: web-elements/x-text/text-clipped-display-important
+    steps:
+      - gotoUrl: ${elementsUrl}tests/fixtures/x-text/text-clipped-display-important.html
+      - javascript: document.fonts.ready.then(() => true)
+      - javascript: new Promise(resolve => setTimeout(() => resolve(true), 100))
+      - web.pixels:
+          suite: web-elements
+          baseline: x-text/text-clipped-display-important/x-text/text-clipped-display-important

@@ -1,0 +1,25 @@
+afterEach:
+  - recordToReport: Original textarea/default-display pixel contract result
+cases:
+  - name: basic-element-x-textarea-placeholder-font-size
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-textarea-placeholder-font-size"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      # Original test explicitly permits 0.02; backend binds it to this PNG only.
+      - web.pixels: {
+          baseline: x-textarea/placeholder-font-size/font-size/index,
+        }
+  - name: basic-element-x-textarea-color
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-textarea-color"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - web.pixels: {
+          baseline: x-textarea/basic-element-x-textarea-color/initial,
+        }
+  - name: config-css-default-display-linear-false
+    steps:
+      - gotoUrl: "${shellUrl}?casename=config-css-default-display-linear-false"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: { baseline: config-css-default-display-linear-false/index }

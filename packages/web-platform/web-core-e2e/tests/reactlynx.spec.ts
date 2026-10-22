@@ -2351,7 +2351,9 @@ test.describe('reactlynx3 tests', () => {
           const observer = new MutationObserver(() => {
             if (inject()) observer.disconnect();
           });
-          observer.observe(document.documentElement, {
+          // addInitScript can run before <html> exists. Observe Document so
+          // the fixture offset is installed before the first layout event.
+          observer.observe(document, {
             childList: true,
             subtree: true,
           });

@@ -1,0 +1,80 @@
+afterEach:
+  - recordToReport: Original component pixel contract result
+cases:
+  - name: api-SelectorQuery
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-SelectorQuery"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - web.pixels: { baseline: api-SelectorQuery/index/index }
+  - name: config-css-default-overflow-visible-unset
+    steps:
+      - gotoUrl: "${shellUrl}?casename=config-css-default-overflow-visible-unset"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          baseline: config-css-default-overflow-visible-unset/index/index,
+        }
+  - name: basic-element-view-border-style-default
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-view-border-style-default"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          baseline: view/basic-element-view-border-style-default/index,
+        }
+  - name: basic-element-scroll-view-fixed
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-scroll-view-fixed"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          baseline: scroll-view/basic-element-scroll-view-fixed/initial,
+        }
+  - name: basic-element-scroll-view-scroll-to-index
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-scroll-view-scroll-to-index"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          baseline: basic-element-scroll-view-scroll-to-index/green-blue/index,
+        }
+  - name: basic-element-x-viewpager-ng-item-position-absolute
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-viewpager-ng-item-position-absolute"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: {
+          baseline: x-viewpager-ng/basic-element-x-viewpager-ng-item-position-absolute/select-index,
+        }
+  - name: basic-element-list-waterfall
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-list-waterfall"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - web.pixels: { baseline: list/basic-element-list-waterfall/initial }
+  - name: api-exposure-custom-event-handler
+    steps:
+      - gotoUrl: "${shellUrl}?casename=api-exposure-custom-event-handler"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 500))"
+      - web.pixels: {
+          baseline: exposure/api-exposure-custom-event-handler/all-green,
+        }
+  - name: basic-element-image-auto-size
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-image-auto-size"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: { baseline: image/auto-size/index }
+  - name: basic-element-image-auto-size-with-padding
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-image-auto-size-with-padding"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - web.pixels: { baseline: image/auto-size-with-padding/index }
+  - name: basic-element-x-swiper-indicator-dots
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-swiper-indicator-dots"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: { baseline: x-swiper/indicator-dots/index }
+  - name: basic-element-x-swiper-indicator-color
+    steps:
+      - gotoUrl: "${shellUrl}?casename=basic-element-x-swiper-indicator-color"
+      - javascript: "document.fonts.ready.then(() => true)"
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.pixels: { baseline: x-swiper/indicator-color/index }

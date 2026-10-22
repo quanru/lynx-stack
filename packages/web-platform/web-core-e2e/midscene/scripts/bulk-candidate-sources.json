@@ -1,0 +1,3194 @@
+[
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "apis",
+    "title": "api-dispose",
+    "fullTitle": "reactlynx3 tests apis api-dispose",
+    "key": "apis/api-dispose",
+    "sourceId": "apis/api-dispose",
+    "line": 1703,
+    "callbackSha256": "f6ec8b4d2ff47c5e047847eaf12395dd13754066f65a23f67574bbaed88f1ddd",
+    "frozenDecision": "deterministic-candidate",
+    "retentionReason": "Preserve console readiness, fin and exact worker-count decrease of one; requires host-side page/workers observation, so retain original runner until an equivalent host adapter exists.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "api-exposure",
+    "title": "api-exposure-change-exposure-id",
+    "fullTitle": "reactlynx3 tests apis api-exposure api-exposure-change-exposure-id",
+    "key": "api-exposure/api-exposure-change-exposure-id",
+    "sourceId": "api-exposure/api-exposure-change-exposure-id",
+    "line": 2027,
+    "callbackSha256": "c9c51e9cc411a238b96956db56cc73dc0847281616b163609466e1468df01e23",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Original clicks are unawaited; awaiting AI actions changes scheduling.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "firefox",
+        "webkit"
+      ],
+      "SSR": [
+        "chromium",
+        "firefox",
+        "webkit"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1929,
+        "text": "test.fixme(isSSR, 'TODO: migrate exposure from web-elements to runtime')"
+      },
+      {
+        "kind": "skip",
+        "line": 2030,
+        "text": "test.skip(browserName !== 'chromium', 'flsky test')"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "api-exposure",
+    "title": "api-exposure-stop-events-has-complex-dataset",
+    "fullTitle": "reactlynx3 tests apis api-exposure api-exposure-stop-events-has-complex-dataset",
+    "key": "api-exposure/api-exposure-stop-events-has-complex-dataset",
+    "sourceId": "api-exposure/api-exposure-stop-events-has-complex-dataset",
+    "line": 2145,
+    "callbackSha256": "eaaa49a298a18919ce81fca8ed433661a0eed1d72fff787910156b540964e756",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Host console observation and listener registration boundary remain required.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": [
+        "chromium",
+        "firefox",
+        "webkit"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1929,
+        "text": "test.fixme(isSSR, 'TODO: migrate exposure from web-elements to runtime')"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "api-exposure",
+    "title": "api-exposure-stop-events-has-dataset",
+    "fullTitle": "reactlynx3 tests apis api-exposure api-exposure-stop-events-has-dataset",
+    "key": "api-exposure/api-exposure-stop-events-has-dataset",
+    "sourceId": "api-exposure/api-exposure-stop-events-has-dataset",
+    "line": 2161,
+    "callbackSha256": "78be41da635af2c132311bd6678d053bb31de5eed02f0f4ab7d89ca28ec2be17",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Host console observation and listener registration boundary remain required.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": [
+        "chromium",
+        "firefox",
+        "webkit"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1929,
+        "text": "test.fixme(isSSR, 'TODO: migrate exposure from web-elements to runtime')"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "api-exposure",
+    "title": "api-exposure-stop-exposure",
+    "fullTitle": "reactlynx3 tests apis api-exposure api-exposure-stop-exposure",
+    "key": "api-exposure/api-exposure-stop-exposure",
+    "sourceId": "api-exposure/api-exposure-stop-exposure",
+    "line": 2177,
+    "callbackSha256": "b91d4d8d2565bb72ec4b46a97471db7f309eef2ff8c6e9a71f3f5695c10540ae",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Original clicks are unawaited; awaiting AI actions changes scheduling.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "webkit"
+      ],
+      "SSR": [
+        "chromium",
+        "firefox",
+        "webkit"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1929,
+        "text": "test.fixme(isSSR, 'TODO: migrate exposure from web-elements to runtime')"
+      },
+      {
+        "kind": "skip",
+        "line": 2180,
+        "text": "test.skip()"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "apis",
+    "title": "api-devtool-event",
+    "fullTitle": "reactlynx3 tests apis api-devtool-event",
+    "key": "apis/api-devtool-event",
+    "sourceId": "apis/api-devtool-event",
+    "line": 2212,
+    "callbackSha256": "762827f22c8361ba66660f9c8448bb4932996371ec2d682e768881e362786ca9",
+    "frozenDecision": "deterministic-candidate",
+    "retentionReason": "Can port using deterministic JavaScript/API and exact original assertions; aiAct is not the operation under test. Preserve listener registration, separate reads, browser guards, waits and PNG baselines.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "basic-element-text-text-selection",
+    "title": "selection-true-boolean-flatten-false",
+    "fullTitle": "reactlynx3 tests elements text basic-element-text-text-selection selection-true-boolean-flatten-false",
+    "key": "basic-element-text-text-selection/selection-true-boolean-flatten-false",
+    "sourceId": "basic-element-text-text-selection/selection-true-boolean-flatten-false",
+    "line": 2775,
+    "callbackSha256": "8f079f32a750d7291ec5b09f113f405f8c2033b1f52653d375b3cc79bc8fa27b",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "webkit"
+      ],
+      "SSR": [
+        "webkit"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 2778,
+        "text": "test.skip(\n              true,\n              'the selection status cannot be screenshot on webkit',\n            )"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "basic-element-text-text-selection",
+    "title": "text-selection-true-string-flatten-false",
+    "fullTitle": "reactlynx3 tests elements text basic-element-text-text-selection text-selection-true-string-flatten-false",
+    "key": "basic-element-text-text-selection/text-selection-true-string-flatten-false",
+    "sourceId": "basic-element-text-text-selection/text-selection-true-string-flatten-false",
+    "line": 2801,
+    "callbackSha256": "de2cb71f7c03eb478b71ea6a344b091a9c09f4ea6f3b634dd5bf5a24e3a92641",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "basic-element-text-text-selection",
+    "title": "text-selection-false-string-flatten-false",
+    "fullTitle": "reactlynx3 tests elements text basic-element-text-text-selection text-selection-false-string-flatten-false",
+    "key": "basic-element-text-text-selection/text-selection-false-string-flatten-false",
+    "sourceId": "basic-element-text-text-selection/text-selection-false-string-flatten-false",
+    "line": 2816,
+    "callbackSha256": "b5c859122cbe3653fda210c944605c54a583c9ae20d1e56377015ae9fc6d9214",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "firefox"
+      ],
+      "SSR": [
+        "firefox"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 2817,
+        "text": "test.skip(browserName === 'firefox', 'firefox headless issue')"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "basic-element-text-text-selection",
+    "title": "text-selection-false-boolean-flatten-false",
+    "fullTitle": "reactlynx3 tests elements text basic-element-text-text-selection text-selection-false-boolean-flatten-false",
+    "key": "basic-element-text-text-selection/text-selection-false-boolean-flatten-false",
+    "sourceId": "basic-element-text-text-selection/text-selection-false-boolean-flatten-false",
+    "line": 2832,
+    "callbackSha256": "9ec32e448208ea1310e9e517a0a1e09be033282b6e84456ceb4b1e5dd8a63c5e",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "firefox"
+      ],
+      "SSR": [
+        "firefox"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 2833,
+        "text": "test.skip(browserName === 'firefox', 'firefox headless issue')"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "text",
+    "title": "basic-element-text-bindselectionchange",
+    "fullTitle": "reactlynx3 tests elements text basic-element-text-bindselectionchange",
+    "key": "text/basic-element-text-bindselectionchange",
+    "sourceId": "text/basic-element-text-bindselectionchange",
+    "line": 2849,
+    "callbackSha256": "b474f54f98ec28e3503837cc6f300eabab01800e571242fda8dce5de5f780252",
+    "frozenDecision": "deterministic-candidate",
+    "retentionReason": "Can port using deterministic JavaScript/API and exact original assertions; aiAct is not the operation under test. Preserve listener registration, separate reads, browser guards, waits and PNG baselines.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "text",
+    "title": "basic-element-text-dynamic-text-style-update",
+    "fullTitle": "reactlynx3 tests elements text basic-element-text-dynamic-text-style-update",
+    "key": "text/basic-element-text-dynamic-text-style-update",
+    "sourceId": "text/basic-element-text-dynamic-text-style-update",
+    "line": 2921,
+    "callbackSha256": "86b3bcec54cc844b499661a1003ada91977a6bd4cc70c2ae0c103ac751d5dd4b",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Fixture action target is a transparent 10px control, not independently visible.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "text",
+    "title": "basic-element-text-set-native-props-with-setData",
+    "fullTitle": "reactlynx3 tests elements text basic-element-text-set-native-props-with-setData",
+    "key": "text/basic-element-text-set-native-props-with-setData",
+    "sourceId": "text/basic-element-text-set-native-props-with-setData",
+    "line": 3003,
+    "callbackSha256": "6b047d5e6833af21680672f0146d29e84e0db3cc9ccf1b66b96b337ca7b3ac2a",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Fixture click target is an unlabeled 1px view; visual grounding is unproven.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "scroll-view",
+    "title": "basic-element-scroll-view-event-scroll",
+    "fullTitle": "reactlynx3 tests elements scroll-view basic-element-scroll-view-event-scroll",
+    "key": "scroll-view/basic-element-scroll-view-event-scroll",
+    "sourceId": "scroll-view/basic-element-scroll-view-event-scroll",
+    "line": 3284,
+    "callbackSha256": "4ea879d75321e40feb19da070c85fb730262fa72607544519b2752c0d6db9c0b",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "firefox",
+        "webkit"
+      ],
+      "SSR": [
+        "firefox",
+        "webkit"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 3289,
+        "text": "test.skip(browserName !== 'chromium', 'not support CDPsession')"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "scroll-view",
+    "title": "basic-element-scroll-view-event-scrolltoupper",
+    "fullTitle": "reactlynx3 tests elements scroll-view basic-element-scroll-view-event-scrolltoupper",
+    "key": "scroll-view/basic-element-scroll-view-event-scrolltoupper",
+    "sourceId": "scroll-view/basic-element-scroll-view-event-scrolltoupper",
+    "line": 3365,
+    "callbackSha256": "76044b2ed5e47516337a847c20945d78bf9befc1450c0887f1cec06fd7ddf81f",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "firefox",
+        "webkit"
+      ],
+      "SSR": [
+        "firefox",
+        "webkit"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 3370,
+        "text": "test.skip(browserName !== 'chromium', 'not support CDPsession')"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "scroll-view",
+    "title": "basic-element-scroll-view-event-scrolltolower",
+    "fullTitle": "reactlynx3 tests elements scroll-view basic-element-scroll-view-event-scrolltolower",
+    "key": "scroll-view/basic-element-scroll-view-event-scrolltolower",
+    "sourceId": "scroll-view/basic-element-scroll-view-event-scrolltolower",
+    "line": 3412,
+    "callbackSha256": "88e1446dd63cdcb276eb0315bad99d048e3e675da70b128b9dd681bc7add6513",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "firefox",
+        "webkit"
+      ],
+      "SSR": [
+        "firefox",
+        "webkit"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 3417,
+        "text": "test.skip(browserName !== 'chromium', 'not support CDPsession')"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-viewpager-ng",
+    "title": "basic-element-x-viewpager-ng-allow-horizontal-gesture",
+    "fullTitle": "reactlynx3 tests elements x-viewpager-ng basic-element-x-viewpager-ng-allow-horizontal-gesture",
+    "key": "x-viewpager-ng/basic-element-x-viewpager-ng-allow-horizontal-gesture",
+    "sourceId": "x-viewpager-ng/basic-element-x-viewpager-ng-allow-horizontal-gesture",
+    "line": 3469,
+    "callbackSha256": "46382a62c336704ebb98b78430efc2aaf5ca25787c8b643cdc2270c6b60d12ae",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "firefox",
+        "webkit"
+      ],
+      "SSR": [
+        "firefox",
+        "webkit"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 3474,
+        "text": "test.skip(browserName !== 'chromium', 'cannot swipe')"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-viewpager-ng",
+    "title": "basic-element-x-viewpager-ng-bindchange",
+    "fullTitle": "reactlynx3 tests elements x-viewpager-ng basic-element-x-viewpager-ng-bindchange",
+    "key": "x-viewpager-ng/basic-element-x-viewpager-ng-bindchange",
+    "sourceId": "x-viewpager-ng/basic-element-x-viewpager-ng-bindchange",
+    "line": 3497,
+    "callbackSha256": "456326ee1a919204bd0b0c0d4cea437e196b7c274d0212af2a256c66736f11ed",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "firefox",
+        "webkit"
+      ],
+      "SSR": [
+        "firefox",
+        "webkit"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 3502,
+        "text": "test.skip(browserName !== 'chromium', 'cannot swipe')"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-viewpager-ng",
+    "title": "basic-element-x-viewpager-ng-bindoffsetchange",
+    "fullTitle": "reactlynx3 tests elements x-viewpager-ng basic-element-x-viewpager-ng-bindoffsetchange",
+    "key": "x-viewpager-ng/basic-element-x-viewpager-ng-bindoffsetchange",
+    "sourceId": "x-viewpager-ng/basic-element-x-viewpager-ng-bindoffsetchange",
+    "line": 3522,
+    "callbackSha256": "05b75b91439141ca91f8ba7b80eaa45818a893065f0c193a5515d86269491dc5",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "firefox",
+        "webkit"
+      ],
+      "SSR": [
+        "firefox",
+        "webkit"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 3527,
+        "text": "test.skip(browserName !== 'chromium', 'cannot swipe')"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-viewpager-ng",
+    "title": "basic-element-x-viewpager-ng-exposure",
+    "fullTitle": "reactlynx3 tests elements x-viewpager-ng basic-element-x-viewpager-ng-exposure",
+    "key": "x-viewpager-ng/basic-element-x-viewpager-ng-exposure",
+    "sourceId": "x-viewpager-ng/basic-element-x-viewpager-ng-exposure",
+    "line": 3546,
+    "callbackSha256": "4954758a3031081c38eb59bf4bd176513211f643d771da879ecef3fbbf94ebd8",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Preserve CDP swipe and SSR fixme. Existing offsetchange neighbor pushes offsets into itself; do not silently strengthen or repair original assertions.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "firefox",
+        "webkit"
+      ],
+      "SSR": [
+        "chromium",
+        "firefox",
+        "webkit"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 3551,
+        "text": "test.skip(browserName !== 'chromium', 'cannot swipe')"
+      },
+      {
+        "kind": "skip",
+        "line": 3552,
+        "text": "test.fixme(isSSR, 'SSR does not support exposure')"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-viewpager-ng",
+    "title": "basic-element-x-viewpager-ng-bindchange-select-tab",
+    "fullTitle": "reactlynx3 tests elements x-viewpager-ng basic-element-x-viewpager-ng-bindchange-select-tab",
+    "key": "x-viewpager-ng/basic-element-x-viewpager-ng-bindchange-select-tab",
+    "sourceId": "x-viewpager-ng/basic-element-x-viewpager-ng-bindchange-select-tab",
+    "line": 3633,
+    "callbackSha256": "7235494f07995b72e70eeab90351450112e7f2bd676596a28197558d827e1766",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Exact event counts, host listener timing and browser-dependent assertions remain required.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-input",
+    "title": "basic-element-x-input-blur",
+    "fullTitle": "reactlynx3 tests elements x-input basic-element-x-input-blur",
+    "key": "x-input/basic-element-x-input-blur",
+    "sourceId": "x-input/basic-element-x-input-blur",
+    "line": 3698,
+    "callbackSha256": "c3b49fc8d63eca9ea182ea235923fad7472ac523b078b7258e6ac456ac3f5ce4",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Original innerText attachment read and original case deadline must remain before the PNG.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-input",
+    "title": "basic-element-x-input-getValue",
+    "fullTitle": "reactlynx3 tests elements x-input basic-element-x-input-getValue",
+    "key": "x-input/basic-element-x-input-getValue",
+    "sourceId": "x-input/basic-element-x-input-getValue",
+    "line": 3782,
+    "callbackSha256": "a444c3f8841f2c91e312754ff60d2cead231d429ae1a1d0944da932790de2afd",
+    "frozenDecision": "deterministic-candidate",
+    "retentionReason": "Can port using deterministic JavaScript/API and exact original assertions; aiAct is not the operation under test. Preserve listener registration, separate reads, browser guards, waits and PNG baselines.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-input",
+    "title": "basic-element-x-input-bindselection",
+    "fullTitle": "reactlynx3 tests elements x-input basic-element-x-input-bindselection",
+    "key": "x-input/basic-element-x-input-bindselection",
+    "sourceId": "x-input/basic-element-x-input-bindselection",
+    "line": 3821,
+    "callbackSha256": "bc979ad7e827ccd3a1bf5781ef87c579a467d2d051e8aecdf5a77a83521f7879",
+    "frozenDecision": "deterministic-candidate",
+    "retentionReason": "Can port using deterministic JavaScript/API and exact original assertions; aiAct is not the operation under test. Preserve listener registration, separate reads, browser guards, waits and PNG baselines.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-overlay-ng",
+    "title": "basic-element-x-overlay-ng-demo",
+    "fullTitle": "reactlynx3 tests elements x-overlay-ng basic-element-x-overlay-ng-demo",
+    "key": "x-overlay-ng/basic-element-x-overlay-ng-demo",
+    "sourceId": "x-overlay-ng/basic-element-x-overlay-ng-demo",
+    "line": 3850,
+    "callbackSha256": "62bbc29945b10204dd9d0529c341eb7f2d59f90d137feb02698f1c4feebc8248",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": [
+        "chromium",
+        "firefox",
+        "webkit"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 3851,
+        "text": "test.fixme(isSSR, 'flaky')"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-overlay-ng",
+    "title": "basic-element-x-overlay-ng-playground-test-1",
+    "fullTitle": "reactlynx3 tests elements x-overlay-ng basic-element-x-overlay-ng-playground-test-1",
+    "key": "x-overlay-ng/basic-element-x-overlay-ng-playground-test-1",
+    "sourceId": "x-overlay-ng/basic-element-x-overlay-ng-playground-test-1",
+    "line": 3869,
+    "callbackSha256": "e01a005f31360deacda4c510dbe2b21a1c8d45fa0616f5c08cd1336baa9edbe9",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-overlay-ng",
+    "title": "basic-element-x-overlay-ng-playground-test-2",
+    "fullTitle": "reactlynx3 tests elements x-overlay-ng basic-element-x-overlay-ng-playground-test-2",
+    "key": "x-overlay-ng/basic-element-x-overlay-ng-playground-test-2",
+    "sourceId": "x-overlay-ng/basic-element-x-overlay-ng-playground-test-2",
+    "line": 3928,
+    "callbackSha256": "8b4ff6b17a308d16363efedb328cac774a40b23c2be74dbcb3875c0975fb3c34",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-overlay-ng",
+    "title": "basic-element-x-overlay-ng-playground-test-3",
+    "fullTitle": "reactlynx3 tests elements x-overlay-ng basic-element-x-overlay-ng-playground-test-3",
+    "key": "x-overlay-ng/basic-element-x-overlay-ng-playground-test-3",
+    "sourceId": "x-overlay-ng/basic-element-x-overlay-ng-playground-test-3",
+    "line": 3964,
+    "callbackSha256": "8232d245df1d3db9cb49a8687cbf6e4a54a170531c1207442f74bf425f7d8fd6",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-overlay-ng",
+    "title": "basic-element-x-overlay-ng-playground-test-4-has-backdrop",
+    "fullTitle": "reactlynx3 tests elements x-overlay-ng basic-element-x-overlay-ng-playground-test-4-has-backdrop",
+    "key": "x-overlay-ng/basic-element-x-overlay-ng-playground-test-4-has-backdrop",
+    "sourceId": "x-overlay-ng/basic-element-x-overlay-ng-playground-test-4-has-backdrop",
+    "line": 3997,
+    "callbackSha256": "cccbbfe38f3ac5cf6807273d4858574abe200c78f40693da78590b1bbe615b51",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-overlay-ng",
+    "title": "basic-element-x-overlay-ng-counter-test2-could-show-all",
+    "fullTitle": "reactlynx3 tests elements x-overlay-ng basic-element-x-overlay-ng-counter-test2-could-show-all",
+    "key": "x-overlay-ng/basic-element-x-overlay-ng-counter-test2-could-show-all",
+    "sourceId": "x-overlay-ng/basic-element-x-overlay-ng-counter-test2-could-show-all",
+    "line": 4050,
+    "callbackSha256": "21e45ea6995b02aa61d9484f6f6a016288e44b8837796ddc172107b00399b137",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "webkit"
+      ],
+      "SSR": [
+        "webkit"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 4055,
+        "text": "test.skip(browserName === 'webkit', 'flaky')"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-overlay-ng",
+    "title": "basic-element-x-overlay-ng-counter-test2-event-correct",
+    "fullTitle": "reactlynx3 tests elements x-overlay-ng basic-element-x-overlay-ng-counter-test2-event-correct",
+    "key": "x-overlay-ng/basic-element-x-overlay-ng-counter-test2-event-correct",
+    "sourceId": "x-overlay-ng/basic-element-x-overlay-ng-counter-test2-event-correct",
+    "line": 4102,
+    "callbackSha256": "4bb2519ff1dd6f966440a6be111dee4b36764b22a106a5e2e12eea1ffac8683e",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "webkit"
+      ],
+      "SSR": [
+        "webkit"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 4107,
+        "text": "test.skip(browserName === 'webkit', 'blank view')"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-refresh-view",
+    "title": "basic-element-x-refresh-view-demo",
+    "fullTitle": "reactlynx3 tests elements x-refresh-view basic-element-x-refresh-view-demo",
+    "key": "x-refresh-view/basic-element-x-refresh-view-demo",
+    "sourceId": "x-refresh-view/basic-element-x-refresh-view-demo",
+    "line": 4153,
+    "callbackSha256": "32346ad916b880f4cb6573df03addfa193ee8b87fbfa08ac625f4eed92110e93",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "firefox",
+        "webkit"
+      ],
+      "SSR": [
+        "firefox",
+        "webkit"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 4158,
+        "text": "test.skip(browserName !== 'chromium')"
+      },
+      {
+        "kind": "return",
+        "line": 4162,
+        "text": "return;"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-swiper",
+    "title": "basic-element-x-swiper-method-scroll-to",
+    "fullTitle": "reactlynx3 tests elements x-swiper basic-element-x-swiper-method-scroll-to",
+    "key": "x-swiper/basic-element-x-swiper-method-scroll-to",
+    "sourceId": "x-swiper/basic-element-x-swiper-method-scroll-to",
+    "line": 4248,
+    "callbackSha256": "fabae25ebfac2798b6d83dfeb114902b04c56200cb8b332cc250b13763d9a451",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Animation-enabled PNG sampling and original wait/normalization sequence require temporal equivalence.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "firefox"
+      ],
+      "SSR": [
+        "firefox"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 4251,
+        "text": "test.skip(browserName == 'firefox')"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-swiper",
+    "title": "basic-element-x-swiper-mode-carry",
+    "fullTitle": "reactlynx3 tests elements x-swiper basic-element-x-swiper-mode-carry",
+    "key": "x-swiper/basic-element-x-swiper-mode-carry",
+    "sourceId": "x-swiper/basic-element-x-swiper-mode-carry",
+    "line": 4354,
+    "callbackSha256": "751192acf2df74b6173dde986e8535794172a3a56e461bf71ffc58d72a90d85a",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "firefox",
+        "webkit"
+      ],
+      "SSR": [
+        "firefox",
+        "webkit"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 4362,
+        "text": "test.skip(browserName !== 'chromium', 'do not support cdp session')"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-swiper",
+    "title": "basic-element-x-swiper-swiper-dynamic",
+    "fullTitle": "reactlynx3 tests elements x-swiper basic-element-x-swiper-swiper-dynamic",
+    "key": "x-swiper/basic-element-x-swiper-swiper-dynamic",
+    "sourceId": "x-swiper/basic-element-x-swiper-swiper-dynamic",
+    "line": 4379,
+    "callbackSha256": "8f4686a1826505b27c73e748b8e436700a02ec7ce92a3a31a13adaceada89501",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Animation-enabled PNG sampling and original wait/normalization sequence require temporal equivalence.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-swiper",
+    "title": "basic-element-x-swiper-duration",
+    "fullTitle": "reactlynx3 tests elements x-swiper basic-element-x-swiper-duration",
+    "key": "x-swiper/basic-element-x-swiper-duration",
+    "sourceId": "x-swiper/basic-element-x-swiper-duration",
+    "line": 4443,
+    "callbackSha256": "4272d2010ed50cd6feb4cade282a08c609518d492c1be41bca4b868c8284afe4",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-swiper",
+    "title": "basic-element-x-swiper-autoplay",
+    "fullTitle": "reactlynx3 tests elements x-swiper basic-element-x-swiper-autoplay",
+    "key": "x-swiper/basic-element-x-swiper-autoplay",
+    "sourceId": "x-swiper/basic-element-x-swiper-autoplay",
+    "line": 4469,
+    "callbackSha256": "8e235192b004092be3543e6ae069d2760d42a7c289a4ac379202724d4307a49e",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-swiper",
+    "title": "basic-element-x-swiper-interval",
+    "fullTitle": "reactlynx3 tests elements x-swiper basic-element-x-swiper-interval",
+    "key": "x-swiper/basic-element-x-swiper-interval",
+    "sourceId": "x-swiper/basic-element-x-swiper-interval",
+    "line": 4491,
+    "callbackSha256": "138ac906ffd51f997d134913db9f96acecc386210869dec7f1ef05bdc8d11dfb",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "firefox"
+      ],
+      "SSR": [
+        "firefox"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 4494,
+        "text": "test.skip(\n            browserName === 'firefox',\n            'diffScreenShot cost too long time in firefox',\n          )"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-swiper",
+    "title": "basic-element-x-swiper-circular-normal",
+    "fullTitle": "reactlynx3 tests elements x-swiper basic-element-x-swiper-circular-normal",
+    "key": "x-swiper/basic-element-x-swiper-circular-normal",
+    "sourceId": "x-swiper/basic-element-x-swiper-circular-normal",
+    "line": 4515,
+    "callbackSha256": "8187b46878a1b876593a75c5b1a41c375d817f4b6c842474c8bebf9d45236dcb",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Fixture action target is a transparent 10px control, not independently visible.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-swiper",
+    "title": "basic-element-x-swiper-circular-carousel",
+    "fullTitle": "reactlynx3 tests elements x-swiper basic-element-x-swiper-circular-carousel",
+    "key": "x-swiper/basic-element-x-swiper-circular-carousel",
+    "sourceId": "x-swiper/basic-element-x-swiper-circular-carousel",
+    "line": 4535,
+    "callbackSha256": "350ae9bad40df29b4392c24f896738f8734c8ab09b00e569212e45b82accc6aa",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Fixture action target is a transparent 10px control, not independently visible.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-swiper",
+    "title": "basic-element-x-swiper-circular-coverflow",
+    "fullTitle": "reactlynx3 tests elements x-swiper basic-element-x-swiper-circular-coverflow",
+    "key": "x-swiper/basic-element-x-swiper-circular-coverflow",
+    "sourceId": "x-swiper/basic-element-x-swiper-circular-coverflow",
+    "line": 4575,
+    "callbackSha256": "ee677fd3464ae8d7bb3be6b5fab5e8301c3f7aded099781208f916bfceca0677",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Fixture action target is a transparent 10px control, not independently visible.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "firefox",
+        "webkit"
+      ],
+      "SSR": [
+        "firefox",
+        "webkit"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 4578,
+        "text": "test.skip(browserName !== 'chromium')"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-swiper",
+    "title": "basic-element-x-swiper-circular-flat-coverflow",
+    "fullTitle": "reactlynx3 tests elements x-swiper basic-element-x-swiper-circular-flat-coverflow",
+    "key": "x-swiper/basic-element-x-swiper-circular-flat-coverflow",
+    "sourceId": "x-swiper/basic-element-x-swiper-circular-flat-coverflow",
+    "line": 4616,
+    "callbackSha256": "c5f534c070073b40af1ababb9087a227f85862d79dedb70407f8984a7cfc3804",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Fixture action target is a transparent 10px control, not independently visible.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "firefox"
+      ],
+      "SSR": [
+        "firefox"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 4619,
+        "text": "test.skip(browserName == 'firefox')"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-swiper",
+    "title": "basic-element-x-swiper-circular-carry",
+    "fullTitle": "reactlynx3 tests elements x-swiper basic-element-x-swiper-circular-carry",
+    "key": "x-swiper/basic-element-x-swiper-circular-carry",
+    "sourceId": "x-swiper/basic-element-x-swiper-circular-carry",
+    "line": 4662,
+    "callbackSha256": "0e78431e907023583918662e3970695e89d4592acb49aa73bcf99d0741e91fff",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Fixture action target is a transparent 10px control, not independently visible.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-swiper",
+    "title": "basic-element-x-swiper-page-margin",
+    "fullTitle": "reactlynx3 tests elements x-swiper basic-element-x-swiper-page-margin",
+    "key": "x-swiper/basic-element-x-swiper-page-margin",
+    "sourceId": "x-swiper/basic-element-x-swiper-page-margin",
+    "line": 4682,
+    "callbackSha256": "29d51b8ce9920e25efd3a23974005625395d123b11a8042bfcb08ce288b45f03",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "webkit"
+      ],
+      "SSR": [
+        "webkit"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 4685,
+        "text": "test.skip(browserName === 'webkit', 'flaky')"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-swiper",
+    "title": "basic-element-x-swiper-vertical",
+    "fullTitle": "reactlynx3 tests elements x-swiper basic-element-x-swiper-vertical",
+    "key": "x-swiper/basic-element-x-swiper-vertical",
+    "sourceId": "x-swiper/basic-element-x-swiper-vertical",
+    "line": 4700,
+    "callbackSha256": "f3118a5dfab77675a525831136052a7ab8937fbb4e56939060438e5feed5ae8f",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "webkit"
+      ],
+      "SSR": [
+        "webkit"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 4703,
+        "text": "test.skip(browserName === 'webkit', 'scroll driven animation')"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-swiper",
+    "title": "basic-element-x-swiper-bindchange",
+    "fullTitle": "reactlynx3 tests elements x-swiper basic-element-x-swiper-bindchange",
+    "key": "x-swiper/basic-element-x-swiper-bindchange",
+    "sourceId": "x-swiper/basic-element-x-swiper-bindchange",
+    "line": 4730,
+    "callbackSha256": "0c63b3040e89dcebb6a437ba51708e57d881aac7971f856136f6b0916862f0a8",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "firefox"
+      ],
+      "SSR": [
+        "firefox"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 4733,
+        "text": "test.skip(browserName === 'firefox')"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-swiper",
+    "title": "basic-element-x-swiper-bindscrollstart",
+    "fullTitle": "reactlynx3 tests elements x-swiper basic-element-x-swiper-bindscrollstart",
+    "key": "x-swiper/basic-element-x-swiper-bindscrollstart",
+    "sourceId": "x-swiper/basic-element-x-swiper-bindscrollstart",
+    "line": 4790,
+    "callbackSha256": "fac56f66bfc4b8cd74bcc29b680aca1e81657d02d2b5e223bfbfdba43fe2a630",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-swiper",
+    "title": "basic-element-x-swiper-bindscrollend",
+    "fullTitle": "reactlynx3 tests elements x-swiper basic-element-x-swiper-bindscrollend",
+    "key": "x-swiper/basic-element-x-swiper-bindscrollend",
+    "sourceId": "x-swiper/basic-element-x-swiper-bindscrollend",
+    "line": 4852,
+    "callbackSha256": "3930aa6088d63b9681e2cffe143d457e25f90af7ad43f35584d502462dddbc61",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-textarea",
+    "title": "basic-element-x-textarea-maxlength",
+    "fullTitle": "reactlynx3 tests elements x-textarea basic-element-x-textarea-maxlength",
+    "key": "x-textarea/basic-element-x-textarea-maxlength",
+    "sourceId": "x-textarea/basic-element-x-textarea-maxlength",
+    "line": 4933,
+    "callbackSha256": "ada627de83fc6694531cc6d3c2a26ef75f479fc5af0f0fc906f7a1f81ea44480",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Six unlabeled 5px controls separated by 1px are not reliable independent visual targets.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-textarea",
+    "title": "basic-element-x-textarea-bindinput",
+    "fullTitle": "reactlynx3 tests elements x-textarea basic-element-x-textarea-bindinput",
+    "key": "x-textarea/basic-element-x-textarea-bindinput",
+    "sourceId": "x-textarea/basic-element-x-textarea-bindinput",
+    "line": 5099,
+    "callbackSha256": "b1d9bd61969d0286eb299137b243778d8aad75b9bcefac39d8c00b733486cda2",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Original force-click, explicit blur and fill are separate phases. AI typing is not an equivalent replacement for fill; retain input semantics.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-textarea",
+    "title": "basic-element-x-textarea-getValue",
+    "fullTitle": "reactlynx3 tests elements x-textarea basic-element-x-textarea-getValue",
+    "key": "x-textarea/basic-element-x-textarea-getValue",
+    "sourceId": "x-textarea/basic-element-x-textarea-getValue",
+    "line": 5155,
+    "callbackSha256": "ec98307fc80e0c91e0cc6e6d2ea40c1c1a59a37dfd494098086010a1cd48ca8c",
+    "frozenDecision": "deterministic-candidate",
+    "retentionReason": "Can port using deterministic JavaScript/API and exact original assertions; aiAct is not the operation under test. Preserve listener registration, separate reads, browser guards, waits and PNG baselines.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "webkit"
+      ],
+      "SSR": [
+        "webkit"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 5158,
+        "text": "test.skip(browserName === 'webkit')"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "x-textarea",
+    "title": "basic-element-x-textarea-bindselection",
+    "fullTitle": "reactlynx3 tests elements x-textarea basic-element-x-textarea-bindselection",
+    "key": "x-textarea/basic-element-x-textarea-bindselection",
+    "sourceId": "x-textarea/basic-element-x-textarea-bindselection",
+    "line": 5196,
+    "callbackSha256": "ef32d1b8cf1bd29a4a0435486e9b3c3e263c92e97b2a5d6a73037a4051216a22",
+    "frozenDecision": "deterministic-candidate",
+    "retentionReason": "Can port using deterministic JavaScript/API and exact original assertions; aiAct is not the operation under test. Preserve listener registration, separate reads, browser guards, waits and PNG baselines.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "list",
+    "title": "basic-element-list-basic",
+    "fullTitle": "reactlynx3 tests elements list basic-element-list-basic",
+    "key": "list/basic-element-list-basic",
+    "sourceId": "list/basic-element-list-basic",
+    "line": 5243,
+    "callbackSha256": "57e2868a36cb77e54df6d5cfdcc3dfc43f1cf63092763b0d5cc2d535a051b7ad",
+    "frozenDecision": "deterministic-candidate",
+    "retentionReason": "Can port using deterministic JavaScript/API and exact original assertions; aiAct is not the operation under test. Preserve listener registration, separate reads, browser guards, waits and PNG baselines.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "list",
+    "title": "basic-element-list-bindwheel",
+    "fullTitle": "reactlynx3 tests elements list basic-element-list-bindwheel",
+    "key": "list/basic-element-list-bindwheel",
+    "sourceId": "list/basic-element-list-bindwheel",
+    "line": 5276,
+    "callbackSha256": "e6a6653f055c76890d8ed4024c86d967db32540490546127bde1631ec92377d5",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsersByMode": {
+      "CSR": [
+        "webkit"
+      ],
+      "SSR": [
+        "webkit"
+      ]
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 5279,
+        "text": "test.skip(\n            browserName === 'webkit',\n            'mouse wheel unsupported on webkit',\n          )"
+      }
+    ]
+  },
+  {
+    "package": "web-core-e2e",
+    "file": "tests/reactlynx.spec.ts",
+    "suite": "reactlynx3 tests",
+    "group": "list",
+    "title": "basic-element-list-basic-size",
+    "fullTitle": "reactlynx3 tests elements list basic-element-list-basic-size",
+    "key": "list/basic-element-list-basic-size",
+    "sourceId": "list/basic-element-list-basic-size",
+    "line": 5294,
+    "callbackSha256": "57e2868a36cb77e54df6d5cfdcc3dfc43f1cf63092763b0d5cc2d535a051b7ad",
+    "frozenDecision": "deterministic-candidate",
+    "retentionReason": "Can port using deterministic JavaScript/API and exact original assertions; aiAct is not the operation under test. Preserve listener registration, separate reads, browser guards, waits and PNG baselines.",
+    "skipBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "earlyReturnBrowsersByMode": {
+      "CSR": [],
+      "SSR": []
+    },
+    "guardEvidence": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-text",
+    "title": "x-text/avatar-text-inline",
+    "fullTitle": "web-elements test suite x-text x-text/avatar-text-inline",
+    "key": "x-text/x-text/avatar-text-inline",
+    "sourceId": "x-text/x-text/avatar-text-inline",
+    "line": 277,
+    "callbackSha256": "f928e1e43eb412d7db6a3dd3ecd5032530bfb4072dade9e16f6a1a141b06bba4",
+    "frozenDecision": "deterministic-candidate",
+    "retentionReason": "Can port using deterministic JavaScript/API and exact original assertions; aiAct is not the operation under test. Preserve listener registration, separate reads, browser guards, waits and PNG baselines.",
+    "skipBrowsers": [],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "scroll-view",
+    "title": "scroll-view/basic",
+    "fullTitle": "web-elements test suite scroll-view scroll-view/basic",
+    "key": "scroll-view/scroll-view/basic",
+    "sourceId": "scroll-view/scroll-view/basic",
+    "line": 461,
+    "callbackSha256": "bd1c829a40456755108223680093daa69aa42b96a6f054ce861d9cdafc871133",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [],
+    "earlyReturnBrowsers": [
+      "webkit"
+    ],
+    "guardEvidence": [
+      {
+        "kind": "return",
+        "line": 464,
+        "text": "return;"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "scroll-view",
+    "title": "scroll-view/fading-edge-length",
+    "fullTitle": "web-elements test suite scroll-view scroll-view/fading-edge-length",
+    "key": "scroll-view/scroll-view/fading-edge-length",
+    "sourceId": "scroll-view/scroll-view/fading-edge-length",
+    "line": 522,
+    "callbackSha256": "6738946fea0ae90c3b2588018311862173d252a3f85d913514d86e0a0074aed3",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 527,
+        "text": "test.skip(browserName !== 'chromium', 'using chromium only cdp methods')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "scroll-view",
+    "title": "scroll-view/event-scroll",
+    "fullTitle": "web-elements test suite scroll-view scroll-view/event-scroll",
+    "key": "scroll-view/scroll-view/event-scroll",
+    "sourceId": "scroll-view/scroll-view/event-scroll",
+    "line": 565,
+    "callbackSha256": "3a2b952b288d13d79f640834b88474c2b41ddcd52bd35688c7892244157cef64",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 568,
+        "text": "test.skip(browserName !== 'chromium', 'using chromium only cdp methods')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "scroll-view",
+    "title": "scroll-view/bounces-false",
+    "fullTitle": "web-elements test suite scroll-view scroll-view/bounces-false",
+    "key": "scroll-view/scroll-view/bounces-false",
+    "sourceId": "scroll-view/scroll-view/bounces-false",
+    "line": 724,
+    "callbackSha256": "09e34c04c53098f53c4088254703f02458380e2f88e8441eaad1220ab5720a4e",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 727,
+        "text": "test.skip(browserName !== 'chromium', 'using chromium only cdp methods')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-foldview-ng",
+    "title": "x-foldview-ng/basic-fling",
+    "fullTitle": "web-elements test suite x-foldview-ng x-foldview-ng/basic-fling",
+    "key": "x-foldview-ng/x-foldview-ng/basic-fling",
+    "sourceId": "x-foldview-ng/x-foldview-ng/basic-fling",
+    "line": 872,
+    "callbackSha256": "7e31bf49f4148509420130870b1abf304166f4cb7381e9bfb2929a1919242fc8",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 875,
+        "text": "test.skip(browserName !== 'chromium', 'using chromium only cdp methods')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-foldview-ng",
+    "title": "x-foldview-ng/swipe-basic",
+    "fullTitle": "web-elements test suite x-foldview-ng x-foldview-ng/swipe-basic",
+    "key": "x-foldview-ng/x-foldview-ng/swipe-basic",
+    "sourceId": "x-foldview-ng/x-foldview-ng/swipe-basic",
+    "line": 951,
+    "callbackSha256": "14de8c28b1c39d951579f72a013cdb25bd4166ce42e38b0f852a3b428108224e",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 954,
+        "text": "test.skip(browserName !== 'chromium', 'using chromium only cdp methods')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-foldview-ng",
+    "title": "x-foldview-ng/size-toolbar-and-slot-size-lager",
+    "fullTitle": "web-elements test suite x-foldview-ng x-foldview-ng/size-toolbar-and-slot-size-lager",
+    "key": "x-foldview-ng/x-foldview-ng/size-toolbar-and-slot-size-lager",
+    "sourceId": "x-foldview-ng/x-foldview-ng/size-toolbar-and-slot-size-lager",
+    "line": 1051,
+    "callbackSha256": "3eebc1e7416089527ca9c69268377d4757319638536cd98eb25968eda6069c14",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1056,
+        "text": "test.skip(\n          browserName !== 'chromium',\n          'using chromium only cdp methods',\n        )"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-foldview-ng",
+    "title": "x-foldview-ng/swipe-with-x-scroll-view",
+    "fullTitle": "web-elements test suite x-foldview-ng x-foldview-ng/swipe-with-x-scroll-view",
+    "key": "x-foldview-ng/x-foldview-ng/swipe-with-x-scroll-view",
+    "sourceId": "x-foldview-ng/x-foldview-ng/swipe-with-x-scroll-view",
+    "line": 1073,
+    "callbackSha256": "a645ff42c8aeb419dee8abed4642b418d83ff4849279381f4a1c91cb24041d2a",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1078,
+        "text": "test.skip(browserName !== 'chromium', 'using chromium only cdp methods')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-foldview-ng",
+    "title": "x-foldview-ng/swipe-with-x-list",
+    "fullTitle": "web-elements test suite x-foldview-ng x-foldview-ng/swipe-with-x-list",
+    "key": "x-foldview-ng/x-foldview-ng/swipe-with-x-list",
+    "sourceId": "x-foldview-ng/x-foldview-ng/swipe-with-x-list",
+    "line": 1102,
+    "callbackSha256": "4616bff056f44b22d8a54b10d234ee6e0b92e7fef6fb8ed96cc34857992f5fa8",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1107,
+        "text": "test.skip(browserName !== 'chromium', 'using chromium only cdp methods')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-foldview-ng",
+    "title": "x-foldview-ng/event-offset-granularity",
+    "fullTitle": "web-elements test suite x-foldview-ng x-foldview-ng/event-offset-granularity",
+    "key": "x-foldview-ng/x-foldview-ng/event-offset-granularity",
+    "sourceId": "x-foldview-ng/x-foldview-ng/event-offset-granularity",
+    "line": 1154,
+    "callbackSha256": "00241016e15f04a50fe5af3313d87fa5b105d52334fedcab084af18011e6d79b",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1159,
+        "text": "test.skip(browserName !== 'chromium', 'using chromium only cdp methods')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-foldview-ng",
+    "title": "x-foldview-ng/with-x-viewpager-ng",
+    "fullTitle": "web-elements test suite x-foldview-ng x-foldview-ng/with-x-viewpager-ng",
+    "key": "x-foldview-ng/x-foldview-ng/with-x-viewpager-ng",
+    "sourceId": "x-foldview-ng/x-foldview-ng/with-x-viewpager-ng",
+    "line": 1218,
+    "callbackSha256": "5847c2b6c16283ef594f36407d65170f55ee4ca146371b026476dc0e19c253cf",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1221,
+        "text": "test.skip(\n          browserName !== 'chromium',\n          'using chromium only cdp methods',\n        )"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-foldview-ng",
+    "title": "x-foldview-ng/with-x-refresh-view",
+    "fullTitle": "web-elements test suite x-foldview-ng x-foldview-ng/with-x-refresh-view",
+    "key": "x-foldview-ng/x-foldview-ng/with-x-refresh-view",
+    "sourceId": "x-foldview-ng/x-foldview-ng/with-x-refresh-view",
+    "line": 1239,
+    "callbackSha256": "9fa49060aeb27234abe71e8be717d8a2c6090c728489bdb6429ba6daa94a1f97",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1244,
+        "text": "test.skip(\n          browserName !== 'chromium',\n          'using chromium only cdp methods',\n        )"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-foldview-ng",
+    "title": "x-foldview-ng/with-x-viewpager-ng-pan-both-x-and-y",
+    "fullTitle": "web-elements test suite x-foldview-ng x-foldview-ng/with-x-viewpager-ng-pan-both-x-and-y",
+    "key": "x-foldview-ng/x-foldview-ng/with-x-viewpager-ng-pan-both-x-and-y",
+    "sourceId": "x-foldview-ng/x-foldview-ng/with-x-viewpager-ng-pan-both-x-and-y",
+    "line": 1345,
+    "callbackSha256": "9490d8cf9a67601247e26527446f5df3321c9577591609383f08d726463dd8c7",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1348,
+        "text": "test.skip(\n          browserName !== 'chromium',\n          'using chromium only cdp methods',\n        )"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-viewpager-ng",
+    "title": "x-viewpager-ng/basic",
+    "fullTitle": "web-elements test suite x-viewpager-ng x-viewpager-ng/basic",
+    "key": "x-viewpager-ng/x-viewpager-ng/basic",
+    "sourceId": "x-viewpager-ng/x-viewpager-ng/basic",
+    "line": 1399,
+    "callbackSha256": "b7fe209636f4d01c7f2b33606bc6bd11bbd07f66b04e600071efe1a2a4cd487c",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1402,
+        "text": "test.skip(browserName !== 'chromium', 'cannot swipe')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-viewpager-ng",
+    "title": "x-viewpager-ng/basic-with-lynx-wrapper",
+    "fullTitle": "web-elements test suite x-viewpager-ng x-viewpager-ng/basic-with-lynx-wrapper",
+    "key": "x-viewpager-ng/x-viewpager-ng/basic-with-lynx-wrapper",
+    "sourceId": "x-viewpager-ng/x-viewpager-ng/basic-with-lynx-wrapper",
+    "line": 1421,
+    "callbackSha256": "a204febc2c5dd40293dd85a86d417887fc44c801e889bccd6691b85d42a7c92b",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1426,
+        "text": "test.skip(browserName !== 'chromium', 'cannot swipe')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-viewpager-ng",
+    "title": "x-viewpager-ng/bounces",
+    "fullTitle": "web-elements test suite x-viewpager-ng x-viewpager-ng/bounces",
+    "key": "x-viewpager-ng/x-viewpager-ng/bounces",
+    "sourceId": "x-viewpager-ng/x-viewpager-ng/bounces",
+    "line": 1446,
+    "callbackSha256": "01f787b4a814a5b00d811ad620d033a4e957f3b4ace08b4389f72b42c470fcc4",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1449,
+        "text": "test.skip(browserName !== 'chromium', 'cannot swipe')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-viewpager-ng",
+    "title": "x-viewpager-ng/event-offsetchange-offset-value",
+    "fullTitle": "web-elements test suite x-viewpager-ng x-viewpager-ng/event-offsetchange-offset-value",
+    "key": "x-viewpager-ng/x-viewpager-ng/event-offsetchange-offset-value",
+    "sourceId": "x-viewpager-ng/x-viewpager-ng/event-offsetchange-offset-value",
+    "line": 1465,
+    "callbackSha256": "741f87f05a77df6075142c0f47bad2ae58b18780f1251427a03cf754c980bdad",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1470,
+        "text": "test.skip(browserName !== 'chromium', 'cannot swipe')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-viewpager-ng",
+    "title": "x-viewpager-ng/event-willchange",
+    "fullTitle": "web-elements test suite x-viewpager-ng x-viewpager-ng/event-willchange",
+    "key": "x-viewpager-ng/x-viewpager-ng/event-willchange",
+    "sourceId": "x-viewpager-ng/x-viewpager-ng/event-willchange",
+    "line": 1502,
+    "callbackSha256": "17f692c0c1241266ef87bcd96181d2e4e8332946fe72f4702a4c2018f06b3b24",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1507,
+        "text": "test.skip(browserName !== 'chromium', 'cannot swipe')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-viewpager-ng",
+    "title": "x-viewpager-ng/selecttab-method-not-smooth",
+    "fullTitle": "web-elements test suite x-viewpager-ng x-viewpager-ng/selecttab-method-not-smooth",
+    "key": "x-viewpager-ng/x-viewpager-ng/selecttab-method-not-smooth",
+    "sourceId": "x-viewpager-ng/x-viewpager-ng/selecttab-method-not-smooth",
+    "line": 1533,
+    "callbackSha256": "b9075005e6d681223b236ae73a4a85570b594308a5c19eb1b440c90adfd92384",
+    "frozenDecision": "deterministic-candidate",
+    "retentionReason": "Chromium is explicitly skipped; requires Firefox/WebKit and exactly one offset event. A Chromium-only migration cannot cover this case.",
+    "skipBrowsers": [
+      "chromium"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1538,
+        "text": "test.skip(\n          browserName === 'chromium',\n          'chromium will skip the smooth scrolling',\n        )"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-viewpager-ng",
+    "title": "x-viewpager-ng/selecttab-method-default-smooth",
+    "fullTitle": "web-elements test suite x-viewpager-ng x-viewpager-ng/selecttab-method-default-smooth",
+    "key": "x-viewpager-ng/x-viewpager-ng/selecttab-method-default-smooth",
+    "sourceId": "x-viewpager-ng/x-viewpager-ng/selecttab-method-default-smooth",
+    "line": 1564,
+    "callbackSha256": "d9a3db8d88a28c4a90e15358848b8311574f38e6fc36596dd1aba6ccef8882c5",
+    "frozenDecision": "deterministic-candidate",
+    "retentionReason": "Chromium is explicitly skipped; requires Firefox/WebKit and more than one offset event. Keep the smooth-scroll API call and event window.",
+    "skipBrowsers": [
+      "chromium"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1569,
+        "text": "test.skip(\n          browserName === 'chromium',\n          'chromium will skip the smooth scrolling',\n        )"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-viewpager-ng",
+    "title": "x-viewpager-ng/do-not-response-to-select-index-on-dragging",
+    "fullTitle": "web-elements test suite x-viewpager-ng x-viewpager-ng/do-not-response-to-select-index-on-dragging",
+    "key": "x-viewpager-ng/x-viewpager-ng/do-not-response-to-select-index-on-dragging",
+    "sourceId": "x-viewpager-ng/x-viewpager-ng/do-not-response-to-select-index-on-dragging",
+    "line": 1611,
+    "callbackSha256": "cd9759062bb1b02a254adc3bbdf84846cef31c7914d11d00ba3733b9277041f3",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1616,
+        "text": "test.skip(browserName !== 'chromium', 'cannot swipe')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-list",
+    "title": "basic",
+    "fullTitle": "web-elements test suite x-list basic",
+    "key": "x-list/basic",
+    "sourceId": "x-list/basic",
+    "line": 1949,
+    "callbackSha256": "10a6e8d21935ac2df4512d74fbd539ccadf467bddfabe8b9a04a2ed18dbd759c",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Exact horizontal-negative and vertical-positive wheel inputs plus three PNG checkpoints; keep original wheel deltas and WebKit skip. Other components named basic are not mappings.",
+    "skipBrowsers": [
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1953,
+        "text": "test.skip()"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-list",
+    "title": "enable-scroll",
+    "fullTitle": "web-elements test suite x-list enable-scroll",
+    "key": "x-list/enable-scroll",
+    "sourceId": "x-list/enable-scroll",
+    "line": 1961,
+    "callbackSha256": "8218dcb4bc5a310207cea5200379ebef5b6574f3908d5d11a579cfca30896174",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1965,
+        "text": "test.skip()"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-list",
+    "title": "sticky",
+    "fullTitle": "web-elements test suite x-list sticky",
+    "key": "x-list/sticky",
+    "sourceId": "x-list/sticky",
+    "line": 1984,
+    "callbackSha256": "a98595ddd31a897fc0d32a198e08964cdd7d7ceef4317261a15d7cbabddaeb0d",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1988,
+        "text": "test.skip()"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-list",
+    "title": "sticky-offset",
+    "fullTitle": "web-elements test suite x-list sticky-offset",
+    "key": "x-list/sticky-offset",
+    "sourceId": "x-list/sticky-offset",
+    "line": 1994,
+    "callbackSha256": "9ae9578f4a6b75be24c54f5f246e80db00610130741da516c1f96c5ceef09408",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 1998,
+        "text": "test.skip()"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-list",
+    "title": "event-scrolltolower",
+    "fullTitle": "web-elements test suite x-list event-scrolltolower",
+    "key": "x-list/event-scrolltolower",
+    "sourceId": "x-list/event-scrolltolower",
+    "line": 2059,
+    "callbackSha256": "1f4a00dfbfac6090bbaa4042d4020785006dafe1680d7ad08c28fca2107e7cee",
+    "frozenDecision": "deterministic-candidate",
+    "retentionReason": "Preserve console listener, programmatic scrollTo(0,5000), both 1000ms waits and WebKit skip. scroll-view/event-scrolltolower is a different source case.",
+    "skipBrowsers": [
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 2062,
+        "text": "test.skip()"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-list",
+    "title": "event-scrolltoupper",
+    "fullTitle": "web-elements test suite x-list event-scrolltoupper",
+    "key": "x-list/event-scrolltoupper",
+    "sourceId": "x-list/event-scrolltoupper",
+    "line": 2087,
+    "callbackSha256": "dcb977696fd9c5b987b15ae0fe7cb877ed88c70b0be6a815ca6c607388d1b7fe",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 2090,
+        "text": "test.skip()"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-list",
+    "title": "event-scrolltoupper-flow",
+    "fullTitle": "web-elements test suite x-list event-scrolltoupper-flow",
+    "key": "x-list/event-scrolltoupper-flow",
+    "sourceId": "x-list/event-scrolltoupper-flow",
+    "line": 2112,
+    "callbackSha256": "b32bb2b94cba8666a1663c1ca374360ff9e4e68ba85f960102cb73a5a4325576",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 2119,
+        "text": "test.skip()"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-list",
+    "title": "event-scrolltolower-flow",
+    "fullTitle": "web-elements test suite x-list event-scrolltolower-flow",
+    "key": "x-list/event-scrolltolower-flow",
+    "sourceId": "x-list/event-scrolltolower-flow",
+    "line": 2137,
+    "callbackSha256": "936edd0131713317ed1d8371bde0488d3e1c83e9ab74af20d6efd8862df3c686",
+    "frozenDecision": "deterministic-candidate",
+    "retentionReason": "Can port using deterministic JavaScript/API and exact original assertions; aiAct is not the operation under test. Preserve listener registration, separate reads, browser guards, waits and PNG baselines.",
+    "skipBrowsers": [
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 2143,
+        "text": "test.skip()"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-list",
+    "title": "event-lower-threshold-item-count",
+    "fullTitle": "web-elements test suite x-list event-lower-threshold-item-count",
+    "key": "x-list/event-lower-threshold-item-count",
+    "sourceId": "x-list/event-lower-threshold-item-count",
+    "line": 2165,
+    "callbackSha256": "c12371cc6a261357a187256a990be2c54983d7882f88ce56456d8acece5d6d2f",
+    "frozenDecision": "deterministic-candidate",
+    "retentionReason": "Can port using deterministic JavaScript/API and exact original assertions; aiAct is not the operation under test. Preserve listener registration, separate reads, browser guards, waits and PNG baselines.",
+    "skipBrowsers": [
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 2168,
+        "text": "test.skip()"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-list",
+    "title": "event-lower-load-more",
+    "fullTitle": "web-elements test suite x-list event-lower-load-more",
+    "key": "x-list/event-lower-load-more",
+    "sourceId": "x-list/event-lower-load-more",
+    "line": 2192,
+    "callbackSha256": "6af584f43ff3a2ca9a15721b699271659969c823bd6b9ecf73636db1fdc3b339",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Listener installs after programmatic scroll and before click; preserve the 100ms observation window.",
+    "skipBrowsers": [
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 2195,
+        "text": "test.skip()"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-list",
+    "title": "event-snap",
+    "fullTitle": "web-elements test suite x-list event-snap",
+    "key": "x-list/event-snap",
+    "sourceId": "x-list/event-snap",
+    "line": 2223,
+    "callbackSha256": "39720cd917454366e2d91abdfb0d419d979d9af4dcba0110485e9e4230d876ea",
+    "frozenDecision": "deterministic-candidate",
+    "retentionReason": "Can port using deterministic JavaScript/API and exact original assertions; aiAct is not the operation under test. Preserve listener registration, separate reads, browser guards, waits and PNG baselines.",
+    "skipBrowsers": [
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 2226,
+        "text": "test.skip()"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-list",
+    "title": "event-layoutcomplete",
+    "fullTitle": "web-elements test suite x-list event-layoutcomplete",
+    "key": "x-list/event-layoutcomplete",
+    "sourceId": "x-list/event-layoutcomplete",
+    "line": 2270,
+    "callbackSha256": "7b85545aaa2158f223ae9627d2899360dde5db6496ddd2506bb8ca10973f0fcc",
+    "frozenDecision": "deterministic-candidate",
+    "retentionReason": "Only Chromium is enabled. Preserve the actual array assertions; commented-out visible-cell details must not be represented as original coverage.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 2274,
+        "text": "test.skip()"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-list",
+    "title": "basic-flow",
+    "fullTitle": "web-elements test suite x-list basic-flow",
+    "key": "x-list/basic-flow",
+    "sourceId": "x-list/basic-flow",
+    "line": 2492,
+    "callbackSha256": "10a6e8d21935ac2df4512d74fbd539ccadf467bddfabe8b9a04a2ed18dbd759c",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 2496,
+        "text": "test.skip()"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-list",
+    "title": "sticky-flow",
+    "fullTitle": "web-elements test suite x-list sticky-flow",
+    "key": "x-list/sticky-flow",
+    "sourceId": "x-list/sticky-flow",
+    "line": 2511,
+    "callbackSha256": "a98595ddd31a897fc0d32a198e08964cdd7d7ceef4317261a15d7cbabddaeb0d",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 2515,
+        "text": "test.skip()"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-list",
+    "title": "basic-waterfall",
+    "fullTitle": "web-elements test suite x-list basic-waterfall",
+    "key": "x-list/basic-waterfall",
+    "sourceId": "x-list/basic-waterfall",
+    "line": 2536,
+    "callbackSha256": "5eb111e5ea7c72fe147331d07d6caa158ce68345b2d091bd3eaa278604040f04",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 2540,
+        "text": "test.skip()"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-list",
+    "title": "scroll-orientation-waterfall",
+    "fullTitle": "web-elements test suite x-list scroll-orientation-waterfall",
+    "key": "x-list/scroll-orientation-waterfall",
+    "sourceId": "x-list/scroll-orientation-waterfall",
+    "line": 2547,
+    "callbackSha256": "0bfd9fd7fb251dfa0b11eac9da45c1f3542ee77a2be6a3696dbbd6204d8032e4",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 2553,
+        "text": "test.skip()"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-list",
+    "title": "sticky-waterfall",
+    "fullTitle": "web-elements test suite x-list sticky-waterfall",
+    "key": "x-list/sticky-waterfall",
+    "sourceId": "x-list/sticky-waterfall",
+    "line": 2569,
+    "callbackSha256": "fe355b715e3ffe3065c653486cfe1c47938bcd1dc228935be3fc37d9b2ddb1be",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 2573,
+        "text": "test.skip()"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-list",
+    "title": "full-span-waterfall",
+    "fullTitle": "web-elements test suite x-list full-span-waterfall",
+    "key": "x-list/full-span-waterfall",
+    "sourceId": "x-list/full-span-waterfall",
+    "line": 2578,
+    "callbackSha256": "00f2b9e605adf4e6a664c516ffbfb0c7230bfdb517a84d4b080ec428737aeadd",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 2584,
+        "text": "test.skip()"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-list",
+    "title": "event-scrolltoupper-waterfall",
+    "fullTitle": "web-elements test suite x-list event-scrolltoupper-waterfall",
+    "key": "x-list/event-scrolltoupper-waterfall",
+    "sourceId": "x-list/event-scrolltoupper-waterfall",
+    "line": 2594,
+    "callbackSha256": "a1534cb49ab15b99239b4fffdc3fc60b2742f9354aca45d7e39e998212526e58",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 2602,
+        "text": "test.skip()"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-list",
+    "title": "event-scrolltolower-waterfall",
+    "fullTitle": "web-elements test suite x-list event-scrolltolower-waterfall",
+    "key": "x-list/event-scrolltolower-waterfall",
+    "sourceId": "x-list/event-scrolltolower-waterfall",
+    "line": 2620,
+    "callbackSha256": "d93b291e14209d14b0ef1346c1f98935987af4fee4d704f6e7cca6aa1ead57d5",
+    "frozenDecision": "deterministic-candidate",
+    "retentionReason": "Can port using deterministic JavaScript/API and exact original assertions; aiAct is not the operation under test. Preserve listener registration, separate reads, browser guards, waits and PNG baselines.",
+    "skipBrowsers": [
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 2623,
+        "text": "test.skip()"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-overlay-ng",
+    "title": "scroll-prevent-through",
+    "fullTitle": "web-elements test suite x-overlay-ng scroll-prevent-through",
+    "key": "x-overlay-ng/scroll-prevent-through",
+    "sourceId": "x-overlay-ng/scroll-prevent-through",
+    "line": 3296,
+    "callbackSha256": "8ba366c1ac9532c2cad4a46e2bcb17fdd68abbcaa57907b9893bf59638834572",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 3299,
+        "text": "test.skip(browserName !== 'chromium', 'not support CDPsession')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-refresh-view",
+    "title": "x-refresh-view/pull",
+    "fullTitle": "web-elements test suite x-refresh-view x-refresh-view/pull",
+    "key": "x-refresh-view/x-refresh-view/pull",
+    "sourceId": "x-refresh-view/x-refresh-view/pull",
+    "line": 3384,
+    "callbackSha256": "810887c5b50d24d8f695a0de4da27b749cc005666e132a76fcb3ee159eef8c9d",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 3387,
+        "text": "test.skip(browserName !== 'chromium', 'cannot swipe')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-refresh-view",
+    "title": "x-refresh-view/enable-refresh-false",
+    "fullTitle": "web-elements test suite x-refresh-view x-refresh-view/enable-refresh-false",
+    "key": "x-refresh-view/x-refresh-view/enable-refresh-false",
+    "sourceId": "x-refresh-view/x-refresh-view/enable-refresh-false",
+    "line": 3419,
+    "callbackSha256": "79459681e3fc4ccd20c42abd8fa22030fb6853d8c2c484c5340e458b9176813d",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 3424,
+        "text": "test.skip(browserName != 'chromium', 'cannot wheel')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-refresh-view",
+    "title": "x-refresh-view/enable-loadmore-false",
+    "fullTitle": "web-elements test suite x-refresh-view x-refresh-view/enable-loadmore-false",
+    "key": "x-refresh-view/x-refresh-view/enable-loadmore-false",
+    "sourceId": "x-refresh-view/x-refresh-view/enable-loadmore-false",
+    "line": 3447,
+    "callbackSha256": "e6e7474437dcf03a1b2732710c85cc6b39dc0b5d78d23f05456a3050248cdee7",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 3452,
+        "text": "test.skip(browserName != 'chromium', 'cannot wheel')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-refresh-view",
+    "title": "x-refresh-view/enable-auto-loadmore-false",
+    "fullTitle": "web-elements test suite x-refresh-view x-refresh-view/enable-auto-loadmore-false",
+    "key": "x-refresh-view/x-refresh-view/enable-auto-loadmore-false",
+    "sourceId": "x-refresh-view/x-refresh-view/enable-auto-loadmore-false",
+    "line": 3468,
+    "callbackSha256": "2b15a249ea310ee643e3f8a6f181dfab95183b6d12890156f4412a4881b5efab",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 3473,
+        "text": "test.skip(browserName != 'chromium', 'cannot wheel')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-refresh-view",
+    "title": "x-refresh-view/enable-auto-loadmore-true",
+    "fullTitle": "web-elements test suite x-refresh-view x-refresh-view/enable-auto-loadmore-true",
+    "key": "x-refresh-view/x-refresh-view/enable-auto-loadmore-true",
+    "sourceId": "x-refresh-view/x-refresh-view/enable-auto-loadmore-true",
+    "line": 3501,
+    "callbackSha256": "e1a6605d778ec717baa81a62a5b237aabc944f339d9c2c74fd256028077cdad2",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 3506,
+        "text": "test.skip(browserName != 'chromium', 'cannot wheel')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-refresh-view",
+    "title": "x-refresh-view/event-headerreleased",
+    "fullTitle": "web-elements test suite x-refresh-view x-refresh-view/event-headerreleased",
+    "key": "x-refresh-view/x-refresh-view/event-headerreleased",
+    "sourceId": "x-refresh-view/x-refresh-view/event-headerreleased",
+    "line": 3523,
+    "callbackSha256": "3b683be629ea167e8c5f5de53a3432be8bf686060ba68250ae061cff65c10787",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 3528,
+        "text": "test.skip(browserName != 'chromium', 'cannot wheel')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-refresh-view",
+    "title": "x-refresh-view/event-headeroffset",
+    "fullTitle": "web-elements test suite x-refresh-view x-refresh-view/event-headeroffset",
+    "key": "x-refresh-view/x-refresh-view/event-headeroffset",
+    "sourceId": "x-refresh-view/x-refresh-view/event-headeroffset",
+    "line": 3557,
+    "callbackSha256": "ed9009bf0f4d42922e4c918ab8c5f8fec46375b82bf447290d46ca26ab37ffee",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 3562,
+        "text": "test.skip(browserName != 'chromium', 'cannot wheel')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-refresh-view",
+    "title": "x-refresh-view/event-headershow",
+    "fullTitle": "web-elements test suite x-refresh-view x-refresh-view/event-headershow",
+    "key": "x-refresh-view/x-refresh-view/event-headershow",
+    "sourceId": "x-refresh-view/x-refresh-view/event-headershow",
+    "line": 3596,
+    "callbackSha256": "5cbbe14639caf2bdc3d4d720de2487a4a1382f637320fb5236c8d25b7a7a71ad",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 3601,
+        "text": "test.skip(browserName != 'chromium', 'cannot wheel')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-refresh-view",
+    "title": "x-refresh-view/event-footerreleased",
+    "fullTitle": "web-elements test suite x-refresh-view x-refresh-view/event-footerreleased",
+    "key": "x-refresh-view/x-refresh-view/event-footerreleased",
+    "sourceId": "x-refresh-view/x-refresh-view/event-footerreleased",
+    "line": 3629,
+    "callbackSha256": "5878ecb9dcbc385a6f687c59c01e83e1133ddd991e586f9a0dacc880d761f250",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 3634,
+        "text": "test.skip(browserName != 'chromium', 'cannot wheel')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-swiper",
+    "title": "x-swiper/x-swiper-set-current-smooth-scroll",
+    "fullTitle": "web-elements test suite x-swiper x-swiper/x-swiper-set-current-smooth-scroll",
+    "key": "x-swiper/x-swiper/x-swiper-set-current-smooth-scroll",
+    "sourceId": "x-swiper/x-swiper/x-swiper-set-current-smooth-scroll",
+    "line": 3708,
+    "callbackSha256": "b043fdd29a9c994ef2295ee1146c4d6ff9df152b614a5145d2dd403311c47ab3",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Two timestamp/JSHandle measurements compare smooth and non-smooth duration. Preserve timestamps, listeners and separate evaluations; do not add model calls to measurement windows.",
+    "skipBrowsers": [],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-swiper",
+    "title": "x-swiper/x-swiper-basic-circular",
+    "fullTitle": "web-elements test suite x-swiper x-swiper/x-swiper-basic-circular",
+    "key": "x-swiper/x-swiper/x-swiper-basic-circular",
+    "sourceId": "x-swiper/x-swiper/x-swiper-basic-circular",
+    "line": 3927,
+    "callbackSha256": "98210af831a97a86206185f9462207fabdebc004f49ce29b8667d898f1c0c81e",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 3932,
+        "text": "test.skip(\n          browserName !== 'chromium',\n          'using chromium only cdp methods',\n        )"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-swiper",
+    "title": "x-swiper/x-swiper-circular-coverflow",
+    "fullTitle": "web-elements test suite x-swiper x-swiper/x-swiper-circular-coverflow",
+    "key": "x-swiper/x-swiper/x-swiper-circular-coverflow",
+    "sourceId": "x-swiper/x-swiper/x-swiper-circular-coverflow",
+    "line": 3996,
+    "callbackSha256": "cf6a84d9f757926bdeff0097f6b8960b99efbe3e35cc2372ac06fb510c41413a",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 4001,
+        "text": "test.skip(\n          browserName !== 'chromium',\n          'using chromium only cdp methods',\n        )"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-swiper",
+    "title": "x-swiper/x-swiper-current-change",
+    "fullTitle": "web-elements test suite x-swiper x-swiper/x-swiper-current-change",
+    "key": "x-swiper/x-swiper/x-swiper-current-change",
+    "sourceId": "x-swiper/x-swiper/x-swiper-current-change",
+    "line": 4086,
+    "callbackSha256": "e8ada4f182bd3a7eb2e25684367254cb87760460e011e720da594d99fcb796f0",
+    "frozenDecision": "retain-input-candidate",
+    "retentionReason": "Integrate unchanged original execution first. Exact keyboard/mouse/touch/selection, held-drag state or animation/event timing is part of the contract; free-form aiAct is not established as equivalent.",
+    "skipBrowsers": [
+      "firefox",
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 4089,
+        "text": "test.skip(browserName !== 'chromium', 'cannot swipe')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-textarea",
+    "title": "method-select",
+    "fullTitle": "web-elements test suite x-textarea method-select",
+    "key": "x-textarea/method-select",
+    "sourceId": "x-textarea/method-select",
+    "line": 4411,
+    "callbackSha256": "ce9dd92fc3bd8078913cc8848ddf6cfcf3ef206ed24fbc473a1119f1acde510a",
+    "frozenDecision": "deterministic-candidate",
+    "retentionReason": "Source navigates to x-input/method although grouped under x-textarea, and skips Chromium. Preserve this alias; changing it would change the original case.",
+    "skipBrowsers": [
+      "chromium"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 4414,
+        "text": "test.skip(\n          browserName === 'chromium',\n          'cannot demonstrate the text is selected',\n        )"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-audio-tt",
+    "title": "attribute-src",
+    "fullTitle": "web-elements test suite x-audio-tt attribute-src",
+    "key": "x-audio-tt/attribute-src",
+    "sourceId": "x-audio-tt/attribute-src",
+    "line": 4467,
+    "callbackSha256": "5080ad7277b771e77095bb3da1d303e4daaaa0666c57a8d6a9b583b20752a561",
+    "frozenDecision": "deterministic-candidate",
+    "retentionReason": "Can port using deterministic JavaScript/API and exact original assertions; aiAct is not the operation under test. Preserve listener registration, separate reads, browser guards, waits and PNG baselines.",
+    "skipBrowsers": [],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-audio-tt",
+    "title": "attribute-loop",
+    "fullTitle": "web-elements test suite x-audio-tt attribute-loop",
+    "key": "x-audio-tt/attribute-loop",
+    "sourceId": "x-audio-tt/attribute-loop",
+    "line": 4515,
+    "callbackSha256": "0ef9ee0bfb9e18d2e110ab877e777128afc9fad115a2ddefc0c5440a2a1f4777",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Media playback progression and original action-to-observation windows are not proven equivalent with AI latency.",
+    "skipBrowsers": [
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 4517,
+        "text": "test.skip(browserName === 'webkit', 'webkit dose not work on linux')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-audio-tt",
+    "title": "method-stop",
+    "fullTitle": "web-elements test suite x-audio-tt method-stop",
+    "key": "x-audio-tt/method-stop",
+    "sourceId": "x-audio-tt/method-stop",
+    "line": 4811,
+    "callbackSha256": "dc7786c77bc5604362b0959597cb930734f69833d96b7e99b9a3d5cfda260845",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Media playback progression and original action-to-observation windows are not proven equivalent with AI latency.",
+    "skipBrowsers": [],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-audio-tt",
+    "title": "method-pause",
+    "fullTitle": "web-elements test suite x-audio-tt method-pause",
+    "key": "x-audio-tt/method-pause",
+    "sourceId": "x-audio-tt/method-pause",
+    "line": 4833,
+    "callbackSha256": "c69885a01ff97bd26947c4e551b67800cc8f6e6df7fdf40d5f69503dfd1e97dd",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Media playback progression and original action-to-observation windows are not proven equivalent with AI latency.",
+    "skipBrowsers": [],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-audio-tt",
+    "title": "method-resume",
+    "fullTitle": "web-elements test suite x-audio-tt method-resume",
+    "key": "x-audio-tt/method-resume",
+    "sourceId": "x-audio-tt/method-resume",
+    "line": 4855,
+    "callbackSha256": "4b32c3ce71ed6b9dcf82ac021c7f55b1de80174b9579a53e96d685d62cde4a9c",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Media playback progression and original action-to-observation windows are not proven equivalent with AI latency.",
+    "skipBrowsers": [
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 4856,
+        "text": "test.skip(browserName === 'webkit', 'webkit dose not work on linux')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-audio-tt",
+    "title": "method-seek",
+    "fullTitle": "web-elements test suite x-audio-tt method-seek",
+    "key": "x-audio-tt/method-seek",
+    "sourceId": "x-audio-tt/method-seek",
+    "line": 4885,
+    "callbackSha256": "86ba613df1c53b243be3c3aa69ed32ca9d1e5cb16424b0d15cb1d8d8d9a0473b",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Media playback progression and original action-to-observation windows are not proven equivalent with AI latency.",
+    "skipBrowsers": [],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": []
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-audio-tt",
+    "title": "method-player-info",
+    "fullTitle": "web-elements test suite x-audio-tt method-player-info",
+    "key": "x-audio-tt/method-player-info",
+    "sourceId": "x-audio-tt/method-player-info",
+    "line": 4916,
+    "callbackSha256": "939e4e8976df245664f712b47ec9cf3ca70c2f99f282b0291aeaa8826a3f029e",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Media playback progression and original action-to-observation windows are not proven equivalent with AI latency.",
+    "skipBrowsers": [
+      "webkit"
+    ],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": [
+      {
+        "kind": "skip",
+        "line": 4917,
+        "text": "test.skip(browserName === 'webkit', 'webkit dose not work on linux')"
+      }
+    ]
+  },
+  {
+    "package": "web-elements",
+    "file": "tests/web-elements.spec.ts",
+    "suite": "web-elements test suite",
+    "group": "x-audio-tt",
+    "title": "method-prepare",
+    "fullTitle": "web-elements test suite x-audio-tt method-prepare",
+    "key": "x-audio-tt/method-prepare",
+    "sourceId": "x-audio-tt/method-prepare",
+    "line": 4958,
+    "callbackSha256": "dff47284ac69557ffd36a10c36143da18e8a9fc8c1ad96019d6070f4b5c274d9",
+    "frozenDecision": "conditional-ai-candidate",
+    "retentionReason": "Temporarily retain unchanged callback; reassess AI feasibility later. Media playback progression and original action-to-observation windows are not proven equivalent with AI latency.",
+    "skipBrowsers": [],
+    "earlyReturnBrowsers": [],
+    "guardEvidence": []
+  }
+]

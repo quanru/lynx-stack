@@ -1,0 +1,36 @@
+cases:
+  # The first case is a visual smoke check. The second maps the complete original
+  # basic-bindtap contract, including ordered one-shot inline-style assertions.
+  - name: bindtap toggles the square pink to green
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-bindtap
+      - aiWaitFor: The pink square is visible at the top-left of the white page.
+      # Avoid fixed screenshot pixels: DPR scaling makes 100 CSS px roughly one quarter of the viewport width.
+      - aiAssert: A small solid pink square is rendered at the top-left corner of an otherwise blank white page.
+      - aiAct: Toggle the pink square at the top-left to green.
+      - aiWaitFor: The square at the top-left is green.
+      - aiAssert: The same square is now solid green after the tap, and the rest of the page stays white.
+
+  - name: basic-bindtap
+    tags: [toggle]
+    steps:
+      - gotoUrl: ${shellUrl}?casename=basic-bindtap
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - recordToReport: Before the original ordered bindtap contract
+      - aiAct: Click the pink square at the top-left once. Stop after that single click; do not repeat it to adjust the click position.
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.expect: {
+          selector: "#target",
+          attribute: style,
+          contains: green,
+          immediate: true,
+        }
+      - aiAct: Click the green square at the top-left once. Stop after that single click; do not repeat it to adjust the click position.
+      - javascript: "new Promise(resolve => setTimeout(() => resolve(true), 100))"
+      - web.expect: {
+          selector: "#target",
+          attribute: style,
+          contains: pink,
+          immediate: true,
+        }
+      - recordToReport: Original ordered bindtap contract passed

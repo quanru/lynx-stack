@@ -313,7 +313,7 @@ screenshot/link acceptance is separate from the successful publication jobs.
 ## Single-job Web execution
 
 CI now runs the complete YAML inventory once in one Web job, with
-`maxConcurrency: 1`. Generated partitions and shard-specific report selection
+`maxConcurrentProjects: 1` and `maxConcurrentFiles: 1`. Generated partitions and shard-specific report selection
 are removed. Retained original Playwright suites still run exactly once;
 their browser profiles, assertions and timing are unchanged. The website-safe
 Pages publisher and screenshot Summary remain in place.
@@ -411,10 +411,14 @@ planning itself adds latency. No product source, original test, fixture, PNG,
 assertion deadline or retry count changes. Fresh complete-case hosted validation
 and actual input/screenshot inspection are required before acceptance.
 
-## Rome SDK alignment (pending hosted acceptance)
+## Midscene SDK 1.16.5 (pending hosted acceptance)
 
-The integration now pins all Midscene packages to `1.15.3`, matching Rome's
-`codex/pr-974-e2e-reference` branch at `d1b3183`. Run `npm run check:model`
+The integration pins all Midscene packages to stable `1.16.5`, verified against
+the public npm `latest` tags on 2026-10-22. This upgrades the previous Rome-aligned
+`1.15.3` integration; it does not claim Rome uses the new release. Playwright
+remains pinned to `1.61.1` for the original pixel baselines. The SDK replaces
+`test.maxConcurrency` with `maxConcurrentProjects` and `maxConcurrentFiles`;
+both remain explicitly `1`. Run `npm run check:model`
 to invoke the official `midscene-test model verify` checks for text, image
 understanding and AI location. A small output filter removes credentials from
 the verifier's failure diagnostics; the SDK still determines success or failure.

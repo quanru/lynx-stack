@@ -2,7 +2,7 @@
 applyTo: "packages/web-platform/web-core-e2e/midscene/**"
 ---
 
-Keep all Midscene packages on the same pinned SDK release (currently 1.15.3).
+Keep all Midscene packages on the same pinned SDK release (currently 1.16.5).
 Run Web in one CI job with all projects serial and the original YAML files.
 Do not restore generated case partitions or per-shard report aggregation.
 Preserve every retained original-runner invocation once per job, and verify

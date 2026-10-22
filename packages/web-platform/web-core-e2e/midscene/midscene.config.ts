@@ -322,9 +322,10 @@ export default defineTestProject<WebProjectContext>({
     ),
   ],
   test: {
-    // Keep all projects serial in the single CI job to bound model pressure.
+    // Keep projects and files serial in the single CI job to bound model pressure.
     // Keep the existing per-step deadline; upgrading the SDK must not relax it.
-    maxConcurrency: 1,
+    maxConcurrentProjects: 1,
+    maxConcurrentFiles: 1,
     testTimeout: 180_000,
   },
   output: {
